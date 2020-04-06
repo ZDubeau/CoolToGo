@@ -23,7 +23,6 @@ def retrieve_data_by_id(project_ID,api_KEY,select_id):
     req = re.json()
     
     dict_for_id = {}
-
     
     dict_for_id['lieu_event'] = 'Lieu'
 #-----------------------------------------------------------------------------------------------------------------------
@@ -77,9 +76,40 @@ def retrieve_data_by_id(project_ID,api_KEY,select_id):
         dict_for_id['adresse2'] = None
         dict_for_id['adresse1'] = None
 #------------------------------------------------------------------------------------------------------------------------
-    dict_for_id['code_postal'] = req['localisation']['adresse']['codePostal']
+    #dict_for_id['code_postal'] = req['localisation']['adresse']['codePostal']
+    #if 'localisation' in req:
+        #if 'adresse' in req['localisation']:
+            #if 'codePostal' in req['localisation']['adresse']:
+                #dict_for_id['code_postal'] = req['localisation']['adresse']['codePostal']
+            #else:
+                #dict_for_id['code_postal'] = None
+        #else:
+            #dict_for_id['code_postal'] = None
+    #else:
+        #dict_for_id['code_postal'] = None
 #------------------------------------------------------------------------------------------------------------------------
-    dict_for_id['ville'] = req['localisation']['adresse']['commune']['nom']
+    #dict_for_id['ville'] = req['localisation']['adresse']['commune']['nom']
+    if 'localisation' in req:
+        if 'adresse' in req['localisation']:
+            if 'commune' in req['localisation']['adresse']:
+                if 'codePostal' in req['localisation']['adresse']:
+                    dict_for_id['code_postal'] = req['localisation']['adresse']['codePostal']
+
+                    if 'nom' in req['localisation']['adresse']['commune']:
+                        dict_for_id['ville'] = req['localisation']['adresse']['commune']['nom']
+                    else:
+                        dict_for_id['ville'] = None
+                else:
+                    dict_for_id['code_postal'] = None
+            else:
+                dict_for_id['ville'] = None
+                dict_for_id['code_postal'] = None
+        else:
+            dict_for_id['ville'] = None
+            dict_for_id['code_postal'] = None
+    else:
+        dict_for_id['ville'] = None
+        dict_for_id['code_postal'] = None
 #------------------------------------------------------------------------------------------------------------------------
     if 'presentation' in req:
         if 'descriptifCourt' in req['presentation']:
@@ -149,13 +179,9 @@ def retrieve_data_by_id(project_ID,api_KEY,select_id):
         dict_for_id['date_début'] = None
         dict_for_id['date_fin'] = None
   
-    #print(dict_for_id)
     result_df = result_df.append(dict_for_id,ignore_index=True)
     
     return result_df
-
-#print(retrive_data_by_selectionId(project_ID,api_KEY,selectionId))
-#retrieve_data_by_id(project_ID,api_KEY,select_id)
 #-----------------------------------------------------------------------------------------------------------------------
 def retrieve_data_by_id_light(project_ID,api_KEY,select_id):
     
@@ -174,11 +200,13 @@ def retrieve_data_by_id_light(project_ID,api_KEY,select_id):
     dict_for_id['names'] = req['gestion']['membreProprietaire']['nom']
     dict_for_id['types'] = req['type']
 
-    #print(dict_for_id)
     result_df = result_df.append(dict_for_id,ignore_index=True)
     
     return result_df
 #-----------------------------------------------------------------------------------------------------------------------
+count_ = "100"              #"count":20
+first = "0"                 # start from 0
+
 def retrive_data_by_selectionId(project_ID,api_KEY,selectionId):
     import pandas as pd
     result_df = pd.DataFrame(columns = ['lieu_event','names','types','longitude','latitude',
@@ -189,7 +217,10 @@ def retrive_data_by_selectionId(project_ID,api_KEY,selectionId):
     url = 'http://api.apidae-tourisme.com/api/v002/recherche/list-objets-touristiques?query={'
     url += '"projetId":"'+project_ID+'",'
     url += '"apiKey":"'+api_KEY+'",'
-    url += '"selectionIds":["'+selectionId+'"]}'
+    url += '"selectionIds":["'+selectionId+'"],'
+    url += '"count":"'+count_+'",'
+    url += '"first":"'+str(first)+'"}'
+
     req = requests.get(url)
     df = pd.json_normalize(req.json(),'objetsTouristiques', errors='ignore')
     for index, row in df.iterrows():

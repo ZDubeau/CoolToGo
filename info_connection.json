@@ -1,0 +1,24 @@
+
+{
+    "LOCALHOST" : {
+        "dbname" : "cooool",
+        "user" : "toooo",
+        "password" : "goooo",
+        "host" : "localhost",
+        "port" : 5432
+    },
+    "Master" : {
+        "dbname" : "cooltogo",
+        "user" : "admin",
+        "password" : "turbine",
+        "host" : "localhost",
+        "port" : 5432
+    },
+    "Staging" : {
+        "dbname" : "s_cool",
+        "user" : "s_to",
+        "password" : "s_go",
+        "host" : "localhost",
+        "port" : 5432
+    }
+}

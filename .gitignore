@@ -1,0 +1,8 @@
+Trav/
+Doc/
+Archives/
+Svg/
+.vscode/
+data/
+__pycache__/
+.ipynb_checkpoints/

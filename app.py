@@ -6,7 +6,7 @@ from flask import *
 
 app = Flask(__name__)
 
-@app.route('/tables')
+@app.route('/', methods=['GET'])
 def get_welcome_page():
     #df_light = apex.retrieve_data_by_id_light(apex.project_ID,apex.api_KEY,apex.select_id)
     #df = apex.retrieve_data_by_id(apex.project_ID,apex.api_KEY,apex.select_id)

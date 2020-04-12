@@ -1,0 +1,74 @@
+
+{% extends "layout.html" %}
+{% block bootstrap_2 %}
+
+    {% for table in tables %}
+        {{ table|safe }}
+    {% endfor %}
+</br>
+<center><h2 style="color: red; text-align: center;">{{errorMessage}}</h2></center>
+<section id="app" class="hero is-fullheight">
+    <div class="hero-body">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-half is-offset-one-quarter" style="width: 80%;">
+                    <span class="title">
+                        Add / Remove Administator
+                    </span>
+                    <!-- -------------------------------------------------------- -->
+                    <form action="/new_admin" method="post">
+                    <!-- -------------------------------------------------------- -->
+                        <div class="field">
+                            <label class="label" style="font-size: 14px;">Username</label>
+                                <input
+                                name="adm_uname"
+                                class="input"
+                                type="text"
+                                maxlength="50"
+                                placeholder="Enter Username"
+                                style="color: #969696; width: 40%;"
+                                required>
+                        </div>
+                        <div class="field">
+                            <label class="label" style="font-size: 14px;">Email</label>
+                                <input
+                                name="adm_email"
+                                class="input"
+                                type="text"
+                                maxlength="50"
+                                placeholder="Enter email"
+                                style="color: #969696; width: 60%;"
+                                required>
+                        </div>
+                        <div class="field">
+                            <label class="label" style="font-size: 14px;">Password</label>
+                                <input
+                                name="adm_psw"
+                                class="input"
+                                type="password"
+                                maxlength="50"
+                                placeholder="Enter Password"
+                                style="color: #969696; width: 40%;"
+                                required>
+                        </div>
+                        <div class="field">
+                            <label class="label" style="font-size: 14px;">Confirm Password</label>
+                                <input
+                                name="adm_psw-repeat"
+                                class="input"
+                                type="password"
+                                maxlength="50"
+                                placeholder="Confirm Password"
+                                style="color: #969696; width: 40%;"
+                                required>
+                        </div>
+                        <button type="submit" style="background-color: #007bff; border-radius: 5px; border-color: #007bff; margin: 28px 0; padding: 5px 25px;">Confirm</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+ 
+{% endblock bootstrap_2 %}
+

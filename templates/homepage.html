@@ -1,0 +1,109 @@
+<!-- ------------------------ Fait par Zahra ------------------------- -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="static/css/homepage.css">
+</head>
+<body>
+<!-- --La page d'accueil avec deux boutons de l'iscription et la connexion-- -->
+    <div class="content">
+        <center>
+            <h1>Cool To Go!</h1>
+            <h3>Administration page</h2>
+            <h3>{{errorMessage}}</h3>
+                <button onclick="document.getElementById('id_1').style.display='block'" style="width:auto;" id="LogIn">Login</button>
+                <button onclick="document.getElementById('id_2').style.display='block'" style="width:auto;" id="SignUp">SignUp</button>
+        </center>
+    </div> 
+<!-- ---------------La fenetre de la connection d'utilisateur------------------ -->
+    <div id="id_1" class="modal">
+        <form class="modal-content animate" action="/login" method="post">
+            <div class="logcontainer">
+                <h2>Administration Login</h2>
+                    <img alt="" class="log">
+            </div>
+                <div class="container">
+                    <label id="forme" for="uname"><b>Username</b></label>
+                    <input type="text" placeholder="Enter Username" name="uname" required>
+                
+                    <label id="forme" for="psw"><b>Password</b></label>
+                    <input type="password" placeholder="Enter Password" name="psw" required>
+                        
+                    <button type="submit">Login</button>
+                </div>
+                    <div class="container" style="background-color:#f1f1f1">
+                        <button type="button" class="cancelbtn" onclick="document.getElementById('id_1').style.display='none'">Cancel</button>
+                        <span class="psw">Forgot <a href="#">password?</a></span>
+                    </div>
+        </form>
+    </div>
+<!-- -----------------------La fenetre de l'iscription------------------------ -->
+    <div id="id_2" class="modal">
+        <form class="modal-content animate" action="/inscription" method="post">
+            <div class="inscontainer">
+                <h2>Create An Account</h2>
+                    <img alt="" class="insc">
+            </div>
+                <div class="container">
+                    <label id="forme" for="uname"><b>Username</b></label>
+                    <input type="text" placeholder="Enter Username" name="uname" required>
+
+                    <label id="forme" for="psw"><b>Password</b></label>
+                    <input type="password" placeholder="Enter Password" name="psw" required>
+                    
+                    <label id="forme" for="psw-repeat"><b>Confirm Password</b></label>
+                    <input type="password" placeholder="Confirm Password" name="psw-repeat" required>
+
+                    <button type="submit">Confirm</button>
+                </div>
+                    <div class="container" style="background-color:#f1f1f1">
+                        <button type="button" class="cancelbtn" onclick="document.getElementById('id_2').style.display='none'">Cancel</button>
+                    </div>
+        </form>
+    </div>
+<!-- -------------------------------------------------------------------------- -->  
+    <script>
+        // Get the modal
+        var modal1 = document.getElementById('id_1');
+        var modal2 = document.getElementById('id_2');
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            if (event.target == modal1) {
+                modal1.style.display = "none";
+            }
+            if (event.target == modal2) {
+                modal2.style.display = "none";
+            }
+        }
+
+        var password = document.getElementById("password")
+        , forme = document.getElementById("forme");
+
+        function validatePassword(){
+            if(password.value != forme.value) {
+        forme.setCustomValidity("Passwords Don't Match");
+        } else {
+        forme.setCustomValidity('');
+            }
+        }
+        password.onchange = validatePassword;
+        confirm_password.onkeyup = validatePassword;
+        
+        var video = document.getElementById("myVideo");
+        var btn = document.getElementById("myBtn");
+        
+        function myFunction() {
+            if (video.paused) {
+            video.play();
+            btn.innerHTML = "Pause";
+            } else {
+            video.pause();
+            btn.innerHTML = "Play";
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+""" Projet CoolToGo Alone """
+############################################
+""" Module by Zahra
+𐤟 Création : 2020-03-06
+𐤟 Dernière MàJ : 2020-04-12
+"""
+
+################ Tables des données extraites d'apidae ################
+
+drop_cooltogo_from_apidae ="""DROP TABLE IF EXISTS cooltogo_from_apidae;"""
+
+cooltogo_from_apidae = """
+  CREATE TABLE IF NOT EXISTS cooltogo_from_apidae (
+        id SERIAL PRIMARY KEY,
+        id_apidae VARCHAR(50),
+        lieu_event TEXT,
+        names TEXT,
+        types TEXT,
+        latitude FLOAT,
+        longitude FLOAT,
+        adresse1 VARCHAR(100),
+        adresse2 VARCHAR(101),
+        code_postal VARCHAR(10),
+        ville TEXT,
+        description_teaser TEXT,
+        images TEXT,
+        publics VARCHAR(20),
+        categories VARCHAR(102),
+        accessibilité VARCHAR(103),
+        payant BOOL,
+        plus_d_infos_et_horaires VARCHAR(104),
+        date_début DATE,
+        date_fin DATE
+    )"""
+
+insert_cooltogo_from_apidae = """
+  INSERT INTO cooltogo_from_apidae (id_apidae,id_selection, lieu_event, names, types, latitude, longitude, adresse1, adresse2, code_postal, ville, description_teaser, images, publics, categories, accessibilité, payant, plus_d_infos_et_horaires, date_début, date_fin)
+  VALUES (%(id_apidae)s,%(id_selection)s, %(lieu_event)s, %(names)s, %(types)s, %(latitude)s, %(longitude)s, %(adresse1)s, %(adresse2)s, %(code_postal)s, %(ville)s, %(description_teaser)s, %(images)s, %(publics)s, %(categories)s, %(accessibilité)s, %(payant)s, %(plus_d_infos_et_horaires)s, %(date_début)s, %(date_fin)s) returning id;"""
+
+################ Tables des données validés par l'administrateur ################
+
+drop_cooltogo_validated ="""DROP TABLE IF EXISTS cooltogo_validated;"""
+
+cooltogo_validated = """
+  CREATE TABLE IF NOT EXISTS cooltogo_validated (
+        id SERIAL PRIMARY KEY,
+        id_apidae VARCHAR(50),
+        Lieu_event TEXT,
+        X FLOAT,
+        Y FLOAT,
+        name TEXT,
+        Adresse1 VARCHAR(105),
+        Adresse2 VARCHAR(106),
+        Code_postal VARCHAR(10),
+        Ville TEXT,
+        Description_Teaser TEXT,
+        Description TEXT,
+        Images TEXT,
+        Publics VARCHAR(20),
+        styleUrl TEXT,
+        styleHash TEXT,
+        Type TEXT,
+        Catégories VARCHAR(107),
+        Accessibilité VARCHAR(108),
+        payant BOOL,
+        Plus_d_infos_et_horaires VARCHAR(109),
+        Dates_début DATE,
+        Dates_fin DATE
+    )"""
+
+insert_cooltogo_validated = """
+  INSERT INTO cooltogo_validated (id_apidae,Lieu_event, X, Y, name, Adresse1, Adresse2, Code_postal, Ville, Description_Teaser, Description, Images, Publics, styleUrl, styleHash, Type, Catégories, Accessibilité, payant, Plus_d_infos_et_horaires, Dates_début, Dates_fin)
+  VALUES (%(id_apidae)s, %(Lieu_event)s, %(X)s, %(Y)s, %(name)s, %(Adresse1)s, %(Adresse2)s, %(Code_postal)s, %(Ville)s, %(Description_Teaser)s, %(Description)s,%(Images)s, %(Publics)s, %(styleUrl)s, %(styleHash)s, %(Type)s, %(Catégories)s, %(Accessibilité)s, %(payant)s, %(Plus_d_infos_et_horaires)s, %(Dates_début)s, %(Dates_fin)s) returning id;"""
+
+################ Table des administrateurs ################
+
+drop_administrators = """DROP TABLE IF EXISTS administrators;"""
+
+administrators = """
+  CREATE TABLE IF NOT EXISTS administrators (
+        PKId_Admin BIGSERIAL PRIMARY KEY,
+        Admin_Name TEXT NOT NULL,
+        Admin_pwd_hash TEXT,
+        Admin_email TEXT
+  )"""
+
+insert_administrators = """
+  INSERT INTO administrators (Admin_Name, Admin_pwd_hash, Admin_email)
+  VALUES (%(Admin_Name)s, %(Admin_pwd_hash)s, %(Admin_email)s) returning PKId_Admin;"""
+
+################ Tables des messages ################
+
+drop_message = """DROP TABLE IF EXISTS message;"""
+
+message = """
+  CREATE TABLE IF NOT EXISTS message (
+        id SERIAL PRIMARY KEY,
+        message TEXT NOT NULL,
+        published_on TIMESTAMP,
+        active BOOL
+    )"""
+
+insert_message = """
+  INSERT INTO message (message, published_on, active)
+  VALUES (%(message)s, %(published_on)s, %(active)s) returning id;"""
+
+################ Tables des selection ################
+
+drop_selection = """DROP TABLE IF EXISTS selection;"""
+
+selection = """
+    CREATE TABLE IF NOT EXISTS selection (
+        id SERIAL PRIMARY KEY,
+        selection TEXT NOT NULL,
+        description TEXT NOT NULL,
+        selection_type TEXT NOT NULL
+    )"""
+
+insert_selection = """
+  INSERT INTO selection (selection, description, selection_type)
+  VALUES (%(selection)s, %(description)s, %(selection_type)s) returning id;"""
+
+################ Tables des selection extraction ################
+
+drop_selection_extraction = """DROP TABLE IF EXISTS selection_extraction;"""
+
+selection_extraction = """
+    CREATE TABLE IF NOT EXISTS selection_extraction (
+        id SERIAL PRIMARY KEY,
+        selection_id BIGINT NOT NULL,
+        selection_extraction_date TIMESTAMP NOT NULL
+    )"""
+
+## next week, a new episode...

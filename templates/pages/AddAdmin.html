@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+{% block bootstrap_2 %}
+<div class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header card-header-primary">
+              <h4 class="card-title">New Profile</h4>
+            </div>
+            <div class="card-body">
+                <!-- Add new administrator -->
+              <form>
+                <div class="row">
+                    <!-- Add username -->
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Username</label>
+                      <input type="text" class="form-control" required>
+                    </div>
+                  </div>
+                  <!-- Add password -->
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label class="bmd-label-floating" for="psw">password</label>
+                      <input type="password" class="form-control" name="psw" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                    <!-- Add email (It is not required) -->
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Email address</label>
+                      <input type="text" class="form-control">
+                    </div>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary pull-right">Add</button>
+                <div class="clearfix"></div>
+              </form>
+              <!-- ---------------------------------------------- -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock bootstrap_2 %}

@@ -1,0 +1,243 @@
+{% extends "layout.html" %}
+
+{% block bootstrap_2 %}
+<section id="app" class="hero is-fullheight">
+    <div class="hero-body">
+      <div class="container">
+        <div class="columns">
+          <div class="column is-half is-offset-one-quarter" style="width: 55%;">
+            <p class="title"><img src="/static/image/logo_cooltogo.svg" alt="logo" style="width:40px;">
+              Edit informations
+            </p>
+            <div>
+            <form action="/edit_data_valid" method="post">
+                <!-- ------------------ id Apidae ----------------------- -->
+                <div class="field">
+                    <label class="label">id_apidae</label>
+                        <input
+                        name="id_apidae"
+                        value="{{id_apidae}}"
+                        class="input"
+                        type="text"
+                        maxlength="40"
+                        style="color: #969696;"
+                        readonly>
+                </div>
+                <!-- ---------- Choose a lieu or an event ----------- -->
+                <div class="field">
+                    <label class="label">lieu_event</label>
+                        <span class="select">
+                            <select name="lieu_event" required>
+                            <option></option>
+                            <option>Lieu</option>
+                            <option>Event</option>
+                            </select>
+                        </span>
+                </div>
+                <!-- --------------- name of responsible --------------- -->
+                <div class="field">
+                    <label class="label">name</label>
+                        <input
+                        name="name"
+                        value="{{name}}"
+                        class="input"
+                        type="text"
+                        maxlength="50"
+                        style="color: #969696;"
+                        required>
+                </div>
+                <!-- ----------------- Niveau Fracheur ------------------- -->
+                <div class="field">
+                    <label class="label">Niveau_Fracheur</label>
+                        <input
+                        name="niveau_fracheur"
+                        class="input"
+                        type="text"
+                        maxlength="80"
+                        style="color: #969696;"
+                        required>
+                </div>
+                <!-- ------------------ Choose a type ------------------- -->
+                <div class="field">
+                    <label class="label">type</label>
+                        <span class="select">
+                            <select name="type">
+                                <option></option>
+                                <option>ACTIVITE</option>
+                                <option>COMMERCE_ET_SERVICE</option>
+                                <option>EQUIPEMENT</option>
+                                <option>FETE_ET_MANIFESTATION</option>
+                                <option>HEBERGEMENT_LOCATIF</option>
+                                <option>HOTELLERIE_PLEIN_AIR</option>
+                                <option>PATRIMOINE_NATUREL</option>
+                                <option>RESTAURATION</option>
+                                <option>STRUCTURE</option>
+                            </select>
+                        </span>
+                </div>
+                <!-- --------------------- Adresse 1 ---------------------- -->
+                <div class="field">
+                    <label class="label">adresse1</label>
+                        <input
+                        name="adresse1"
+                        class="input"
+                        value="{{adresse1}}"
+                        type="text"
+                        maxlength="50"
+                        style="color: #969696;"
+                        required>
+                </div>
+                <!-- --------------------- Adresse 2 --------------------- -->
+                <div class="field">
+                    <label class="label">adresse2</label>
+                        <input
+                        name="adresse2"
+                        class="input"
+                        value="{{adresse2}}"
+                        type="text"
+                        maxlength="50"
+                        placeholder="Ex. Champ Clotury"
+                        style="color: #969696;"
+                        >
+                </div>
+                <!-- -------------------- Code postal --------------------- -->
+                <div class="field">
+                    <label class="label">Code postal</label>
+                        <input
+                        name="code_postal"
+                        class="input"
+                        value="{{code_postal}}"
+                        type="text"
+                        maxlength="50"
+                        style="color: #969696;"
+                        required>
+                </div>
+                <!-- ----------------------- City ------------------------ -->
+                <div class="field">
+                    <label class="label">City</label>
+                        <input
+                        name="city"
+                        class="input"
+                        value="{{city}}"
+                        type="text"
+                        maxlength="70"
+                        style="color: #969696;"
+                        required>
+                </div>
+                <!-- ----------------- Description Teaser ---------------- -->
+                <div class="field">
+                    <label class="label">Description Teaser</label>
+                        <textarea
+                        name="description_teaser"
+                        class="textarea"
+                        value="{{Description_Teaser}}"
+                        maxlength="1000"
+                        style="color: #969696;"
+                        >
+                        </textarea>
+                </div>
+                <!-- ---------- Upload url of an image ----------- -->
+                <div class="field">
+                    <label class="label">Images</label>
+                        <input
+                        name="images"
+                        class="input"
+                        value="{{Images}}"
+                        type="text"
+                        maxlength="50"
+                        style="color: #969696;"
+                        required>
+                </div>
+                <!-- -------------------------------------------------- -->
+                <div class="field">
+                    <label class="label">Publics</label>
+                        <label><input name="senior" type="checkbox" value ="Senior">Senior&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                        <label><input name="enfant" type="checkbox" value ="Enfant ">Enfant&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                        <label><input name="jeune" type="checkbox" value="Jeune">Jeune&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                        <label><input name="adult" type="checkbox" value="Adult">Adult</label>
+                </div>
+                <!-- --------------------------------------------------- -->
+                <div class="field">
+                    <label class="label">Categories</label>
+                        <input
+                        name="categories"
+                        class="input"
+                        value="{{categories}}"
+                        type="text"
+                        maxlength="50"
+                        style="color: #969696;"
+                        >
+                </div>
+                <!-- -------------------------------------------------- -->
+                <div class="field">
+                    <label class="label">Accessibilité</label>
+                        <input
+                        name="accessibilite"
+                        class="input"
+                        value="{{accessibilite}}"
+                        type="text"
+                        maxlength="50"
+                        placeholder="Ex. Accessible en fauteuil roulant en autonomie"
+                        style="color: #969696;"
+                        required>
+                </div>
+                <!-- ------------------------------------------------ -->
+                <div class="field">
+                    <label class="label">Payant</label>
+                        <span class="select">
+                            <select name="Payant" required>
+                            <option></option>
+                            <option>True</option>
+                            <option>False</option>
+                            </select>
+                        </span>
+                </div>
+                <!-- -------------------------------------------------- -->
+                <div class="field">
+                    <label class="label">plus d'infos et horaires</label>
+                        <input
+                        name="plus_d_infos"
+                        class="input"
+                        value="{{plus_d_infos}}"
+                        type="text"
+                        maxlength="50"
+                        placeholder="Ex. http://www.grenoble-tourisme.com"
+                        style="color: #969696;"
+                        >
+                </div>
+                <!-- ---------------------------------------------------- -->
+                <div class="field">
+                    <label class="label">Date début</label>
+                        <input
+                        name="date_debut"
+                        class="input"
+                        value="{{date_debut}}"
+                        type="date"
+                        style="color: #969696;"
+                        >
+                </div>
+                <!-- ------------------------------------------------- -->
+                <div class="field">
+                    <label class="label">Date fin</label>
+                        <input
+                        name="date_fin"
+                        class="input"
+                        value="{{date_fin}}"
+                        type="date"
+                        style="color: #969696;"
+                        >
+                </div>
+                <!-- ---------------------------------------------------- -->
+              <div class="field is-grouped is-grouped-right">
+                <div class="control">
+                  <button class="button is-link">Add</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<h3>{{errorMessage}}</h3>
+{% endblock bootstrap_2 %}

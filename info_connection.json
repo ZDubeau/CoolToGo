@@ -8,17 +8,17 @@
         "port" : 5432
     },
     "Master" : {
-        "dbname" : "cooltogo",
-        "user" : "admin",
-        "password" : "turbine",
-        "host" : "localhost",
+        "dbname" : "d74ievmpccqdh6",
+        "user" : "pecrslpcwmptbf",
+        "password" : "3f48aaeb90fa4b6b1aa0d93cd78e67635047214b80b323c584fabcc29b66a160",
+        "host" : "ec2-46-137-177-160.eu-west-1.compute.amazonaws.com",
         "port" : 5432
     },
     "Staging" : {
-        "dbname" : "s_cool",
-        "user" : "s_to",
-        "password" : "s_go",
-        "host" : "localhost",
+        "dbname" : "d74ievmpccqdh6",
+        "user" : "pecrslpcwmptbf",
+        "password" : "3f48aaeb90fa4b6b1aa0d93cd78e67635047214b80b323c584fabcc29b66a160",
+        "host" : "ec2-46-137-177-160.eu-west-1.compute.amazonaws.com",
         "port" : 5432
     }
 }

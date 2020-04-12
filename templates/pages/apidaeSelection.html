@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+{% block bootstrap_2 %}
+<div>
+    {% for table in tables %}
+        {{ table|safe }}
+    {% endfor %}
+</div>
+<section id="app" class="hero is-fullheight">
+    <div class="hero-body">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-half is-offset-one-quarter" style="width: 35%;">
+                    <p class="title">
+                    Add new selection
+                    </p>
+                    <form action="/new_selection" method="post">
+                        <!-- ----------------------- Selection ------------------------- -->
+                        <div class="field">
+                            <label class="label">Selection</label>
+                                <input
+                                name="selection"
+                                class="input"
+                                type="text"
+                                maxlength="70"
+                                placeholder="Ex. ..."
+                                style="color: #969696;"
+                                required>
+                        </div>
+                        <!-- ---------------------- Description ------------------------ -->
+                        <div class="field">
+                            <label class="label">Description</label>
+                                <input
+                                name="description"
+                                class="input"
+                                type="text"
+                                maxlength="80"
+                                placeholder="Ex. ..."
+                                style="color: #969696;"
+                                required>
+                        </div>
+                        <!-- --------------------- lieu or event --------------------- -->
+                        <div class="field">
+                            <label class="label">lieu_event</label>
+                                <span class="select">
+                                    <select name="lieu_event" required>
+                                    <option></option>
+                                    <option>Lieu</option>
+                                    <option>Event</option>
+                                    </select>
+                                </span>
+                        </div> 
+                        </br>
+                        <!-- -------------------------------------------------------- -->
+                        <div class="field is-grouped is-grouped-right">
+                            <div class="control">
+                              <button class="button is-link" style="padding: 5px 25px;">Add</button>
+                            </div>
+                          </div>
+                        </form>
+    <h4 style="color: red;">{{errorMessage}}</h4>
+{% endblock bootstrap_2 %}

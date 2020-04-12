@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block bootstrap_2 %}
+<div>
+    {% for table in tables %}
+        {{ table|safe }}
+    {% endfor %}
+    <div class="container-fluid">
+        <div class="row justify-content-md-left">
+            <div class="col-md-auto">
+                <div class="-md-auto control">
+                    <button onclick="window.location.href='/extract_locations';" class="btn btn-outline-primary">Locations</button>
+                    <a href='/extract_locations' download class="btn btn-outline-primary">Download</a>
+                </div>
+            </div>
+        </div>  
+    </div>        
+</div>
+
+<h3>{{errorMessage}}</h3>
+{% endblock bootstrap_2 %}

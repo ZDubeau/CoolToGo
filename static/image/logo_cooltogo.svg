@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="440px" height="440px" viewBox="0 0 440 440" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53.2 (72643) - https://sketchapp.com -->
+    <title>fraicheur</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="fraicheur">
+            <path d="M220,440 C341.50199,440 440,341.50199 440,220 C440,98.4980103 341.50199,0 220,0 C98.4980103,0 0,98.4980103 0,220 C0,341.50199 98.4980103,440 220,440" id="outer-circle" fill="#01289f" fill-rule="nonzero"></path>
+            <path d="M219,251 C235.569144,251 249,237.569144 249,221 C249,204.430856 235.569144,191 219,191 C202.430856,191 189,204.430856 189,221 C189,237.569144 202.430856,251 219,251" id="inner-circle" stroke="#d0eeed" stroke-width="20" fill-rule="nonzero"></path>
+            <g id="branch" transform="translate(160.000000, 20.000000)" stroke="#d0eeed" stroke-linecap="round" stroke-width="20">
+                <path d="M60,161.5 L60,0.5" id="stem"></path>
+                <path d="M59,140 L0.5,80" id="arm"></path>
+                <path d="M120,141 L61.5,81" id="arm" transform="translate(90.500000, 111.000000) scale(-1, 1) translate(-90.500000, -111.000000) "></path>
+                <path d="M120,81 L61.5,21" id="arm" transform="translate(90.500000, 51.000000) scale(-1, 1) translate(-90.500000, -51.000000) "></path>
+                <path d="M59,81 L0.5,21" id="arm"></path>
+            </g>
+            <g id="branch" transform="translate(220.000000, 339.000000) scale(1, -1) translate(-220.000000, -339.000000) translate(160.000000, 258.000000)" stroke="#d0eeed" stroke-linecap="round" stroke-width="20">
+                <path d="M60,161.5 L60,0.5" id="stem"></path>
+                <path d="M59,140 L0.5,80" id="arm"></path>
+                <path d="M120,141 L61.5,81" id="arm" transform="translate(90.500000, 111.000000) scale(-1, 1) translate(-90.500000, -111.000000) "></path>
+                <path d="M120,81 L61.5,21" id="arm" transform="translate(90.500000, 51.000000) scale(-1, 1) translate(-90.500000, -51.000000) "></path>
+                <path d="M59,81 L0.5,21" id="arm"></path>
+            </g>
+            <g id="branch" transform="translate(339.000000, 220.000000) scale(1, -1) rotate(90.000000) translate(-339.000000, -220.000000) translate(279.000000, 139.000000)" stroke="#d0eeed" stroke-linecap="round" stroke-width="20">
+                <path d="M60,161.5 L60,0.5" id="stem"></path>
+                <path d="M59,140 L0.5,80" id="arm"></path>
+                <path d="M120,141 L61.5,81" id="arm" transform="translate(90.500000, 111.000000) scale(-1, 1) translate(-90.500000, -111.000000) "></path>
+                <path d="M120,81 L61.5,21" id="arm" transform="translate(90.500000, 51.000000) scale(-1, 1) translate(-90.500000, -51.000000) "></path>
+                <path d="M59,81 L0.5,21" id="arm"></path>
+            </g>
+            <g id="branch" transform="translate(101.000000, 220.000000) scale(-1, -1) rotate(90.000000) translate(-101.000000, -220.000000) translate(41.000000, 139.000000)" stroke="#d0eeed" stroke-linecap="round" stroke-width="20">
+                <path d="M60,161.5 L60,0.5" id="stem"></path>
+                <path d="M59,140 L0.5,80" id="arm"></path>
+                <path d="M120,141 L61.5,81" id="arm" transform="translate(90.500000, 111.000000) scale(-1, 1) translate(-90.500000, -111.000000) "></path>
+                <path d="M120,81 L61.5,21" id="arm" transform="translate(90.500000, 51.000000) scale(-1, 1) translate(-90.500000, -51.000000) "></path>
+                <path d="M59,81 L0.5,21" id="arm"></path>
+            </g>
+            <path d="M198.5,198.5 L81.5,80.5" id="stem" stroke="#d0eeed" stroke-width="20" stroke-linecap="round"></path>
+            <path d="M243,198 L360,80 L243,198 Z" id="stem" stroke="#d0eeed" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M243,242 L360,360 L243,242 Z" id="stem" stroke="#d0eeed" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M197,242 L80,360 L197,242 Z" id="stem" stroke="#d0eeed" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"></path>
+        </g>
+    </g>
+</svg>

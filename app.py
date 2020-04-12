@@ -1,14 +1,14 @@
-from flask import Flask, render_template, request, redirect, url_for, make_response
-import DB_Protocole
-import apidae_extraction as apex  # my function retrieving data from apiade
-from flask import *
+from flask import Flask, render_template, request, redirect, url_for, make_response, jsonify, json
+
 import pandas as pd
 from pandas import DataFrame
 from sqlalchemy import create_engine
+from geopy.geocoders import Nominatim
+
+import DB_Protocole
 from DB_Protocole import ConnexionDB, DeconnexionDB
 import DB_Functions as functions   # insert database related code here
-from geopy.geocoders import Nominatim
-from flask import jsonify
+import apidae_extraction as apex  # my function retrieving data from apiade
 
 app = Flask(__name__)
 

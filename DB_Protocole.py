@@ -8,6 +8,7 @@
 import psycopg2, psycopg2.extras, sys
 from psycopg2 import Error
 import DB_Table_Definitions
+import socket
 ################ Connexion ################
 
 conn = None
@@ -18,7 +19,10 @@ def ConnexionDB(): # /!\ Return connection & cursor as tuple
     global conn
     global cur
     try:
-        conn = psycopg2.connect(dbname="d74ievmpccqdh6", user="pecrslpcwmptbf", password="3f48aaeb90fa4b6b1aa0d93cd78e67635047214b80b323c584fabcc29b66a160", host="ec2-46-137-177-160.eu-west-1.compute.amazonaws.com", port="5432")
+        if socket.gethostname()=="zahra-ThinkPad-T440" :
+            conn = psycopg2.connect(dbname="cooool", user="toooo", password="goooo", host="localhost", port="5432")    
+        else :
+            conn = psycopg2.connect(dbname="d74ievmpccqdh6", user="pecrslpcwmptbf", password="3f48aaeb90fa4b6b1aa0d93cd78e67635047214b80b323c584fabcc29b66a160", host="ec2-46-137-177-160.eu-west-1.compute.amazonaws.com", port="5432")
     except:
         print("Connexion impossible.")
         sys.exit()

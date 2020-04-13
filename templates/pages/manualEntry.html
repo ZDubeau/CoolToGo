@@ -111,8 +111,7 @@
                         maxlength="1000"
                         placeholder="Ex. La bibliothèque Maison de Barnave de Saint Egrève dispose d'un grand nombre de livres, revues et CD à consulter sur place ou à emporter !"
                         style="color: #969696;"
-                        >
-                        </textarea>
+                        ></textarea>
                 </div>
                 <!-- ---------- Upload url of an image ----------- -->
                 <div class="field">
@@ -126,15 +125,16 @@
                         style="color: #969696;"
                         required>
                 </div>
-                <!-- -------------------------------------------------- -->
+                <!-- ----------------- Publics ------------------------ -->
                 <div class="field">
                     <label class="label">Publics</label>
                         <label><input name="senior" type="checkbox" value ="Senior">Senior&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                        <label><input name="enfant" type="checkbox" value ="Enfant ">Enfant&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                        <label><input name="enfant" type="checkbox" value ="Enfant">Enfant&nbsp;&nbsp;&nbsp;&nbsp;</label>
                         <label><input name="jeune" type="checkbox" value="Jeune">Jeune&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                        <label><input name="adult" type="checkbox" value="Adult">Adult</label>
+                        <label><input name="jeune" type="checkbox" value="Jeune">Adulte&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                        <label><input name="adult" type="checkbox" value="Adult">Solidaire</label>
                 </div>
-                <!-- --------------------------------------------------- -->
+                <!-- ---------------- Categorries --------------------- -->
                 <div class="field">
                     <label class="label">Categories</label>
                         <input
@@ -146,7 +146,7 @@
                         style="color: #969696;"
                         >
                 </div>
-                <!-- -------------------------------------------------- -->
+                <!-- ---------------- Accessibilité ------------------- -->
                 <div class="field">
                     <label class="label">Accessibilité</label>
                         <input
@@ -158,7 +158,7 @@
                         style="color: #969696;"
                         required>
                 </div>
-                <!-- ------------------------------------------------ -->
+                <!-- ------------------- Payant ----------------------- -->
                 <div class="field">
                     <label class="label">Payant</label>
                         <span class="select">
@@ -169,7 +169,7 @@
                             </select>
                         </span>
                 </div>
-                <!-- -------------------------------------------------- -->
+                <!-- ------------ plus d'infos et horaires ------------- -->
                 <div class="field">
                     <label class="label">plus d'infos et horaires</label>
                         <input
@@ -181,7 +181,7 @@
                         style="color: #969696;"
                         >
                 </div>
-                <!-- ---------------------------------------------------- -->
+                <!-- ----------------- Date début ---------------------- -->
                 <div class="field">
                     <label class="label">Date début</label>
                         <input
@@ -191,7 +191,7 @@
                         style="color: #969696;"
                         >
                 </div>
-                <!-- ------------------------------------------------- -->
+                <!-- -------------------- Date fin --------------------- -->
                 <div class="field">
                     <label class="label">Date fin</label>
                         <input
@@ -201,7 +201,7 @@
                         style="color: #969696;"
                         >
                 </div>
-                <!-- ---------------------------------------------------- -->
+                <!-- ------------------Add button ---------------------- -->
               <div class="field is-grouped is-grouped-right">
                 <div class="control">
                   <button class="button is-link">Add</button>
@@ -213,5 +213,5 @@
       </div>
     </div>
 
-<h3>{{errorMessage}}</h3>
+<h3 style="color: red;">{{errorMessage}}</h3>
 {% endblock bootstrap_2 %}

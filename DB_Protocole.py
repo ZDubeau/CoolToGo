@@ -9,6 +9,7 @@ import psycopg2, psycopg2.extras, sys
 from psycopg2 import Error
 import DB_Table_Definitions
 import socket
+from sqlalchemy import create_engine
 ################ Connexion ################
 
 conn = None
@@ -85,5 +86,17 @@ def Drop_Table_Casscade(table):
 def Delete(table, condition, MonTuple):
     cur.execute(f"""DELETE FROM {table} WHERE {condition} = %s;""", MonTuple)
     Commit()
+
+################ SQLAlchemy engine for pandas ################
+def make_engine() :
+    try:
+        if socket.gethostname()=="zahra-ThinkPad-T440" :
+            engine = create_engine('postgresql+psycopg2://toooo:goooo@localhost:5432/cooool',echo=False)    
+        else :
+            engine = create_engine('postgresql+psycopg2://pecrslpcwmptbf:3f48aaeb90fa4b6b1aa0d93cd78e67635047214b80b323c584fabcc29b66a160@ec2-46-137-177-160.eu-west-1.compute.amazonaws.com:5432/d74ievmpccqdh6',echo=False) 
+    except:
+        print("Connexion impossible.")
+        sys.exit()
+    return engine
 
 ################ Fin ################

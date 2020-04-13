@@ -6,7 +6,7 @@ from sqlalchemy import create_engine
 from geopy.geocoders import Nominatim
 
 import DB_Protocole
-from DB_Protocole import ConnexionDB, DeconnexionDB
+from DB_Protocole import ConnexionDB, DeconnexionDB, make_engine
 import DB_Functions as functions   # insert database related code here
 import apidae_extraction as apex  # my function retrieving data from apiade
 
@@ -38,7 +38,7 @@ def get_tableApidae():
     user_ID = request.cookies.get('id')
     pseudo = request.cookies.get('pseudo')
     
-    engine = create_engine('postgresql+psycopg2://toooo:goooo@localhost:5432/cooool',echo=False)
+    engine = make_engine()
     df = pd.read_sql("SELECT *,'' as a FROM cooltogo_from_apidae WHERE id_apidae NOT IN (SELECT DISTINCT id_apidae FROM cooltogo_validated) ORDER BY id ASC", engine)
     
     return render_template('pages/tableApidae.html',tables=[df.to_html(classes=['table table-bordered'], table_id='dataTableApidae',index=False)], pseudo=pseudo)
@@ -51,7 +51,7 @@ def get_tableValide():
     user_ID = request.cookies.get('id')
     pseudo = request.cookies.get('pseudo')
 
-    engine = create_engine('postgresql+psycopg2://toooo:goooo@localhost:5432/cooool',echo=False)
+    engine = make_engine()
     df = pd.read_sql("SELECT *, '' as Edit, '' as Del FROM cooltogo_validated ORDER BY id ASC", engine)
     
     return render_template('pages/tableValide.html',tables=[df.to_html(classes='table table-bordered', table_id='dataTableValid',index=False)], pseudo=pseudo)
@@ -101,12 +101,18 @@ def get_new_data_valid():
             first = False
         else :
             public += ",jeune"
-    if "adult" in request.form:
+    if "adulte" in request.form:
         if first :
-            public += "adult"
+            public += "adulte"
             first = False
         else :
             public += ",adult"
+    if "solidaire" in request.form:
+        if first :
+            public += "solidaire"
+            first = False
+        else :
+            public += ",solidaire"
 
     plus_d_infos = request.form["plus_d_infos"]
     Date_debut = request.form["Date_début"]
@@ -155,7 +161,7 @@ def get_new_data_valid():
                                         Date_debut,
                                         Date_fin)
     DeconnexionDB()
-    engine = create_engine('postgresql+psycopg2://toooo:goooo@localhost:5432/cooool',echo=False)
+    engine = make_engine()
     df = pd.read_sql("SELECT *, '' as Edit ,'' as a FROM cooltogo_validated ORDER BY id ASC", engine)
     
     return redirect(url_for("get_tableValide"))
@@ -168,7 +174,7 @@ def get_message():
     user_ID = request.cookies.get('id')
     pseudo = request.cookies.get('pseudo')
 
-    engine = create_engine('postgresql+psycopg2://toooo:goooo@localhost:5432/cooool',echo=False)
+    engine = make_engine()
     df = pd.read_sql("SELECT message, published_on AS Published_date, active FROM message", engine)
 
     return render_template('pages/message.html',tables=[df.to_html(classes='table table-bordered', table_id='dataTableMessage',index=False)], pseudo=pseudo)
@@ -199,7 +205,7 @@ def get_add_admin():
     else :
         errorMessage = ""
 
-    engine = create_engine('postgresql+psycopg2://toooo:goooo@localhost:5432/cooool',echo=False)
+    engine = make_engine()
     df = pd.read_sql("SELECT PKId_Admin as Id, Admin_Name as Name, Admin_email as Email,'' as Action FROM administrators ORDER BY PKId_Admin ASC", engine)
     
     return render_template('pages/Administators.html',tables=[df.to_html(classes='table table-bordered', table_id='dataTableAdmin',index=False)],pseudo=pseudo,errorMessage=errorMessage)
@@ -213,7 +219,7 @@ def post_Administator():
     email = request.form["adm_email"]
     password = request.form["adm_psw"]
     password_repeat = request.form.get("adm_psw-repeat")
-    engine = create_engine('postgresql+psycopg2://toooo:goooo@localhost:5432/cooool',echo=False)
+    engine = make_engine()
     
     if password_repeat == password:
         list_admin = functions.connexion_admin(pseudo, password, True)
@@ -239,7 +245,7 @@ def get_delete_admin(id):
     errorMessage="Admin deleted successfully !"
     return redirect(url_for("get_add_admin",errorMessage=errorMessage))
 
-######################## LOGIN PAGE ############################
+#---------------------- Login page ----------------------#
 
 @app.route("/login", methods=["GET","POST"])
 def post_login():
@@ -254,14 +260,14 @@ def post_login():
         resp = make_response(redirect(url_for("get_home")))
         print("resp :", resp)
 
-        # resp.set_cookie('pseudo', pseudo)
         resp.set_cookie('id', str(admin_ID))
         resp.set_cookie('pseudo', pseudo)
         return redirect(url_for("get_home"))
     elif [pseudo] in lis_admin:
-        errorMessage="Le pseudo existe mais le mot de passe est érroné !"
+        errorMessage="The username existe but the password is wrong!"
     else:
-        errorMessage="Vos identifiants sont incorrects !"
+        errorMessage="The passwords are not match!"
+        
     DeconnexionDB()
     return redirect(url_for("get_homepage",errorMessage=errorMessage))
 
@@ -276,14 +282,16 @@ def post_inscription():
         list_admin = functions.connexion_admin(pseudo, password, True)
         #print(list_admin)
         if [pseudo] in list_admin :
-            errorMessage="L'utilisateur existe déjà !"
+            errorMessage="Username already existe!"
         else:
             functions.insert_administrator(pseudo, password)
-            errorMessage="Bravo vous êtes inscrit !"
+            errorMessage="Well done, you've signed up!"
     else:
-        errorMessage="Vos 2 passwords sont différents !"
+        errorMessage="The passwords are not match!"
     DeconnexionDB()
     return redirect(url_for("get_homepage",errorMessage=errorMessage))
+
+#-------------------- Validated lieu ------------------------#
 
 @app.route('/validate_lieu/<id>')
 def get_validate_lieu(id):
@@ -314,10 +322,12 @@ def get_validate_lieu(id):
                                         data[19],
                                         data[20])
     DeconnexionDB()
-    engine = create_engine('postgresql+psycopg2://toooo:goooo@localhost:5432/cooool',echo=False)
+    engine = make_engine()
     df = pd.read_sql("SELECT *,'' as a FROM cooltogo_from_apidae WHERE id_apidae NOT IN (SELECT DISTINCT id_apidae FROM cooltogo_validated) ORDER BY id ASC", engine)
     
     return redirect(url_for("get_tableApidae"))
+
+#-------------------- Remove a lieu ------------------------#
 
 @app.route('/remove_lieu/<id>')
 def get_remove_lieu(id):
@@ -332,7 +342,7 @@ def get_remove_lieu(id):
 def get_apidaeSelection():
     user_ID = request.cookies.get('id')
     pseudo = request.cookies.get('pseudo')
-    engine = create_engine('postgresql+psycopg2://toooo:goooo@localhost:5432/cooool',echo=False)
+    engine = make_engine()
     df = pd.read_sql("SELECT s.id as id, s.selection as selection, s.description as description, s.selection_type as Lieu_Event, max(se.selection_extraction_date) AS Last_Extract,'' as Launch, '' as Del  FROM selection AS s LEFT JOIN selection_extraction AS se ON s.id = se.selection_id GROUP BY s.id, selection, description ORDER BY s.id ASC", engine)
     return render_template('pages/apidaeSelection.html',tables=[df.to_html(classes='table table-bordered', table_id='dataTableSelection',index=False)], pseudo=pseudo)
 
@@ -350,7 +360,7 @@ def get_new_selection():
 @app.route('/launch_extract/<id>')
 def get_launch_extract(id):
     ConnexionDB()
-    engine = create_engine('postgresql+psycopg2://toooo:goooo@localhost:5432/cooool',echo=False)
+    engine = make_engine()
 
     sql_select_data = "SELECT functions FROM functions WHERE id="+id
     DB_Protocole.cur.execute(sql_select_data)

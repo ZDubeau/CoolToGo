@@ -33,7 +33,6 @@ ligth_actions_list = (  DB_Table_Definitions.drop_message,
                         DB_Table_Definitions.selection_extraction,
                         DB_Table_Definitions.cooltogo_from_apidae,
                         DB_Table_Definitions.cooltogo_validated,
-                        DB_Table_Definitions.niveau_de_fraicheur,
                         DB_Table_Definitions.lien_niveau_de_fraicheur_cooltogo_validated
                         )
 

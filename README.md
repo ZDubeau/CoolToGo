@@ -1,2 +1,2 @@
 # CoolToGo
-# connection params in a file.json
+# connection parameters in a file.json

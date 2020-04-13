@@ -7,6 +7,7 @@
 
 ################ Tables des données extraites d'apidae ################
 
+
 drop_cooltogo_from_apidae ="""DROP TABLE IF EXISTS cooltogo_from_apidae;"""
 
 cooltogo_from_apidae = """

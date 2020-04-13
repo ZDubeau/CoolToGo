@@ -11,6 +11,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import DB_Protocole, DB_Table_Definitions
 
 
+
 def recuperation_id(sql_select:str,valeur_inserer:tuple):
     DB_Protocole.cur.execute(sql_select,valeur_inserer)
     try:

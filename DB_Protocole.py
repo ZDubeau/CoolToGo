@@ -14,7 +14,6 @@ import socket
 conn = None
 cur = None
 
-
 def ConnexionDB(): # /!\ Return connection & cursor as tuple
     global conn
     global cur

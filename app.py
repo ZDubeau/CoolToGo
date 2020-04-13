@@ -10,6 +10,7 @@ from DB_Protocole import ConnexionDB, DeconnexionDB
 import DB_Functions as functions   # insert database related code here
 import apidae_extraction as apex  # my function retrieving data from apiade
 
+
 app = Flask(__name__)
 
 #-------------------------- Homepage ---------------------------#

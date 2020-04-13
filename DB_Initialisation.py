@@ -5,7 +5,6 @@
 𐤟 Dernière MàJ : 2020-04-12
 """
 
-
 import DB_Table_Definitions, DB_Protocole
 
 actions_list = (DB_Table_Definitions.drop_administrators,

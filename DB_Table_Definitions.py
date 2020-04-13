@@ -14,6 +14,7 @@ cooltogo_from_apidae = """
   CREATE TABLE IF NOT EXISTS cooltogo_from_apidae (
         id SERIAL PRIMARY KEY,
         id_apidae VARCHAR(50),
+        id_selection BIGINT,
         lieu_event TEXT,
         names TEXT,
         types TEXT,

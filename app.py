@@ -27,8 +27,15 @@ def after_request(response):
 
 @app.route('/', methods=['GET'])
 def get_homepage():
-    
-    return render_template('homepage.html')
+    ConnexionDB()
+    sql_nb_admin = "SELECT count(*) FROM administrators"
+    DB_Protocole.cur.execute(sql_nb_admin)
+    nb_admin = DB_Protocole.cur.fetchone()[0]
+    inscription = False
+    if nb_admin == 0:
+        inscription = True
+    DeconnexionDB()
+    return render_template('homepage.html', inscription=inscription)
 
 #------------------------ Admin page ---------------------------#
 
@@ -61,10 +68,15 @@ def get_tableValide():
     user_ID = request.cookies.get('id')
     pseudo = request.cookies.get('pseudo')
 
+    if 'errorMessage' in request.args :
+        errorMessage = request.args.get('errorMessage')
+    else :
+        errorMessage = ""
+
     engine = make_engine()
     df = pd.read_sql("SELECT *, '' as Edit, '' as Del FROM cooltogo_validated ORDER BY id ASC", engine)
     
-    return render_template('pages/tableValide.html',tables=[df.to_html(classes='table table-bordered', table_id='dataTableValid',index=False)], pseudo=pseudo)
+    return render_template('pages/tableValide.html',tables=[df.to_html(classes='table table-bordered', table_id='dataTableValid',index=False)], pseudo=pseudo, errorMessage=errorMessage)
 
 #------------------ Manual entry interface --------------------#
 
@@ -89,6 +101,9 @@ def get_new_data_valid():
     codePostal = request.form["code_postal"]
     City = request.form["City"]
     Description_Teaser = request.form["Description_Teaser"]
+    Description = request.form["description"]
+    styleUrl = request.form["styleUrl"]
+    styleHash = request.form["styleHash"]
     Images = request.form["Images"]
     Categories = request.form["Categories"]
     Accessibilite = request.form["Accessibilité"]
@@ -128,8 +143,13 @@ def get_new_data_valid():
     Date_debut = request.form["Date_début"]
     Date_fin = request.form["Date_fin"]
 
+    adresse_to_geolocalize = ""
+    if adresse1 != "None" :
+        adresse_to_geolocalize += adresse1
+    if adresse2 != "None" :
+        adresse_to_geolocalize += " " + adresse2
     geolocator = Nominatim(user_agent="cooltogo_api_backend")
-    location = geolocator.geocode(adresse1+" "+adresse2+" "+codePostal+" "+City)
+    location = geolocator.geocode(adresse_to_geolocalize+" "+codePostal+" "+City)
 
     if location == None:
         x_lat = None
@@ -159,10 +179,11 @@ def get_new_data_valid():
                                         codePostal,
                                         City,
                                         Description_Teaser,
+                                        Description,
                                         Images,
                                         public,
-                                        "",
-                                        "",
+                                        styleUrl,
+                                        styleHash,
                                         type_,
                                         Categories,
                                         Accessibilite,
@@ -281,10 +302,13 @@ def post_login():
     DeconnexionDB()
     return redirect(url_for("get_homepage",errorMessage=errorMessage))
 
+#---------------------- Inscription ----------------------#
+
 @app.route("/inscription", methods=["POST"])
 def post_inscription():
     ConnexionDB()
     pseudo = request.form["uname"]
+    email = request.form["email"]
     password = request.form["psw"]
     password_repeat = request.form.get("psw-repeat")
 
@@ -294,7 +318,7 @@ def post_inscription():
         if [pseudo] in list_admin :
             errorMessage="Username already existe!"
         else:
-            functions.insert_administrator(pseudo, password)
+            functions.insert_administrator(pseudo, password,email)
             errorMessage="Well done, you've signed up!"
     else:
         errorMessage="The passwords are not match!"
@@ -408,15 +432,110 @@ def get_edit_data(id):
     sql_select_data = "SELECT * FROM cooltogo_validated WHERE id="+id
     DB_Protocole.cur.execute(sql_select_data)
     data = DB_Protocole.cur.fetchall()
-
+    publics = data[0][13].split(",")
     DeconnexionDB()
-    return render_template('pages/EditLieuValid.html',id_apidae=data[0][1],name=data[0][5],adresse1=data[0][6],adresse2=data[0][7],code_postal=data[0][8],city=data[0][9],description_teaser=data[0][10],images=data[0][11],categories=data[0][16],accessibilite=data[0][17],plus_d_infos=data[0][19],date_debut=data[0][20],date_fin=data[0][21])
+    return render_template('pages/EditLieuValid.html',id_apidae=data[0][1],lieu_event=data[0][2],latitude=data[0][3],longitude=data[0][4],name=data[0][5],adresse1=data[0][6],adresse2=data[0][7],code_postal=data[0][8],city=data[0][9],description_teaser=data[0][10],description=data[0][11],images=data[0][12],publics = data[0][13].split(","),styleUrl=data[0][14],styleHash=data[0][15],type=data[0][16],categories=data[0][17],accessibilite=data[0][18],payant=data[0][19],plus_d_infos=data[0][20],date_debut=data[0][21],date_fin=data[0][22])
 
-@app.route('/edit_data_valid')
-def get_edit_data_valid(id):
+@app.route('/edit_data_valid' , methods=['GET', 'POST'])
+def get_edit_data_valid():
+    id_apidae = request.form["id_apidae"]
+    lieu_event = request.form["lieu_event"]
+    latitude = request.form["latitude"]
+    longitude = request.form["longitude"]
+    name = request.form["name"]
+    type_ = request.form["type"]
+    adresse1 = request.form["adresse1"]
+    adresse2 = request.form["adresse2"]
+    codePostal = request.form["code_postal"]
+    City = request.form["city"]
+    Description_Teaser = request.form["description_teaser"]
+    Description = request.form["description"]
+    styleUrl = request.form["styleUrl"]
+    styleHash = request.form["styleHash"]
+    Images = request.form["images"]
+    Categories = request.form["categories"]
+    Accessibilite = request.form["accessibilite"]
+    Payant = request.form["payant"]
+    public = ""
+    first = True
 
-    errorMessage = "Lieu mis à jour !!"
-    return redirect(url_for("get_apidaeSelection",errorMessage=errorMessage))
+    if "senior" in request.form:
+        public += "senior"
+        first = False
+    if "enfant" in request.form:
+        if first :
+            public += "enfant"
+            first = False
+        else :
+            public += ",enfant"
+    if "jeune" in request.form:
+        if first :
+            public += "jeune"
+            first = False
+        else :
+            public += ",jeune"
+    if "adulte" in request.form:
+        if first :
+            public += "adulte"
+            first = False
+        else :
+            public += ",adult"
+    if "solidaire" in request.form:
+        if first :
+            public += "solidaire"
+            first = False
+        else :
+            public += ",solidaire"
+
+    plus_d_infos = request.form["plus_d_infos"]
+    Date_debut = request.form["date_debut"]
+    Date_fin = request.form["date_fin"]
+
+    geolocator = Nominatim(user_agent="cooltogo_api_backend")
+    location = geolocator.geocode(adresse1+" "+adresse2+" "+codePostal+" "+City)
+
+    if location == None:
+        x_site = request.form["latitude"]
+        if x_site == "None" :
+            x_lat = None
+        else :
+            x_lat = x_site
+        y_site = request.form["longitude"]
+        if y_site == "None" :
+            y_lon = None
+        else :
+            y_lon = y_site
+    else :
+        x_lat = location.latitude
+        y_lon = location.longitude
+
+    ConnexionDB()
+    errorMessage = functions.update_cooltogo_validated(
+                                        id_apidae,
+                                        lieu_event,
+                                        x_lat,
+                                        y_lon,
+                                        name,
+                                        adresse1,
+                                        adresse2,
+                                        codePostal,
+                                        City,
+                                        Description_Teaser,
+                                        Description,
+                                        Images,
+                                        public,
+                                        styleUrl,
+                                        styleHash,
+                                        type_,
+                                        Categories,
+                                        Accessibilite,
+                                        Payant,
+                                        plus_d_infos,
+                                        Date_debut,
+                                        Date_fin)
+    DeconnexionDB()
+
+    return redirect(url_for("get_tableValide",errorMessage=errorMessage))
 
 @app.route('/extract_locations')
 def get_extract_locations():

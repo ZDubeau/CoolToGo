@@ -254,13 +254,7 @@ def retrive_data_by_multiple_selectionId(project_ID,api_KEY,list_selectionId):
                                 'payant','plus_d_infos_et_horaires','date_début','date_fin']) 
     for value in list_selectionId :
         result_df = result_df.append(retrive_data_by_selectionId(project_ID,api_KEY,value))
-        #result_df['ID'] = result_df.index
-        #result_df.reset_index(level=0, inplace=True)
-        result_df.reset_index(inplace=True)
-        del result_df['index']
-        #result_df = result_df.reset_index(inplace=True)
-        #result_df.columns.values[0]='ID'
-        #result_df['ID']= result_df.index + 1
-        #result_df.drop_duplicates(subset='ID', keep='last')
+    result_df.reset_index(inplace=True)
+    del result_df['index']    
     return result_df
 #-----------------------------------------------------------------------------------------------------------------------

@@ -20,17 +20,17 @@ cooltogo_from_apidae = """
         types TEXT,
         latitude FLOAT,
         longitude FLOAT,
-        adresse1 VARCHAR(100),
-        adresse2 VARCHAR(101),
+        adresse1 TEXT,
+        adresse2 TEXT,
         code_postal VARCHAR(10),
         ville TEXT,
         description_teaser TEXT,
         images TEXT,
-        publics VARCHAR(20),
-        categories VARCHAR(102),
-        accessibilité VARCHAR(103),
+        publics TEXT,
+        categories TEXT,
+        accessibilité TEXT,
         payant BOOL,
-        plus_d_infos_et_horaires VARCHAR(104),
+        plus_d_infos_et_horaires TEXT,
         date_début DATE,
         date_fin DATE
     )"""
@@ -51,21 +51,21 @@ cooltogo_validated = """
         X FLOAT,
         Y FLOAT,
         name TEXT,
-        Adresse1 VARCHAR(105),
-        Adresse2 VARCHAR(106),
+        Adresse1 TEXT,
+        Adresse2 TEXT,
         Code_postal VARCHAR(10),
         Ville TEXT,
         Description_Teaser TEXT,
         Description TEXT,
         Images TEXT,
-        Publics VARCHAR(20),
+        Publics TEXT,
         styleUrl TEXT,
         styleHash TEXT,
         Type TEXT,
-        Catégories VARCHAR(107),
-        Accessibilité VARCHAR(108),
+        Catégories TEXT,
+        Accessibilité TEXT,
         payant BOOL,
-        Plus_d_infos_et_horaires VARCHAR(109),
+        Plus_d_infos_et_horaires TEXT,
         Dates_début DATE,
         Dates_fin DATE
     )"""
@@ -73,6 +73,31 @@ cooltogo_validated = """
 insert_cooltogo_validated = """
   INSERT INTO cooltogo_validated (id_apidae,Lieu_event, X, Y, name, Adresse1, Adresse2, Code_postal, Ville, Description_Teaser, Description, Images, Publics, styleUrl, styleHash, Type, Catégories, Accessibilité, payant, Plus_d_infos_et_horaires, Dates_début, Dates_fin)
   VALUES (%(id_apidae)s, %(Lieu_event)s, %(X)s, %(Y)s, %(name)s, %(Adresse1)s, %(Adresse2)s, %(Code_postal)s, %(Ville)s, %(Description_Teaser)s, %(Description)s,%(Images)s, %(Publics)s, %(styleUrl)s, %(styleHash)s, %(Type)s, %(Catégories)s, %(Accessibilité)s, %(payant)s, %(Plus_d_infos_et_horaires)s, %(Dates_début)s, %(Dates_fin)s) returning id;"""
+
+update_cooltogo_validated = """
+  UPDATE cooltogo_validated 
+    SET  Lieu_event = %(Lieu_event)s,
+         X = %(X)s,
+         Y = %(Y)s,
+         name = %(name)s,
+         Adresse1 = %(Adresse1)s,
+         Adresse2 = %(Adresse2)s, 
+         Code_postal =%(Code_postal)s, 
+         Ville = %(Ville)s, 
+         Description_Teaser = %(Description_Teaser)s, 
+         Description = %(Description)s, 
+         Images =%(Images)s, 
+         Publics = %(Publics)s, 
+         styleUrl =%(styleUrl)s, 
+         styleHash = %(styleHash)s, 
+         Type =%(Type)s, 
+         Catégories = %(Catégories)s, 
+         Accessibilité = %(Accessibilité)s, 
+         payant = %(payant)s, 
+         Plus_d_infos_et_horaires = %(Plus_d_infos_et_horaires)s, 
+         Dates_début = %(Dates_début)s, 
+         Dates_fin =%(Dates_fin)s
+    WHERE id_apidae = %(id_apidae)s returning id;"""
 
 ################ Table des administrateurs ################
 

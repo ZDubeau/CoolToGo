@@ -14,7 +14,9 @@
             <h3>Administration page</h2>
             <h3>{{errorMessage}}</h3>
                 <button onclick="document.getElementById('id_1').style.display='block'" style="width:auto;" id="LogIn">Login</button>
+                {% if inscription %}
                 <button onclick="document.getElementById('id_2').style.display='block'" style="width:auto;" id="SignUp">SignUp</button>
+                {% endif %}
         </center>
     </div> 
 <!-- ---------------La fenetre de la connection d'utilisateur------------------ -->
@@ -40,6 +42,7 @@
         </form>
     </div>
 <!-- -----------------------La fenetre de l'iscription------------------------ -->
+    {% if inscription %}
     <div id="id_2" class="modal">
         <form class="modal-content animate" action="/inscription" method="post">
             <div class="inscontainer">
@@ -49,6 +52,9 @@
                 <div class="container">
                     <label id="forme" for="uname"><b>Username</b></label>
                     <input type="text" placeholder="Enter Username" name="uname" required>
+
+                    <label id="forme" for="email"><b>Address Email</b></label>
+                    <input type="text" placeholder="Email" name="email" required>
 
                     <label id="forme" for="psw"><b>Password</b></label>
                     <input type="password" placeholder="Enter Password" name="psw" required>
@@ -63,6 +69,7 @@
                     </div>
         </form>
     </div>
+    {% endif %}
 <!-- -------------------------------------------------------------------------- -->  
     <script>
         // Get the modal

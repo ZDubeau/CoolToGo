@@ -72,11 +72,59 @@ def insert_cooltogo_validated(id_apidae:str,Lieu_event:str,X:float,Y:float,
         
         try:
             DB_Protocole.Insert_SQL(DB_Table_Definitions.insert_cooltogo_validated,dico)
-            id_row=DB_Protocole.cur.fetchone()[0]
         except (psycopg2.Error, AttributeError) as Error :
             print(Error)
     else:
         print('Il y à déja un id_apidae validée')
+
+def update_cooltogo_validated(id_apidae:str,Lieu_event:str,X:float,Y:float,
+                            name:str,Adresse1:str,Adresse2:str,Code_postal:int,
+                            Ville:str,Description_Teaser:str,Description:str,Images:str,Publics:str,
+                            styleUrl:str,styleHash:str,Type:str,Categories:str,
+                            Accessibilite:str,payant:bool,Plus_d_infos_et_horaires:str,
+                            Dates_debut:str,Dates_fin:str):
+
+    sql_cooltogo_validated="select id as id_valide from cooltogo_validated where id_apidae = %s "
+    id_cooltogo_validated = recuperation_id(sql_cooltogo_validated,(id_apidae,))
+
+    if type(id_cooltogo_validated)==type(int()):
+
+        dico:dict[str,bool]= {
+            'id_apidae': id_apidae,
+            'Lieu_event': Lieu_event,
+            'X': X,
+            'Y' :Y,
+            'name': name,
+            'Adresse1': Adresse1,
+            'Adresse2': Adresse2,
+            'Code_postal': Code_postal,
+            'Ville': Ville,
+            'Description_Teaser': Description_Teaser,
+            'Description' : Description,
+            'Images': Images,
+            'Publics': Publics,
+            'styleUrl': styleUrl,
+            'styleHash': styleHash,
+            'Type': Type,
+            'Catégories': Categories,
+            'Accessibilité': Accessibilite,
+            'payant': payant,
+            'Plus_d_infos_et_horaires': Plus_d_infos_et_horaires,
+            'Dates_début': Dates_debut,
+            'Dates_fin': Dates_fin
+            }
+
+        try:
+            errorMessage = DB_Protocole.Update_SQL(DB_Table_Definitions.update_cooltogo_validated,dico)
+        except (psycopg2.Error, AttributeError) as Error :
+            return Error
+    else:
+        return 'Aucun enregistrement correpondant à mettre à jour'
+    if errorMessage =="OK" :
+        return "Lieu mis à jour !!"
+    else :
+        return errorMessage
+
 
 ###############################################################################
 

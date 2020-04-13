@@ -61,7 +61,7 @@ $(document).ready(function() {
       { "width": "200px", "targets": 6 },
       { "width": "200px", "targets": 7 },
       { "width": "70px", "targets": 8 },
-      { "width": "100px", "targets": 9 },
+      { "width": "170px", "targets": 9 },
       { "width": "1400px", "targets": 10 },
       { "width": "1400px", "targets": 11 },
       { "width": "600px", "targets": 12 },

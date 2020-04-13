@@ -55,6 +55,14 @@ def Insert_SQL(CodeSQL, dico):
     except (psycopg2.Error, AttributeError) as Error :
         return Error
 
+def Update_SQL(CodeSQL, dico):
+    try:
+        cur.execute(CodeSQL, dico)
+        Commit()
+        return "OK"
+    except (psycopg2.Error, AttributeError) as Error :
+        return Error
+
 ################ Tables ################
 
 def Create_Table(CodeSQL):

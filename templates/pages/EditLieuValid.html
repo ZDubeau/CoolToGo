@@ -19,7 +19,7 @@
                         class="input"
                         type="text"
                         maxlength="40"
-                        style="color: #969696;"
+                        style="color: #3f3d3d;"
                         readonly>
                 </div>
                 <!-- ---------- Choose a lieu or an event ----------- -->
@@ -27,11 +27,43 @@
                     <label class="label">lieu_event</label>
                         <span class="select">
                             <select name="lieu_event" required>
-                            <option></option>
-                            <option>Lieu</option>
-                            <option>Event</option>
+                            {% if lieu_event=="Lieu" %}
+                                <option selected>Lieu</option>
+                                <option>Event</option>
+                            {% elif lieu_event=="Event" %}
+                                <option>Lieu</option>
+                                <option selected>Event</option>
+                            {% else %}
+                                <option selected></option>
+                                <option>Lieu</option>
+                                <option>Event</option>
+                            {% endif %}
                             </select>
                         </span>
+                </div>
+                <!-- ------------------ latitude ----------------------- -->
+                <div class="field">
+                    <label class="label">latitude</label>
+                        <input
+                        name="latitude"
+                        value="{{latitude}}"
+                        class="input"
+                        type="text"
+                        maxlength="40"
+                        style="color: #3f3d3d;"
+                        readonly>
+                </div>
+                <!-- ------------------ longitude ----------------------- -->
+                <div class="field">
+                    <label class="label">longitude</label>
+                        <input
+                        name="longitude"
+                        value="{{longitude}}"
+                        class="input"
+                        type="text"
+                        maxlength="40"
+                        style="color: #3f3d3d;"
+                        readonly>
                 </div>
                 <!-- --------------- name of responsible --------------- -->
                 <div class="field">
@@ -42,18 +74,18 @@
                         class="input"
                         type="text"
                         maxlength="50"
-                        style="color: #969696;"
+                        style="color: #3f3d3d;"
                         required>
                 </div>
                 <!-- ----------------- Niveau Fracheur ------------------- -->
                 <div class="field">
-                    <label class="label">Niveau_Fracheur</label>
+                    <label class="label">Niveau Fraicheur</label>
                         <input
                         name="niveau_fracheur"
                         class="input"
                         type="text"
                         maxlength="80"
-                        style="color: #969696;"
+                        style="color: #3f3d3d;"
                         required>
                 </div>
                 <!-- ------------------ Choose a type ------------------- -->
@@ -61,7 +93,106 @@
                     <label class="label">type</label>
                         <span class="select">
                             <select name="type">
-                                <option></option>
+                                {% if type=="ACTIVITE" %}
+                                <option selected>ACTIVITE</option>
+                                <option>COMMERCE_ET_SERVICE</option>
+                                <option>EQUIPEMENT</option>
+                                <option>FETE_ET_MANIFESTATION</option>
+                                <option>HEBERGEMENT_LOCATIF</option>
+                                <option>HOTELLERIE_PLEIN_AIR</option>
+                                <option>PATRIMOINE_NATUREL</option>
+                                <option>RESTAURATION</option>
+                                <option>STRUCTURE</option>
+
+                            {% elif type=="COMMERCE_ET_SERVICE" %}
+                                <option>ACTIVITE</option>
+                                <option selected>COMMERCE_ET_SERVICE</option>
+                                <option>EQUIPEMENT</option>
+                                <option>FETE_ET_MANIFESTATION</option>
+                                <option>HEBERGEMENT_LOCATIF</option>
+                                <option>HOTELLERIE_PLEIN_AIR</option>
+                                <option>PATRIMOINE_NATUREL</option>
+                                <option>RESTAURATION</option>
+                                <option>STRUCTURE</option>
+
+                            {% elif type=="EQUIPEMENT" %}
+                                <option>ACTIVITE</option>
+                                <option>COMMERCE_ET_SERVICE</option>
+                                <option selected>EQUIPEMENT</option>
+                                <option>FETE_ET_MANIFESTATION</option>
+                                <option>HEBERGEMENT_LOCATIF</option>
+                                <option>HOTELLERIE_PLEIN_AIR</option>
+                                <option>PATRIMOINE_NATUREL</option>
+                                <option>RESTAURATION</option>
+                                <option>STRUCTURE</option>
+
+                            {% elif type=="FETE_ET_MANIFESTATION" %}
+                                <option>ACTIVITE</option>
+                                <option>COMMERCE_ET_SERVICE</option>
+                                <option>EQUIPEMENT</option>
+                                <option selected>FETE_ET_MANIFESTATION</option>
+                                <option>HEBERGEMENT_LOCATIF</option>
+                                <option>HOTELLERIE_PLEIN_AIR</option>
+                                <option>PATRIMOINE_NATUREL</option>
+                                <option>RESTAURATION</option>
+                                <option>STRUCTURE</option>
+                            {% elif type=="HEBERGEMENT_LOCATIF" %}
+                                <option>ACTIVITE</option>
+                                <option>COMMERCE_ET_SERVICE</option>
+                                <option>EQUIPEMENT</option>
+                                <option>FETE_ET_MANIFESTATION</option>
+                                <option selected>HEBERGEMENT_LOCATIF</option>
+                                <option>HOTELLERIE_PLEIN_AIR</option>
+                                <option>PATRIMOINE_NATUREL</option>
+                                <option>RESTAURATION</option>
+                                <option>STRUCTURE</option>
+
+                            {% elif type=="HOTELLERIE_PLEIN_AIR" %}
+                                <option>ACTIVITE</option>
+                                <option>COMMERCE_ET_SERVICE</option>
+                                <option>EQUIPEMENT</option>
+                                <option>FETE_ET_MANIFESTATION</option>
+                                <option>HEBERGEMENT_LOCATIF</option>
+                                <option selected>HOTELLERIE_PLEIN_AIR</option>
+                                <option>PATRIMOINE_NATUREL</option>
+                                <option>RESTAURATION</option>
+                                <option>STRUCTURE</option>
+
+                            {% elif type=="PATRIMOINE_NATUREL" %}
+                                <option>ACTIVITE</option>
+                                <option>COMMERCE_ET_SERVICE</option>
+                                <option>EQUIPEMENT</option>
+                                <option>FETE_ET_MANIFESTATION</option>
+                                <option>HEBERGEMENT_LOCATIF</option>
+                                <option>HOTELLERIE_PLEIN_AIR</option>
+                                <option selected>PATRIMOINE_NATUREL</option>
+                                <option>RESTAURATION</option>
+                                <option>STRUCTURE</option>
+
+                            {% elif type=="RESTAURATION" %}
+                                <option>ACTIVITE</option>
+                                <option>COMMERCE_ET_SERVICE</option>
+                                <option>EQUIPEMENT</option>
+                                <option>FETE_ET_MANIFESTATION</option>
+                                <option>HEBERGEMENT_LOCATIF</option>
+                                <option>HOTELLERIE_PLEIN_AIR</option>
+                                <option>PATRIMOINE_NATUREL</option>
+                                <option selected>RESTAURATION</option>
+                                <option>STRUCTURE</option>
+
+                            {% elif type=="STRUCTURE" %}
+                                <option>ACTIVITE</option>
+                                <option>COMMERCE_ET_SERVICE</option>
+                                <option>EQUIPEMENT</option>
+                                <option>FETE_ET_MANIFESTATION</option>
+                                <option>HEBERGEMENT_LOCATIF</option>
+                                <option>HOTELLERIE_PLEIN_AIR</option>
+                                <option>PATRIMOINE_NATUREL</option>
+                                <option>RESTAURATION</option>
+                                <option selected>STRUCTURE</option>
+       
+                            {% else %}
+                                <option selected></option>
                                 <option>ACTIVITE</option>
                                 <option>COMMERCE_ET_SERVICE</option>
                                 <option>EQUIPEMENT</option>
@@ -71,69 +202,79 @@
                                 <option>PATRIMOINE_NATUREL</option>
                                 <option>RESTAURATION</option>
                                 <option>STRUCTURE</option>
+                            {% endif %}
+
                             </select>
                         </span>
                 </div>
                 <!-- --------------------- Adresse 1 ---------------------- -->
                 <div class="field">
                     <label class="label">adresse1</label>
-                        <input
-                        name="adresse1"
-                        class="input"
-                        value="{{adresse1}}"
-                        type="text"
-                        maxlength="50"
-                        style="color: #969696;"
-                        required>
+                    <input
+                    name="adresse1"
+                    class="input"
+                    value="{{adresse1}}"
+                    type="text"
+                    maxlength="50"
+                    style="color: #3f3d3d;"
+                    required>
                 </div>
                 <!-- --------------------- Adresse 2 --------------------- -->
                 <div class="field">
                     <label class="label">adresse2</label>
-                        <input
-                        name="adresse2"
-                        class="input"
-                        value="{{adresse2}}"
-                        type="text"
-                        maxlength="50"
-                        placeholder="Ex. Champ Clotury"
-                        style="color: #969696;"
-                        >
+                    <input
+                    name="adresse2"
+                    class="input"
+                    value="{{adresse2}}"
+                    type="text"
+                    maxlength="50"
+                    placeholder="Ex. Champ Clotury"
+                    style="color: #3f3d3d;"
+                    >
                 </div>
                 <!-- -------------------- Code postal --------------------- -->
                 <div class="field">
                     <label class="label">Code postal</label>
-                        <input
-                        name="code_postal"
-                        class="input"
-                        value="{{code_postal}}"
-                        type="text"
-                        maxlength="50"
-                        style="color: #969696;"
-                        required>
+                    <input
+                    name="code_postal"
+                    class="input"
+                    value="{{code_postal}}"
+                    type="text"
+                    maxlength="50"
+                    style="color: #3f3d3d;"
+                    required>
                 </div>
                 <!-- ----------------------- City ------------------------ -->
                 <div class="field">
                     <label class="label">City</label>
-                        <input
-                        name="city"
-                        class="input"
-                        value="{{city}}"
-                        type="text"
-                        maxlength="70"
-                        style="color: #969696;"
-                        required>
+                    <input
+                    name="city"
+                    class="input"
+                    value="{{city}}"
+                    type="text"
+                    maxlength="70"
+                    style="color: #3f3d3d;"
+                    required>
                 </div>
                 <!-- ----------------- Description Teaser ---------------- -->
                 <div class="field">
                     <label class="label">Description Teaser</label>
-                        <textarea
-                        name="description_teaser"
-                        class="textarea"
-                        value="{{Description_Teaser}}"
-                        maxlength="1000"
-                        style="color: #969696;"
-                        >
-                        </textarea>
+                    <textarea
+                    name="description_teaser"
+                    class="textarea"
+                    maxlength="1000"
+                    style="color: #3f3d3d;"
+                    >{{description_teaser}}</textarea>
+                </div>
+                <!-- ----------------- Description  ---------------------- -->
+                <div class="field">
+                    <label class="label">Description</label>
+                    <textarea
+                    name="description"
+                    class="textarea"
+                    maxlength="1000"
+                    style="color: #3f3d3d;"
+                    >{{description}}</textarea>
                 </div>
                 <!-- ---------- Upload url of an image ----------- -->
                 <div class="field">
@@ -141,31 +282,131 @@
                         <input
                         name="images"
                         class="input"
-                        value="{{Images}}"
+                        value="{{images}}"
                         type="text"
                         maxlength="50"
-                        style="color: #969696;"
+                        style="color: #3f3d3d;"
                         required>
                 </div>
                 <!-- -------------------------------------------------- -->
                 <div class="field">
                     <label class="label">Publics</label>
+                    {% if "senior" in publics%}
+                        <label><input name="senior" type="checkbox" value ="Senior" checked>Senior&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                    {% else %}
                         <label><input name="senior" type="checkbox" value ="Senior">Senior&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                        <label><input name="enfant" type="checkbox" value ="Enfant ">Enfant&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                    {% endif %}
+                    {% if "enfant" in publics%}
+                        <label><input name="enfant" type="checkbox" value ="Enfant" checked>Enfant&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                    {% else %}
+                        <label><input name="enfant" type="checkbox" value ="Enfant">Enfant&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                    {% endif %}
+                    {% if "jeune" in publics%}
+                        <label><input name="jeune" type="checkbox" value="Jeune" checked>Jeune&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                    {% else %}
                         <label><input name="jeune" type="checkbox" value="Jeune">Jeune&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                    {% endif %}
+                    {% if "adulte" in publics%}
+                        <label><input name="adult" type="checkbox" value="Adult" checked>Adult</label>
+                    {% else %}
                         <label><input name="adult" type="checkbox" value="Adult">Adult</label>
+                    {% endif %}
+                    {% if "solidaire" in publics%}
+                        <label><input name="adult" type="checkbox" value="Solidaire" checked>Solidaire</label>
+                    {% else %}
+                        <label><input name="adult" type="checkbox" value="Solidaire">Solidaire</label>
+                    {% endif %}
+                </div>
+
+                <!-- --------------------- StyleUrl ---------------------- -->
+                <div class="field">
+                    <label class="label">StyleUrl</label>
+                    <input
+                    name="styleUrl"
+                    class="input"
+                    value="{{styleUrl}}"
+                    type="text"
+                    maxlength="50"
+                    style="color: #3f3d3d;"
+                    required>
+                </div>
+                <!-- --------------------- StyleHash ---------------------- -->
+                <div class="field">
+                    <label class="label">StyleHash</label>
+                    <input
+                    name="styleHash"
+                    class="input"
+                    value="{{styleHash}}"
+                    type="text"
+                    maxlength="50"
+                    style="color: #3f3d3d;"
+                    required>
                 </div>
                 <!-- --------------------------------------------------- -->
                 <div class="field">
                     <label class="label">Categories</label>
-                        <input
-                        name="categories"
-                        class="input"
-                        value="{{categories}}"
-                        type="text"
-                        maxlength="50"
-                        style="color: #969696;"
-                        >
+                    <span class="select">
+                        <select name="categories">
+                            {% if categories=="Être à l’ombre en nature" %}
+                            <option selected>Être à l’ombre en nature</option>
+                            <option>Être au contact de l'eau</option>
+                            <option>Ressources solidaires</option>
+                            <option>Se divertir en fraîcheur</option>
+                            <option>Sport à la fraich</option>
+                            <option>Un point d’info</option>
+
+                        {% elif categories=="Être au contact de l'eau" %}
+                            <option>Être à l’ombre en nature</option>
+                            <option selected>Être au contact de l'eau</option>
+                            <option>Ressources solidaires</option>
+                            <option>Se divertir en fraîcheur</option>
+                            <option>Sport à la fraich</option>
+                            <option>Un point d’info</option>
+
+                        {% elif categories=="Ressources solidaires" %}
+                            <option>Être à l’ombre en nature</option>
+                            <option>Être au contact de l'eau</option>
+                            <option selected>Ressources solidaires</option>
+                            <option>Se divertir en fraîcheur</option>
+                            <option>Sport à la fraich</option>
+                            <option>Un point d’info</option>
+
+                        {% elif categories=="Se divertir en fraîcheur" %}
+                            <option>Être à l’ombre en nature</option>
+                            <option>Être au contact de l'eau</option>
+                            <option>Ressources solidaires</option>
+                            <option selected>Se divertir en fraîcheur</option>
+                            <option>Sport à la fraich</option>
+                            <option>Un point d’info</option>
+
+                        {% elif categories=="Sport à la fraich" %}
+                            <option>Être à l’ombre en nature</option>
+                            <option>Être au contact de l'eau</option>
+                            <option>Ressources solidaires</option>
+                            <option>Se divertir en fraîcheur</option>
+                            <option selected>Sport à la fraich</option>
+                            <option>Un point d’info</option>
+
+                        {% elif categories=="Un point d’info" %}
+                            <option>Être à l’ombre en nature</option>
+                            <option>Être au contact de l'eau</option>
+                            <option>Ressources solidaires</option>
+                            <option>Se divertir en fraîcheur</option>
+                            <option>Sport à la fraich</option>
+                            <option selected>Un point d’info</option>
+   
+                        {% else %}
+                            <option selected></option>
+                            <option>Être à l’ombre en nature</option>
+                            <option>Être au contact de l'eau</option>
+                            <option>Ressources solidaires</option>
+                            <option>Se divertir en fraîcheur</option>
+                            <option>Sport à la fraich</option>
+                            <option>Un point d’info</option>
+                        {% endif %}
+
+                        </select>
+                    </span>
                 </div>
                 <!-- -------------------------------------------------- -->
                 <div class="field">
@@ -177,17 +418,25 @@
                         type="text"
                         maxlength="50"
                         placeholder="Ex. Accessible en fauteuil roulant en autonomie"
-                        style="color: #969696;"
+                        style="color: #3f3d3d;"
                         required>
                 </div>
                 <!-- ------------------------------------------------ -->
                 <div class="field">
                     <label class="label">Payant</label>
                         <span class="select">
-                            <select name="Payant" required>
-                            <option></option>
-                            <option>True</option>
-                            <option>False</option>
+                            <select name="payant" required>
+                            {% if payant==True %}
+                                <option selected>True</option>
+                                <option>False</option>
+                            {% elif payant==False %}
+                                <option>True</option>
+                                <option selected>False</option>
+                            {% else %}
+                                <option></option>
+                                <option>True</option>
+                                <option>False</option>
+                            {% endif %}
                             </select>
                         </span>
                 </div>
@@ -201,7 +450,7 @@
                         type="text"
                         maxlength="50"
                         placeholder="Ex. http://www.grenoble-tourisme.com"
-                        style="color: #969696;"
+                        style="color: #3f3d3d;"
                         >
                 </div>
                 <!-- ---------------------------------------------------- -->
@@ -212,7 +461,7 @@
                         class="input"
                         value="{{date_debut}}"
                         type="date"
-                        style="color: #969696;"
+                        style="color: #3f3d3d;"
                         >
                 </div>
                 <!-- ------------------------------------------------- -->
@@ -223,7 +472,7 @@
                         class="input"
                         value="{{date_fin}}"
                         type="date"
-                        style="color: #969696;"
+                        style="color: #3f3d3d;"
                         >
                 </div>
                 <!-- ---------------------------------------------------- -->

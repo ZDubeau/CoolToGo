@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, make_response, jsonify, json
-from flask_restful import  Api
-
+from flask_restful import Api
 
 import pandas as pd
 from pandas import DataFrame

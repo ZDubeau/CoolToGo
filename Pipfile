@@ -70,6 +70,7 @@ psycopg2 = "*"
 openpyxl = "*"
 python-dotenv = "*"
 flask-login = "*"
+flask-restful = "*"
 
 [requires]
 python_version = "3.8"

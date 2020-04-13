@@ -41,11 +41,9 @@ def retrieve_data_by_id(project_ID,api_KEY,select_id,selectionId):
     else:
         dict_for_id['id_apidae'] = None
 #-----------------------------------------------------------------------------------------------------------------------
-    DB_Protocole.ConnexionDB()
     sql_select_data = "SELECT id, selection_type FROM selection WHERE selection='"+selectionId+"'"
     DB_Protocole.cur.execute(sql_select_data)
     data = DB_Protocole.cur.fetchall()
-    DB_Protocole.DeconnexionDB()
     dict_for_id['id_selection'] = data[0][0]
     dict_for_id['lieu_event'] = data[0][1]
 #-----------------------------------------------------------------------------------------------------------------------

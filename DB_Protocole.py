@@ -30,8 +30,6 @@ def ConnexionDB(): # /!\ Return connection & cursor as tuple
     print("Connexion :",conn,"Curseur :", cur)
     return conn, cur
 
-#conn, cur = ConnexionBD()
-
 def DeconnexionDB():
     cur.close() 
     conn.close()

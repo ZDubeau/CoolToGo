@@ -1,4 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, make_response, jsonify, json
+from flask_restful import  Api
+
 
 import pandas as pd
 from pandas import DataFrame
@@ -12,6 +14,15 @@ import apidae_extraction as apex  # my function retrieving data from apiade
 
 
 app = Flask(__name__)
+
+api = Api(app) 
+#to allow angular to your python app
+@app.after_request
+def after_request(response):
+  response.headers.add('Access-Control-Allow-Origin', '*')
+  response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+  response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+  return response
 
 #-------------------------- Homepage ---------------------------#
 

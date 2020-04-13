@@ -362,7 +362,7 @@ def get_launch_extract(id):
     ConnexionDB()
     engine = make_engine()
 
-    sql_select_data = "SELECT functions FROM functions WHERE id="+id
+    sql_select_data = "SELECT selection FROM selection WHERE id="+id
     DB_Protocole.cur.execute(sql_select_data)
     functions = DB_Protocole.cur.fetchone()[0]
     df = apex.retrive_data_by_selectionId(apex.project_ID,apex.api_KEY,functions)
@@ -386,7 +386,7 @@ def get_launch_extract(id):
 @app.route('/delete_selection/<id>')
 def get_delete_selection(id):
     ConnexionDB()
-    sql_delete_selection = "DELETE FROM functions WHERE id="+id
+    sql_delete_selection = "DELETE FROM selection WHERE id="+id
     DB_Protocole.cur.execute(sql_delete_selection)
     DB_Protocole.conn.commit()
     DeconnexionDB()

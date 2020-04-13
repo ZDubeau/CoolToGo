@@ -77,16 +77,21 @@
                         style="color: #3f3d3d;"
                         required>
                 </div>
-                <!-- ----------------- Niveau Fracheur ------------------- -->
+                <!-- ----------------- Niveau Fraicheur ------------------- -->
                 <div class="field">
                     <label class="label">Niveau Fraicheur</label>
-                        <input
-                        name="niveau_fracheur"
-                        class="input"
-                        type="text"
-                        maxlength="80"
-                        style="color: #3f3d3d;"
-                        required>
+                    <span class="select">
+                        <select name="niveau_fraicheur" required>
+                            <option value=""></option>
+                            {% for row in liste_niveau_fraicheur %}
+                                {% if (niveau_fraicheur!=None) and (row[0]==niveau_fraicheur[0]) %}
+                                    <option value="{{row[0]}}" selected>{{row[1]}}</option>
+                                {% else %}
+                                    <option value="{{row[0]}}">{{row[1]}}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </span>
                 </div>
                 <!-- ------------------ Choose a type ------------------- -->
                 <div class="field">
@@ -307,14 +312,14 @@
                         <label><input name="jeune" type="checkbox" value="Jeune">Jeune&nbsp;&nbsp;&nbsp;&nbsp;</label>
                     {% endif %}
                     {% if "adulte" in publics%}
-                        <label><input name="adult" type="checkbox" value="Adult" checked>Adult</label>
+                        <label><input name="adulte" type="checkbox" value="Adulte" checked>Adulte&nbsp;&nbsp;&nbsp;&nbsp;</label>
                     {% else %}
-                        <label><input name="adult" type="checkbox" value="Adult">Adult</label>
+                        <label><input name="adulte" type="checkbox" value="Adulte">Adulte&nbsp;&nbsp;&nbsp;&nbsp;</label>
                     {% endif %}
                     {% if "solidaire" in publics%}
-                        <label><input name="adult" type="checkbox" value="Solidaire" checked>Solidaire</label>
+                        <label><input name="solidaire" type="checkbox" value="Solidaire" checked>Solidaire</label>
                     {% else %}
-                        <label><input name="adult" type="checkbox" value="Solidaire">Solidaire</label>
+                        <label><input name="solidaire" type="checkbox" value="Solidaire">Solidaire</label>
                     {% endif %}
                 </div>
 

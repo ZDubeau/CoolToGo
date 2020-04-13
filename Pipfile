@@ -71,6 +71,7 @@ openpyxl = "*"
 python-dotenv = "*"
 flask-login = "*"
 flask-restful = "*"
+celery = "*"
 
 [requires]
 python_version = "3.8"

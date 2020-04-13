@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% block bootstrap_2 %}
+<div>
+{% for table in tables %}
+{{ table|safe }}
+{% endfor %}
+</div>
+<section id="app" class="hero is-fullheight">
+    <div class="hero-body">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-half is-offset-one-quarter" style="width: 55%;">
+                    <p class="title"><img src="/static/image/logo_cooltogo.svg" alt="logo" style="width:60px;transform: translate(0px, -21px);">
+                        Add new message
+                    </p>
+                        <div>
+                            <form action="/new_coolness_value" method="post">
+                                <div class="field">
+                                    <label class="label" style="font-size: 14px;">Niveau de fraicheur</label>
+                                        <input
+                                        name="coolness_value"
+                                        class="text"
+                                        maxlength="50"
+                                        style="color: #363434;"
+                                        required
+                                        >
+                                </div>
+                                <!-- ------- -->
+                                <div class="field is-grouped is-grouped-right">
+                                    <div class="control">
+                                    <button class="button is-link" style="padding: 5px 25px;">Send</button>
+                                </div>
+                            </form>
+                        </div>
+                </div>
+            </div>
+        </div>
+    
+<h3>{{errorMessage}}</h3>
+{% endblock bootstrap_2 %}

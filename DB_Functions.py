@@ -34,7 +34,7 @@ def insert_selection(selection_name:str,description:str,lieu_event:str):
 
 
 def insert_cooltogo_validated(id_apidae:str,Lieu_event:str,X:float,Y:float,
-                            name:str,Adresse1:str,Adresse2:str,Code_postal:int,
+                            name:str,niveau_fraicheur:str,Adresse1:str,Adresse2:str,Code_postal:int,
                             Ville:str,Description_Teaser:str,Description:str,Images:str,Publics:str,
                             styleUrl:str,styleHash:str,Type:str,Categories:str,
                             Accessibilite:str,payant:bool,Plus_d_infos_et_horaires:str,
@@ -72,13 +72,20 @@ def insert_cooltogo_validated(id_apidae:str,Lieu_event:str,X:float,Y:float,
         
         try:
             DB_Protocole.Insert_SQL(DB_Table_Definitions.insert_cooltogo_validated,dico)
+            if (niveau_fraicheur != None) :
+                sql_id = "SELECT id FROM cooltogo_validated WHERE id_apidae='"+id_apidae+"'"
+                DB_Protocole.cur.execute(sql_id)
+                id_cooltogo_validated = DB_Protocole.cur.fetchone()[0]
+                sql_insert_lien = "INSERT INTO lien_niveau_de_fraicheur_cooltogo_validated (id_cooltogo_validated, id_niveau_de_fraicheur) VALUES (" + str(id_cooltogo_validated) + ", " + niveau_fraicheur + ")"
+                DB_Protocole.cur.execute(sql_insert_lien)
+                DB_Protocole.Commit()
         except (psycopg2.Error, AttributeError) as Error :
             print(Error)
     else:
         print('Il y à déja un id_apidae validée')
 
 def update_cooltogo_validated(id_apidae:str,Lieu_event:str,X:float,Y:float,
-                            name:str,Adresse1:str,Adresse2:str,Code_postal:int,
+                            name:str,niveau_fraicheur:str, Adresse1:str,Adresse2:str,Code_postal:int,
                             Ville:str,Description_Teaser:str,Description:str,Images:str,Publics:str,
                             styleUrl:str,styleHash:str,Type:str,Categories:str,
                             Accessibilite:str,payant:bool,Plus_d_infos_et_horaires:str,
@@ -116,6 +123,18 @@ def update_cooltogo_validated(id_apidae:str,Lieu_event:str,X:float,Y:float,
 
         try:
             errorMessage = DB_Protocole.Update_SQL(DB_Table_Definitions.update_cooltogo_validated,dico)
+            sql_id = "SELECT id FROM cooltogo_validated WHERE id_apidae='"+id_apidae+"'"
+            DB_Protocole.cur.execute(sql_id)
+            id_cooltogo_validated = DB_Protocole.cur.fetchone()[0]
+            sql_in_lien_niveau_fraicheur_cooltogo_validated = "SELECT id FROM lien_niveau_de_fraicheur_cooltogo_validated WHERE id_cooltogo_validated="+str(id_cooltogo_validated)
+            DB_Protocole.cur.execute(sql_in_lien_niveau_fraicheur_cooltogo_validated)
+            if (DB_Protocole.cur.fetchone()==None) :
+                sql_insert_lien = "INSERT INTO lien_niveau_de_fraicheur_cooltogo_validated (id_cooltogo_validated, id_niveau_de_fraicheur) VALUES (" + str(id_cooltogo_validated) + ", " + niveau_fraicheur + ")"
+                DB_Protocole.cur.execute(sql_insert_lien)
+            else :
+                sql_update_lien = "UPDATE lien_niveau_de_fraicheur_cooltogo_validated SET id_niveau_de_fraicheur=" + niveau_fraicheur + "WHERE id_cooltogo_validated=" + str(id_cooltogo_validated)
+                DB_Protocole.cur.execute(sql_update_lien)
+            DB_Protocole.Commit()
         except (psycopg2.Error, AttributeError) as Error :
             return Error
     else:

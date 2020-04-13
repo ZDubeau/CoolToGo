@@ -85,8 +85,12 @@ def get_manualEntry():
 
     user_ID = request.cookies.get('id')
     pseudo = request.cookies.get('pseudo')
-
-    return render_template('pages/manualEntry.html', pseudo=pseudo)
+    ConnexionDB()
+    sql_liste_niveau_de_fraicheur = "SELECT id,niveau_de_fraicheur FROM niveau_de_fraicheur WHERE active ORDER BY niveau_de_fraicheur ASC"
+    DB_Protocole.cur.execute(sql_liste_niveau_de_fraicheur)
+    data_liste_fraicheur = DB_Protocole.cur.fetchall()
+    DeconnexionDB()
+    return render_template('pages/manualEntry.html',liste_niveau_fraicheur=data_liste_fraicheur, pseudo=pseudo)
 
 #---------------------- New data valid ------------------------#
 
@@ -95,6 +99,7 @@ def get_new_data_valid():
 
     lieu_event = request.form["lieu_event"]
     name = request.form["name"]
+    niveau_fraicheur = request.form["niveau_fraicheur"]
     type_ = request.form["type"]
     adresse1 = request.form["adresse1"]
     adresse2 = request.form["adresse2"]
@@ -131,7 +136,7 @@ def get_new_data_valid():
             public += "adulte"
             first = False
         else :
-            public += ",adult"
+            public += ",adulte"
     if "solidaire" in request.form:
         if first :
             public += "solidaire"
@@ -174,6 +179,7 @@ def get_new_data_valid():
                                         x_lat,
                                         y_lon,
                                         name,
+                                        niveau_fraicheur,
                                         adresse1,
                                         adresse2,
                                         codePostal,
@@ -338,6 +344,7 @@ def get_validate_lieu(id):
                                         data[6],
                                         data[7],
                                         data[4],
+                                        None,
                                         data[8],
                                         data[9],
                                         data[10],
@@ -368,9 +375,11 @@ def get_remove_lieu(id):
     ConnexionDB()
     sql_delete_valid = "DELETE FROM cooltogo_validated WHERE id="+id
     DB_Protocole.cur.execute(sql_delete_valid)
+    sql_delete_lien_niveau_fraicheur = "DELETE FROM lien_niveau_de_fraicheur_cooltogo_validated WHERE id_cooltogo_validated = "+id
+    DB_Protocole.cur.execute(sql_delete_lien_niveau_fraicheur)
     DB_Protocole.conn.commit()
     DeconnexionDB()
-    return redirect(url_for("get_tableValid"))
+    return redirect(url_for("get_tableValide"))
 
 @app.route('/apidaeSelection', methods=['GET', 'POST'])
 def get_apidaeSelection():
@@ -432,9 +441,15 @@ def get_edit_data(id):
     sql_select_data = "SELECT * FROM cooltogo_validated WHERE id="+id
     DB_Protocole.cur.execute(sql_select_data)
     data = DB_Protocole.cur.fetchall()
+    sql_niveau_de_fraicheur = "SELECT id_niveau_de_fraicheur FROM lien_niveau_de_fraicheur_cooltogo_validated WHERE id_cooltogo_validated="+id
+    DB_Protocole.cur.execute(sql_niveau_de_fraicheur)
+    data_niveau_fraicheur = DB_Protocole.cur.fetchone()
+    sql_liste_niveau_de_fraicheur = "SELECT id,niveau_de_fraicheur FROM niveau_de_fraicheur WHERE active ORDER BY niveau_de_fraicheur ASC"
+    DB_Protocole.cur.execute(sql_liste_niveau_de_fraicheur)
+    data_liste_fraicheur = DB_Protocole.cur.fetchall()
     publics = data[0][13].split(",")
     DeconnexionDB()
-    return render_template('pages/EditLieuValid.html',id_apidae=data[0][1],lieu_event=data[0][2],latitude=data[0][3],longitude=data[0][4],name=data[0][5],adresse1=data[0][6],adresse2=data[0][7],code_postal=data[0][8],city=data[0][9],description_teaser=data[0][10],description=data[0][11],images=data[0][12],publics = data[0][13].split(","),styleUrl=data[0][14],styleHash=data[0][15],type=data[0][16],categories=data[0][17],accessibilite=data[0][18],payant=data[0][19],plus_d_infos=data[0][20],date_debut=data[0][21],date_fin=data[0][22])
+    return render_template('pages/EditLieuValid.html',id_apidae=data[0][1],lieu_event=data[0][2],latitude=data[0][3],longitude=data[0][4],name=data[0][5],niveau_fraicheur=data_niveau_fraicheur,liste_niveau_fraicheur=data_liste_fraicheur,adresse1=data[0][6],adresse2=data[0][7],code_postal=data[0][8],city=data[0][9],description_teaser=data[0][10],description=data[0][11],images=data[0][12],publics = data[0][13].split(","),styleUrl=data[0][14],styleHash=data[0][15],type=data[0][16],categories=data[0][17],accessibilite=data[0][18],payant=data[0][19],plus_d_infos=data[0][20],date_debut=data[0][21],date_fin=data[0][22])
 
 @app.route('/edit_data_valid' , methods=['GET', 'POST'])
 def get_edit_data_valid():
@@ -443,6 +458,7 @@ def get_edit_data_valid():
     latitude = request.form["latitude"]
     longitude = request.form["longitude"]
     name = request.form["name"]
+    niveau_fraicheur = request.form["niveau_fraicheur"]
     type_ = request.form["type"]
     adresse1 = request.form["adresse1"]
     adresse2 = request.form["adresse2"]
@@ -479,7 +495,7 @@ def get_edit_data_valid():
             public += "adulte"
             first = False
         else :
-            public += ",adult"
+            public += ",adulte"
     if "solidaire" in request.form:
         if first :
             public += "solidaire"
@@ -516,6 +532,7 @@ def get_edit_data_valid():
                                         x_lat,
                                         y_lon,
                                         name,
+                                        niveau_fraicheur,
                                         adresse1,
                                         adresse2,
                                         codePostal,
@@ -569,6 +586,32 @@ def get_extract_locations():
     )
     return response
 
+@app.route('/coolness_values', methods=['GET'])
+def get_coolness_values():
+    user_ID = request.cookies.get('id')
+    pseudo = request.cookies.get('pseudo')
+    engine = make_engine()
+    df = pd.read_sql("SELECT id,niveau_de_fraicheur AS Fraicheur, active, '' AS Change FROM niveau_de_fraicheur", engine)
+    return render_template('pages/coolness_values.html',tables=[df.to_html(classes='table table-bordered', table_id='dataTableCoolnessValues',index=False)], pseudo=pseudo)
+
+@app.route("/new_coolness_value", methods=["POST"])
+def post_new_coolness_value():
+    ConnexionDB()
+    coolness_value = request.form["coolness_value"]
+    sql_insert_message = "INSERT INTO niveau_de_fraicheur (niveau_de_fraicheur) VALUES ('"+coolness_value+"')"
+    DB_Protocole.cur.execute(sql_insert_message)
+    DB_Protocole.conn.commit()
+    DeconnexionDB()
+    return redirect(url_for("get_coolness_values"))
+
+@app.route("/change_coolness_status/<id>", methods=['GET','POST'])
+def post_change_coolness_status(id):
+    ConnexionDB()
+    sql_toggle_active = "UPDATE niveau_de_fraicheur SET active = NOT active WHERE id ="+id
+    DB_Protocole.cur.execute(sql_toggle_active)
+    DB_Protocole.conn.commit()
+    DeconnexionDB()
+    return redirect(url_for("get_coolness_values"))
 
 #---------------------------------------------------#
 #                      The End                      #

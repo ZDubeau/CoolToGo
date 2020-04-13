@@ -36,6 +36,18 @@
                         style="color: #969696;"
                         required>
                 </div>
+                <!-- ----------------- Niveau Fraicheur ------------------- -->
+                <div class="field">
+                    <label class="label">Niveau Fraicheur</label>
+                    <span class="select">
+                        <select name="niveau_fraicheur" required>
+                            <option value=""></option>
+                            {% for row in liste_niveau_fraicheur %}
+                                <option value="{{row[0]}}">{{row[1]}}</option>
+                            {% endfor %}
+                        </select>
+                    </span>
+                </div>
                 <!-- ------------------ Choose a type ------------------- -->
                 <div class="field">
                     <label class="label">type</label>

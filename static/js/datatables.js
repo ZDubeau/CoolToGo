@@ -1,6 +1,7 @@
-var validate = '<img src="/static/image/validate.png" style="height:20px;"/>';
-var cancel = '<img src="/static/image/delete.png" style="height:24px;"/>';
-var edit = '<img src="/static/image/edit-svgrepo-com.svg" style="height:20px;"/>';
+var validate = '<img src="/static/image/validate.png" style="height:18px;"/>';
+var cancel = '<img src="/static/image/delete.png" style="height:18px;"/>';
+var edit = '<img src="/static/image/edit-svgrepo-com.svg" style="height:18px;"/>';
+var change = '<img src="/static/image/change.jpeg" style="height:18px;"/>';
 
 // Call the dataTables jQuery plugin
 $(document).ready(function() {
@@ -134,5 +135,21 @@ $(document).ready(function() {
 
   $('#dataTableMessage').DataTable({
     "order": [[ 1, "desc" ]]
+  });
+  $('#dataTableCoolnessValues').DataTable({
+    "columnDefs": [
+      { "visible": false, "targets": 0 },
+      { "width": "20px", "targets": 1 },
+      { "width": "80px", "targets": 2 },
+      { "width": "30px", "targets": 3 }
+    ],
+    "order": [[ 0, "desc" ]],
+    "fnRowCallback" : function ( nRow, aData ) {
+      $('td:eq(2)', nRow).html(change);
+      $('td:eq(2)', nRow).click( function () {
+        var id = aData[0];
+        window.location.href = '/change_coolness_status/' + id;
+      });
+    }
   });
 });

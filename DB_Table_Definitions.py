@@ -158,4 +158,49 @@ selection_extraction = """
         selection_extraction_date TIMESTAMP NOT NULL
     )"""
 
+################ Tables des niveaux de fraicheurs ################
+
+drop_niveau_de_fraicheur = """DROP TABLE IF EXISTS niveau_de_fraicheur;"""
+
+niveau_de_fraicheur = """
+    CREATE TABLE IF NOT EXISTS niveau_de_fraicheur (
+        id SERIAL PRIMARY KEY,
+        niveau_de_fraicheur TEXT NOT NULL,
+        active BOOL NOT NULL DEFAULT TRUE
+    )"""
+
+insert_niveau_de_fraicheur = """
+  INSERT INTO niveau_de_fraicheur (niveau_de_fraicheur)
+  VALUES (%(niveau_de_fraicheur)s) returning id;"""
+
+update_niveau_de_fraicheur ="""
+  UPDATE niveau_de_fraicheur 
+    SET niveau_de_fraicheur= %(niveau_de_fraicheur)s
+        active = %(active)s
+  WHERE id = %(id)s returning id;"""
+
+################ Tables des liens niveaux de fraicheurs - lieux active ################
+
+drop_lien_niveau_de_fraicheur_cooltogo_validated = """DROP TABLE IF EXISTS lien_niveau_de_fraicheur_cooltogo_validated;"""
+
+lien_niveau_de_fraicheur_cooltogo_validated = """
+    CREATE TABLE IF NOT EXISTS lien_niveau_de_fraicheur_cooltogo_validated (
+        id SERIAL PRIMARY KEY,
+        id_cooltogo_validated BIGINT,
+        id_niveau_de_fraicheur BIGINT
+    )"""
+
+insert_lien_niveau_de_fraicheur_cooltogo_validated = """
+  INSERT INTO lien_niveau_de_fraicheur_cooltogo_validated (id_cooltogo_validated, id_niveau_de_fraicheur)
+  VALUES (%(id_cooltogo_validated)s, %(id_niveau_de_fraicheur)s) returning id;"""
+
+update_lien_niveau_de_fraicheur_cooltogo_validated ="""
+  UPDATE lien_niveau_de_fraicheur_cooltogo_validated 
+    SET id_niveau_de_fraicheur= %(id_niveau_de_fraicheur)s
+  WHERE id_cooltogo_validated = %(id_cooltogo_validated)s returning id;"""
+
+delete_lien_niveau_de_fraicheur_cooltogo_validated ="""
+DELETE FROM lien_niveau_de_fraicheur_cooltogo_validated 
+WHERE id_cooltogo_validated = %(id_cooltogo_validated)s;"""
+
 ## next week, a new episode...

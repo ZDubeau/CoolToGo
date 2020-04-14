@@ -242,11 +242,14 @@ def retrive_data_by_selectionId(project_ID,api_KEY,selectionId):
     url += '"selectionIds":["'+selectionId+'"],'
     url += '"count":"'+count_+'",'
     url += '"first":"'+str(first)+'"}'
-
-    req = requests.get(url)
-    df = pd.json_normalize(req.json(),'objetsTouristiques', errors='ignore')
-    for index, row in df.iterrows():
-        result_df = result_df.append(retrieve_data_by_id(project_ID,api_KEY,str(row['id']),selectionId))
+    
+    try :
+        req = requests.get(url)
+        df = pd.json_normalize(req.json(),'objetsTouristiques', errors='ignore')
+        for index, row in df.iterrows():
+            result_df = result_df.append(retrieve_data_by_id(project_ID,api_KEY,str(row['id']),selectionId))
+    except :
+        print ("problème d'extraction")
     return result_df
 #-----------------------------------------------------------------------------------------------------------------------
 def retrive_data_by_multiple_selectionId(project_ID,api_KEY,list_selectionId):

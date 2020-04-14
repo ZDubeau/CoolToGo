@@ -155,7 +155,8 @@ selection_extraction = """
     CREATE TABLE IF NOT EXISTS selection_extraction (
         id SERIAL PRIMARY KEY,
         selection_id BIGINT NOT NULL,
-        selection_extraction_date TIMESTAMP NOT NULL
+        selection_extraction_date TIMESTAMP NOT NULL,
+        selection_extraction_nb_records BIGINT
     )"""
 
 ################ Tables des niveaux de fraicheurs ################

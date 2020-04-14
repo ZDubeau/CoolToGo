@@ -116,17 +116,18 @@ $(document).ready(function() {
       { "width": "80px", "targets": 2 },
       { "width": "30px", "targets": 3 },
       { "width": "80px", "targets": 4 },
-      { "width": "20px", "targets": 5 },
+      { "width": "40px", "targets": 5 },
       { "width": "20px", "targets": 6 },
+      { "width": "20px", "targets": 7 },
     ],
     "fnRowCallback" : function ( nRow, aData ) {
-      $('td:eq(4)', nRow).html(validate);
-      $('td:eq(4)', nRow).click( function () {
+      $('td:eq(5)', nRow).html(validate);
+      $('td:eq(5)', nRow).click( function () {
         var id = aData[0];
         window.location.href = '/launch_extract/' + id;
       });
-      $('td:eq(5)', nRow).html(cancel);
-      $('td:eq(5)', nRow).click( function () {
+      $('td:eq(6)', nRow).html(cancel);
+      $('td:eq(6)', nRow).click( function () {
         var id = aData[0];
         window.location.href = '/delete_selection/' + id;
       });

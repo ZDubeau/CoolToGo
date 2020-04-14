@@ -386,7 +386,7 @@ def get_apidaeSelection():
     user_ID = request.cookies.get('id')
     pseudo = request.cookies.get('pseudo')
     engine = make_engine()
-    df = pd.read_sql("SELECT s.id as id, s.selection as selection, s.description as description, s.selection_type as Lieu_Event, max(se.selection_extraction_date) AS Last_Extract,'' as Launch, '' as Del  FROM selection AS s LEFT JOIN selection_extraction AS se ON s.id = se.selection_id GROUP BY s.id, selection, description ORDER BY s.id ASC", engine)
+    df = pd.read_sql("SELECT s.id as id, s.selection as selection, s.description as description, s.selection_type as Lieu_Event, se.selection_extraction_date AS Last_Extract, se.selection_extraction_nb_records AS Nb_records, '' as Launch, '' as Del  FROM selection AS s LEFT OUTER JOIN selection_extraction AS se ON s.id = se.selection_id AND se.selection_extraction_date =(SELECT MAX(selection_extraction_date) FROM selection_extraction WHERE selection_id=se.selection_id)", engine)
     return render_template('pages/apidaeSelection.html',tables=[df.to_html(classes='table table-bordered', table_id='dataTableSelection',index=False)], pseudo=pseudo)
 
 @app.route('/new_selection', methods=['GET','POST'])
@@ -418,7 +418,8 @@ def get_launch_extract(id):
     df_to_insert = 	df[~df.id_apidae.isin(df_in_db.id_apidae.values)]
    
     df_to_insert.to_sql('cooltogo_from_apidae',con=engine, index=False, if_exists='append')
-    sql_last_extract = "INSERT INTO selection_extraction (selection_id,selection_extraction_date) VALUES ("+id + ",NOW())"
+    nb_records = int(len(df_to_insert.index))
+    sql_last_extract = "INSERT INTO selection_extraction (selection_id,selection_extraction_date,selection_extraction_nb_records) VALUES ("+id + ",NOW()," + str(nb_records) + ")"
     DB_Protocole.cur.execute(sql_last_extract)
     DB_Protocole.conn.commit()
     DeconnexionDB()

@@ -40,7 +40,7 @@ def insert_cooltogo_validated(id_apidae:str,Lieu_event:str,X:float,Y:float,
                             Accessibilite:str,payant:bool,Plus_d_infos_et_horaires:str,
                             Dates_debut:str,Dates_fin:str):
 
-    sql_cooltogo_validated="select id as id_valide from cooltogo_validated where id_apidae = %s "
+    sql_cooltogo_validated="SELECT id AS id_valide FROM cooltogo_validated WHERE id_apidae = %s "
     id_cooltogo_validated = recuperation_id(sql_cooltogo_validated,(id_apidae,))
 
     if type(id_cooltogo_validated)!=type(int()):
@@ -208,22 +208,38 @@ def create_dict_for_lieu_validated(thelist:list):
     Description_Teaser = thelist[10]
     Description = thelist[11]
     Images = thelist[12]
-    Publics = thelist[13]
+    if thelist[13] == None :
+        Publics = None
+    else :
+        Publics = thelist[13].split(",")
     styleUrl = thelist[14]
     styleHash = thelist[15]
     Type = thelist[16]
-    Categories = thelist[17]
+    if thelist[17] == None :
+        Categories = None
+    else :
+        Categories = thelist[17].split(",")
     Accessibilite = thelist[18]
     payant = thelist[19]
     Plus_d_infos_et_horaires = thelist[20]
     Dates_debut = thelist[21]
     Dates_fin = thelist[22]
+    DB_Protocole.ConnexionDB()
+    sql_select_niveau_de_fraicheur = "SELECT nf.niveau_de_fraicheur AS fraicheur FROM niveau_de_fraicheur AS nf INNER JOIN lien_niveau_de_fraicheur_cooltogo_validated AS lnfcv ON nf.id=lnfcv.id_niveau_de_fraicheur WHERE id_cooltogo_validated="+str(id_)
+    DB_Protocole.cur.execute(sql_select_niveau_de_fraicheur)
+    data = DB_Protocole.cur.fetchone()
+    DB_Protocole.DeconnexionDB()    
+    if data == None :
+        niveau_de_fraicheur = None
+    else :
+        niveau_de_fraicheur = data[0]  
 
     dict_for_properties = {}
     dict_for_properties.update({"lieu_event": Lieu_event})
     dict_for_properties.update({"x": X})
     dict_for_properties.update({"y": Y})
     dict_for_properties.update({"name": name})
+    dict_for_properties.update({"niveau_de_fraicheur": niveau_de_fraicheur})
     dict_for_properties.update({"adresse_1": Adresse1})
     dict_for_properties.update({"adresse_2": Adresse2})
     dict_for_properties.update({"code_postal": Code_postal})

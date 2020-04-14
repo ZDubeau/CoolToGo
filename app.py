@@ -203,6 +203,43 @@ def get_new_data_valid():
     
     return redirect(url_for("get_tableValide"))
 
+#-------------------- Validated lieu ------------------------#
+
+@app.route('/validate_lieu/<id>')
+def get_validate_lieu(id):
+    ConnexionDB()
+    sql_select_data = "SELECT * FROM cooltogo_from_apidae WHERE id="+id
+    DB_Protocole.cur.execute(sql_select_data)
+    data = DB_Protocole.cur.fetchone()
+    functions.insert_cooltogo_validated(data[1],
+                                        data[3],
+                                        data[6],
+                                        data[7],
+                                        data[4],
+                                        "",
+                                        data[8],
+                                        data[9],
+                                        data[10],
+                                        data[11],
+                                        data[12],
+                                        data[12],
+                                        data[13],
+                                        data[14],
+                                        "",
+                                        "",
+                                        data[5],
+                                        data[15],
+                                        data[16],
+                                        data[17],
+                                        data[18],
+                                        data[19],
+                                        data[20])
+    DeconnexionDB()
+    engine = make_engine()
+    df = pd.read_sql("SELECT *,'' as a FROM cooltogo_from_apidae WHERE id_apidae NOT IN (SELECT DISTINCT id_apidae FROM cooltogo_validated) ORDER BY id ASC", engine)
+    
+    return redirect(url_for("get_tableApidae"))
+
 #-------------------- Message button ----------------------#
 
 @app.route('/message', methods=['GET'])
@@ -331,43 +368,6 @@ def post_inscription():
     DeconnexionDB()
     return redirect(url_for("get_homepage",errorMessage=errorMessage))
 
-#-------------------- Validated lieu ------------------------#
-
-@app.route('/validate_lieu/<id>')
-def get_validate_lieu(id):
-    ConnexionDB()
-    sql_select_data = "SELECT * FROM cooltogo_from_apidae WHERE id="+id
-    DB_Protocole.cur.execute(sql_select_data)
-    data = DB_Protocole.cur.fetchone()
-    functions.insert_cooltogo_validated(data[1],
-                                        data[3],
-                                        data[6],
-                                        data[7],
-                                        data[4],
-                                        None,
-                                        data[8],
-                                        data[9],
-                                        data[10],
-                                        data[11],
-                                        data[12],
-                                        data[12],
-                                        data[13],
-                                        data[14],
-                                        "",
-                                        "",
-                                        data[5],
-                                        data[15],
-                                        data[16],
-                                        data[17],
-                                        data[18],
-                                        data[19],
-                                        data[20])
-    DeconnexionDB()
-    engine = make_engine()
-    df = pd.read_sql("SELECT *,'' as a FROM cooltogo_from_apidae WHERE id_apidae NOT IN (SELECT DISTINCT id_apidae FROM cooltogo_validated) ORDER BY id ASC", engine)
-    
-    return redirect(url_for("get_tableApidae"))
-
 #-------------------- Remove a lieu ------------------------#
 
 @app.route('/remove_lieu/<id>')
@@ -425,6 +425,7 @@ def get_launch_extract(id):
     
     return redirect(url_for("get_apidaeSelection"))
 
+#---------------- Remove Selection id -----------------#
 
 @app.route('/delete_selection/<id>')
 def get_delete_selection(id):
@@ -434,6 +435,8 @@ def get_delete_selection(id):
     DB_Protocole.conn.commit()
     DeconnexionDB()
     return redirect(url_for("get_apidaeSelection"))
+
+#------------------ Edit lieu valid --------------------#
 
 @app.route('/edit_lieu_valide/<id>')
 def get_edit_data(id):
@@ -445,11 +448,23 @@ def get_edit_data(id):
     DB_Protocole.cur.execute(sql_niveau_de_fraicheur)
     data_niveau_fraicheur = DB_Protocole.cur.fetchone()
     sql_liste_niveau_de_fraicheur = "SELECT id,niveau_de_fraicheur FROM niveau_de_fraicheur WHERE active ORDER BY niveau_de_fraicheur ASC"
+
+
+
+
+
     DB_Protocole.cur.execute(sql_liste_niveau_de_fraicheur)
     data_liste_fraicheur = DB_Protocole.cur.fetchall()
-    publics = data[0][13].split(",")
+    
+    if data[0][13] == None :
+        publics = None
+    else :
+        publics = data[0][13].split(",")
+
     DeconnexionDB()
-    return render_template('pages/EditLieuValid.html',id_apidae=data[0][1],lieu_event=data[0][2],latitude=data[0][3],longitude=data[0][4],name=data[0][5],niveau_fraicheur=data_niveau_fraicheur,liste_niveau_fraicheur=data_liste_fraicheur,adresse1=data[0][6],adresse2=data[0][7],code_postal=data[0][8],city=data[0][9],description_teaser=data[0][10],description=data[0][11],images=data[0][12],publics = data[0][13].split(","),styleUrl=data[0][14],styleHash=data[0][15],type=data[0][16],categories=data[0][17],accessibilite=data[0][18],payant=data[0][19],plus_d_infos=data[0][20],date_debut=data[0][21],date_fin=data[0][22])
+    return render_template('pages/EditLieuValid.html',id_apidae=data[0][1],lieu_event=data[0][2],latitude=data[0][3],longitude=data[0][4],name=data[0][5],niveau_fraicheur=data_niveau_fraicheur,liste_niveau_fraicheur=data_liste_fraicheur,adresse1=data[0][6],adresse2=data[0][7],code_postal=data[0][8],city=data[0][9],description_teaser=data[0][10],description=data[0][11],images=data[0][12],publics = publics,styleUrl=data[0][14],styleHash=data[0][15],type=data[0][16],categories=data[0][17],accessibilite=data[0][18],payant=data[0][19],plus_d_infos=data[0][20],date_debut=data[0][21],date_fin=data[0][22])
+
+#------------------ Edit DATA valid -------------------#
 
 @app.route('/edit_data_valid' , methods=['GET', 'POST'])
 def get_edit_data_valid():
@@ -554,6 +569,8 @@ def get_edit_data_valid():
 
     return redirect(url_for("get_tableValide",errorMessage=errorMessage))
 
+#------------------- extract locations --------------------#
+
 @app.route('/extract_locations')
 def get_extract_locations():
     ConnexionDB()
@@ -593,6 +610,7 @@ def get_coolness_values():
     engine = make_engine()
     df = pd.read_sql("SELECT id,niveau_de_fraicheur AS Fraicheur, active, '' AS Change FROM niveau_de_fraicheur", engine)
     return render_template('pages/coolness_values.html',tables=[df.to_html(classes='table table-bordered', table_id='dataTableCoolnessValues',index=False)], pseudo=pseudo)
+#------------------------------------------------------------
 
 @app.route("/new_coolness_value", methods=["POST"])
 def post_new_coolness_value():
@@ -603,6 +621,8 @@ def post_new_coolness_value():
     DB_Protocole.conn.commit()
     DeconnexionDB()
     return redirect(url_for("get_coolness_values"))
+
+#-------------------------------------------------------------
 
 @app.route("/change_coolness_status/<id>", methods=['GET','POST'])
 def post_change_coolness_status(id):

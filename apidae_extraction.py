@@ -145,9 +145,12 @@ def retrieve_data_by_id(project_ID,api_KEY,select_id,selectionId):
     else:
         dict_for_id['images'] = None
 #-----------------------------------------------------------------------------------------------------------------------
-    dict_for_id['publics'] = 'no info'
+    if 'publics' in req:
+        dict_for_id['publics'] = req['publics']
+    else:
+        dict_for_id['publics'] = None
 #-----------------------------------------------------------------------------------------------------------------------
-    dict_for_id['categories'] = 'no info'
+    dict_for_id['categories'] = None
 #-----------------------------------------------------------------------------------------------------------------------
     if 'prestations' in req:
         if 'tourismesAdaptes' in req['prestations']:

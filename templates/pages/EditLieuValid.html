@@ -5,9 +5,7 @@
       <div class="container">
         <div class="columns">
           <div class="column is-half is-offset-one-quarter" style="width: 55%;">
-            <p class="title"><img src="/static/image/logo_cooltogo.svg" alt="logo" style="width:40px;">
-              Edit informations
-            </p>
+            <p class="title">Edit informations</p>
             <div>
             <form action="/edit_data_valid" method="post">
                 <!-- ------------------ id Apidae ----------------------- -->
@@ -481,9 +479,9 @@
                         >
                 </div>
                 <!-- ---------------------------------------------------- -->
-              <div class="field is-grouped is-grouped-right">
+              <div class="field is-grouped is-grouped-left">
                 <div class="control">
-                  <button class="button is-link">Add</button>
+                  <button class="button is-link" style="background-color: #007bff; border-radius: 5px; border-color: #007bff; margin: 28px 0; padding: 5px 25px;">Add</button>
                 </div>
               </div>
             </form>
@@ -492,5 +490,5 @@
       </div>
     </div>
 
-<h3>{{errorMessage}}</h3>
+<h3 style="color: #00E64D;">{{errorMessage}}</h3>
 {% endblock bootstrap_2 %}

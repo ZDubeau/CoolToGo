@@ -5,9 +5,7 @@
       <div class="container">
         <div class="columns">
           <div class="column is-half is-offset-one-quarter" style="width: 55%;">
-            <p class="title"><img src="/static/image/logo_cooltogo.svg" alt="logo" style="width:40px;">
-              Add new informations
-            </p>
+            <p class="title">Add new informations</p>
             <div>
                 {% for table in tables %}
                     {{ table|safe }}
@@ -217,9 +215,9 @@
                         >
                 </div>
                 <!-- ------------------Add button ---------------------- -->
-              <div class="field is-grouped is-grouped-right">
+              <div class="field is-grouped is-grouped-left">
                 <div class="control">
-                  <button class="button is-link">Add</button>
+                  <button class="button is-link" style="background-color: #007bff; border-radius: 5px; border-color: #007bff; margin: 28px 0; padding: 5px 25px;">Add</button>
                 </div>
               </div>
             </form>

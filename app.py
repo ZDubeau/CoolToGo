@@ -12,7 +12,7 @@ import DB_Table_Definitions
 import DB_Functions as functions   # insert database related code here
 import apidae_extraction as apex  # my function retrieving data from apiade
 
-secret_key = os.environ.get("SECRET_KEY")
+secret_key = os.urandom(32)
 
 app = Flask(__name__)
 app.secret_key = secret_key

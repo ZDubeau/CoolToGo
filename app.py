@@ -12,7 +12,7 @@ import DB_Table_Definitions
 import DB_Functions as functions   # insert database related code here
 import apidae_extraction as apex  # my function retrieving data from apiade
 
-secret_key = 'b\|O \x0b\xce\xb5\xf3\xab$:;\xec\xb9|\x9c\x7f\xe2\xfe\xc1\x82\xe8\xcc\xeb\xff \xaa+\xd9\xdc\xfa@2
+secret_key = 'b\|O \x0b\xce\xb5\xf3\xab$:;\xec\xb9|\x9c\x7f\xe2\xfe\xc1\x82\xe8\xcc\xeb\xff \xaa+\xd9\xdc\xfa@2'
 
 app = Flask(__name__)
 app.secret_key = secret_key

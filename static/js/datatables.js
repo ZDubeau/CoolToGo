@@ -1,7 +1,8 @@
 var validate = '<img src="/static/image/validate.png" style="height:18px;"/>';
 var cancel = '<img src="/static/image/delete.png" style="height:18px;"/>';
 var edit = '<img src="/static/image/edit-svgrepo-com.svg" style="height:18px;"/>';
-var change = '<img src="/static/image/change.jpeg" style="height:18px;"/>';
+var json = '<img src="/static/image/json.png" style="height:18px;"/>';
+var on_off = '<img src="/static/image/toggle.jpeg" style="height:18px;"/>';
 
 // Call the dataTables jQuery plugin
 $(document).ready(function() {
@@ -14,7 +15,7 @@ $(document).ready(function() {
     },
     "columnDefs": [
       { "visible": false, "targets": 0 },
-      { "width": "110px", "targets": 1 },
+      { "width": "120px", "targets": 1 },
       { "width": "70px", "targets": 2 },
       { "width": "70px", "targets": 3 },
       { "width": "400px", "targets": 4 },
@@ -57,7 +58,7 @@ $(document).ready(function() {
     },
     "columnDefs": [
       { "visible": false, "targets": 0 },
-      { "width": "85px", "targets": 1 },
+      { "width": "120px", "targets": 1 },
       { "width": "70px", "targets": 2 },
       { "width": "80px", "targets": 3 },
       { "width": "80px", "targets": 4 },
@@ -141,8 +142,35 @@ $(document).ready(function() {
   });
 
   $('#dataTableMessage').DataTable({
-    "order": [[ 1, "desc" ]]
+    "columnDefs": [
+      { "visible": false, "targets": 0 },
+      { "width": "130px", "targets": 1 },
+      { "width": "50px", "targets": 2 },
+      { "width": "50px", "targets": 3 },
+      { "width": "10px", "targets": 4 },
+      { "width": "10px", "targets": 5 },
+      { "width": "10px", "targets": 6 }
+    ],
+    "order": [[ 0, "desc" ]],
+    "fnRowCallback" : function ( nRow, aData ) {
+      $('td:eq(3)', nRow).html(edit);
+      $('td:eq(3)', nRow).click( function () {
+        var id = aData[0];
+        window.location.href = '/edit_message/' + id;
+      });
+      $('td:eq(4)', nRow).html(json);
+      $('td:eq(4)', nRow).click( function () {
+        var id = aData[0];
+        window.location.href = '/publish_message/' + id;
+      });
+      $('td:eq(5)', nRow).html(cancel);
+      $('td:eq(5)', nRow).click( function () {
+        var id = aData[0];
+        window.location.href = '/delete_message/' + id;
+      });
+    }
   });
+
   $('#dataTableCoolnessValues').DataTable({
     "columnDefs": [
       { "visible": false, "targets": 0 },
@@ -152,7 +180,7 @@ $(document).ready(function() {
     ],
     "order": [[ 0, "desc" ]],
     "fnRowCallback" : function ( nRow, aData ) {
-      $('td:eq(2)', nRow).html(change);
+      $('td:eq(2)', nRow).html(on_off);
       $('td:eq(2)', nRow).click( function () {
         var id = aData[0];
         window.location.href = '/change_coolness_status/' + id;

@@ -168,10 +168,37 @@ def retrive_data_by_selectionId(project_ID,api_KEY,selectionId):
     url = 'http://api.apidae-tourisme.com/api/v002/recherche/list-objets-touristiques?query={'
     url += '"projetId":"'+project_ID+'",'
     url += '"apiKey":"'+api_KEY+'",'
+    url += '"selectionIds":["'+selectionId+'"]}'
+    count = 100
+    try :
+        req = requests.get(url).json()
+        if "numFound" in req :
+            nb_object = int(req["numFound"])
+        else :
+            print("Oh merde")
+            return result_df
+        i = 0
+        while count*i<nb_object :
+            result_df = result_df.append(retrive_data_by_selectionId_by_cent(project_ID,api_KEY,selectionId,count*i,count))
+            i+=1
+    except :
+        print ("problème d'extraction")
+    return result_df
+
+def retrive_data_by_selectionId_by_cent(project_ID,api_KEY,selectionId,first,count):
+    import pandas as pd
+    result_df = pd.DataFrame(columns = ['id_apidae','id_selection','lieu_event','names','types','longitude','latitude',
+                                'adresse1','adresse2','code_postal','ville','telephone','email','site_web','description_teaser'
+                                ,'images','publics','categories','accessibilité',
+                                'payant','plus_d_infos_et_horaires','date_début','date_fin']) 
+    
+    url = 'http://api.apidae-tourisme.com/api/v002/recherche/list-objets-touristiques?query={'
+    url += '"projetId":"'+project_ID+'",'
+    url += '"apiKey":"'+api_KEY+'",'
     url += '"selectionIds":["'+selectionId+'"],'
     url += '"count":"'+count_+'",'
     url += '"first":"'+str(first)+'"}'
-    
+    print(url)
     try :
         req = requests.get(url)
         df = pd.json_normalize(req.json(),'objetsTouristiques', errors='ignore')

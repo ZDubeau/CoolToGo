@@ -17,8 +17,8 @@
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark " style="background: #01289f;">
-            <a class="navbar-brand" >
-                <img src="{{ url_for('static', filename='/image/logo_cooltogo.svg') }}" alt="logo" style="width:37px;"><p class="font-weight-bolder" style="color: #d0eeed;" href="{{ url_for('get_home')}}">&nbsp;&nbsp;Cool To Go</p>
+            <a class="navbar-brand" href="{{ url_for('get_home')}}">
+                <img src="{{ url_for('static', filename='/image/logo_cooltogo.svg') }}" alt="logo" style="width:37px;"><p class="font-weight-bolder" style="color: #d0eeed;">&nbsp;&nbsp;Cool To Go</p>
                 <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i class="fas fa-bars"></i>
                 </button>
             </a><!-- Navbar Search-->
@@ -94,7 +94,7 @@
                     </div>
                     <!-- ------------------------------------------------------------------ -->
                     <div class="sb-sidenav-footer">
-                        <a class="small">Logged in as: {{pseudo}}</a>
+                        <a class="small">Logged in as: {{username}}</a>
                     </div>
                 </nav>
             </div>

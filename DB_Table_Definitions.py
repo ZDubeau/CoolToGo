@@ -23,7 +23,7 @@ cooltogo_from_apidae = """
         adresse2 TEXT,
         code_postal VARCHAR(10),
         ville TEXT,
-        telephone VARCHAR(20),
+        telephone TEXT,
         email TEXT,
         site_web TEXT,
         description_teaser TEXT,
@@ -41,6 +41,14 @@ insert_cooltogo_from_apidae = """
   INSERT INTO cooltogo_from_apidae (id_apidae,id_selection, lieu_event, names, types, latitude, longitude, adresse1, adresse2, code_postal, ville,telephone, email, site_web, description_teaser, images, publics, categories, accessibilité, payant, plus_d_infos_et_horaires, date_début, date_fin)
   VALUES (%(id_apidae)s,%(id_selection)s, %(lieu_event)s, %(names)s, %(types)s, %(latitude)s, %(longitude)s, %(adresse1)s, %(adresse2)s, %(code_postal)s, %(ville)s, %(telephone)s, %(email)s, %(site_web)s, %(description_teaser)s, %(images)s, %(publics)s, %(categories)s, %(accessibilité)s, %(payant)s, %(plus_d_infos_et_horaires)s, %(date_début)s, %(date_fin)s) returning id;"""
 
+select_cooltogo_from_apidae_for_display ="""
+  SELECT *,'' as a FROM cooltogo_from_apidae WHERE id_apidae NOT IN (SELECT DISTINCT id_apidae FROM cooltogo_validated) ORDER BY id ASC; """
+
+select_cooltogo_from_apidae_one_id = """
+  SELECT * FROM cooltogo_from_apidae WHERE id=%s; """
+
+delete_cooltogo_from_apidae_with_selection_id = """
+  DELETE FROM cooltogo_from_apidae WHERE id_selection=%s; """
 
 ################ Tables des données validés par l'administrateur ################
 
@@ -108,6 +116,24 @@ update_cooltogo_validated = """
           Dates_fin =%(Dates_fin)s
     WHERE id_apidae = %(id_apidae)s returning id;"""
 
+select_id_cooltogo_validated = """
+  SELECT id AS id_valide FROM cooltogo_validated WHERE id_apidae = %s; """
+
+select_cooltogo_validated = """
+  SELECT * FROM cooltogo_validated; """
+
+select_cooltogo_validated_for_display = """
+    SELECT *, '' as Edit, '' as Del FROM cooltogo_validated ORDER BY id ASC; """
+
+select_cooltogo_validate_with_id = """
+  SELECT * FROM cooltogo_validated WHERE id=%s; """
+
+select_max_id_from_cooltogo_validated = """
+  SELECT MAX(id) FROM cooltogo_validated; """
+
+delete_from_cooltogo_validated_with_id = """
+  DELETE FROM cooltogo_validated WHERE id=%s; """
+
 ################ Table des administrateurs ################
 
 drop_administrators = """DROP TABLE IF EXISTS administrators;"""
@@ -124,6 +150,15 @@ insert_administrators = """
   INSERT INTO administrators (Admin_Name, Admin_pwd_hash, Admin_email)
   VALUES (%(Admin_Name)s, %(Admin_pwd_hash)s, %(Admin_email)s) returning PKId_Admin;"""
 
+nombre_administrators = """
+  SELECT count(*) FROM administrators; """
+
+select_adminitrators_for_display = """
+  SELECT PKId_Admin as Id, Admin_Name as Name, Admin_email as Email,'' as Action FROM administrators ORDER BY PKId_Admin ASC;"""
+
+delete_administrators = """
+  DELETE FROM administrators WHERE PKId_Admin=%s; """
+
 #################### Tables des messages ###################
 
 drop_message = """DROP TABLE IF EXISTS message;"""
@@ -132,13 +167,25 @@ message = """
   CREATE TABLE IF NOT EXISTS message (
         id SERIAL PRIMARY KEY,
         message TEXT NOT NULL,
-        published_on TIMESTAMP,
-        active BOOL
+        start_date DATE,
+        end_date DATE
     )"""
 
 insert_message = """
-  INSERT INTO message (message, published_on, active)
-  VALUES (%(message)s, %(published_on)s, %(active)s) returning id;"""
+  INSERT INTO message (message, start_date, end_date)
+  VALUES (%s,%s,%s) returning id;"""
+
+update_message = """
+  UPDATE message SET message=%s, start_date=%s, end_date=%s WHERE id=%s;"""
+
+delete_message = """
+  DELETE FROM message WHERE id=%s;"""
+
+select_message = """ 
+  SELECT * FROM message WHERE id=%s;"""
+
+select_message_list = """ 
+  SELECT id,message, start_date, end_date, '' as Edit, '' as Publish, '' as Delete FROM message; """
 
 ################### Tables des selection ####################
 
@@ -156,6 +203,12 @@ insert_selection = """
   INSERT INTO selection (selection, description, selection_type)
   VALUES (%(selection)s, %(description)s, %(selection_type)s) returning id;"""
 
+select_selection_with_id = """
+  SELECT selection FROM selection WHERE id=%s; """
+
+delete_selection = """
+  DELETE FROM selection WHERE id=%s; """
+
 ################ Tables des selection extraction ################
 
 drop_selection_extraction = """DROP TABLE IF EXISTS selection_extraction;"""
@@ -167,6 +220,16 @@ selection_extraction = """
         selection_extraction_date TIMESTAMP NOT NULL,
         selection_extraction_nb_records BIGINT
     )"""
+
+insert_selection_extraction = """
+  INSERT INTO selection_extraction (selection_id,selection_extraction_date,selection_extraction_nb_records) VALUES (%s,NOW(),%s);"""
+
+
+select_selection_information = """
+  SELECT s.id as id, s.selection as selection, s.description as categories, s.selection_type as Lieu_Event, se.selection_extraction_date AS Last_Extract, se.selection_extraction_nb_records AS Nb_records, '' as Launch, '' as Del  
+    FROM selection AS s LEFT OUTER JOIN selection_extraction AS se ON s.id = se.selection_id AND se.selection_extraction_date =(SELECT MAX(selection_extraction_date) FROM selection_extraction WHERE selection_id=se.selection_id);"""
+
+
 
 ################ Tables des niveaux de fraicheurs ################
 
@@ -181,13 +244,22 @@ niveau_de_fraicheur = """
 
 insert_niveau_de_fraicheur = """
   INSERT INTO niveau_de_fraicheur (niveau_de_fraicheur)
-  VALUES (%(niveau_de_fraicheur)s) returning id;"""
+  VALUES (%s) returning id;"""
 
 update_niveau_de_fraicheur ="""
   UPDATE niveau_de_fraicheur 
     SET niveau_de_fraicheur= %(niveau_de_fraicheur)s
         active = %(active)s
   WHERE id = %(id)s returning id;"""
+
+change_niveau_de_fraicheur_status = """
+  UPDATE niveau_de_fraicheur SET active = NOT active WHERE id =%s; """
+
+select_niveau_de_fraicheur_for_diplay = """
+  SELECT id,niveau_de_fraicheur AS Fraicheur, active, '' AS Change FROM niveau_de_fraicheur;"""
+
+select_niveau_de_fraicheur_tous = """
+  SELECT id,niveau_de_fraicheur FROM niveau_de_fraicheur WHERE active ORDER BY niveau_de_fraicheur ASC;"""
 
 ################ Tables des liens niveaux de fraicheurs - lieux active ################
 
@@ -204,13 +276,15 @@ insert_lien_niveau_de_fraicheur_cooltogo_validated = """
   INSERT INTO lien_niveau_de_fraicheur_cooltogo_validated (id_cooltogo_validated, id_niveau_de_fraicheur)
   VALUES (%(id_cooltogo_validated)s, %(id_niveau_de_fraicheur)s) returning id;"""
 
+select_lien_niveau_de_fraicheur_cooltogo_validated = """
+  SELECT id_niveau_de_fraicheur FROM lien_niveau_de_fraicheur_cooltogo_validated WHERE id_cooltogo_validated=%s; """
+
 update_lien_niveau_de_fraicheur_cooltogo_validated ="""
   UPDATE lien_niveau_de_fraicheur_cooltogo_validated 
     SET id_niveau_de_fraicheur= %(id_niveau_de_fraicheur)s
   WHERE id_cooltogo_validated = %(id_cooltogo_validated)s returning id;"""
 
 delete_lien_niveau_de_fraicheur_cooltogo_validated ="""
-DELETE FROM lien_niveau_de_fraicheur_cooltogo_validated 
-WHERE id_cooltogo_validated = %(id_cooltogo_validated)s;"""
+  DELETE FROM lien_niveau_de_fraicheur_cooltogo_validated WHERE id_cooltogo_validated = %s;"""
 
 ############################ THE END ################################

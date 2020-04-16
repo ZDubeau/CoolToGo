@@ -25,20 +25,23 @@ $(document).ready(function() {
       { "width": "350px", "targets": 9 },
       { "width": "80px", "targets": 10 },
       { "width": "180px", "targets": 11 },
-      { "width": "1400px", "targets": 12 },
-      { "width": "600px", "targets": 13 },
-      { "width": "60px", "targets": 14 },
-      { "width": "70px", "targets": 15 },
-      { "width": "300px", "targets": 16 },
+      { "width": "100px", "targets": 12 },
+      { "width": "300px", "targets": 13 },
+      { "width": "800px", "targets": 14 },
+      { "width": "1400px", "targets": 15 },
+      { "width": "600px", "targets": 16 },
       { "width": "60px", "targets": 17 },
-      { "width": "250px", "targets": 18 },
-      { "width": "70px", "targets": 19 },
-      { "width": "70px", "targets": 20 },
-      { "width": "20px", "targets": 21 },
+      { "width": "70px", "targets": 18 },
+      { "width": "300px", "targets": 19 },
+      { "width": "60px", "targets": 20 },
+      { "width": "250px", "targets": 21 },
+      { "width": "70px", "targets": 22 },
+      { "width": "70px", "targets": 23 },
+      { "width": "20px", "targets": 24 },
     ],
     "fnRowCallback" : function ( nRow, aData ) {
-      $('td:eq(20)', nRow).html(validate);
-      $('td:eq(20)', nRow).click( function () {
+      $('td:eq(23)', nRow).html(validate);
+      $('td:eq(23)', nRow).click( function () {
         var id = aData[0];
         window.location.href = '/validate_lieu/' + id;
       });
@@ -63,30 +66,33 @@ $(document).ready(function() {
       { "width": "200px", "targets": 7 },
       { "width": "70px", "targets": 8 },
       { "width": "170px", "targets": 9 },
-      { "width": "1400px", "targets": 10 },
-      { "width": "1400px", "targets": 11 },
-      { "width": "600px", "targets": 12 },
-      { "width": "180px", "targets": 13 },
-      { "width": "90px", "targets": 14 },
-      { "width": "90px", "targets": 15 },
-      { "width": "150px", "targets": 16 },
-      { "width": "180px", "targets": 17 },
-      { "width": "300px", "targets": 18 },
-      { "width": "70px", "targets": 19 },
-      { "width": "280px", "targets":20 },
-      { "width": "80px", "targets":21 },
-      { "width": "80px", "targets":22 },
-      { "width": "20px", "targets":23 },
-      { "width": "20px", "targets":24 }
+      { "width": "100px", "targets": 10 },
+      { "width": "300px", "targets": 11 },
+      { "width": "800px", "targets": 12 },
+      { "width": "1400px", "targets": 13 },
+      { "width": "1400px", "targets": 14 },
+      { "width": "600px", "targets": 15 },
+      { "width": "180px", "targets": 16 },
+      { "width": "90px", "targets": 17 },
+      { "width": "90px", "targets": 18 },
+      { "width": "150px", "targets": 19 },
+      { "width": "180px", "targets": 20 },
+      { "width": "300px", "targets": 21 },
+      { "width": "70px", "targets": 22 },
+      { "width": "280px", "targets":23 },
+      { "width": "80px", "targets":24 },
+      { "width": "80px", "targets":25 },
+      { "width": "20px", "targets":26 },
+      { "width": "20px", "targets":27 }
     ],
     "fnRowCallback" : function ( nRow, aData ) {
-      $('td:eq(22)', nRow).html(edit);
-      $('td:eq(22)', nRow).click( function () {
+      $('td:eq(25)', nRow).html(edit);
+      $('td:eq(25)', nRow).click( function () {
         var id = aData[0];
         window.location.href = '/edit_lieu_valide/' + id;
       });
-      $('td:eq(23)', nRow).html(cancel);
-      $('td:eq(23)', nRow).click( function () {
+      $('td:eq(26)', nRow).html(cancel);
+      $('td:eq(26)', nRow).click( function () {
         var id = aData[0];
         window.location.href = '/remove_lieu/' + id;
       });
@@ -140,9 +146,9 @@ $(document).ready(function() {
   $('#dataTableCoolnessValues').DataTable({
     "columnDefs": [
       { "visible": false, "targets": 0 },
-      { "width": "20px", "targets": 1 },
-      { "width": "80px", "targets": 2 },
-      { "width": "30px", "targets": 3 }
+      { "width": "100px", "targets": 1 },
+      { "width": "60px", "targets": 2 },
+      { "width": "15px", "targets": 3 }
     ],
     "order": [[ 0, "desc" ]],
     "fnRowCallback" : function ( nRow, aData ) {

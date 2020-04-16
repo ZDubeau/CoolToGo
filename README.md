@@ -1,2 +1,2 @@
 # CoolToGo
-# connection parameters in a file.json
+# connection parameters on postgreSQL & Heroku --> file.json

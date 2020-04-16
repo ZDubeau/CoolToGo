@@ -2,24 +2,26 @@
 ############################################
 """ Module by Zahra
 𐤟 Création : 2020-03-06
-𐤟 Dernière MàJ : 2020-04-12
+𐤟 Dernière MàJ : 2020-04-15
 """
 
 import psycopg2
 from psycopg2 import Error
 from werkzeug.security import generate_password_hash, check_password_hash
 import DB_Protocole, DB_Table_Definitions
+from enum import Enum
 
-
+#----------------------------------------------------------------------------#
 
 def recuperation_id(sql_select:str,valeur_inserer:tuple):
+
     DB_Protocole.cur.execute(sql_select,valeur_inserer)
     try:
         id_table=DB_Protocole.cur.fetchone()[0]
     except:
         id_table=None
     return id_table
-
+###############################################################################
 
 def insert_selection(selection_name:str,description:str,lieu_event:str):
     dico= {
@@ -31,11 +33,11 @@ def insert_selection(selection_name:str,description:str,lieu_event:str):
         return "Ok"
     except (psycopg2.Error, AttributeError) as Error :
         return Error
-
+###############################################################################
 
 def insert_cooltogo_validated(id_apidae:str,Lieu_event:str,X:float,Y:float,
                             name:str,niveau_fraicheur:str,Adresse1:str,Adresse2:str,Code_postal:int,
-                            Ville:str,Description_Teaser:str,Description:str,Images:str,Publics:str,
+                            Ville:str,Telephone:str,Email:str,Site_web:str,Description_Teaser:str,Description:str,Images:str,Publics:str,
                             styleUrl:str,styleHash:str,Type:str,Categories:str,
                             Accessibilite:str,payant:bool,Plus_d_infos_et_horaires:str,
                             Dates_debut:str,Dates_fin:str):
@@ -55,6 +57,9 @@ def insert_cooltogo_validated(id_apidae:str,Lieu_event:str,X:float,Y:float,
             'Adresse2': Adresse2,
             'Code_postal': Code_postal,
             'Ville': Ville,
+            'telephone': Telephone,
+            'email': Email,
+            'site_web': Site_web,
             'Description_Teaser': Description_Teaser,
             'Description' : Description,
             'Images': Images,
@@ -71,6 +76,7 @@ def insert_cooltogo_validated(id_apidae:str,Lieu_event:str,X:float,Y:float,
             }
         
         try:
+            print(DB_Table_Definitions.insert_cooltogo_validated,dico)
             DB_Protocole.Insert_SQL(DB_Table_Definitions.insert_cooltogo_validated,dico)
             if (niveau_fraicheur != None) :
                 sql_id = "SELECT id FROM cooltogo_validated WHERE id_apidae='"+id_apidae+"'"
@@ -82,11 +88,12 @@ def insert_cooltogo_validated(id_apidae:str,Lieu_event:str,X:float,Y:float,
         except (psycopg2.Error, AttributeError) as Error :
             print(Error)
     else:
-        print('Il y à déja un id_apidae validée')
+        print('There is already a validated id_apidae')
+###############################################################################
 
 def update_cooltogo_validated(id_apidae:str,Lieu_event:str,X:float,Y:float,
                             name:str,niveau_fraicheur:str, Adresse1:str,Adresse2:str,Code_postal:int,
-                            Ville:str,Description_Teaser:str,Description:str,Images:str,Publics:str,
+                            Ville:str,Telephone:str,Email:str,Site_web:str,Description_Teaser:str,Description:str,Images:str,Publics:str,
                             styleUrl:str,styleHash:str,Type:str,Categories:str,
                             Accessibilite:str,payant:bool,Plus_d_infos_et_horaires:str,
                             Dates_debut:str,Dates_fin:str):
@@ -106,6 +113,9 @@ def update_cooltogo_validated(id_apidae:str,Lieu_event:str,X:float,Y:float,
             'Adresse2': Adresse2,
             'Code_postal': Code_postal,
             'Ville': Ville,
+            'telephone': Telephone,
+            'email': Email,
+            'site_web': Site_web,
             'Description_Teaser': Description_Teaser,
             'Description' : Description,
             'Images': Images,
@@ -143,11 +153,10 @@ def update_cooltogo_validated(id_apidae:str,Lieu_event:str,X:float,Y:float,
         return "Lieu mis à jour !!"
     else :
         return errorMessage
-
-
 ###############################################################################
 
 def insert_administrator(username:str , password:str,mail:str = None):
+
     sql_admin="select PKId_Admin from administrators where Admin_Name = %s "
     id_admin = recuperation_id(sql_admin,(username,))
     hash = 'pbkdf2:sha256'
@@ -164,18 +173,18 @@ def insert_administrator(username:str , password:str,mail:str = None):
             DB_Protocole.Insert_SQL(DB_Table_Definitions.insert_administrators,dico)
             id_admin=DB_Protocole.cur.fetchone()[0]
         except Error :
-            print('insert utilisateur echoué' + Error)
+            print('Failed user insert !' + Error)
     else:
-        print('Il y à déja un utilisateur')
-    return id_admin
+        print('There is already an user !')
 
+    return id_admin
 ###############################################################################
 
 def connexion_admin(nom_admin:str, password:str, inscription:bool=False):
     '''
-    permet de verifier si un utilisateur existe ou pas
+    permet de verifier si un utilisateur existe ou pas!
     '''
-    sql_admin = "select Admin_Name from administrators"
+    sql_admin = "SELECT Admin_Name FROM administrators"
     DB_Protocole.cur.execute(sql_admin)
     list_admin:list = DB_Protocole.cur.fetchall()
 
@@ -191,10 +200,10 @@ def connexion_admin(nom_admin:str, password:str, inscription:bool=False):
         return existe, list_admin
     else:
         return list_admin
-
 ###############################################################################
 
 def create_dict_for_lieu_validated(thelist:list):
+
     id_ = thelist[0]
     id_apidae = thelist[1]
     Lieu_event = thelist[2]
@@ -205,25 +214,28 @@ def create_dict_for_lieu_validated(thelist:list):
     Adresse2 = thelist[7]
     Code_postal = thelist[8]
     Ville = thelist[9]
-    Description_Teaser = thelist[10]
-    Description = thelist[11]
-    Images = thelist[12]
-    if thelist[13] == None :
+    telephone = thelist[10]
+    email = thelist[11]
+    site_web = thelist[12]
+    Description_Teaser = thelist[13]
+    Description = thelist[14]
+    Images = thelist[15]
+    if thelist[16] == None :
         Publics = None
     else :
-        Publics = thelist[13].split(",")
-    styleUrl = thelist[14]
-    styleHash = thelist[15]
-    Type = thelist[16]
-    if thelist[17] == None :
+        Publics = thelist[16].split(",")
+    styleUrl = thelist[17]
+    styleHash = thelist[18]
+    Type = thelist[19]
+    if thelist[20] == None :
         Categories = None
     else :
-        Categories = thelist[17].split(",")
-    Accessibilite = thelist[18]
-    payant = thelist[19]
-    Plus_d_infos_et_horaires = thelist[20]
-    Dates_debut = thelist[21]
-    Dates_fin = thelist[22]
+        Categories = thelist[20].split(",")
+    Accessibilite = thelist[21]
+    payant = thelist[22]
+    Plus_d_infos_et_horaires = thelist[23]
+    Dates_debut = thelist[24]
+    Dates_fin = thelist[25]
     DB_Protocole.ConnexionDB()
     sql_select_niveau_de_fraicheur = "SELECT nf.niveau_de_fraicheur AS fraicheur FROM niveau_de_fraicheur AS nf INNER JOIN lien_niveau_de_fraicheur_cooltogo_validated AS lnfcv ON nf.id=lnfcv.id_niveau_de_fraicheur WHERE id_cooltogo_validated="+str(id_)
     DB_Protocole.cur.execute(sql_select_niveau_de_fraicheur)
@@ -244,6 +256,9 @@ def create_dict_for_lieu_validated(thelist:list):
     dict_for_properties.update({"adresse_2": Adresse2})
     dict_for_properties.update({"code_postal": Code_postal})
     dict_for_properties.update({"ville": Ville})
+    dict_for_properties.update({"telephone": telephone})
+    dict_for_properties.update({"email": email})
+    dict_for_properties.update({"site_web": site_web})
     dict_for_properties.update({"description_teaser": Description_Teaser})
     dict_for_properties.update({"images": Images})
     dict_for_properties.update({"publics": Publics})
@@ -266,3 +281,4 @@ def create_dict_for_lieu_validated(thelist:list):
     dict_for_lieu_validated.update({"geometry": dict_for_geometry})
     dict_for_lieu_validated.update({"type": "Feature"})
     return dict_for_lieu_validated
+########################################################################

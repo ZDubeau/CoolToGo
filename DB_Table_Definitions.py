@@ -2,11 +2,10 @@
 ############################################
 """ Module by Zahra
 𐤟 Création : 2020-03-06
-𐤟 Dernière MàJ : 2020-04-12
+𐤟 Dernière MàJ : 2020-04-13
 """
 
 ################ Tables des données extraites d'apidae ################
-
 
 drop_cooltogo_from_apidae ="""DROP TABLE IF EXISTS cooltogo_from_apidae;"""
 
@@ -24,6 +23,9 @@ cooltogo_from_apidae = """
         adresse2 TEXT,
         code_postal VARCHAR(10),
         ville TEXT,
+        telephone VARCHAR(20),
+        email TEXT,
+        site_web TEXT,
         description_teaser TEXT,
         images TEXT,
         publics TEXT,
@@ -36,8 +38,9 @@ cooltogo_from_apidae = """
     )"""
 
 insert_cooltogo_from_apidae = """
-  INSERT INTO cooltogo_from_apidae (id_apidae,id_selection, lieu_event, names, types, latitude, longitude, adresse1, adresse2, code_postal, ville, description_teaser, images, publics, categories, accessibilité, payant, plus_d_infos_et_horaires, date_début, date_fin)
-  VALUES (%(id_apidae)s,%(id_selection)s, %(lieu_event)s, %(names)s, %(types)s, %(latitude)s, %(longitude)s, %(adresse1)s, %(adresse2)s, %(code_postal)s, %(ville)s, %(description_teaser)s, %(images)s, %(publics)s, %(categories)s, %(accessibilité)s, %(payant)s, %(plus_d_infos_et_horaires)s, %(date_début)s, %(date_fin)s) returning id;"""
+  INSERT INTO cooltogo_from_apidae (id_apidae,id_selection, lieu_event, names, types, latitude, longitude, adresse1, adresse2, code_postal, ville,telephone, email, site_web, description_teaser, images, publics, categories, accessibilité, payant, plus_d_infos_et_horaires, date_début, date_fin)
+  VALUES (%(id_apidae)s,%(id_selection)s, %(lieu_event)s, %(names)s, %(types)s, %(latitude)s, %(longitude)s, %(adresse1)s, %(adresse2)s, %(code_postal)s, %(ville)s, %(telephone)s, %(email)s, %(site_web)s, %(description_teaser)s, %(images)s, %(publics)s, %(categories)s, %(accessibilité)s, %(payant)s, %(plus_d_infos_et_horaires)s, %(date_début)s, %(date_fin)s) returning id;"""
+
 
 ################ Tables des données validés par l'administrateur ################
 
@@ -45,58 +48,64 @@ drop_cooltogo_validated ="""DROP TABLE IF EXISTS cooltogo_validated;"""
 
 cooltogo_validated = """
   CREATE TABLE IF NOT EXISTS cooltogo_validated (
-        id SERIAL PRIMARY KEY,
-        id_apidae VARCHAR(50),
-        Lieu_event TEXT,
-        X FLOAT,
-        Y FLOAT,
-        name TEXT,
-        Adresse1 TEXT,
-        Adresse2 TEXT,
-        Code_postal VARCHAR(10),
-        Ville TEXT,
-        Description_Teaser TEXT,
-        Description TEXT,
-        Images TEXT,
-        Publics TEXT,
-        styleUrl TEXT,
-        styleHash TEXT,
-        Type TEXT,
-        Catégories TEXT,
-        Accessibilité TEXT,
-        payant BOOL,
-        Plus_d_infos_et_horaires TEXT,
-        Dates_début DATE,
-        Dates_fin DATE
+          id SERIAL PRIMARY KEY,
+          id_apidae VARCHAR(50),
+          Lieu_event TEXT,
+          X FLOAT,
+          Y FLOAT,
+          name TEXT,
+          Adresse1 TEXT,
+          Adresse2 TEXT,
+          Code_postal VARCHAR(10),
+          Ville TEXT,
+          telephone VARCHAR(20),
+          email TEXT,
+          site_web TEXT,
+          Description_Teaser TEXT,
+          Description TEXT,
+          Images TEXT,
+          Publics TEXT,
+          styleUrl TEXT,
+          styleHash TEXT,
+          Type TEXT,
+          Catégories TEXT,
+          Accessibilité TEXT,
+          payant BOOL,
+          Plus_d_infos_et_horaires TEXT,
+          Dates_début DATE,
+          Dates_fin DATE
     )"""
 
 insert_cooltogo_validated = """
-  INSERT INTO cooltogo_validated (id_apidae,Lieu_event, X, Y, name, Adresse1, Adresse2, Code_postal, Ville, Description_Teaser, Description, Images, Publics, styleUrl, styleHash, Type, Catégories, Accessibilité, payant, Plus_d_infos_et_horaires, Dates_début, Dates_fin)
-  VALUES (%(id_apidae)s, %(Lieu_event)s, %(X)s, %(Y)s, %(name)s, %(Adresse1)s, %(Adresse2)s, %(Code_postal)s, %(Ville)s, %(Description_Teaser)s, %(Description)s,%(Images)s, %(Publics)s, %(styleUrl)s, %(styleHash)s, %(Type)s, %(Catégories)s, %(Accessibilité)s, %(payant)s, %(Plus_d_infos_et_horaires)s, %(Dates_début)s, %(Dates_fin)s) returning id;"""
+  INSERT INTO cooltogo_validated (id_apidae,Lieu_event, X, Y, name, Adresse1, Adresse2, Code_postal, Ville, telephone, email, site_web, Description_Teaser, Description, Images, Publics, styleUrl, styleHash, Type, Catégories, Accessibilité, payant, Plus_d_infos_et_horaires, Dates_début, Dates_fin)
+  VALUES (%(id_apidae)s, %(Lieu_event)s, %(X)s, %(Y)s, %(name)s, %(Adresse1)s, %(Adresse2)s, %(Code_postal)s, %(Ville)s, %(telephone)s, %(email)s, %(site_web)s, %(Description_Teaser)s, %(Description)s,%(Images)s, %(Publics)s, %(styleUrl)s, %(styleHash)s, %(Type)s, %(Catégories)s, %(Accessibilité)s, %(payant)s, %(Plus_d_infos_et_horaires)s, %(Dates_début)s, %(Dates_fin)s) returning id;"""
 
 update_cooltogo_validated = """
   UPDATE cooltogo_validated 
     SET  Lieu_event = %(Lieu_event)s,
-         X = %(X)s,
-         Y = %(Y)s,
-         name = %(name)s,
-         Adresse1 = %(Adresse1)s,
-         Adresse2 = %(Adresse2)s, 
-         Code_postal =%(Code_postal)s, 
-         Ville = %(Ville)s, 
-         Description_Teaser = %(Description_Teaser)s, 
-         Description = %(Description)s, 
-         Images =%(Images)s, 
-         Publics = %(Publics)s, 
-         styleUrl =%(styleUrl)s, 
-         styleHash = %(styleHash)s, 
-         Type =%(Type)s, 
-         Catégories = %(Catégories)s, 
-         Accessibilité = %(Accessibilité)s, 
-         payant = %(payant)s, 
-         Plus_d_infos_et_horaires = %(Plus_d_infos_et_horaires)s, 
-         Dates_début = %(Dates_début)s, 
-         Dates_fin =%(Dates_fin)s
+          X = %(X)s,
+          Y = %(Y)s,
+          name = %(name)s,
+          Adresse1 = %(Adresse1)s,
+          Adresse2 = %(Adresse2)s, 
+          Code_postal =%(Code_postal)s, 
+          Ville = %(Ville)s,
+          telephone = %(telephone)s,
+          email = %(email)s,
+          site_web = %(site_web)s,
+          Description_Teaser = %(Description_Teaser)s, 
+          Description = %(Description)s, 
+          Images =%(Images)s, 
+          Publics = %(Publics)s, 
+          styleUrl =%(styleUrl)s, 
+          styleHash = %(styleHash)s, 
+          Type =%(Type)s, 
+          Catégories = %(Catégories)s, 
+          Accessibilité = %(Accessibilité)s, 
+          payant = %(payant)s, 
+          Plus_d_infos_et_horaires = %(Plus_d_infos_et_horaires)s, 
+          Dates_début = %(Dates_début)s, 
+          Dates_fin =%(Dates_fin)s
     WHERE id_apidae = %(id_apidae)s returning id;"""
 
 ################ Table des administrateurs ################
@@ -115,7 +124,7 @@ insert_administrators = """
   INSERT INTO administrators (Admin_Name, Admin_pwd_hash, Admin_email)
   VALUES (%(Admin_Name)s, %(Admin_pwd_hash)s, %(Admin_email)s) returning PKId_Admin;"""
 
-################ Tables des messages ################
+#################### Tables des messages ###################
 
 drop_message = """DROP TABLE IF EXISTS message;"""
 
@@ -131,7 +140,7 @@ insert_message = """
   INSERT INTO message (message, published_on, active)
   VALUES (%(message)s, %(published_on)s, %(active)s) returning id;"""
 
-################ Tables des selection ################
+################### Tables des selection ####################
 
 drop_selection = """DROP TABLE IF EXISTS selection;"""
 
@@ -204,4 +213,4 @@ delete_lien_niveau_de_fraicheur_cooltogo_validated ="""
 DELETE FROM lien_niveau_de_fraicheur_cooltogo_validated 
 WHERE id_cooltogo_validated = %(id_cooltogo_validated)s;"""
 
-## next week, a new episode...
+############################ THE END ################################

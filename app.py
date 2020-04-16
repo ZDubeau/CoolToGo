@@ -37,6 +37,57 @@ def get_homepage():
     DeconnexionDB()
     return render_template('homepage.html', inscription=inscription)
 
+#---------------------- Inscription ----------------------#
+
+@app.route("/inscription", methods=["POST"])
+def post_inscription():
+    ConnexionDB()
+
+    pseudo = request.form["uname"]
+    email = request.form["email"]
+    password = request.form["psw"]
+    password_repeat = request.form.get("psw-repeat")
+
+    if password_repeat == password:
+        list_admin = functions.connexion_admin(pseudo, password, True)
+        #print(list_admin)
+        if [pseudo] in list_admin :
+            errorMessage="Username already existe!"
+        else:
+            functions.insert_administrator(pseudo, password,email)
+            errorMessage="Well done, you've signed up!"
+    else:
+        errorMessage="The passwords are not match!"
+    DeconnexionDB()
+
+    return redirect(url_for("get_homepage",errorMessage=errorMessage))
+
+#---------------------- Login page ----------------------#
+
+@app.route("/login", methods=["GET","POST"])
+def post_login():
+
+    ConnexionDB()
+    pseudo = request.form.get("uname")
+    password = request.form.get("psw")
+    sql_admin="select PKId_Admin from administrators where Admin_Name = %s "
+    admin_ID = functions.recuperation_id(sql_admin,(pseudo,))
+    bonID, lis_admin = functions.connexion_admin(pseudo, password)    
+    if bonID == True:
+        resp = make_response(redirect(url_for("get_home")))
+        print("resp :", resp)
+
+        resp.set_cookie('id', str(admin_ID))
+        resp.set_cookie('pseudo', pseudo)
+        return redirect(url_for("get_home"))
+    elif [pseudo] in lis_admin:
+        errorMessage="The username existe but the password is wrong!"
+    else:
+        errorMessage="The passwords are not match!"
+    DeconnexionDB()
+
+    return redirect(url_for("get_homepage",errorMessage=errorMessage))
+
 #------------------------ Admin page ---------------------------#
 
 @app.route('/home', methods=['GET'])
@@ -58,7 +109,7 @@ def get_tableApidae():
     engine = make_engine()
     df = pd.read_sql("SELECT *,'' as a FROM cooltogo_from_apidae WHERE id_apidae NOT IN (SELECT DISTINCT id_apidae FROM cooltogo_validated) ORDER BY id ASC", engine)
     
-    return render_template('pages/tableApidae.html',tables=[df.to_html(classes=['table table-bordered'], table_id='dataTableApidae',index=False)], pseudo=pseudo)
+    return render_template('pages/tableApidae.html',tables=[df.to_html(classes='table table-bordered', table_id='dataTableApidae',index=False)], pseudo=pseudo)
 
 #------------------ Valid tables interface --------------------#
 
@@ -105,6 +156,9 @@ def get_new_data_valid():
     adresse2 = request.form["adresse2"]
     codePostal = request.form["code_postal"]
     City = request.form["City"]
+    telephone = request.form["telephone"]
+    email = request.form["email"]
+    site_web = request.form["site_web"]
     Description_Teaser = request.form["Description_Teaser"]
     Description = request.form["description"]
     styleUrl = request.form["styleUrl"]
@@ -184,6 +238,9 @@ def get_new_data_valid():
                                         adresse2,
                                         codePostal,
                                         City,
+                                        telephone,
+                                        email,
+                                        site_web,
                                         Description_Teaser,
                                         Description,
                                         Images,
@@ -197,10 +254,7 @@ def get_new_data_valid():
                                         plus_d_infos,
                                         Date_debut,
                                         Date_fin)
-    DeconnexionDB()
-    engine = make_engine()
-    df = pd.read_sql("SELECT *, '' as Edit ,'' as a FROM cooltogo_validated ORDER BY id ASC", engine)
-    
+    DeconnexionDB()    
     return redirect(url_for("get_tableValide"))
 
 #-------------------- Validated lieu ------------------------#
@@ -222,49 +276,26 @@ def get_validate_lieu(id):
                                         data[10],
                                         data[11],
                                         data[12],
-                                        data[12],
                                         data[13],
                                         data[14],
-                                        "",
-                                        "",
-                                        data[5],
+                                        data[15],
                                         data[15],
                                         data[16],
                                         data[17],
+                                        "",
+                                        "",
+                                        data[5],
                                         data[18],
                                         data[19],
-                                        data[20])
+                                        data[20],
+                                        data[21],
+                                        data[22],
+                                        data[23])
     DeconnexionDB()
     engine = make_engine()
     df = pd.read_sql("SELECT *,'' as a FROM cooltogo_from_apidae WHERE id_apidae NOT IN (SELECT DISTINCT id_apidae FROM cooltogo_validated) ORDER BY id ASC", engine)
     
     return redirect(url_for("get_tableApidae"))
-
-#-------------------- Message button ----------------------#
-
-@app.route('/message', methods=['GET'])
-def get_message():
-
-    user_ID = request.cookies.get('id')
-    pseudo = request.cookies.get('pseudo')
-
-    engine = make_engine()
-    df = pd.read_sql("SELECT message, published_on AS Published_date, active FROM message", engine)
-
-    return render_template('pages/message.html',tables=[df.to_html(classes='table table-bordered', table_id='dataTableMessage',index=False)], pseudo=pseudo)
-
-@app.route("/new-message", methods=["POST"])
-def post_new_message():
-    ConnexionDB()
-    message = request.form["message"]
-    sql_set_all_message_to_false = "UPDATE message SET active = False"
-    DB_Protocole.cur.execute(sql_set_all_message_to_false)
-    DB_Protocole.conn.commit()
-    sql_insert_message = "INSERT INTO message (message, published_on, active) VALUES ('"+message+"',NOW(),True)"
-    DB_Protocole.cur.execute(sql_insert_message)
-    DB_Protocole.conn.commit()
-    DeconnexionDB()
-    return redirect(url_for("get_message"))
 
 #------------ Add new administator interface ---------------#
 
@@ -288,6 +319,7 @@ def get_add_admin():
 
 @app.route("/new_admin", methods=["POST"])
 def post_Administator():
+
     ConnexionDB()
     pseudo = request.form["adm_uname"]
     email = request.form["adm_email"]
@@ -298,80 +330,35 @@ def post_Administator():
     if password_repeat == password:
         list_admin = functions.connexion_admin(pseudo, password, True)
         if [pseudo] in list_admin :
-            errorMessage="L'utilisateur existe déjà !"
+            errorMessage="Username already existe !"
         else:
             functions.insert_administrator(pseudo, password,email)
-            errorMessage="Bravo utilisateur inscrit !"
+            errorMessage="Well done login please !"
     else:
-        errorMessage="The password inputs are diffrents !"
+        errorMessage="The password inputs are differents !"
     DeconnexionDB()
+
     return redirect(url_for("get_add_admin",errorMessage=errorMessage))
 
 #--------------- Remove an administator ------------------#
 
 @app.route('/delete_admin/<id>')
 def get_delete_admin(id):
+
     ConnexionDB()
     sql_delete_admin = "DELETE FROM administrators WHERE PKId_Admin="+id
     DB_Protocole.cur.execute(sql_delete_admin)
     DB_Protocole.conn.commit()
     DeconnexionDB()
     errorMessage="Admin deleted successfully !"
+
     return redirect(url_for("get_add_admin",errorMessage=errorMessage))
-
-#---------------------- Login page ----------------------#
-
-@app.route("/login", methods=["GET","POST"])
-def post_login():
-    ConnexionDB()
-    pseudo = request.form.get("uname")
-    password = request.form.get("psw")
-    sql_admin="select PKId_Admin from administrators where Admin_Name = %s "
-    admin_ID = functions.recuperation_id(sql_admin,(pseudo,))
-
-    bonID, lis_admin = functions.connexion_admin(pseudo, password)    
-    if bonID == True:
-        resp = make_response(redirect(url_for("get_home")))
-        print("resp :", resp)
-
-        resp.set_cookie('id', str(admin_ID))
-        resp.set_cookie('pseudo', pseudo)
-        return redirect(url_for("get_home"))
-    elif [pseudo] in lis_admin:
-        errorMessage="The username existe but the password is wrong!"
-    else:
-        errorMessage="The passwords are not match!"
-        
-    DeconnexionDB()
-    return redirect(url_for("get_homepage",errorMessage=errorMessage))
-
-#---------------------- Inscription ----------------------#
-
-@app.route("/inscription", methods=["POST"])
-def post_inscription():
-    ConnexionDB()
-    pseudo = request.form["uname"]
-    email = request.form["email"]
-    password = request.form["psw"]
-    password_repeat = request.form.get("psw-repeat")
-
-    if password_repeat == password:
-        list_admin = functions.connexion_admin(pseudo, password, True)
-        #print(list_admin)
-        if [pseudo] in list_admin :
-            errorMessage="Username already existe!"
-        else:
-            functions.insert_administrator(pseudo, password,email)
-            errorMessage="Well done, you've signed up!"
-    else:
-        errorMessage="The passwords are not match!"
-    DeconnexionDB()
-    return redirect(url_for("get_homepage",errorMessage=errorMessage))
 
 #-------------------- Remove a lieu ------------------------#
 
 @app.route('/remove_lieu/<id>')
 def get_remove_lieu(id):
+
     ConnexionDB()
     sql_delete_valid = "DELETE FROM cooltogo_validated WHERE id="+id
     DB_Protocole.cur.execute(sql_delete_valid)
@@ -379,32 +366,42 @@ def get_remove_lieu(id):
     DB_Protocole.cur.execute(sql_delete_lien_niveau_fraicheur)
     DB_Protocole.conn.commit()
     DeconnexionDB()
+
     return redirect(url_for("get_tableValide"))
+
+#----------------- Apidae Selection --------------------#
 
 @app.route('/apidaeSelection', methods=['GET', 'POST'])
 def get_apidaeSelection():
+
     user_ID = request.cookies.get('id')
     pseudo = request.cookies.get('pseudo')
     engine = make_engine()
-    df = pd.read_sql("SELECT s.id as id, s.selection as selection, s.description as description, s.selection_type as Lieu_Event, se.selection_extraction_date AS Last_Extract, se.selection_extraction_nb_records AS Nb_records, '' as Launch, '' as Del  FROM selection AS s LEFT OUTER JOIN selection_extraction AS se ON s.id = se.selection_id AND se.selection_extraction_date =(SELECT MAX(selection_extraction_date) FROM selection_extraction WHERE selection_id=se.selection_id)", engine)
+    df = pd.read_sql("SELECT s.id as id, s.selection as selection, s.description as categories, s.selection_type as Lieu_Event, se.selection_extraction_date AS Last_Extract, se.selection_extraction_nb_records AS Nb_records, '' as Launch, '' as Del  FROM selection AS s LEFT OUTER JOIN selection_extraction AS se ON s.id = se.selection_id AND se.selection_extraction_date =(SELECT MAX(selection_extraction_date) FROM selection_extraction WHERE selection_id=se.selection_id)", engine)
+    
     return render_template('pages/apidaeSelection.html',tables=[df.to_html(classes='table table-bordered', table_id='dataTableSelection',index=False)], pseudo=pseudo)
+
+#------------------- New Selection --------------------#
 
 @app.route('/new_selection', methods=['GET','POST'])
 def get_new_selection():
+
     ConnexionDB()
     selection_name = request.form["selection"]
-    description = request.form["description"]
+    categories = request.form["categories"]
     lieu_event = request.form["lieu_event"]
-    functions.insert_selection(selection_name,description,lieu_event)
+    functions.insert_selection(selection_name,categories,lieu_event)
     DeconnexionDB()
+
     return redirect(url_for("get_apidaeSelection"))
 
+#--------------- Lancement(launch) d'extraction --------------#
 
 @app.route('/launch_extract/<id>')
 def get_launch_extract(id):
+
     ConnexionDB()
     engine = make_engine()
-
     sql_select_data = "SELECT selection FROM selection WHERE id="+id
     DB_Protocole.cur.execute(sql_select_data)
     functions = DB_Protocole.cur.fetchone()[0]
@@ -431,10 +428,12 @@ def get_launch_extract(id):
 @app.route('/delete_selection/<id>')
 def get_delete_selection(id):
     ConnexionDB()
+
     sql_delete_selection = "DELETE FROM selection WHERE id="+id
     DB_Protocole.cur.execute(sql_delete_selection)
     DB_Protocole.conn.commit()
     DeconnexionDB()
+
     return redirect(url_for("get_apidaeSelection"))
 
 #------------------ Edit lieu valid --------------------#
@@ -442,6 +441,7 @@ def get_delete_selection(id):
 @app.route('/edit_lieu_valide/<id>')
 def get_edit_data(id):
     ConnexionDB()
+
     sql_select_data = "SELECT * FROM cooltogo_validated WHERE id="+id
     DB_Protocole.cur.execute(sql_select_data)
     data = DB_Protocole.cur.fetchall()
@@ -449,26 +449,22 @@ def get_edit_data(id):
     DB_Protocole.cur.execute(sql_niveau_de_fraicheur)
     data_niveau_fraicheur = DB_Protocole.cur.fetchone()
     sql_liste_niveau_de_fraicheur = "SELECT id,niveau_de_fraicheur FROM niveau_de_fraicheur WHERE active ORDER BY niveau_de_fraicheur ASC"
-
-
-
-
-
     DB_Protocole.cur.execute(sql_liste_niveau_de_fraicheur)
     data_liste_fraicheur = DB_Protocole.cur.fetchall()
     
-    if data[0][13] == None :
+    if data[0][16] == None :
         publics = None
     else :
-        publics = data[0][13].split(",")
+        publics = data[0][16].split(",")
 
     DeconnexionDB()
-    return render_template('pages/EditLieuValid.html',id_apidae=data[0][1],lieu_event=data[0][2],latitude=data[0][3],longitude=data[0][4],name=data[0][5],niveau_fraicheur=data_niveau_fraicheur,liste_niveau_fraicheur=data_liste_fraicheur,adresse1=data[0][6],adresse2=data[0][7],code_postal=data[0][8],city=data[0][9],description_teaser=data[0][10],description=data[0][11],images=data[0][12],publics = publics,styleUrl=data[0][14],styleHash=data[0][15],type=data[0][16],categories=data[0][17],accessibilite=data[0][18],payant=data[0][19],plus_d_infos=data[0][20],date_debut=data[0][21],date_fin=data[0][22])
+    return render_template('pages/EditLieuValid.html',id_apidae=data[0][1],lieu_event=data[0][2],latitude=data[0][3],longitude=data[0][4],name=data[0][5],niveau_fraicheur=data_niveau_fraicheur,liste_niveau_fraicheur=data_liste_fraicheur,adresse1=data[0][6],adresse2=data[0][7],code_postal=data[0][8],city=data[0][9],telephone=data[0][10],email=data[0][11],ite_web=data[0][12],description_teaser=data[0][13],description=data[0][14],images=data[0][15],publics = publics,styleUrl=data[0][17],styleHash=data[0][18],type=data[0][19],categories=data[0][20],accessibilite=data[0][21],payant=data[0][22],plus_d_infos=data[0][23],date_debut=data[0][24],date_fin=data[0][25])
 
 #------------------ Edit DATA valid -------------------#
 
 @app.route('/edit_data_valid' , methods=['GET', 'POST'])
 def get_edit_data_valid():
+
     id_apidae = request.form["id_apidae"]
     lieu_event = request.form["lieu_event"]
     latitude = request.form["latitude"]
@@ -480,6 +476,9 @@ def get_edit_data_valid():
     adresse2 = request.form["adresse2"]
     codePostal = request.form["code_postal"]
     City = request.form["city"]
+    telephone = request.form["telephone"]
+    email = request.form["email"]
+    site_web = request.form["site_web"]
     Description_Teaser = request.form["description_teaser"]
     Description = request.form["description"]
     styleUrl = request.form["styleUrl"]
@@ -553,6 +552,9 @@ def get_edit_data_valid():
                                         adresse2,
                                         codePostal,
                                         City,
+                                        telephone,
+                                        email,
+                                        site_web,
                                         Description_Teaser,
                                         Description,
                                         Images,
@@ -566,14 +568,15 @@ def get_edit_data_valid():
                                         plus_d_infos,
                                         Date_debut,
                                         Date_fin)
+    
     DeconnexionDB()
-
     return redirect(url_for("get_tableValide",errorMessage=errorMessage))
 
 #------------------- extract locations --------------------#
 
 @app.route('/extract_locations')
 def get_extract_locations():
+
     ConnexionDB()
     sql_select_data = "SELECT * FROM cooltogo_validated"
     DB_Protocole.cur.execute(sql_select_data)
@@ -604,14 +607,19 @@ def get_extract_locations():
     )
     return response
 
+#-------------- Niveau de fraicheur ---------------#
+
 @app.route('/coolness_values', methods=['GET'])
 def get_coolness_values():
+
     user_ID = request.cookies.get('id')
     pseudo = request.cookies.get('pseudo')
     engine = make_engine()
     df = pd.read_sql("SELECT id,niveau_de_fraicheur AS Fraicheur, active, '' AS Change FROM niveau_de_fraicheur", engine)
+    
     return render_template('pages/coolness_values.html',tables=[df.to_html(classes='table table-bordered', table_id='dataTableCoolnessValues',index=False)], pseudo=pseudo)
-#------------------------------------------------------------
+
+#------------ Nouveau niveau fraicheur -----------#
 
 @app.route("/new_coolness_value", methods=["POST"])
 def post_new_coolness_value():
@@ -627,12 +635,43 @@ def post_new_coolness_value():
 
 @app.route("/change_coolness_status/<id>", methods=['GET','POST'])
 def post_change_coolness_status(id):
+
     ConnexionDB()
     sql_toggle_active = "UPDATE niveau_de_fraicheur SET active = NOT active WHERE id ="+id
     DB_Protocole.cur.execute(sql_toggle_active)
     DB_Protocole.conn.commit()
     DeconnexionDB()
+    
     return redirect(url_for("get_coolness_values"))
+
+#-------------------- Message button ----------------------#
+
+@app.route('/message', methods=['GET'])
+def get_message():
+
+    user_ID = request.cookies.get('id')
+    pseudo = request.cookies.get('pseudo')
+
+    engine = make_engine()
+    df = pd.read_sql("SELECT message, published_on AS Published_date, active FROM message", engine)
+
+    return render_template('pages/message.html',tables=[df.to_html(classes='table table-bordered', table_id='dataTableMessage',index=False)], pseudo=pseudo)
+
+@app.route("/new-message", methods=["POST"])
+def post_new_message():
+    ConnexionDB()
+
+    message = request.form["message"]
+    sql_set_all_message_to_false = "UPDATE message SET active = False"
+    DB_Protocole.cur.execute(sql_set_all_message_to_false)
+    DB_Protocole.conn.commit()
+    sql_insert_message = "INSERT INTO message (message, published_on, active) VALUES (%s,NOW(),True)"
+    DB_Protocole.cur.execute(sql_insert_message, [message])
+    DB_Protocole.conn.commit()
+    DeconnexionDB()
+
+    return redirect(url_for("get_message"))
+
 
 #---------------------------------------------------#
 #                      The End                      #

@@ -59,4 +59,3 @@ wcwidth==0.1.9
 webencodings==0.5.1
 Werkzeug==1.0.1
 widgetsnbextension==3.5.1
-

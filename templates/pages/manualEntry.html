@@ -31,7 +31,7 @@
                         type="text"
                         maxlength="50"
                         placeholder="Ex. Office de Tourisme de Grenoble-Alpes Métropole"
-                        style="color: #969696;"
+                        style="color: #3f3d3d;"
                         required>
                 </div>
                 <!-- ----------------- Niveau Fraicheur ------------------- -->
@@ -73,7 +73,7 @@
                         type="text"
                         maxlength="50"
                         placeholder="Ex. 1 rue Casimir Brenier"
-                        style="color: #969696;"
+                        style="color: #3f3d3d;"
                         required>
                 </div>
                 <!-- --------------------- Adresse 2 --------------------- -->
@@ -85,7 +85,7 @@
                         type="text"
                         maxlength="50"
                         placeholder="Ex. Champ Clotury"
-                        style="color: #969696;"
+                        style="color: #3f3d3d;"
                         >
                 </div>
                 <!-- -------------------- Code postal --------------------- -->
@@ -97,7 +97,7 @@
                         type="text"
                         maxlength="50"
                         placeholder="Ex. 38000"
-                        style="color: #969696;"
+                        style="color: #3f3d3d;"
                         required>
                 </div>
                 <!-- ----------------------- City ------------------------ -->
@@ -109,7 +109,43 @@
                         type="text"
                         maxlength="70"
                         placeholder="Ex. Grenoble"
-                        style="color: #969696;"
+                        style="color: #3f3d3d;"
+                        required>
+                </div>
+                 <!-- ----------------------- telephone ------------------------ -->
+                 <div class="field">
+                    <label class="label">Telephone</label>
+                        <input
+                        name="telephone"
+                        class="input"
+                        type="text"
+                        maxlength="70"
+                        placeholder="Ex. 01.02.03.04.05"
+                        style="color: #3f3d3d;"
+                        required>
+                </div>
+                 <!-- ----------------------- Email ------------------------ -->
+                 <div class="field">
+                    <label class="label">Email</label>
+                        <input
+                        name="email"
+                        class="input"
+                        type="text"
+                        maxlength="70"
+                        placeholder="Ex. example@example.fr"
+                        style="color: #3f3d3d;"
+                        required>
+                </div>
+                 <!-- ----------------------- site web ------------------------ -->
+                 <div class="field">
+                    <label class="label">Site Web</label>
+                        <input
+                        name="site_web"
+                        class="input"
+                        type="text"
+                        maxlength="70"
+                        placeholder="Ex. www.siteweb.com"
+                        style="color: #3f3d3d;"
                         required>
                 </div>
                 <!-- ----------------- Description Teaser ---------------- -->
@@ -118,10 +154,45 @@
                         <textarea
                         name="Description_Teaser"
                         class="textarea"
-                        maxlength="1000"
-                        placeholder="Ex. La bibliothèque Maison de Barnave de Saint Egrève dispose d'un grand nombre de livres, revues et CD à consulter sur place ou à emporter !"
-                        style="color: #969696;"
+                        maxlength="300"
+                        placeholder="Ex. La bibliothèque Maison de Barnave de Saint Egrève."
+                        style="color: #3f3d3d;"
                         ></textarea>
+                </div>
+                <!-- ----------------- Description  ---------------------- -->
+                <div class="field">
+                    <label class="label">Description</label>
+                    <textarea
+                    name="description"
+                    class="textarea"
+                    maxlength="1000"
+                    placeholder="Ex. La bibliothèque Maison de Barnave de Saint Egrève dispose d'un grand nombre de livres, revues et CD à consulter sur place ou à emporter !"
+                    style="color: #3f3d3d;"
+                    ></textarea>
+                </div>
+                 <!-- ---------- Style url ----------- -->
+                 <div class="field">
+                    <label class="label">Style Url</label>
+                        <input
+                        name="styleUrl"
+                        class="input"
+                        type="text"
+                        maxlength="50"
+                        placeholder="Ex. #icon-1694-0288D1-nodesc"
+                        style="color: #3f3d3d;"
+                        required>
+                </div>
+                 <!-- ---------- style Hash ----------- -->
+                 <div class="field">
+                    <label class="label">Style Hash</label>
+                        <input
+                        name="styleHash"
+                        class="input"
+                        type="text"
+                        maxlength="50"
+                        placeholder="Ex. 1e0dd1186"
+                        style="color: #3f3d3d;"
+                        required>
                 </div>
                 <!-- ---------- Upload url of an image ----------- -->
                 <div class="field">
@@ -132,7 +203,7 @@
                         type="text"
                         maxlength="50"
                         placeholder="Ex. http://  ...............  .jpeg"
-                        style="color: #969696;"
+                        style="color: #3f3d3d;"
                         required>
                 </div>
                 <!-- ----------------- Publics ------------------------ -->
@@ -148,7 +219,7 @@
                 <div class="field">
                     <label class="label">Categories</label>
                         <span class="select">
-                            <select name="type">
+                            <select name="Categories">
                                 <option></option>
                                 <option>Etre a l’ombre en nature</option>
                                 <option>Etre au contact de l'eau</option>
@@ -168,7 +239,7 @@
                         type="text"
                         maxlength="50"
                         placeholder="Ex. Accessible en fauteuil roulant en autonomie"
-                        style="color: #969696;"
+                        style="color: #3f3d3d;"
                         required>
                 </div>
                 <!-- ------------------- Payant ----------------------- -->
@@ -191,7 +262,7 @@
                         type="text"
                         maxlength="50"
                         placeholder="Ex. http://www.grenoble-tourisme.com"
-                        style="color: #969696;"
+                        style="color: #3f3d3d;"
                         >
                 </div>
                 <!-- ----------------- Date début ---------------------- -->
@@ -201,7 +272,7 @@
                         name="Date_début"
                         class="input"
                         type="date"
-                        style="color: #969696;"
+                        style="color: #3f3d3d;"
                         >
                 </div>
                 <!-- -------------------- Date fin --------------------- -->
@@ -211,7 +282,7 @@
                         name="Date_fin"
                         class="input"
                         type="date"
-                        style="color: #969696;"
+                        style="color: #3f3d3d;"
                         >
                 </div>
                 <!-- ------------------Add button ---------------------- -->

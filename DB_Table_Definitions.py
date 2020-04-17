@@ -206,6 +206,9 @@ insert_selection = """
 select_selection_with_id = """
   SELECT selection FROM selection WHERE id=%s; """
 
+select_selection_with_type = """
+  SELECT id, selection_type FROM selection WHERE selection=%s; """
+
 delete_selection = """
   DELETE FROM selection WHERE id=%s; """
 

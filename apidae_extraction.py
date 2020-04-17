@@ -2,7 +2,13 @@ import requests     # For retrieving Data from Apidae web site
 import json         # For be can getting format json
 import pandas as pd
 from pandas.io.json import json_normalize   # For transorming 'format json' to 'DataFrame pandas'
-import DB_Protocole
+import DB_Protocole, DB_Table_Definitions
+import threading
+from threading import Thread
+import time
+import queue
+import psycopg2, psycopg2.extras, sys
+from psycopg2 import Error
 
 
 project_ID = '4364'     # Cool To Go project id
@@ -10,7 +16,6 @@ api_KEY = 'ALrtqQmv'    # Apidae API key
 select_id = "86749"     # Example id
 
 def retrieve_data_by_id(project_ID,api_KEY,select_id,selectionId):
-    
     result_df = pd.DataFrame(columns = ['id_apidae','id_selection','lieu_event','names','types','longitude','latitude',
                                 'adresse1','adresse2','code_postal','ville','telephone','email','site_web','description_teaser',
                                 'images','publics','categories','accessibilité',
@@ -20,7 +25,7 @@ def retrieve_data_by_id(project_ID,api_KEY,select_id,selectionId):
     url += "responseFields=id,nom,informations,presentation.descriptifCourt,@all"
     url += '&apiKey='+api_KEY
     url += '&projetId='+project_ID
-
+    print(url,selectionId)
     re = requests.get(url)
     req = re.json()
     
@@ -30,9 +35,11 @@ def retrieve_data_by_id(project_ID,api_KEY,select_id,selectionId):
     if 'identifier' in req:
         dict_for_id['id_apidae'] = req['identifier']
 #-----------------------------------------------------------------------------------------------------------------------
-    sql_select_data = "SELECT id, selection_type FROM selection WHERE selection='"+selectionId+"'"
-    DB_Protocole.cur.execute(sql_select_data)
-    data = DB_Protocole.cur.fetchall()
+    connection = DB_Protocole.Connexion()
+    curseur = connection.cursor(cursor_factory = psycopg2.extras.DictCursor)
+    curseur.execute(DB_Table_Definitions.select_selection_with_type,[selectionId])
+    data = curseur.fetchall()
+    DB_Protocole.Deconnexion(connection,curseur)
     dict_for_id['id_selection'] = data[0][0]
     dict_for_id['lieu_event'] = data[0][1]
 #-----------------------------------------------------------------------------------------------------------------------
@@ -181,7 +188,7 @@ def retrive_data_by_selectionId(project_ID,api_KEY,selectionId):
         while count*i<nb_object :
             result_df = result_df.append(retrive_data_by_selectionId_by_cent(project_ID,api_KEY,selectionId,count*i,count))
             i+=1
-    except :
+    except ValueError :
         print ("problème d'extraction")
     return result_df
 
@@ -198,14 +205,23 @@ def retrive_data_by_selectionId_by_cent(project_ID,api_KEY,selectionId,first,cou
     url += '"selectionIds":["'+selectionId+'"],'
     url += '"count":"'+count_+'",'
     url += '"first":"'+str(first)+'"}'
-    print(url)
     try :
         req = requests.get(url)
         df = pd.json_normalize(req.json(),'objetsTouristiques', errors='ignore')
+        que = queue.Queue()
+        threads_list = list()
         for index, row in df.iterrows():
-            result_df = result_df.append(retrieve_data_by_id(project_ID,api_KEY,str(row['id']),selectionId))
+            #result_df = result_df.append(retrieve_data_by_id(project_ID,api_KEY,str(row['id']),selectionId))
+            t = Thread(target=lambda q, arg1, arg2, arg3, arg4: q.put(retrieve_data_by_id(arg1,arg2,arg3,arg4)), args=(que, project_ID,api_KEY,str(row['id']),selectionId),daemon=True)
+            t.start()
+            threads_list.append(t)
+        for t in threads_list:
+            t.join()
+        while not que.empty():
+            df = que.get()
+            result_df = result_df.append(df)
     except :
-        print ("problème d'extraction")
+        print ("problème d'extraction by cent")
     return result_df
 #-----------------------------------------------------------------------------------------------------------------------
 def retrive_data_by_multiple_selectionId(project_ID,api_KEY,list_selectionId):

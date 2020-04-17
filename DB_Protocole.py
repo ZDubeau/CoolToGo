@@ -33,21 +33,21 @@ def ConnexionDB(): # /!\ Return connection & cursor as tuple
     return conn, cur
 
 def Connexion(): # /!\ Return connection & cursor as tuple
-    global conn
     try:
         if socket.gethostname()=="zahra-ThinkPad-T440" :
             # Connection parameters on localhost
-            conn = psycopg2.connect(dbname="cooool", user="toooo", password="goooo", host="localhost", port="5432")    
+            connection = psycopg2.connect(dbname="cooool", user="toooo", password="goooo", host="localhost", port="5432")    
         else :
             # Connection parameters on Heroku
-            conn = psycopg2.connect(dbname="d74ievmpccqdh6", user="pecrslpcwmptbf", password="3f48aaeb90fa4b6b1aa0d93cd78e67635047214b80b323c584fabcc29b66a160", host="ec2-46-137-177-160.eu-west-1.compute.amazonaws.com", port="5432")
+            connection = psycopg2.connect(dbname="d74ievmpccqdh6", user="pecrslpcwmptbf", password="3f48aaeb90fa4b6b1aa0d93cd78e67635047214b80b323c584fabcc29b66a160", host="ec2-46-137-177-160.eu-west-1.compute.amazonaws.com", port="5432")
     except:
         print("connection impossible !")
         sys.exit()
-    return conn
+    return connection
 
-def Deconnexion():
-    conn.close()
+def Deconnexion(connection,curseur):
+    curseur.close
+    connection.close()
 
 def DeconnexionDB():
     cur.close() 

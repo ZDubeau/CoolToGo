@@ -73,6 +73,9 @@ flask-login = "*"
 flask-restful = "*"
 celery = "*"
 redis = "*"
+thread = "*"
+threading = "*"
+queue = "*"
 
 [requires]
 python_version = "3.8"

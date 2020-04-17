@@ -5,11 +5,13 @@
 𐤟 Dernière MàJ : 2020-04-12
 """
 
-import psycopg2, psycopg2.extras, sys
+import psycopg2, psycopg2.extras, sys, json
 from psycopg2 import Error
 import DB_Table_Definitions
-import socket
+import os
 from sqlalchemy import create_engine
+from sqlalchemy.engine import url as sqla_url
+
 ################ Connexion ################
 
 conn = None
@@ -18,30 +20,36 @@ cur = None
 def ConnexionDB(): # /!\ Return connection & cursor as tuple
     global conn
     global cur
+    with open('info_connection.json') as json_file:
+        data = json.load(json_file)
+        environnement = os.getenv("FLASK_ENV")
+        dbname = data[environnement]['dbname']
+        user = data[environnement]['user']
+        password = data[environnement]['password']
+        host = data[environnement]['host']
+        port = data[environnement]['port']
     try:
-        if socket.gethostname()=="zahra-ThinkPad-T440" :
-            # Connection parameters on localhost
-            conn = psycopg2.connect(dbname="cooool", user="toooo", password="goooo", host="localhost", port="5432")    
-        else :
-            # Connection parameters on Heroku
-            conn = psycopg2.connect(dbname="d74ievmpccqdh6", user="pecrslpcwmptbf", password="3f48aaeb90fa4b6b1aa0d93cd78e67635047214b80b323c584fabcc29b66a160", host="ec2-46-137-177-160.eu-west-1.compute.amazonaws.com", port="5432")
+            conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
     except:
-        print("connection impossible !")
+        print("connection impossible !!!")
         sys.exit()
     cur = conn.cursor(cursor_factory = psycopg2.extras.DictCursor)
     #print("Connection :",conn,"Curseur :", cur)
     return conn, cur
 
 def Connexion(): # /!\ Return connection & cursor as tuple
+    with open('info_connection.json') as json_file:
+        data = json.load(json_file)
+        environnement = os.getenv("FLASK_ENV")
+        dbname = data[environnement]['dbname']
+        user = data[environnement]['user']
+        password = data[environnement]['password']
+        host = data[environnement]['host']
+        port = data[environnement]['port']
     try:
-        if socket.gethostname()=="zahra-ThinkPad-T440" :
-            # Connection parameters on localhost
-            connection = psycopg2.connect(dbname="cooool", user="toooo", password="goooo", host="localhost", port="5432")    
-        else :
-            # Connection parameters on Heroku
-            connection = psycopg2.connect(dbname="d74ievmpccqdh6", user="pecrslpcwmptbf", password="3f48aaeb90fa4b6b1aa0d93cd78e67635047214b80b323c584fabcc29b66a160", host="ec2-46-137-177-160.eu-west-1.compute.amazonaws.com", port="5432")
+        connection = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
     except:
-        print("connection impossible !")
+        print("connection impossible !!")
         sys.exit()
     return connection
 
@@ -113,13 +121,19 @@ def Delete(table, condition, MonTuple):
 ########### SQLAlchemy engine for pandas #############
 
 def make_engine() :
+    with open('info_connection.json') as json_file:
+        data = json.load(json_file)
+    environnement = os.getenv("FLASK_ENV")    
+    db_connect_url = sqla_url.URL(
+        drivername='postgresql+psycopg2',
+        username=data[environnement]['user'],
+        password=data[environnement]['password'],
+        host=data[environnement]['host'],
+        port=data[environnement]['port'],
+        database=data[environnement]['dbname'])
     try:
-        if socket.gethostname()=="zahra-ThinkPad-T440" :
-            # Create engine for postgreSQL
-            engine = create_engine('postgresql+psycopg2://toooo:goooo@localhost:5432/cooool',echo=False)    
-        else :
-            # Create engine for Heroku
-            engine = create_engine('postgresql+psycopg2://pecrslpcwmptbf:3f48aaeb90fa4b6b1aa0d93cd78e67635047214b80b323c584fabcc29b66a160@ec2-46-137-177-160.eu-west-1.compute.amazonaws.com:5432/d74ievmpccqdh6',echo=False) 
+        # Create engine for postgreSQL
+        engine = create_engine(db_connect_url,echo=False)    
     except:
         print("Connection impossible !")
         sys.exit()

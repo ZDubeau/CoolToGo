@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, make_response, jsonify, json,g,abort,session
 from flask_restful import Api
-import os
+import socket, os
 import pandas as pd
 from pandas import DataFrame
 from sqlalchemy import create_engine
@@ -12,10 +12,10 @@ import DB_Table_Definitions
 import DB_Functions as functions   # insert database related code here
 import apidae_extraction as apex  # my function retrieving data from apiade
 
-secret_key = 'b\|O \x0b\xce\xb5\xf3\xab$:;\xec\xb9|\x9c\x7f\xe2\xfe\xc1\x82\xe8\xcc\xeb\xff \xaa+\xd9\xdc\xfa@2'
 
 app = Flask(__name__)
-app.secret_key = secret_key
+
+app.secret_key = os.getenv("SECRET_KEY")
 
 api = Api(app) 
 #to allow angular to your python app

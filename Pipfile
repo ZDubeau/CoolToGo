@@ -72,9 +72,7 @@ python-dotenv = "*"
 flask-login = "*"
 celery = "*"
 redis = "*"
-thread = "*"
-threading = "*"
-queue = "*"
+flask-restful = "*"
 
 [requires]
 python_version = "3.8"

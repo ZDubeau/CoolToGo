@@ -5,5 +5,4 @@ Svg/
 .vscode/
 data/
 __pycache__/
-.ipynb_checkpoints/
-Jupyter_testes/
+readme.md

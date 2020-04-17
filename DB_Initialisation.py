@@ -38,7 +38,7 @@ ligth_actions_list = (  DB_Table_Definitions.drop_message,
 
 if __name__== "__main__":
     DB_Protocole.ConnexionDB()
-    for value in ligth_actions_list:
+    for value in full_actions_list:
         DB_Protocole.cur.execute(value)
         DB_Protocole.Commit() 
     DB_Protocole.DeconnexionDB()

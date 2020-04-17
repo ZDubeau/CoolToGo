@@ -1,0 +1,7 @@
+{% extends "layout.html" %}
+{% block bootstrap_2 %}
+    {% for table in tables %}
+        {{ table|safe }}
+    {% endfor %}
+    <center><h2 style="color: black; text-align: center;">{{errorMessage}}</h2></center>
+{% endblock bootstrap_2 %}

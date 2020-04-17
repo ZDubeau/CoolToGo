@@ -1,0 +1,556 @@
+{% extends "layout.html" %}
+{% block bootstrap_2 %}
+<section id="app" class="hero is-fullheight">
+    <div class="hero-body">
+      <div class="container">
+        <div class="columns">
+          <div class="column is-half is-offset-one-quarter" style="width: 55%;">
+            <p class="title">Edit informations</p>
+            <div>
+            <form action="/edit_data_valid" method="post">
+                <!-- ------------------ id Apidae ----------------------- -->
+                <div class="field">
+                    <label class="label">id_apidae</label>
+                        <input
+                        name="id_apidae"
+                        value="{{id_apidae}}"
+                        class="input"
+                        type="text"
+                        maxlength="40"
+                        style="color: #3f3d3d;"
+                        readonly>
+                </div>
+                <!-- ---------- Choose a lieu or an event ----------- -->
+                <div class="field">
+                    <label class="label">lieu_event</label>
+                        <span class="select">
+                            <select name="lieu_event" required>
+                            {% if lieu_event=="Lieu" %}
+                                <option selected>Lieu</option>
+                                <option>Event</option>
+                            {% elif lieu_event=="Event" %}
+                                <option>Lieu</option>
+                                <option selected>Event</option>
+                            {% else %}
+                                <option selected></option>
+                                <option>Lieu</option>
+                                <option>Event</option>
+                            {% endif %}
+                            </select>
+                        </span>
+                </div>
+                <!-- ------------------ latitude ----------------------- -->
+                <div class="field">
+                    <label class="label">latitude</label>
+                        <input
+                        name="latitude"
+                        value="{{latitude}}"
+                        class="input"
+                        type="text"
+                        maxlength="40"
+                        style="color: #3f3d3d;"
+                        readonly>
+                </div>
+                <!-- ------------------ longitude ----------------------- -->
+                <div class="field">
+                    <label class="label">longitude</label>
+                        <input
+                        name="longitude"
+                        value="{{longitude}}"
+                        class="input"
+                        type="text"
+                        maxlength="40"
+                        style="color: #3f3d3d;"
+                        readonly>
+                </div>
+                <!-- --------------- name of responsible --------------- -->
+                <div class="field">
+                    <label class="label">name</label>
+                        <input
+                        name="name"
+                        value="{{name}}"
+                        class="input"
+                        type="text"
+                        maxlength="50"
+                        style="color: #3f3d3d;"
+                        required>
+                </div>
+                <!-- ----------------- Niveau Fraicheur ------------------- -->
+                <div class="field">
+                    <label class="label">Niveau Fraicheur</label>
+                    <span class="select">
+                        <select name="niveau_fraicheur" required>
+                            <option value=""></option>
+                            {% for row in liste_niveau_fraicheur %}
+                                {% if (niveau_fraicheur!=None) and (row[0]==niveau_fraicheur[0]) %}
+                                    <option value="{{row[0]}}" selected>{{row[1]}}</option>
+                                {% else %}
+                                    <option value="{{row[0]}}">{{row[1]}}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </span>
+                </div>
+                <!-- ------------------ Choose a type ------------------- -->
+                <div class="field">
+                    <label class="label">type</label>
+                        <span class="select">
+                            <select name="type">
+                                {% if type=="ACTIVITE" %}
+                                <option selected>ACTIVITE</option>
+                                <option>COMMERCE_ET_SERVICE</option>
+                                <option>EQUIPEMENT</option>
+                                <option>FETE_ET_MANIFESTATION</option>
+                                <option>HEBERGEMENT_LOCATIF</option>
+                                <option>HOTELLERIE_PLEIN_AIR</option>
+                                <option>PATRIMOINE_NATUREL</option>
+                                <option>RESTAURATION</option>
+                                <option>STRUCTURE</option>
+
+                            {% elif type=="COMMERCE_ET_SERVICE" %}
+                                <option>ACTIVITE</option>
+                                <option selected>COMMERCE_ET_SERVICE</option>
+                                <option>EQUIPEMENT</option>
+                                <option>FETE_ET_MANIFESTATION</option>
+                                <option>HEBERGEMENT_LOCATIF</option>
+                                <option>HOTELLERIE_PLEIN_AIR</option>
+                                <option>PATRIMOINE_NATUREL</option>
+                                <option>RESTAURATION</option>
+                                <option>STRUCTURE</option>
+
+                            {% elif type=="EQUIPEMENT" %}
+                                <option>ACTIVITE</option>
+                                <option>COMMERCE_ET_SERVICE</option>
+                                <option selected>EQUIPEMENT</option>
+                                <option>FETE_ET_MANIFESTATION</option>
+                                <option>HEBERGEMENT_LOCATIF</option>
+                                <option>HOTELLERIE_PLEIN_AIR</option>
+                                <option>PATRIMOINE_NATUREL</option>
+                                <option>RESTAURATION</option>
+                                <option>STRUCTURE</option>
+
+                            {% elif type=="FETE_ET_MANIFESTATION" %}
+                                <option>ACTIVITE</option>
+                                <option>COMMERCE_ET_SERVICE</option>
+                                <option>EQUIPEMENT</option>
+                                <option selected>FETE_ET_MANIFESTATION</option>
+                                <option>HEBERGEMENT_LOCATIF</option>
+                                <option>HOTELLERIE_PLEIN_AIR</option>
+                                <option>PATRIMOINE_NATUREL</option>
+                                <option>RESTAURATION</option>
+                                <option>STRUCTURE</option>
+                            {% elif type=="HEBERGEMENT_LOCATIF" %}
+                                <option>ACTIVITE</option>
+                                <option>COMMERCE_ET_SERVICE</option>
+                                <option>EQUIPEMENT</option>
+                                <option>FETE_ET_MANIFESTATION</option>
+                                <option selected>HEBERGEMENT_LOCATIF</option>
+                                <option>HOTELLERIE_PLEIN_AIR</option>
+                                <option>PATRIMOINE_NATUREL</option>
+                                <option>RESTAURATION</option>
+                                <option>STRUCTURE</option>
+
+                            {% elif type=="HOTELLERIE_PLEIN_AIR" %}
+                                <option>ACTIVITE</option>
+                                <option>COMMERCE_ET_SERVICE</option>
+                                <option>EQUIPEMENT</option>
+                                <option>FETE_ET_MANIFESTATION</option>
+                                <option>HEBERGEMENT_LOCATIF</option>
+                                <option selected>HOTELLERIE_PLEIN_AIR</option>
+                                <option>PATRIMOINE_NATUREL</option>
+                                <option>RESTAURATION</option>
+                                <option>STRUCTURE</option>
+
+                            {% elif type=="PATRIMOINE_NATUREL" %}
+                                <option>ACTIVITE</option>
+                                <option>COMMERCE_ET_SERVICE</option>
+                                <option>EQUIPEMENT</option>
+                                <option>FETE_ET_MANIFESTATION</option>
+                                <option>HEBERGEMENT_LOCATIF</option>
+                                <option>HOTELLERIE_PLEIN_AIR</option>
+                                <option selected>PATRIMOINE_NATUREL</option>
+                                <option>RESTAURATION</option>
+                                <option>STRUCTURE</option>
+
+                            {% elif type=="RESTAURATION" %}
+                                <option>ACTIVITE</option>
+                                <option>COMMERCE_ET_SERVICE</option>
+                                <option>EQUIPEMENT</option>
+                                <option>FETE_ET_MANIFESTATION</option>
+                                <option>HEBERGEMENT_LOCATIF</option>
+                                <option>HOTELLERIE_PLEIN_AIR</option>
+                                <option>PATRIMOINE_NATUREL</option>
+                                <option selected>RESTAURATION</option>
+                                <option>STRUCTURE</option>
+
+                            {% elif type=="STRUCTURE" %}
+                                <option>ACTIVITE</option>
+                                <option>COMMERCE_ET_SERVICE</option>
+                                <option>EQUIPEMENT</option>
+                                <option>FETE_ET_MANIFESTATION</option>
+                                <option>HEBERGEMENT_LOCATIF</option>
+                                <option>HOTELLERIE_PLEIN_AIR</option>
+                                <option>PATRIMOINE_NATUREL</option>
+                                <option>RESTAURATION</option>
+                                <option selected>STRUCTURE</option>
+       
+                            {% else %}
+                                <option selected></option>
+                                <option>ACTIVITE</option>
+                                <option>COMMERCE_ET_SERVICE</option>
+                                <option>EQUIPEMENT</option>
+                                <option>FETE_ET_MANIFESTATION</option>
+                                <option>HEBERGEMENT_LOCATIF</option>
+                                <option>HOTELLERIE_PLEIN_AIR</option>
+                                <option>PATRIMOINE_NATUREL</option>
+                                <option>RESTAURATION</option>
+                                <option>STRUCTURE</option>
+                            {% endif %}
+
+                            </select>
+                        </span>
+                </div>
+                <!-- --------------------- Adresse 1 ---------------------- -->
+                <div class="field">
+                    <label class="label">adresse1</label>
+                    <input
+                    name="adresse1"
+                    class="input"
+                    value="{{adresse1}}"
+                    type="text"
+                    maxlength="50"
+                    style="color: #3f3d3d;"
+                    required>
+                </div>
+                <!-- --------------------- Adresse 2 --------------------- -->
+                <div class="field">
+                    <label class="label">adresse2</label>
+                    <input
+                    name="adresse2"
+                    class="input"
+                    value="{{adresse2}}"
+                    type="text"
+                    maxlength="50"
+                    placeholder="Ex. Champ Clotury"
+                    style="color: #3f3d3d;"
+                    >
+                </div>
+                <!-- -------------------- Code postal --------------------- -->
+                <div class="field">
+                    <label class="label">Code postal</label>
+                    <input
+                    name="code_postal"
+                    class="input"
+                    value="{{code_postal}}"
+                    type="text"
+                    maxlength="50"
+                    style="color: #3f3d3d;"
+                    required>
+                </div>
+                <!-- ----------------------- City ------------------------ -->
+                <div class="field">
+                    <label class="label">City</label>
+                    <input
+                    name="city"
+                    class="input"
+                    value="{{city}}"
+                    type="text"
+                    maxlength="70"
+                    style="color: #3f3d3d;"
+                    required>
+                </div>
+                <!-- ----------------------- telephone ------------------------ -->
+                <div class="field">
+                    <label class="label">Telephone</label>
+                        <input
+                        name="telephone"
+                        class="input"
+                        value="{{telephone}}"
+                        type="text"
+                        maxlength="70"
+                        placeholder="Ex. Grenoble"
+                        style="color: #3f3d3d;"
+                        required>
+                </div>
+                 <!-- ----------------------- Email ------------------------ -->
+                 <div class="field">
+                    <label class="label">Email</label>
+                        <input
+                        name="email"
+                        class="input"
+                        value="{{email}}"
+                        type="text"
+                        maxlength="70"
+                        placeholder="Ex. Grenoble"
+                        style="color: #3f3d3d;"
+                        required>
+                </div>
+                 <!-- ----------------------- site web ------------------------ -->
+                 <div class="field">
+                    <label class="label">Site Web</label>
+                        <input
+                        name="site_web"
+                        class="input"
+                        value="{{site_web}}"
+                        type="text"
+                        maxlength="70"
+                        placeholder="Ex. Grenoble"
+                        style="color: #3f3d3d;"
+                        required>
+                </div>
+                <!-- ----------------- Description Teaser ---------------- -->
+                <div class="field">
+                    <label class="label">Description Teaser</label>
+                    <textarea
+                    name="description_teaser"
+                    class="textarea"
+                    maxlength="1000"
+                    style="color: #3f3d3d;"
+                    >{{description_teaser}}</textarea>
+                </div>
+                <!-- ----------------- Description  ---------------------- -->
+                <div class="field">
+                    <label class="label">Description</label>
+                    <textarea
+                    name="description"
+                    class="textarea"
+                    maxlength="1000"
+                    style="color: #3f3d3d;"
+                    >{{description}}</textarea>
+                </div>
+                <!-- ---------- Upload url of an image ----------- -->
+                <div class="field">
+                    <label class="label">Images</label>
+                        <input
+                        name="images"
+                        class="input"
+                        value="{{images}}"
+                        type="text"
+                        maxlength="50"
+                        style="color: #3f3d3d;"
+                        required>
+                </div>
+                <!-- -------------------------------------------------- -->
+                <div class="field">
+                    <label class="label">Publics</label>
+                    {% if publics == None %}
+                        <label><input name="senior" type="checkbox" value ="Senior">Senior&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                        <label><input name="enfant" type="checkbox" value ="Enfant">Enfant&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                        <label><input name="jeune" type="checkbox" value="Jeune">Jeune&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                        <label><input name="adulte" type="checkbox" value="Adulte">Adulte&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                        <label><input name="solidaire" type="checkbox" value="Solidaire">Solidaire</label>
+                    {% else %}
+                        {% if "senior" in publics%}
+                            <label><input name="senior" type="checkbox" value ="Senior" checked>Senior&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                        {% else %}
+                            <label><input name="senior" type="checkbox" value ="Senior">Senior&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                        {% endif %}
+                        {% if "enfant" in publics%}
+                            <label><input name="enfant" type="checkbox" value ="Enfant" checked>Enfant&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                        {% else %}
+                            <label><input name="enfant" type="checkbox" value ="Enfant">Enfant&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                        {% endif %}
+                        {% if "jeune" in publics%}
+                            <label><input name="jeune" type="checkbox" value="Jeune" checked>Jeune&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                        {% else %}
+                            <label><input name="jeune" type="checkbox" value="Jeune">Jeune&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                        {% endif %}
+                        {% if "adulte" in publics%}
+                            <label><input name="adulte" type="checkbox" value="Adulte" checked>Adulte&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                        {% else %}
+                            <label><input name="adulte" type="checkbox" value="Adulte">Adulte&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                        {% endif %}
+                        {% if "solidaire" in publics%}
+                            <label><input name="solidaire" type="checkbox" value="Solidaire" checked>Solidaire</label>
+                        {% else %}
+                            <label><input name="solidaire" type="checkbox" value="Solidaire">Solidaire</label>
+                        {% endif %}
+                    {% endif %}
+                </div>
+
+                <!-- --------------------- StyleUrl ---------------------- -->
+                <div class="field">
+                    <label class="label">StyleUrl</label>
+                    <input
+                    name="styleUrl"
+                    class="input"
+                    value="{{styleUrl}}"
+                    type="text"
+                    maxlength="50"
+                    style="color: #3f3d3d;"
+                    required>
+                </div>
+                <!-- --------------------- StyleHash ---------------------- -->
+                <div class="field">
+                    <label class="label">StyleHash</label>
+                    <input
+                    name="styleHash"
+                    class="input"
+                    value="{{styleHash}}"
+                    type="text"
+                    maxlength="50"
+                    style="color: #3f3d3d;"
+                    required>
+                </div>
+                <!-- --------------------------------------------------- -->
+                <div class="field">
+                    <label class="label">Categories</label>
+                    <span class="select">
+                        <select name="categories" required>
+                        {% if categories == None %}
+                            <option></option>
+                            <option>Etre à l’ombre en nature</option>
+                            <option>Etre au contact de l'eau</option>
+                            <option>Ressources solidaires</option>
+                            <option>Se divertir en fraicheur</option>
+                            <option>Sport a la fraich</option>
+                            <option>Un point d’info</option>
+                        {% else %}
+                            {% if categories=="Etre a l’ombre en nature" %}
+                                <option></option>
+                                <option selected>Etre à l’ombre en nature</option>
+                                <option>Etre au contact de l'eau</option>
+                                <option>Ressources solidaires</option>
+                                <option>Se divertir en fraicheur</option>
+                                <option>Sport a la fraich</option>
+                                <option>Un point d’info</option>
+
+                            {% elif categories=="Etre au contact de l'eau" %}
+                                <option></option>
+                                <option>Etre a l’ombre en nature</option>
+                                <option selected>Être au contact de l'eau</option>
+                                <option>Ressources solidaires</option>
+                                <option>Se divertir en fraicheur</option>
+                                <option>Sport a la fraich</option>
+                                <option>Un point d’info</option>
+
+                            {% elif categories=="Ressources solidaires" %}
+                                <option></option>
+                                <option>Etre a l’ombre en nature</option>
+                                <option>Etre au contact de l'eau</option>
+                                <option selected>Ressources solidaires</option>
+                                <option>Se divertir en fraicheur</option>
+                                <option>Sport a la fraich</option>
+                                <option>Un point d’info</option>
+
+                            {% elif categories=="Se divertir en fraicheur" %}
+                                <option></option>
+                                <option>Etre a l’ombre en nature</option>
+                                <option>Etre au contact de l'eau</option>
+                                <option>Ressources solidaires</option>
+                                <option selected>Se divertir en fraicheur</option>
+                                <option>Sport a la fraich</option>
+                                <option>Un point d’info</option>
+
+                            {% elif categories=="Sport a la fraich" %}
+                                <option></option>
+                                <option>Etre a l’ombre en nature</option>
+                                <option>Etre au contact de l'eau</option>
+                                <option>Ressources solidaires</option>
+                                <option>Se divertir en fraicheur</option>
+                                <option selected>Sport a la fraich</option>
+                                <option>Un point d’info</option>
+
+                            {% elif categories=="Un point d’info" %}
+                                <option></option>
+                                <option>Etre à l’ombre en nature</option>
+                                <option>Etre au contact de l'eau</option>
+                                <option>Ressources solidaires</option>
+                                <option>Se divertir en fraicheur</option>
+                                <option>Sport a la fraich</option>
+                                <option selected>Un point d’info</option>
+    
+                            {% else %}
+                                <option selected></option>
+                                <option>Etre a l’ombre en nature</option>
+                                <option>Etre au contact de l'eau</option>
+                                <option>Ressources solidaires</option>
+                                <option>Se divertir en fraicheur</option>
+                                <option>Sport a la fraich</option>
+                                <option>Un point d’info</option>
+                            {% endif %}
+                        {% endif %}
+                        </select>
+                    </span>
+                </div>
+                <!-- -------------------------------------------------- -->
+                <div class="field">
+                    <label class="label">Accessibilité</label>
+                        <input
+                        name="accessibilite"
+                        class="input"
+                        value="{{accessibilite}}"
+                        type="text"
+                        maxlength="50"
+                        placeholder="Ex. Accessible en fauteuil roulant en autonomie"
+                        style="color: #3f3d3d;"
+                        required>
+                </div>
+                <!-- ------------------------------------------------ -->
+                <div class="field">
+                    <label class="label">Payant</label>
+                        <span class="select">
+                            <select name="payant" required>
+                            {% if payant==True %}
+                                <option selected>True</option>
+                                <option>False</option>
+                            {% elif payant==False %}
+                                <option>True</option>
+                                <option selected>False</option>
+                            {% else %}
+                                <option></option>
+                                <option>True</option>
+                                <option>False</option>
+                            {% endif %}
+                            </select>
+                        </span>
+                </div>
+                <!-- -------------------------------------------------- -->
+                <div class="field">
+                    <label class="label">plus d'infos et horaires</label>
+                        <input
+                        name="plus_d_infos"
+                        class="input"
+                        value="{{plus_d_infos}}"
+                        type="text"
+                        maxlength="50"
+                        placeholder="Ex. http://www.grenoble-tourisme.com"
+                        style="color: #3f3d3d;"
+                        >
+                </div>
+                <!-- ---------------------------------------------------- -->
+                <div class="field">
+                    <label class="label">Date début</label>
+                        <input
+                        name="date_debut"
+                        class="input"
+                        value="{{date_debut}}"
+                        type="date"
+                        style="color: #3f3d3d;"
+                        >
+                </div>
+                <!-- ------------------------------------------------- -->
+                <div class="field">
+                    <label class="label">Date fin</label>
+                        <input
+                        name="date_fin"
+                        class="input"
+                        value="{{date_fin}}"
+                        type="date"
+                        style="color: #3f3d3d;"
+                        >
+                </div>
+                <!-- ---------------------------------------------------- -->
+              <div class="field is-grouped is-grouped-left">
+                <div class="control">
+                  <button class="button is-link" style="background-color: #007bff; border-radius: 5px; border-color: #007bff; margin: 28px 0; padding: 5px 25px;">Add</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<h3 style="color: #00E64D;">{{errorMessage}}</h3>
+{% endblock bootstrap_2 %}

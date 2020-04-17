@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+{% block bootstrap_2 %}
+<div>
+{% for table in tables %}
+{{ table|safe }}
+{% endfor %}
+</div>
+<section id="app" class="hero is-fullheight">
+    <div class="hero-body">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-half is-offset-one-quarter" style="width: 55%;">
+                    <p class="title">Add new message</p>
+                        <div>
+                            <form action="/new-message" method="post">
+                                <div class="field">
+                                    <label class="label" style="font-size: 14px;">Message</label>
+                                        <textarea
+                                        name="message"
+                                        class="textarea"
+                                        maxlength="1500"
+                                        style="color: #363434;"
+                                        required
+                                        ></textarea>
+                                </div>
+                                <!-- ------- -->
+                                <div class="field">
+                                    <label class="label" style="font-size: 14px;">Date de début</label>
+                                        <input
+                                        name="start_date"
+                                        class="input"
+                                        type="date"
+                                        style="color: #3f3d3d;">
+                                </div>
+                                <!-- ------- -->
+                                <div class="field">
+                                    <label class="label" style="font-size: 14px;">Date de fin</label>
+                                        <input
+                                        name="end_date"
+                                        class="input"
+                                        type="date"
+                                        style="color: #3f3d3d;">
+                                </div>
+                                <!-- ------- -->
+                                <div class="field is-grouped is-grouped-left">
+                                    <div class="control">
+                                    <button class="button is-link" style="padding: 5px 25px;">Send</button>
+                                </div>
+                            </form>
+                        </div>
+                </div>
+            </div>
+        </div>
+    
+<h3>{{errorMessage}}</h3>
+{% endblock bootstrap_2 %}

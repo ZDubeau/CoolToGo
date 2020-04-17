@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block bootstrap_2 %}
+<div>
+{% for table in tables %}
+{{ table|safe }}
+{% endfor %}
+</div>
+<section id="app" class="hero is-fullheight">
+    <div class="hero-body">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-half is-offset-one-quarter" style="width: 55%;">
+                    <p class="title">Add new coolness value</p>
+                        <div>
+                            <form action="/new_coolness_value" method="post">
+                                <div class="field">
+                                    <label class="label" style="font-size: 14px;">Niveau de fraicheur</label>
+                                        <input
+                                        name="coolness_value"
+                                        class="input"
+                                        maxlength="50"
+                                        style="color: #363434; width: 65%;"
+                                        required
+                                        >
+                                </div>
+                                <!-- ------- -->
+                                <div class="field is-grouped is-grouped-left">
+                                    <div class="control">
+                                    <button class="button is-link" style="background-color: #007bff; border-radius: 5px; border-color: #007bff; margin: 28px 0; padding: 5px 25px;">Send</button>
+                                </div>
+                            </form>
+                        </div>
+                </div>
+            </div>
+        </div>
+    
+<h3>{{errorMessage}}</h3>
+{% endblock bootstrap_2 %}

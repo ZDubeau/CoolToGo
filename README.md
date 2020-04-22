@@ -3,7 +3,10 @@
 
 
 # In to do list
-*  automatic function to define if a selection retrieve location or event
+*  automatic function to define if a selection retrieves location or event
+*  automate the data retrieval for a selection on a scheduled basis
+*  automate the selection retrieval for a projet on scheduled basis
+*  simplify the number of columns in the validated locations and extracted locations
 *  ...
 
 

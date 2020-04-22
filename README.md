@@ -22,10 +22,10 @@
 * modification of validated data
 * manual entry of validated data
 * extraction of validated data in json
-* creattion and management of "coolness" values
+* creation and management of "coolness" values
 * creation and management of message to display on the CoolToGo website
 * export of message in json
-* 
+
 
 a [mock-up](http://cooltogo-staging.herokuapp.com/) of the application is available with credentials test / test
 

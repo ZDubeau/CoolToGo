@@ -24,10 +24,7 @@
             </a><!-- Navbar Search-->
             <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
                 <div class="input-group">
-                    
-                    <div class="input-group-append">
-                       
-                    </div>
+                    <div class="input-group-append"></div>
                 </div>
             </form>
             <!-- Navbar-->
@@ -45,50 +42,55 @@
                 <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                     <div class="sb-sidenav-menu">
                         <div class="nav">
-                            <!-- ----------------------------------------------------------------- -->
+                            <!-- ----------------------------------------------------------------- -->    
                             <div class="sb-sidenav-menu-heading"></div>
-                                <a class="nav-link" href="{{ url_for('get_apidaeSelection')}}">
-                                    <div class="sb-nav-link-icon">
-                                        <i class="fas fa-database"></i>
-                                    </div>
-                                        Manage Apidae Selection
-                                </a>
+                            <a class="nav-link" href="{{ url_for('get_projectInformation')}}">
+                                <div class="sb-nav-link-icon">
+                                    <i class="fas fa-key"></i>
+                                </div>
+                                Projects Infos
+                            </a>
+                            <a class="nav-link" href="{{ url_for('get_apidaeSelection')}}">
+                                <div class="sb-nav-link-icon">
+                                    <i class="fas fa-database"></i>
+                                </div>
+                                Manage Apidae Selection
+                            </a>
                             <!-- ------------------------ Layout of Tables ----------------------- -->
-                                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts"
-                                    >
-                                    <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
-                                    Tables
-                                        <div class="sb-sidenav-collapse-arrow">
-                                            <i class="fas fa-angle-down"></i>
-                                        </div>
-                                </a>
-                                    <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
-                                        <!-- <div class="sb-nav-link-icon"><i class="fas fa-caret-right"></i></div> -->
-                                        <nav class="sb-sidenav-menu-nested nav">
-                                            <a class="nav-link" href="{{ url_for('get_tableValide')}}">Validated Locations</a>
-                                            <a class="nav-link" href="{{ url_for('get_manualEntry')}}">Manual Entry Validated</a>
-                                            <a class="nav-link" href="{{ url_for('get_tableApidae')}}">Apidae Extraction</a>
-                                        </nav>
-                                    </div>
-
-                                    <a class="nav-link" href="{{ url_for('get_message')}}">
-                                        <div class="sb-nav-link-icon">
-                                            <i class="fas fa-envelope"></i>
-                                        </div>
-                                            Messages
-                                    </a>
-                                    <a class="nav-link" href="{{ url_for('get_coolness_values')}}">
-                                        <div class="sb-nav-link-icon">
-                                            <i class="fas fa-temperature-low"></i>
-                                        </div>
-                                            Manage Coolness
-                                    </a>
-                                    <a class="nav-link" href="{{ url_for('get_add_admin')}}">
-                                        <div class="sb-nav-link-icon">
-                                            <i class="fas fa-user-plus"></i>
-                                        </div>
-                                            New Admin
-                                    </a>
+                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
+                                <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
+                                Tables
+                                <div class="sb-sidenav-collapse-arrow">
+                                    <i class="fas fa-angle-down"></i>
+                                </div>
+                            </a>
+                            <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                                <!-- <div class="sb-nav-link-icon"><i class="fas fa-caret-right"></i></div> -->
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" href="{{ url_for('get_tableValide')}}">Validated Locations</a>
+                                    <a class="nav-link" href="{{ url_for('get_manualEntry')}}">Manual Entry Validated</a>
+                                    <a class="nav-link" href="{{ url_for('get_tableApidae')}}">Apidae Extraction</a>
+                                </nav>
+                            </div>
+                            <!-- ----------------------------------------------------------------- -->
+                            <a class="nav-link" href="{{ url_for('get_message')}}">
+                                <div class="sb-nav-link-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                Messages
+                            </a>
+                            <a class="nav-link" href="{{ url_for('get_coolness_values')}}">
+                                <div class="sb-nav-link-icon">
+                                    <i class="fas fa-temperature-low"></i>
+                                </div>
+                                Manage Coolness
+                            </a>
+                            <a class="nav-link" href="{{ url_for('get_add_admin')}}">
+                                <div class="sb-nav-link-icon">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                New Admin
+                            </a>
                             <!-- ------------------------------------------------------------------ -->
                         </div>
                     </div>

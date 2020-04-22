@@ -10,11 +10,6 @@ import queue
 import psycopg2, psycopg2.extras, sys
 from psycopg2 import Error
 
-
-project_ID = '4364'     # Cool To Go project id
-api_KEY = 'ALrtqQmv'    # Apidae API key
-select_id = "86749"     # Example id
-
 def retrieve_data_by_id(project_ID,api_KEY,select_id,selectionId):
     result_df = pd.DataFrame(columns = ['id_apidae','id_selection','lieu_event','names','types','longitude','latitude',
                                 'adresse1','adresse2','code_postal','ville','telephone','email','site_web','description_teaser',
@@ -25,7 +20,7 @@ def retrieve_data_by_id(project_ID,api_KEY,select_id,selectionId):
     url += "responseFields=id,nom,informations,presentation.descriptifCourt,@all"
     url += '&apiKey='+api_KEY
     url += '&projetId='+project_ID
-    print(url,selectionId)
+    #print(url,selectionId)
     re = requests.get(url)
     req = re.json()
     
@@ -236,3 +231,23 @@ def retrive_data_by_multiple_selectionId(project_ID,api_KEY,list_selectionId):
     del result_df['index']    
     return result_df
 #-----------------------------------------------------------------------------------------------------------------------
+
+def retrieve_selection_list(id_projet,project_ID,api_KEY):
+    import pandas as pd
+    result_df = pd.DataFrame(columns = ['id_projet','selection','description','selection_type']) 
+    
+    url = 'http://api.apidae-tourisme.com/api/v002/referentiel/selections/?query={'
+    url += '"apiKey": "'+api_KEY+'",'
+    url += '"projetId":'+project_ID
+    url += '}'
+
+    req = requests.get(url).json()
+    for line in req:
+        dict_for_id = {}
+        dict_for_id['id_projet'] = id_projet
+        dict_for_id['selection'] = line['id']
+        dict_for_id['description'] = line['nom']
+        dict_for_id['selection_type'] = ""
+        result_df = result_df.append(dict_for_id,ignore_index=True)
+
+    return result_df

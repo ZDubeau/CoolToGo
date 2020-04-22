@@ -50,6 +50,9 @@ select_cooltogo_from_apidae_one_id = """
 delete_cooltogo_from_apidae_with_selection_id = """
   DELETE FROM cooltogo_from_apidae WHERE id_selection=%s; """
 
+delete_cooltogo_from_apidae_with_project_id = """
+  DELETE FROM cooltogo_from_apidae WHERE id_selection IN (SELECT id FROM selection WHERE id_projet=%s); """
+
 ################ Tables des données validés par l'administrateur ################
 
 drop_cooltogo_validated ="""DROP TABLE IF EXISTS cooltogo_validated;"""
@@ -194,20 +197,27 @@ drop_selection = """DROP TABLE IF EXISTS selection;"""
 selection = """
     CREATE TABLE IF NOT EXISTS selection (
         id SERIAL PRIMARY KEY,
+        id_projet BIGINT NULL,
         selection TEXT NOT NULL,
         description TEXT NOT NULL,
         selection_type TEXT NOT NULL
     )"""
 
 insert_selection = """
-  INSERT INTO selection (selection, description, selection_type)
-  VALUES (%(selection)s, %(description)s, %(selection_type)s) returning id;"""
+  INSERT INTO selection (id_projet,selection, description, selection_type)
+  VALUES (%(id_project)s, %(selection)s, %(description)s, %(selection_type)s) returning id;"""
+
+edit_selection = """
+  UPDATE selection SET selection_type= %(selection_type)s WHERE id=%(id)s;"""
 
 select_selection_with_id = """
-  SELECT selection FROM selection WHERE id=%s; """
+  SELECT selection,description,selection_type,id_projet FROM selection WHERE id=%s; """
 
 select_selection_with_type = """
   SELECT id, selection_type FROM selection WHERE selection=%s; """
+
+delete_selection_with_project_id = """
+  DELETE FROM selection WHERE id_projet=%s; """
 
 delete_selection = """
   DELETE FROM selection WHERE id=%s; """
@@ -229,8 +239,8 @@ insert_selection_extraction = """
 
 
 select_selection_information = """
-  SELECT s.id as id, s.selection as selection, s.description as categories, s.selection_type as Lieu_Event, se.selection_extraction_date AS Last_Extract, se.selection_extraction_nb_records AS Nb_records, '' as Launch, '' as Del  
-    FROM selection AS s LEFT OUTER JOIN selection_extraction AS se ON s.id = se.selection_id AND se.selection_extraction_date =(SELECT MAX(selection_extraction_date) FROM selection_extraction WHERE selection_id=se.selection_id);"""
+  SELECT s.id as id, p.project_ID as project_ID, s.selection as selection, s.description as categories, s.selection_type as Lieu_Event, se.selection_extraction_date AS Last_Extract, se.selection_extraction_nb_records AS Nb_records, '' as Launch, '' as Edit  
+    FROM selection AS s LEFT JOIN projet AS p on s.id_projet=p.id LEFT OUTER JOIN selection_extraction AS se ON s.id = se.selection_id AND se.selection_extraction_date =(SELECT MAX(selection_extraction_date) FROM selection_extraction WHERE selection_id=se.selection_id);"""
 
 
 
@@ -289,5 +299,33 @@ update_lien_niveau_de_fraicheur_cooltogo_validated ="""
 
 delete_lien_niveau_de_fraicheur_cooltogo_validated ="""
   DELETE FROM lien_niveau_de_fraicheur_cooltogo_validated WHERE id_cooltogo_validated = %s;"""
+
+################ Tables des liens niveaux de fraicheurs - lieux active ################
+
+drop_projet = """DROP TABLE IF EXISTS projet;"""
+
+projet = """
+    CREATE TABLE IF NOT EXISTS projet (
+        id SERIAL PRIMARY KEY,
+        project_ID TEXT NOT NULL,
+        api_key TEXT NOT NULL
+    )"""
+
+insert_projet = """
+  INSERT INTO projet (project_ID, api_key)
+  VALUES (%(project_ID)s, %(api_key)s) returning id;"""
+
+select_projet_with_id = """
+  SELECT project_ID, api_key FROM projet WHERE id=%s; """
+
+select_projet_information= """
+  SELECT id, project_ID, api_key,'' as Launch, '' as Del FROM projet; """
+
+select_selection_projet =  """
+  SELECT project_ID, api_key,selection FROM projet as p LEFT JOIN selection as s ON p.id=s.id_projet WHERE s.id=%s; """
+
+delete_projet_with_id = """
+  DELETE FROM projet WHERE id=%s; """
+
 
 ############################ THE END ################################

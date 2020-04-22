@@ -119,24 +119,50 @@ $(document).ready(function() {
   $('#dataTableSelection').DataTable({
     "columnDefs": [
       { "visible": false, "targets": 0 },
-      { "width": "20px", "targets": 1 },
-      { "width": "80px", "targets": 2 },
-      { "width": "30px", "targets": 3 },
-      { "width": "80px", "targets": 4 },
-      { "width": "40px", "targets": 5 },
-      { "width": "20px", "targets": 6 },
-      { "width": "20px", "targets": 7 },
+      { "width": "40px", "targets": 1 },
+      { "width": "35px", "targets": 2 },
+      { "width": "80px", "targets": 3 },
+      { "width": "45px", "targets": 4 },
+      { "width": "80px", "targets": 5 },
+      { "width": "45px", "targets": 6 },
+      { "width": "25px", "targets": 7 },
+      { "width": "20px", "targets": 8 },
     ],
     "fnRowCallback" : function ( nRow, aData ) {
-      $('td:eq(5)', nRow).html(validate);
-      $('td:eq(5)', nRow).click( function () {
+      var lieu = aData[4]
+      if (lieu !=""){
+        $('td:eq(6)', nRow).html(validate);
+        $('td:eq(6)', nRow).click( function () {
+          var id = aData[0];
+          window.location.href = '/launch_extract/' + id;
+        });
+      }
+      $('td:eq(7)', nRow).html(edit);
+      $('td:eq(7)', nRow).click( function () {
         var id = aData[0];
-        window.location.href = '/launch_extract/' + id;
+        window.location.href = '/edit_selection/' + id;
       });
-      $('td:eq(6)', nRow).html(cancel);
-      $('td:eq(6)', nRow).click( function () {
+    }
+  });
+
+  $('#dataTableProjet').DataTable({
+    "columnDefs": [
+      { "visible": false, "targets": 0 },
+      { "width": "50px", "targets": 1 },
+      { "width": "50px", "targets": 2 },
+      { "width": "25px", "targets": 3 },
+      { "width": "25px", "targets": 4 },
+    ],
+    "fnRowCallback" : function ( nRow, aData ) {
+      $('td:eq(2)', nRow).html(validate);
+      $('td:eq(2)', nRow).click( function () {
         var id = aData[0];
-        window.location.href = '/delete_selection/' + id;
+        window.location.href = '/launch_selection_extract/' + id;
+      });
+      $('td:eq(3)', nRow).html(cancel);
+      $('td:eq(3)', nRow).click( function () {
+        var id = aData[0];
+        window.location.href = '/delete_projet/' + id;
       });
     }
   });

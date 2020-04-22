@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+{% block bootstrap_2 %}
+<div>
+    {% for table in tables %}
+        {{ table|safe }}
+    {% endfor %}
+</div>
+<section id="app" class="hero is-fullheight">
+    <div class="hero-body">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-half is-offset-one-quarter" style="width: 35%;">
+                    <p class="title">
+                    Add new project
+                    </p>
+                    <form action="/new_project_info " method="post">
+                        <!-- ----------------------- project_ID ------------------------- -->
+                        <div class="field">
+                            <label class="label">project ID</label>
+                                <input
+                                name="project_ID"
+                                class="input"
+                                type="text"
+                                maxlength="70"
+                                placeholder="Ex. 4364"
+                                style="color: #292727;"
+                                required>
+                        </div>
+                        <!-- ----------------------- api_key ------------------------- -->
+                        <div class="field">
+                            <label class="label">API key</label>
+                                <input
+                                name="api_key"
+                                class="input"
+                                type="text"
+                                maxlength="70"
+                                placeholder="Ex. ALrtqQmv"
+                                style="color: #292727;"
+                                required>
+                        </div>
+                        </br>
+                        <!-- -------------------------------------------------------- -->
+                        <div class="field is-grouped is-grouped-left">
+                            <div class="control">
+                              <button class="button is-link" style="padding: 5px 25px;">Add</button>
+                            </div>
+                          </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<h4 style="color: red;">{{errorMessage}}</h4>
+{% endblock bootstrap_2 %}

@@ -7,6 +7,7 @@
 *  automate the data retrieval for a selection on a scheduled basis
 *  automate the selection retrieval for a projet on scheduled basis
 *  simplify the number of columns in the validated locations and extracted locations
+*  documentation, help page for each functionnality
 *  ...
 
 

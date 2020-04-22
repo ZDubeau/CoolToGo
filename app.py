@@ -207,7 +207,7 @@ def get_new_data_valid():
         x_lat = location.latitude
         y_lon = location.longitude 
     ConnexionDB()
-    DB_Protocole.cur.execute(select_max_id_from_cooltogo_validated)
+    DB_Protocole.cur.execute(DB_Table_Definitions.select_max_id_from_cooltogo_validated)
     id_max = DB_Protocole.cur.fetchone()[0]
     if id_max == None:
         id_max = "1"
@@ -340,6 +340,58 @@ def get_remove_lieu(id):
     DeconnexionDB()
     return redirect(url_for("get_tableValide"))
 
+#----------------- Project Informations --------------------#
+
+@app.route('/projectInformation', methods=['GET', 'POST'])
+def get_projectInformation():
+    if "username" not in session :
+        return redirect(url_for("get_homepage"))
+    else :
+        username = session["username"]
+        engine = make_engine()
+        df = pd.read_sql(DB_Table_Definitions.select_projet_information, engine)
+        return render_template('pages/projectInformation.html',tables=[df.to_html(classes='table table-bordered', table_id='dataTableProjet',index=False)], username=username)
+
+#------------------- New Project --------------------#
+
+@app.route('/new_project_info', methods=['GET','POST'])
+def get_new_project_info():
+    ConnexionDB()
+    project_ID = request.form["project_ID"]
+    api_key = request.form["api_key"]
+    functions.insert_projet(project_ID,api_key)
+    DeconnexionDB()
+    return redirect(url_for("get_projectInformation"))
+
+#--------------- Lancement(launch) d'extraction des selection --------------#
+
+@app.route('/launch_selection_extract/<id>')
+def get_launch_selection_extract(id):
+    ConnexionDB()
+    engine = make_engine()
+    DB_Protocole.cur.execute(DB_Table_Definitions.select_projet_with_id, [id])
+    data = DB_Protocole.cur.fetchone()
+    df = apex.retrieve_selection_list(id,data[0],data[1])
+    DB_Protocole.cur.execute(DB_Table_Definitions.delete_selection_with_project_id,[id])
+    DB_Protocole.conn.commit()
+    df.to_sql('selection',con=engine, index=False, if_exists='append')
+    DeconnexionDB()
+    return redirect(url_for("get_apidaeSelection"))
+
+#---------------- Remove project id -----------------#
+
+@app.route('/delete_projet/<id>')
+def get_delete_projet(id):
+    ConnexionDB()
+    DB_Protocole.cur.execute(DB_Table_Definitions.delete_cooltogo_from_apidae_with_project_id, [id])
+    DB_Protocole.conn.commit()
+    DB_Protocole.cur.execute(DB_Table_Definitions.delete_selection_with_project_id, [id])
+    DB_Protocole.conn.commit()
+    DB_Protocole.cur.execute(DB_Table_Definitions.delete_projet_with_id, [id])
+    DB_Protocole.conn.commit()
+    DeconnexionDB()
+    return redirect(url_for("get_projectInformation"))
+
 #----------------- Apidae Selection --------------------#
 
 @app.route('/apidaeSelection', methods=['GET', 'POST'])
@@ -352,15 +404,29 @@ def get_apidaeSelection():
         df = pd.read_sql(DB_Table_Definitions.select_selection_information, engine)
         return render_template('pages/apidaeSelection.html',tables=[df.to_html(classes='table table-bordered', table_id='dataTableSelection',index=False)], username=username)
 
+#------------------- Edit Selection --------------------#
+
+@app.route('/edit_selection/<id>', methods=['GET','POST'])
+def get_edit_selection(id):
+    if "username" not in session :
+        return redirect(url_for("get_homepage"))
+    else :
+        username = session["username"]
+        ConnexionDB()
+        DB_Protocole.cur.execute(DB_Table_Definitions.select_selection_with_id, [id])
+        data = DB_Protocole.cur.fetchone()
+        DeconnexionDB()
+        return render_template('pages/editSelection.html',id_selection=id, selection=data[0],categories=data[1],selection_type=data[2], username=username)
+
+
 #------------------- New Selection --------------------#
 
-@app.route('/new_selection', methods=['GET','POST'])
-def get_new_selection():
+@app.route('/edit_selection_post', methods=['GET','POST'])
+def get_edit_selection_post():
     ConnexionDB()
-    selection_name = request.form["selection"]
-    categories = request.form["categories"]
+    id_selection = request.form["id"]
     lieu_event = request.form["lieu_event"]
-    functions.insert_selection(selection_name,categories,lieu_event)
+    functions.edit_selection(id_selection,lieu_event)
     DeconnexionDB()
     return redirect(url_for("get_apidaeSelection"))
 
@@ -370,9 +436,9 @@ def get_new_selection():
 def get_launch_extract(id):
     ConnexionDB()
     engine = make_engine()
-    DB_Protocole.cur.execute(DB_Table_Definitions.select_selection_with_id, [id])
-    functions = DB_Protocole.cur.fetchone()[0]
-    df = apex.retrive_data_by_selectionId(apex.project_ID,apex.api_KEY,functions)
+    DB_Protocole.cur.execute(DB_Table_Definitions.select_selection_projet, [id])
+    data = DB_Protocole.cur.fetchone()
+    df = apex.retrive_data_by_selectionId(data[0],data[1],data[2])
     DB_Protocole.cur.execute(DB_Table_Definitions.delete_cooltogo_from_apidae_with_selection_id,[id])
     DB_Protocole.conn.commit()
     df_in_db = pd.read_sql_table("cooltogo_from_apidae", engine)

@@ -5,57 +5,6 @@
         {{ table|safe }}
     {% endfor %}
 </div>
-<section id="app" class="hero is-fullheight">
-    <div class="hero-body">
-        <div class="container">
-            <div class="columns">
-                <div class="column is-half is-offset-one-quarter" style="width: 35%;">
-                    <p class="title">
-                    Add new selection
-                    </p>
-                    <form action="/new_selection" method="post">
-                        <!-- ----------------------- Selection ------------------------- -->
-                        <div class="field">
-                            <label class="label">Selection</label>
-                                <input
-                                name="selection"
-                                class="input"
-                                type="text"
-                                maxlength="70"
-                                placeholder="Ex. 86750"
-                                style="color: #292727;"
-                                required>
-                        </div>
-                        <!-- ---------------------- Categories ------------------------ -->
-                        <div class="field">
-                            <label class="label">Categories</label>
-                                <input
-                                name="categories"
-                                class="input"
-                                type="text"
-                                maxlength="80"
-                                placeholder="Ex. ..."
-                                style="color: #292727;"
-                                required>
-                        </div>
-                        <!-- --------------------- lieu or event --------------------- -->
-                        <div class="field">
-                            <label class="label">lieu_event</label>
-                                <span class="select">
-                                    <select name="lieu_event" required>
-                                    <option></option>
-                                    <option>Lieu</option>
-                                    <option>Event</option>
-                                    </select>
-                                </span>
-                        </div> 
-                        </br>
-                        <!-- -------------------------------------------------------- -->
-                        <div class="field is-grouped is-grouped-left">
-                            <div class="control">
-                              <button class="button is-link" style="padding: 5px 25px;">Add</button>
-                            </div>
-                          </div>
-                        </form>
-    <h4 style="color: red;">{{errorMessage}}</h4>
+
+<h4 style="color: red;">{{errorMessage}}</h4>
 {% endblock bootstrap_2 %}

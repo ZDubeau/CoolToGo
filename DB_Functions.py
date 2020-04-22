@@ -23,13 +23,39 @@ def recuperation_id(sql_select:str,valeur_inserer:tuple):
     return id_table
 ###############################################################################
 
-def insert_selection(selection_name:str,description:str,lieu_event:str):
+def insert_selection(project_ID:str,api_key:str,selection_name:str,description:str,lieu_event:str):
     dico= {
+        'project_ID': project_ID,
+        'api_key': api_key,
         'selection': selection_name,
         'description': description,
         'selection_type': lieu_event}
     try:
         DB_Protocole.Insert_SQL(DB_Table_Definitions.insert_selection,dico)
+        return "Ok"
+    except (psycopg2.Error, AttributeError) as Error :
+        return Error
+###############################################################################
+
+def edit_selection(id_selection:str,lieu_event:str):
+    dico= {
+        'selection_type': lieu_event,
+        'id': int(id_selection)}
+    print(dico)
+    try:
+        DB_Protocole.Insert_SQL(DB_Table_Definitions.edit_selection,dico)
+        return "Ok"
+    except (psycopg2.Error, AttributeError) as Error :
+        return Error
+###############################################################################
+
+def insert_projet(project_ID:str,api_key:str):
+    dico= {
+        'project_ID': project_ID,
+        'api_key': api_key}
+    print(dico)
+    try:
+        DB_Protocole.Insert_SQL(DB_Table_Definitions.insert_projet,dico)
         return "Ok"
     except (psycopg2.Error, AttributeError) as Error :
         return Error

@@ -656,6 +656,10 @@ def get_message():
         return redirect(url_for("get_homepage"))
     else :
         username = session["username"]
+        if 'errorMessage' in request.args :
+            errorMessage = request.args.get('errorMessage')
+        else :
+            errorMessage = ""
         engine = make_engine()
         df = pd.read_sql(DB_Table_Definitions.select_message_list, engine)
         return render_template('pages/message.html',tables=[df.to_html(classes='table table-bordered', table_id='dataTableMessage',index=False)], username=username)
@@ -675,7 +679,7 @@ def post_new_message():
     DB_Protocole.cur.execute(DB_Table_Definitions.insert_message, [message, start_date, end_date])
     DB_Protocole.conn.commit()
     DeconnexionDB()
-    return redirect(url_for("get_message"),errorMessage="Nouveau message créé !!")
+    return redirect(url_for("get_message",errorMessage="Nouveau message créé !!"))
 
 @app.route('/edit_message/<id>')
 def get_edit_message(id):

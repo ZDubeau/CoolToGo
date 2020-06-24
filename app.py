@@ -1,3 +1,6 @@
+from wtforms.validators import InputRequired, Email, Length, Regexp, AnyOf
+from wtforms import Form, StringField, PasswordField, validators
+from flask_wtf import FlaskForm
 from flask import Flask, render_template, request, redirect, url_for, make_response, jsonify, json, g, abort, session
 from flask_restful import Api
 import socket
@@ -6,13 +9,22 @@ import pandas as pd
 from pandas import DataFrame
 from sqlalchemy import create_engine
 from geopy.geocoders import Nominatim
+import psycopg2
+import psycopg2.extras
 
 import DB_Protocole
 from DB_Protocole import ConnexionDB, DeconnexionDB, make_engine
 import DB_Table_Definitions
 import DB_Functions as functions   # insert database related code here
 import apidae_extraction as apex  # my function retrieving data from apiade
-
+import Table_admin as admin
+import Table_Apidae as apidae
+import Table_category as ctg
+import Table_project as prj
+import Table_selection as slc
+import Table_extraction as extract
+import Table_message as msg
+import Table_freshness as fresh
 
 app = Flask(__name__)
 
@@ -35,38 +47,101 @@ def after_request(response):
 @app.route('/', methods=['GET'])
 def get_homepage():
     session.clear()
+
+    form = RegistrationForm(request.form)
     ConnexionDB()
-    DB_Protocole.cur.execute(DB_Table_Definitions.nombre_administrators)
+    modal_inscription = False
+    modal_login = False
+    DB_Protocole.cur.execute(admin.nombre_admin)
     nb_admin = DB_Protocole.cur.fetchone()[0]
     inscription = False
     if nb_admin == 0:
         inscription = True
     DeconnexionDB()
-    return render_template('homepage.html', inscription=inscription)
+    return render_template('homepage.html', inscription=inscription, form=form, modal_inscription=modal_inscription, modal_login=modal_login)
+
+#*********************** Register - new version **************************#
+
+
+class RegistrationForm(Form):
+    username = StringField(
+        '', validators=[validators.input_required(), validators.Length(min=4, max=25)])
+    email = StringField(
+        '', validators=[validators.input_required(), validators.Email()])
+    password = PasswordField('', validators=[validators.input_required(), validators.Regexp(
+        '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})', message='Le mot de passe doit être composé de 8 caractères dont 1 lettre minuscule, 1 letter majuscule, 1 chiffre et un caractère spécial')])
+    confirm = PasswordField('', validators=[validators.input_required()])
+
+
+@app.route('/inscription', methods=['GET', 'POST'])
+def register():
+    ConnexionDB()
+    form = RegistrationForm(request.form)
+    for fieldName, errorMessages in form.errors.items():
+        for err in errorMessages:
+            # do something with your errorMessages for fieldName
+            print(fieldName, err)
+    if request.method == 'POST' and form.validate():
+        list_admin = functions.connexion_admin(
+            form.username.data, form.password.data, True)
+        # print(list_admin)
+        if [form.username.data] in list_admin:
+            ErrorMessage = "Nom d'utilisateur déjà existant!"
+        else:
+            functions.insert_administrator(
+                form.username.data, form.password.data, form.email.data)
+            ErrorMessage = "Merci de votre inscription!"
+            #flash('Thanks for registering')
+    modal_inscription = False
+    DB_Protocole.cur.execute(admin.nombre_admin)
+    nb_admin = DB_Protocole.cur.fetchone()[0]
+    inscription = False
+    if nb_admin == 0:
+        inscription = True
+        modal_inscription = True
+    DeconnexionDB()
+    return render_template('homepage.html', inscription=inscription, form=form, modal_inscription=modal_inscription)
+
+#*********************** Login - new version **************************#
+
+
+class LoginForm(Form):
+    username = StringField('username', [validators.Length(
+        min=6, max=15, message='Nom d\'utilisteur incorrect')])
+    password = PasswordField('password', [validators.Length(
+        min=6, max=12, message='Mot de passe incorrect'), AnyOf(['secret', 'password'])])
+
+
+@app.route('/login_1', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    modal_login = False
+    if form.validate_on_submit():
+        modal_login = True
+        return 'Formulaire soumis avec succès !'
+    return render_template('get_homepage', form=form)
 
 #---------------------- Inscription ----------------------#
+# @app.route("/inscription", methods=["POST"])
+# def post_inscription():
+#     ConnexionDB()
+#     username = request.form["uname"]
+#     email = request.form["email"]
+#     password = request.form["psw"]
+#     password_repeat = request.form.get("psw-repeat")
+#     if password_repeat == password:
+#         list_admin = functions.connexion_admin(username, password, True)
+#         # print(list_admin)
+#         if [username] in list_admin:
+#             ErrorMessage = "Username already existe!"
+#         else:
+#             functions.insert_administrator(username, password, email)
+#             ErrorMessage = "Well done, you've signed up!"
+#     else:
+#         ErrorMessage = "The passwords are not match!"
+#     DeconnexionDB()
 
-
-@app.route("/inscription", methods=["POST"])
-def post_inscription():
-    ConnexionDB()
-    username = request.form["uname"]
-    email = request.form["email"]
-    password = request.form["psw"]
-    password_repeat = request.form.get("psw-repeat")
-    if password_repeat == password:
-        list_admin = functions.connexion_admin(username, password, True)
-        # print(list_admin)
-        if [username] in list_admin:
-            errorMessage = "Username already existe!"
-        else:
-            functions.insert_administrator(username, password, email)
-            errorMessage = "Well done, you've signed up!"
-    else:
-        errorMessage = "The passwords are not match!"
-    DeconnexionDB()
-
-    return redirect(url_for("get_homepage", errorMessage=errorMessage))
+#     return redirect(url_for("get_homepage", ErrorMessage=ErrorMessage))
 
 #---------------------- Login page ----------------------#
 
@@ -76,20 +151,19 @@ def post_login():
     ConnexionDB()
     username = request.form.get("uname")
     password = request.form.get("psw")
-    sql_admin = "select PKId_Admin from administrators where Admin_Name = %s "
-    admin_ID = functions.recuperation_id(sql_admin, (username,))
-    bonID, lis_admin = functions.connexion_admin(username, password)
+    admin_ID = functions.recuperation_id(admin.select_id_admin, (username,))
+    bonID, list_admin = functions.connexion_admin(username, password)
     if bonID == True:
         resp = make_response(redirect(url_for("get_home")))
         session["username"] = username
         return redirect(url_for("get_home"))
-    elif [username] in lis_admin:
-        errorMessage = "The username existe but the password is wrong!"
+    elif [username] in list_admin:
+        ErrorMessage = "The username existe but the password is wrong!"
     else:
-        errorMessage = "The passwords are not match!"
+        ErrorMessage = "The passwords are not match!"
     DeconnexionDB()
 
-    return redirect(url_for("get_homepage", errorMessage=errorMessage))
+    return redirect(url_for("get_homepage", ErrorMessage=ErrorMessage))
 
 #------------------------ Admin page ---------------------------#
 
@@ -113,7 +187,7 @@ def get_tableApidae():
         username = session["username"]
         engine = make_engine()
         df = pd.read_sql(
-            DB_Table_Definitions.select_cooltogo_from_apidae_for_display, engine)
+            apidae.select_apidae_display, engine)
 
         return render_template('pages/tableApidae.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableApidae', index=False)], username=username)
 
@@ -126,30 +200,14 @@ def get_tableValide():
         return redirect(url_for("get_homepage"))
     else:
         username = session["username"]
-        if 'errorMessage' in request.args:
-            errorMessage = request.args.get('errorMessage')
+        if 'ErrorMessage' in request.args:
+            ErrorMessage = request.args.get('ErrorMessage')
         else:
-            errorMessage = ""
+            ErrorMessage = ""
         engine = make_engine()
         df = pd.read_sql(
             DB_Table_Definitions.select_cooltogo_validated_for_display, engine)
-        return render_template('pages/tableValide.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableValid', index=False)], username=username, errorMessage=errorMessage)
-
-#------------------ Manual entry interface --------------------#
-
-
-@app.route('/manualEntry', methods=['GET'])
-def get_manualEntry():
-    if "username" not in session:
-        return redirect(url_for("get_homepage"))
-    else:
-        username = session["username"]
-        ConnexionDB()
-        DB_Protocole.cur.execute(
-            DB_Table_Definitions.select_niveau_de_fraicheur_tous)
-        data_liste_fraicheur = DB_Protocole.cur.fetchall()
-        DeconnexionDB()
-        return render_template('pages/manualEntry.html', liste_niveau_fraicheur=data_liste_fraicheur, username=username)
+        return render_template('pages/tableValide.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableValid', index=False)], username=username, ErrorMessage=ErrorMessage)
 
 #---------------------- New data valid ------------------------#
 
@@ -169,8 +227,8 @@ def get_new_data_valid():
     site_web = request.form["site_web"]
     Description_Teaser = request.form["Description_Teaser"]
     Description = request.form["description"]
-    styleUrl = request.form["styleUrl"]
-    styleHash = request.form["styleHash"]
+    # styleUrl = request.form["styleUrl"]
+    # styleHash = request.form["styleHash"]
     Images = request.form["Images"]
     Categories = request.form["Categories"]
     Accessibilite = request.form["Accessibilité"]
@@ -247,8 +305,6 @@ def get_new_data_valid():
                                         Description,
                                         Images,
                                         public,
-                                        styleUrl,
-                                        styleHash,
                                         type_,
                                         Categories,
                                         Accessibilite,
@@ -266,7 +322,7 @@ def get_new_data_valid():
 def get_validate_lieu(id):
     ConnexionDB()
     DB_Protocole.cur.execute(
-        DB_Table_Definitions.select_cooltogo_from_apidae_one_id, [id])
+        apidae.select_apidae_1_id, [id])
     data = DB_Protocole.cur.fetchone()
     functions.insert_cooltogo_validated(data[1],
                                         data[3],
@@ -297,7 +353,7 @@ def get_validate_lieu(id):
     DeconnexionDB()
     return redirect(url_for("get_tableApidae"))
 
-#------------ Add new administator interface ---------------#
+#________________________Add new administator interface_______________________#
 
 
 @app.route('/add_admin', methods=['GET'])
@@ -306,17 +362,17 @@ def get_add_admin():
         return redirect(url_for("get_homepage"))
     else:
         username = session["username"]
-        if 'errorMessage' in request.args:
-            errorMessage = request.args.get('errorMessage')
+        if 'ErrorMessage' in request.args:
+            ErrorMessage = request.args.get('ErrorMessage')
         else:
-            errorMessage = ""
+            ErrorMessage = ""
 
         engine = make_engine()
         df = pd.read_sql(
-            DB_Table_Definitions.select_adminitrators_for_display, engine)
-        return render_template('pages/Administators.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableAdmin', index=False)], username=username, errorMessage=errorMessage)
+            admin.select_admin_for_display, engine)
+        return render_template('pages/Administators.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableAdmin', index=False)], username=username, ErrorMessage=ErrorMessage)
 
-#------------ Add admin interface after adding -------------#
+# Add admin interface after adding
 
 
 @app.route("/new_admin", methods=["POST"])
@@ -330,27 +386,26 @@ def post_Administator():
     if password_repeat == password:
         list_admin = functions.connexion_admin(username, password, True)
         if [username] in list_admin:
-            errorMessage = "Username already existe !"
+            ErrorMessage = "Username already existe !"
         else:
             functions.insert_administrator(username, password, email)
-            errorMessage = "Well done login please !"
     else:
-        errorMessage = "The password inputs are differents !"
+        ErrorMessage = "The password inputs are differents !"
     DeconnexionDB()
-    return redirect(url_for("get_add_admin", errorMessage=errorMessage))
+    return redirect(url_for("get_add_admin", ErrorMessage=ErrorMessage))
 
-#--------------- Remove an administator ------------------#
+# Remove an administator
 
 
 @app.route('/delete_admin/<id>')
 def get_delete_admin(id):
     ConnexionDB()
-    DB_Protocole.cur.execute(DB_Table_Definitions.delete_administrators, [id])
+    DB_Protocole.cur.execute(admin.delete_admin, [id])
     DB_Protocole.conn.commit()
     DeconnexionDB()
-    errorMessage = "Admin deleted successfully !"
-    return redirect(url_for("get_add_admin", errorMessage=errorMessage))
-
+    ErrorMessage = "Admin deleted successfully !"
+    return redirect(url_for("get_add_admin", ErrorMessage=ErrorMessage))
+# ________________________________________________________________________
 #-------------------- Remove a lieu ------------------------#
 
 
@@ -376,7 +431,7 @@ def get_projectInformation():
         username = session["username"]
         engine = make_engine()
         df = pd.read_sql(
-            DB_Table_Definitions.select_projet_information, engine)
+            prj.select_project_information, engine)
         return render_template('pages/projectInformation.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableProjet', index=False)], username=username)
 
 #------------------- New Project --------------------#
@@ -387,7 +442,7 @@ def get_new_project_info():
     ConnexionDB()
     project_ID = request.form["project_ID"]
     api_key = request.form["api_key"]
-    functions.insert_projet(project_ID, api_key)
+    functions.insert_project(project_ID, api_key)
     DeconnexionDB()
     return redirect(url_for("get_projectInformation"))
 
@@ -398,11 +453,11 @@ def get_new_project_info():
 def get_launch_selection_extract(id):
     ConnexionDB()
     engine = make_engine()
-    DB_Protocole.cur.execute(DB_Table_Definitions.select_projet_with_id, [id])
+    DB_Protocole.cur.execute(prj.select_project_with_id, [id])
     data = DB_Protocole.cur.fetchone()
     df = apex.retrieve_selection_list(id, data[0], data[1])
     DB_Protocole.cur.execute(
-        DB_Table_Definitions.delete_selection_with_project_id, [id])
+        slc.delete_selection_with_project_id, [id])
     DB_Protocole.conn.commit()
     df.to_sql('selection', con=engine, index=False, if_exists='append')
     DeconnexionDB()
@@ -415,12 +470,12 @@ def get_launch_selection_extract(id):
 def get_delete_projet(id):
     ConnexionDB()
     DB_Protocole.cur.execute(
-        DB_Table_Definitions.delete_cooltogo_from_apidae_with_project_id, [id])
+        apidae.delete_apidae_project_id, [id])
     DB_Protocole.conn.commit()
     DB_Protocole.cur.execute(
-        DB_Table_Definitions.delete_selection_with_project_id, [id])
+        prj.delete_selection_with_project_id, [id])
     DB_Protocole.conn.commit()
-    DB_Protocole.cur.execute(DB_Table_Definitions.delete_projet_with_id, [id])
+    DB_Protocole.cur.execute(DB_Table_Definitions.delete_with_id, [id])
     DB_Protocole.conn.commit()
     DeconnexionDB()
     return redirect(url_for("get_projectInformation"))
@@ -436,7 +491,7 @@ def get_apidaeSelection():
         username = session["username"]
         engine = make_engine()
         df = pd.read_sql(
-            DB_Table_Definitions.select_selection_information, engine)
+            slc.select_selection_information, engine)
         return render_template('pages/apidaeSelection.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableSelection', index=False)], username=username)
 
 #------------------- Edit Selection --------------------#
@@ -450,7 +505,7 @@ def get_edit_selection(id):
         username = session["username"]
         ConnexionDB()
         DB_Protocole.cur.execute(
-            DB_Table_Definitions.select_selection_with_id, [id])
+            slc.select_selection_with_id, [id])
         data = DB_Protocole.cur.fetchone()
         DeconnexionDB()
         return render_template('pages/editSelection.html', id_selection=id, selection=data[0], categories=data[1], selection_type=data[2], username=username)
@@ -472,23 +527,25 @@ def get_edit_selection_post():
 
 @app.route('/launch_extract/<id>')
 def get_launch_extract(id):
-    ConnexionDB()
+    connection = DB_Protocole.Connexion()
+    curseur = connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
     engine = make_engine()
-    DB_Protocole.cur.execute(
-        DB_Table_Definitions.select_selection_projet, [id])
-    data = DB_Protocole.cur.fetchone()
+    curseur.execute(
+        prj.select_selection_project, [id])
+    data = curseur.fetchone()
     df = apex.retrive_data_by_selectionId(data[0], data[1], data[2])
-    DB_Protocole.cur.execute(
-        DB_Table_Definitions.delete_cooltogo_from_apidae_with_selection_id, [id])
-    DB_Protocole.conn.commit()
-    df_in_db = pd.read_sql_table("cooltogo_from_apidae", engine)
-    df_to_insert = df[~df.id_apidae.isin(df_in_db.id_apidae.values)]
-    df_to_insert.to_sql('cooltogo_from_apidae', con=engine,
+    curseur.execute(
+        apidae.delete_apidae_selection_id, [id])
+    connection.commit()
+    # df_in_db = pd.read_sql_table("data_from_apidae", engine)
+    # df_to_insert = df[~df.id_apidae.isin(df_in_db.id_apidae.values)]
+    df_to_insert = df
+    df_to_insert.to_sql('data_from_apidae', con=engine,
                         index=False, if_exists='append')
-    DB_Protocole.cur.execute(DB_Table_Definitions.insert_selection_extraction, [
-                             id, int(len(df_to_insert.index))])
-    DB_Protocole.conn.commit()
-    DeconnexionDB()
+    curseur.execute(extract.insert_selection_extraction, [
+        id, int(len(df_to_insert.index))])
+    connection.commit()
+    DB_Protocole.Deconnexion(connection, curseur)
     return redirect(url_for("get_apidaeSelection"))
 
 #---------------- Remove Selection id -----------------#
@@ -497,10 +554,11 @@ def get_launch_extract(id):
 @app.route('/delete_selection/<id>')
 def get_delete_selection(id):
     ConnexionDB()
-    DB_Protocole.cur.execute(DB_Table_Definitions.delete_selection, [id])
+    DB_Protocole.cur.execute(slc.delete_selection, [id])
     DB_Protocole.conn.commit()
     DeconnexionDB()
     return redirect(url_for("get_apidaeSelection"))
+
 
 #------------------ Edit lieu valid --------------------#
 
@@ -605,7 +663,7 @@ def get_edit_data_valid():
         x_lat = location.latitude
         y_lon = location.longitude
     ConnexionDB()
-    errorMessage = functions.update_cooltogo_validated(
+    ErrorMessage = functions.update_cooltogo_validated(
         id_apidae,
         lieu_event,
         x_lat,
@@ -634,7 +692,7 @@ def get_edit_data_valid():
         Date_fin)
 
     DeconnexionDB()
-    return redirect(url_for("get_tableValide", errorMessage=errorMessage))
+    return redirect(url_for("get_tableValide", ErrorMessage=ErrorMessage))
 
 #------------------- extract locations --------------------#
 
@@ -665,7 +723,7 @@ def get_extract_locations():
     )
     return response
 
-#-------------- Niveau de fraicheur ---------------#
+#_____________________________Freshness______________________________#
 
 
 @app.route('/coolness_values', methods=['GET'])
@@ -676,30 +734,27 @@ def get_coolness_values():
         username = session["username"]
         engine = make_engine()
         df = pd.read_sql(
-            DB_Table_Definitions.select_niveau_de_fraicheur_for_diplay, engine)
+            fresh.select_freshness_level_for_diplay, engine)
         return render_template('pages/coolness_values.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableCoolnessValues', index=False)], username=username)
-
-#------------ Nouveau niveau fraicheur -----------#
 
 
 @app.route("/new_coolness_value", methods=["POST"])
 def post_new_coolness_value():
     ConnexionDB()
     coolness_value = request.form["coolness_value"]
+    score_freshness = request.form['score_freshness']
     DB_Protocole.cur.execute(
-        DB_Table_Definitions.insert_niveau_de_fraicheur, [coolness_value])
+        fresh.insert_freshness_level, [coolness_value, score_freshness])
     DB_Protocole.conn.commit()
     DeconnexionDB()
     return redirect(url_for("get_coolness_values"))
-
-# -------------------------------------------------------------
 
 
 @app.route("/change_coolness_status/<id>", methods=['GET', 'POST'])
 def post_change_coolness_status(id):
     ConnexionDB()
     DB_Protocole.cur.execute(
-        DB_Table_Definitions.change_niveau_de_fraicheur_status, [id])
+        fresh.change_freshness_level_status, [id])
     DB_Protocole.conn.commit()
     DeconnexionDB()
     return redirect(url_for("get_coolness_values"))
@@ -713,13 +768,13 @@ def get_message():
         return redirect(url_for("get_homepage"))
     else:
         username = session["username"]
-        if 'errorMessage' in request.args:
-            errorMessage = request.args.get('errorMessage')
+        if 'ErrorMessage' in request.args:
+            ErrorMessage = request.args.get('ErrorMessage')
         else:
-            errorMessage = ""
+            ErrorMessage = ""
         engine = make_engine()
-        df = pd.read_sql(DB_Table_Definitions.select_message_list, engine)
-        return render_template('pages/message.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableMessage', index=False)], errorMessage=errorMessage, susername=username)
+        df = pd.read_sql(msg.select_message_list, engine)
+        return render_template('pages/message.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableMessage', index=False)], ErrorMessage=ErrorMessage, susername=username)
 
 
 @app.route("/new-message", methods=["POST"])
@@ -734,11 +789,11 @@ def post_new_message():
         end_date = request.form['end_date']
     else:
         end_date = None
-    DB_Protocole.cur.execute(DB_Table_Definitions.insert_message, [
+    DB_Protocole.cur.execute(msg.insert_message, [
                              message, start_date, end_date])
     DB_Protocole.conn.commit()
     DeconnexionDB()
-    return redirect(url_for("get_message", errorMessage="Nouveau message créé !!"))
+    return redirect(url_for("get_message", ErrorMessage="Nouveau message créé !!"))
 
 
 @app.route('/edit_message/<id>')
@@ -770,7 +825,7 @@ def post_edit_message_save():
         end_date = request.form['end_date']
     else:
         end_date = None
-    DB_Protocole.cur.execute(DB_Table_Definitions.update_message, [
+    DB_Protocole.cur.execute(msg.update_message, [
                              message, start_date, end_date, id])
     DB_Protocole.conn.commit()
     DeconnexionDB()
@@ -782,7 +837,7 @@ def post_edit_message_save():
 def get_publish_message(id):
 
     ConnexionDB()
-    DB_Protocole.cur.execute(DB_Table_Definitions.select_message, [id])
+    DB_Protocole.cur.execute(msg.select_message, [id])
     data = DB_Protocole.cur.fetchone()
     DeconnexionDB()
 
@@ -803,16 +858,96 @@ def get_publish_message(id):
         mimetype='application/json'
     )
     return response
-#--------------- Remove a message ------------------#
+
+
 @app.route('/delete_message/<id>')
 def get_delete_message(id):
     ConnexionDB()
-    DB_Protocole.cur.execute(DB_Table_Definitions.delete_message, [id])
+    DB_Protocole.cur.execute(msg.delete_message, [id])
     DB_Protocole.conn.commit()
     DeconnexionDB()
-    errorMessage = "Message deleted successfully !"
+    ErrorMessage = "Message deleted successfully !"
 
-    return redirect(url_for("get_message", errorMessage=errorMessage))
+    return redirect(url_for("get_message", ErrorMessage=ErrorMessage))
+
+
+#__________________________Category___________________________#
+
+@app.route('/category', methods=['GET'])
+def get_category():
+    if "username" not in session:
+        return redirect(url_for("get_homepage"))
+    else:
+        username = session["username"]
+        if 'ErrorMessage' in request.args:
+            ErrorMessage = request.args.get('ErrorMessage')
+        else:
+            ErrorMessage = ""
+        engine = make_engine()
+        df = pd.read_sql(ctg.select_category, engine)
+        return render_template('pages/category.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableCategory', index=False)], ErrorMessage=ErrorMessage, username=username)
+
+
+@app.route("/new_category", methods=["POST"])
+def post_category():
+    conn, cur = ConnexionDB()
+    category = request.form["category"]
+    cur.execute(ctg.select_category_with_description,
+                {"category": category})
+    if cur.rowcount > 0:
+        ErrorMessage = "La catégorie existe déjà !"
+    else:
+        engine = make_engine()
+        cur.execute(
+            ctg.insert_category, {"category": category})
+        conn.commit()
+        ErrorMessage = ""
+    DeconnexionDB()
+    return redirect(url_for("get_category", ErrorMessage=ErrorMessage))
+
+
+@app.route('/edit_category/<id>')
+def get_edit_categoriy(id):
+    if "username" not in session:
+        return redirect(url_for("get_homepage"))
+    else:
+        username = session["username"]
+        ConnexionDB()
+        DB_Protocole.cur.execute(ctg.select_category_with_id, [id])
+        data = DB_Protocole.cur.fetchone()
+        DeconnexionDB()
+        category = data[1]
+        engine = make_engine()
+        df = pd.read_sql(ctg.select_category, engine)
+    return render_template('pages/category_edit.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableCategory', index=False)], id=id, category=category)
+
+
+@app.route("/edit_category_save", methods=["POST"])
+def post_edit_categpry():
+    ConnexionDB()
+    id = request.form["id"]
+    category = request.form["category"]
+    DB_Protocole.cur.execute(ctg.update_category, [
+                             category, id])
+    DB_Protocole.conn.commit()
+    DeconnexionDB()
+
+    return redirect(url_for("get_category"))
+
+
+@app.route('/delete_category/<id>')
+def get_delete_category(id):
+    try:
+        ConnexionDB()
+        DB_Protocole.cur.execute(ctg.delete_category, [id])
+        DB_Protocole.conn.commit()
+        DeconnexionDB()
+        ErrorMessage = ""
+    except Exception as e:
+        ErrorMessage = e
+
+    return redirect(url_for("get_category", ErrorMessage=ErrorMessage))
+
 
 #---------------------------------------------------#
 #                      The End                      #

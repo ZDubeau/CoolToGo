@@ -1,23 +1,23 @@
 {
-    "development" : {
-        "dbname" : "cooool",
-        "user" : "toooo",
-        "password" : "goooo",
-        "host" : "localhost",
-        "port" : 5432
+    "development": {
+        "dbname": "cooool",
+        "user": "toooo",
+        "password": "goooo",
+        "host": "localhost",
+        "port": 5454
     },
-    "production" : {
-        "dbname" : "d2itutjrhom96p",
-        "user" : "uscregocdiwpui",
-        "password" : "c633cd75dbeb9c53c423a6b9dc28503c9f6709664e62ac5db9290a3e3a2d86d3",
-        "host" : "ec2-54-247-78-30.eu-west-1.compute.amazonaws.com",
-        "port" : 5432
+    "production": {
+        "dbname": "d2itutjrhom96p",
+        "user": "uscregocdiwpui",
+        "password": "c633cd75dbeb9c53c423a6b9dc28503c9f6709664e62ac5db9290a3e3a2d86d3",
+        "host": "ec2-54-247-78-30.eu-west-1.compute.amazonaws.com",
+        "port": 5432
     },
-    "staging" : {
-        "dbname" : "d74ievmpccqdh6",
-        "user" : "pecrslpcwmptbf",
-        "password" : "3f48aaeb90fa4b6b1aa0d93cd78e67635047214b80b323c584fabcc29b66a160",
-        "host" : "ec2-46-137-177-160.eu-west-1.compute.amazonaws.com",
-        "port" : 5432
+    "staging": {
+        "dbname": "d74ievmpccqdh6",
+        "user": "pecrslpcwmptbf",
+        "password": "3f48aaeb90fa4b6b1aa0d93cd78e67635047214b80b323c584fabcc29b66a160",
+        "host": "ec2-46-137-177-160.eu-west-1.compute.amazonaws.com",
+        "port": 5432
     }
 }

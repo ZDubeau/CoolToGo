@@ -1,213 +1,167 @@
-import requests     # For retrieving Data from Apidae web site
-import json         # For be can getting format json
+""" 
+Projet CoolToGo
+----------------------------
+Creation date : 2020-04-02
+Last update   : 2020-06-11
+Estimate time :  ?
+Spend time    :  ?
+----------------------------
+"""
+# _______________________________________________________________________
+
+# For retrieving Data from Apidae web site
+import requests
+
+# For be can getting format json
+import json
+
+# Treatment module
 import pandas as pd
-from pandas.io.json import json_normalize   # For transorming 'format json' to 'DataFrame pandas'
-import DB_Protocole, DB_Table_Definitions
+
+# For transorming 'format json' to 'DataFrame pandas'
+from pandas.io.json import json_normalize
+
+# postgreSQL
+import psycopg2
+import psycopg2.extras
+import sys
+from psycopg2 import Error
+
 import threading
 from threading import Thread
 import time
 import queue
-import psycopg2, psycopg2.extras, sys
-from psycopg2 import Error
 
-def retrieve_data_by_id(project_ID,api_KEY,select_id,selectionId):
-    result_df = pd.DataFrame(columns = ['id_apidae','id_selection','lieu_event','names','types','longitude','latitude',
-                                'adresse1','adresse2','code_postal','ville','telephone','email','site_web','description_teaser',
-                                'images','publics','categories','accessibilité',
-                                'payant','plus_d_infos_et_horaires','date_début','date_fin']) 
-    
+# My functions
+import DB_Protocole
+import Table_selection as slc
+
+# Transformation function of data by id
+from apidae_id_tranformation import restauration_transformation
+from transformation import transformation
+
+# _______________________________________________________________________
+
+
+def retrieve_data_by_id(project_ID, api_KEY, select_id, selectionId):
+    result_df = pd.DataFrame(columns=['id_apidae', 'id_selection', 'type_apidae', 'titre', 'adresse1', 'adresse2',
+                                      'code_postal', 'ville', 'altitude', 'latitude', 'longitude', 'telephone', 'email',
+                                      'site_web', 'description_courte', 'description_detaillee', 'image', 'publics',
+                                      'tourisme_adapte', 'payant', 'animaux_acceptes', 'environnement', 'equipement',
+                                      'services', 'periode', 'activites', 'ouverture', 'typologie'])
+
     url = 'http://api.apidae-tourisme.com/api/v002/objet-touristique/get-by-id/' + select_id + '?'
     url += "responseFields=id,nom,informations,presentation.descriptifCourt,@all"
     url += '&apiKey='+api_KEY
     url += '&projetId='+project_ID
-    #print(url,selectionId)
     re = requests.get(url)
     req = re.json()
-    
-    dict_for_id = {}
 
-    dict_for_id['id_apidae'] = None
-    if 'identifier' in req:
-        dict_for_id['id_apidae'] = req['identifier']
-#-----------------------------------------------------------------------------------------------------------------------
+    transfo = transformation(req, [5154, 6143])
+    transfo.Execute()
+    dict_for_id = transfo.dict_id()
+    # if 596 in transfo.list_elements_de_references():
+    #     print(dict_for_id['id_apidae'], transfo.list_elements_de_references(
+    #     ), "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+    # # print(transfo.special_elements_descriptions())
+    # print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+
     connection = DB_Protocole.Connexion()
-    curseur = connection.cursor(cursor_factory = psycopg2.extras.DictCursor)
-    curseur.execute(DB_Table_Definitions.select_selection_with_type,[selectionId])
-    data = curseur.fetchall()
-    DB_Protocole.Deconnexion(connection,curseur)
-    dict_for_id['id_selection'] = data[0][0]
-    dict_for_id['lieu_event'] = data[0][1]
-#-----------------------------------------------------------------------------------------------------------------------
-    dict_for_id['names'] = None
-    if 'gestion' in req:
-        if 'membreProprietaire' in req['gestion']:
-            if 'nom' in req['gestion']['membreProprietaire']:
-                dict_for_id['names'] = req['gestion']['membreProprietaire']['nom']
-#-----------------------------------------------------------------------------------------------------------------------
-    dict_for_id['types'] = None
-    if 'type' in req:
-        dict_for_id['types'] = req['type']
-#-----------------------------------------------------------------------------------------------------------------------
-    dict_for_id['longitude'] = None
-    dict_for_id['latitude'] = None
-    dict_for_id['adresse2'] = None
-    dict_for_id['adresse1'] = None
-    if 'localisation' in req:
-        if 'geolocalisation' in req['localisation']:
-            if 'geoJson' in req['localisation']['geolocalisation']:
-                if 'coordinates' in req['localisation']['geolocalisation']['geoJson']:
-                    dict_for_id['longitude'] = req['localisation']['geolocalisation']['geoJson']['coordinates'][0]
-                    dict_for_id['latitude'] = req['localisation']['geolocalisation']['geoJson']['coordinates'][1]
-#------------------------------------------------------------------------------------------------------------------------
-        if 'adresse' in req['localisation']:
-            if 'adresse1' in req['localisation']['adresse']:
-                dict_for_id['adresse1'] = req['localisation']['adresse']['adresse1']
-            if 'adresse2' in req['localisation']['adresse']:
-                dict_for_id['adresse2'] = req['localisation']['adresse']['adresse2']
-#------------------------------------------------------------------------------------------------------------------------
-    dict_for_id['ville'] = None
-    dict_for_id['code_postal'] = None
-    if 'localisation' in req:
-        if 'adresse' in req['localisation']:
-            if 'commune' in req['localisation']['adresse']:
-                if 'codePostal' in req['localisation']['adresse']:
-                    dict_for_id['code_postal'] = req['localisation']['adresse']['codePostal']
-                    if 'nom' in req['localisation']['adresse']['commune']:
-                        dict_for_id['ville'] = req['localisation']['adresse']['commune']['nom']
-#------------------------------------------------------------------------------------------------------------------------
-    dict_for_id['telephone'] = None
-    dict_for_id['email'] = None
-    dict_for_id['site_web'] = None
-    if 'informations' in req:
-        if 'moyensCommunication' in req['informations']:
-            moyenCommunications = req['informations']['moyensCommunication']
-            for values in moyenCommunications :
-                if 'type' in values and  'coordonnees' in values :
-                    if 'libelleFr' in values['type'] and 'fr' in values['coordonnees'] :
-                        if values['type']['libelleFr'] == "Site web (URL)" :
-                            dict_for_id['site_web'] = values['coordonnees']['fr']
-                        elif values['type']['libelleFr'] == "Téléphone" :
-                            dict_for_id['telephone'] = values['coordonnees']['fr']
-                        elif values['type']['libelleFr'] == "Mél" :
-                            dict_for_id['email'] = values['coordonnees']['fr']    
-#------------------------------------------------------------------------------------------------------------------------
-    dict_for_id['description_teaser'] = None
-    if 'presentation' in req:
-        if 'descriptifCourt' in req['presentation']:
-            if 'libelleFr' in req['presentation']['descriptifCourt']:
-                dict_for_id['description_teaser'] = req['presentation']['descriptifCourt']['libelleFr']
-#-----------------------------------------------------------------------------------------------------------------------
-    dict_for_id['images'] = None
-    if 'illustrations' in req:
-        if 'traductionFichiers' in req['illustrations'][0]:
-            if 'url' in req['illustrations'][0]['traductionFichiers'][0]:
-                dict_for_id['images'] = req['illustrations'][0]['traductionFichiers'][0]['url']
-#-----------------------------------------------------------------------------------------------------------------------
-    dict_for_id['publics'] = None
-#-----------------------------------------------------------------------------------------------------------------------
-    dict_for_id['categories'] = None
-#-----------------------------------------------------------------------------------------------------------------------
-    dict_for_id['accessibilité'] = None
-    if 'prestations' in req:
-        if 'tourismesAdaptes' in req['prestations']:
-            if 'libelleFr' in req['prestations']['tourismesAdaptes'][0]:
-                dict_for_id['accessibilité'] = req['prestations']['tourismesAdaptes'][0]['libelleFr']  
-#-----------------------------------------------------------------------------------------------------------------------
-    dict_for_id['payant'] = None
-    if 'descriptionTarif' in req:
-        if 'gratuit' in req['descriptionTarif']:
-            dict_for_id['payant'] = req['descriptionTarif']['gratuit']
-#-----------------------------------------------------------------------------------------------------------------------
-    dict_for_id['plus_d_infos_et_horaires'] = None
-    if 'gestion' in req:
-        if 'membreProprietaire' in req['gestion']:
-            if 'siteWeb' in req['gestion']['membreProprietaire']:
-                dict_for_id['plus_d_infos_et_horaires'] = req['gestion']['membreProprietaire']['siteWeb']
-#-----------------------------------------------------------------------------------------------------------------------
-    dict_for_id['date_début'] = None
-    dict_for_id['date_fin'] = None
-    if 'ouverture' in req:
-        if 'periodesOuvertures' in req['ouverture']:
-            if 'dateDebut' in req['ouverture']['periodesOuvertures'][0]:
-                dict_for_id['date_début'] = req['ouverture']['periodesOuvertures'][0]['dateDebut']
-            if 'dateFin' in req['ouverture']['periodesOuvertures'][0]:
-                dict_for_id['date_fin'] = req['ouverture']['periodesOuvertures'][0]['dateFin']
-  
-    result_df = result_df.append(dict_for_id,ignore_index=True)
-    return result_df
-#-----------------------------------------------------------------------------------------------------------------------
-def retrieve_data_by_id_light(project_ID,api_KEY,select_id):
-    
-    result_df = pd.DataFrame(columns = ['id_apidae','lieu_event','names','types']) 
-    
-    url = 'http://api.apidae-tourisme.com/api/v002/objet-touristique/get-by-id/' + select_id + '?'
-    url += "responseFields=id,nom,informations,presentation.descriptifCourt,@all"
-    url += '&apiKey='+api_KEY
-    url += '&projetId='+project_ID
+    curseur = connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    curseur.execute(
+        slc.select_selection_with_type, [selectionId])
+    data = curseur.fetchone()
+    DB_Protocole.Deconnexion(connection, curseur)
+    dict_for_id['id_selection'] = data[0]
 
-    re = requests.get(url)
-    req = re.json()
-    
-    dict_for_id = {}
-    dict_for_id['id_apidae'] = req['gestion']['membreProprietaire']['type']['id']
-    dict_for_id['lieu_event'] = 'Lieu'
-    dict_for_id['names'] = req['gestion']['membreProprietaire']['nom']
-    dict_for_id['types'] = req['type']
-
-    result_df = result_df.append(dict_for_id,ignore_index=True)
+    result_df = result_df.append(dict_for_id, ignore_index=True)
     return result_df
-#-----------------------------------------------------------------------------------------------------------------------
-count_ = "100"              #"count":20
+# _______________________________________________________________________
+
+
+# def retrieve_data_by_id_light(project_ID, api_KEY, select_id):
+
+#     result_df = pd.DataFrame(
+#         columns=['id_apidae', 'Type_Apidae', 'Titre'])
+
+#     url = 'http://api.apidae-tourisme.com/api/v002/objet-touristique/get-by-id/' + select_id + '?'
+#     url += "responseFields=id,nom,informations,presentation.descriptifCourt,@all"
+#     url += '&apiKey='+api_KEY
+#     url += '&projetId='+project_ID
+
+#     re = requests.get(url)
+#     req = re.json()
+
+#     dict_for_id = {}
+#     dict_for_id['id_apidae'] = req['gestion']['membreProprietaire']['type']['id']
+#     dict_for_id['Titre'] = req['gestion']['membreProprietaire']['nom']
+#     dict_for_id['types'] = req['type']
+
+#     result_df = result_df.append(dict_for_id, ignore_index=True)
+#     return result_df
+
+
+# _______________________________________________________________________
+
+count_ = "100"              # "count":20
 first = "0"                 # start from 0
 
-def retrive_data_by_selectionId(project_ID,api_KEY,selectionId):
+
+def retrive_data_by_selectionId(project_ID, api_KEY, selectionId):
     import pandas as pd
-    result_df = pd.DataFrame(columns = ['id_apidae','id_selection','lieu_event','names','types','longitude','latitude',
-                                'adresse1','adresse2','code_postal','ville','telephone','email','site_web','description_teaser'
-                                ,'images','publics','categories','accessibilité',
-                                'payant','plus_d_infos_et_horaires','date_début','date_fin']) 
-    
+    result_df = pd.DataFrame(columns=['id_apidae', 'id_selection', 'type_apidae', 'titre', 'adresse1', 'adresse2',
+                                      'code_postal', 'ville', 'altitude', 'latitude', 'longitude', 'telephone', 'email',
+                                      'site_web', 'description_courte', 'description_detaillee', 'image', 'publics',
+                                      'tourisme_adapte', 'payant', 'animaux_acceptes', 'environnement', 'equipement',
+                                      'services', 'periode', 'activites', 'ouverture', 'typologie'])
+
     url = 'http://api.apidae-tourisme.com/api/v002/recherche/list-objets-touristiques?query={'
     url += '"projetId":"'+project_ID+'",'
     url += '"apiKey":"'+api_KEY+'",'
     url += '"selectionIds":["'+selectionId+'"]}'
     count = 100
-    try :
+    try:
         req = requests.get(url).json()
-        if "numFound" in req :
+        if "numFound" in req:
             nb_object = int(req["numFound"])
-        else :
+        else:
             print("Oh merde")
             return result_df
         i = 0
-        while count*i<nb_object :
-            result_df = result_df.append(retrive_data_by_selectionId_by_cent(project_ID,api_KEY,selectionId,count*i,count))
-            i+=1
-    except ValueError :
-        print ("problème d'extraction")
+        while count*i < nb_object:
+            result_df = result_df.append(retrive_data_by_selectionId_by_cent(
+                project_ID, api_KEY, selectionId, count*i, count))
+            i += 1
+    except ValueError:
+        print("problème d'extraction")
     return result_df
+# _______________________________________________________________________
 
-def retrive_data_by_selectionId_by_cent(project_ID,api_KEY,selectionId,first,count):
+
+def retrive_data_by_selectionId_by_cent(project_ID, api_KEY, selectionId, first, count):
     import pandas as pd
-    result_df = pd.DataFrame(columns = ['id_apidae','id_selection','lieu_event','names','types','longitude','latitude',
-                                'adresse1','adresse2','code_postal','ville','telephone','email','site_web','description_teaser'
-                                ,'images','publics','categories','accessibilité',
-                                'payant','plus_d_infos_et_horaires','date_début','date_fin']) 
-    
+    result_df = pd.DataFrame(columns=['id_apidae', 'id_selection', 'type_apidae', 'titre', 'adresse1', 'adresse2',
+                                      'code_postal', 'ville', 'altitude', 'latitude', 'longitude', 'telephone', 'email',
+                                      'site_web', 'description_courte', 'description_detaillee', 'image', 'publics',
+                                      'tourisme_adapte', 'payant', 'animaux_acceptes', 'environnement', 'equipement',
+                                      'services', 'periode', 'activites', 'ouverture', 'typologie'])
+
     url = 'http://api.apidae-tourisme.com/api/v002/recherche/list-objets-touristiques?query={'
     url += '"projetId":"'+project_ID+'",'
     url += '"apiKey":"'+api_KEY+'",'
     url += '"selectionIds":["'+selectionId+'"],'
-    url += '"count":"'+count_+'",'
+    url += '"count":"'+str(count)+'",'
     url += '"first":"'+str(first)+'"}'
-    try :
+    try:
         req = requests.get(url)
-        df = pd.json_normalize(req.json(),'objetsTouristiques', errors='ignore')
+        df = pd.json_normalize(
+            req.json(), 'objetsTouristiques', errors='ignore')
         que = queue.Queue()
         threads_list = list()
         for index, row in df.iterrows():
             #result_df = result_df.append(retrieve_data_by_id(project_ID,api_KEY,str(row['id']),selectionId))
-            t = Thread(target=lambda q, arg1, arg2, arg3, arg4: q.put(retrieve_data_by_id(arg1,arg2,arg3,arg4)), args=(que, project_ID,api_KEY,str(row['id']),selectionId),daemon=True)
+            t = Thread(target=lambda q, arg1, arg2, arg3, arg4: q.put(retrieve_data_by_id(
+                arg1, arg2, arg3, arg4)), args=(que, project_ID, api_KEY, str(row['id']), selectionId), daemon=True)
             t.start()
             threads_list.append(t)
         for t in threads_list:
@@ -215,39 +169,44 @@ def retrive_data_by_selectionId_by_cent(project_ID,api_KEY,selectionId,first,cou
         while not que.empty():
             df = que.get()
             result_df = result_df.append(df)
-    except :
-        print ("problème d'extraction by cent")
+    except:
+        print("problème d'extraction by cent")
     return result_df
-#-----------------------------------------------------------------------------------------------------------------------
-def retrive_data_by_multiple_selectionId(project_ID,api_KEY,list_selectionId):
-    import pandas as pd
-    result_df = pd.DataFrame(columns = ['id_apidae','id_selection','lieu_event','names','types','longitude','latitude',
-                                'adresse1','adresse2','code_postal','ville','telephone','email','site_web','description_teaser',
-                                'images','publics','categories','accessibilité',
-                                'payant','plus_d_infos_et_horaires','date_début','date_fin']) 
-    for value in list_selectionId :
-        result_df = result_df.append(retrive_data_by_selectionId(project_ID,api_KEY,value))
-    result_df.reset_index(inplace=True)
-    del result_df['index']    
-    return result_df
-#-----------------------------------------------------------------------------------------------------------------------
+# _______________________________________________________________________
 
-def retrieve_selection_list(id_projet,project_ID,api_KEY):
+
+def retrive_data_by_multiple_selectionId(project_ID, api_KEY, list_selectionId):
     import pandas as pd
-    result_df = pd.DataFrame(columns = ['id_projet','selection','description','selection_type']) 
-    
+    result_df = pd.DataFrame(columns=['id_apidae', 'id_selection', 'type_apidae', 'titre', 'adresse1', 'adresse2',
+                                      'code_postal', 'ville', 'altitude', 'latitude', 'longitude', 'telephone', 'email',
+                                      'site_web', 'description_courte', 'description_detaillee', 'image', 'publics',
+                                      'tourisme_adapte', 'payant', 'animaux_acceptes', 'environnement', 'equipement',
+                                      'services', 'periode', 'activites', 'ouverture', 'typologie'])
+    for value in list_selectionId:
+        result_df = result_df.append(
+            retrive_data_by_selectionId(project_ID, api_KEY, value))
+    result_df.reset_index(inplace=True)
+    del result_df['index']
+    return result_df
+# _______________________________________________________________________
+
+
+def retrieve_selection_list(id_projet, project_ID, api_KEY):
+    import pandas as pd
+    result_df = pd.DataFrame(
+        columns=['id_project', 'selection', 'description'])
+
     url = 'http://api.apidae-tourisme.com/api/v002/referentiel/selections/?query={'
     url += '"apiKey": "'+api_KEY+'",'
     url += '"projetId":'+project_ID
     url += '}'
-
     req = requests.get(url).json()
     for line in req:
         dict_for_id = {}
-        dict_for_id['id_projet'] = id_projet
+        dict_for_id['id_project'] = id_projet
         dict_for_id['selection'] = line['id']
         dict_for_id['description'] = line['nom']
-        dict_for_id['selection_type'] = ""
-        result_df = result_df.append(dict_for_id,ignore_index=True)
+        result_df = result_df.append(dict_for_id, ignore_index=True)
 
     return result_df
+# _______________________________________________________________________

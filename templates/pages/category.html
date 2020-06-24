@@ -2,7 +2,7 @@
 {% block bootstrap_2 %}
 <div class="card-header"
     style="background-color: #1778b8b6; color: black; border-radius: 4px 4px 0px 0px; font-size: large; font-weight: bold;">
-    Administrateurs
+    Catégories
 </div>
 <div class="card-body" style="border-radius: 0px 0px 4px 4px;background-color: #1778b825;">
     <div class="table-responsive">
@@ -22,30 +22,15 @@
                 <div class="column is-half is-offset-one-quarter"
                     style="width: 80%;margin-left: 0 !important;transform: translate(-27px, 0px)">
                     <span class="title" style="font-size: 1.25rem;">
-                        Ajouter un(e) Administateur
+                        Ajouter une catégorie
                     </span>
                     <!-- -------------------------------------------------------- -->
-                    <form action="/new_admin" method="post">
+                    <form action="/new_category" method="post">
                         <!-- -------------------------------------------------------- -->
                         <div class="field" style="padding-top: 50px;">
-                            <label class="label" style="font-size: 14px;">Nom d'utilisateur</label>
-                            <input name="adm_uname" class="input" type="text" maxlength="50"
-                                placeholder="Entrez nom d'utilisateur" style="color: #969696; width: 40%;" required>
-                        </div>
-                        <div class="field">
-                            <label class="label" style="font-size: 14px;">Adresse mail</label>
-                            <input name="adm_email" class="input" type="text" maxlength="50"
-                                placeholder="Entrez adresse mail" style="color: #969696; width: 60%;" required>
-                        </div>
-                        <div class="field">
-                            <label class="label" style="font-size: 14px;">Mot de passe</label>
-                            <input name="adm_psw" class="input" type="password" maxlength="50"
-                                placeholder="Entrez mot de passe" style="color: #969696; width: 40%;" required>
-                        </div>
-                        <div class="field">
-                            <label class="label" style="font-size: 14px;">Confirmer mot de passe</label>
-                            <input name="adm_psw-repeat" class="input" type="password" maxlength="50"
-                                placeholder="Confirmez mot de passe" style="color: #969696; width: 40%;" required>
+                            <label class="label" style="font-size: 14px;">Catégorie</label>
+                            <input name="category" class="input" type="text" maxlength="50" placeholder="catégorie"
+                                style="color: #3f3e3e; width: 40%;" required>
                         </div>
                         <div class="field is-grouped is-grouped-left">
                             <div class="control">
@@ -58,5 +43,4 @@
         </div>
     </div>
 </section>
-
 {% endblock bootstrap_2 %}

@@ -6,3 +6,4 @@ Svg/
 data/
 __pycache__/
 readme.md
+.ipynb_checkpoints/

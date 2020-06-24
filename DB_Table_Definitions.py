@@ -7,7 +7,7 @@
 
 ################ Tables des données extraites d'apidae ################
 
-drop_cooltogo_from_apidae ="""DROP TABLE IF EXISTS cooltogo_from_apidae;"""
+drop_cooltogo_from_apidae = """DROP TABLE IF EXISTS cooltogo_from_apidae;"""
 
 cooltogo_from_apidae = """
   CREATE TABLE IF NOT EXISTS cooltogo_from_apidae (
@@ -41,7 +41,7 @@ insert_cooltogo_from_apidae = """
   INSERT INTO cooltogo_from_apidae (id_apidae,id_selection, lieu_event, names, types, latitude, longitude, adresse1, adresse2, code_postal, ville,telephone, email, site_web, description_teaser, images, publics, categories, accessibilité, payant, plus_d_infos_et_horaires, date_début, date_fin)
   VALUES (%(id_apidae)s,%(id_selection)s, %(lieu_event)s, %(names)s, %(types)s, %(latitude)s, %(longitude)s, %(adresse1)s, %(adresse2)s, %(code_postal)s, %(ville)s, %(telephone)s, %(email)s, %(site_web)s, %(description_teaser)s, %(images)s, %(publics)s, %(categories)s, %(accessibilité)s, %(payant)s, %(plus_d_infos_et_horaires)s, %(date_début)s, %(date_fin)s) returning id;"""
 
-select_cooltogo_from_apidae_for_display ="""
+select_cooltogo_from_apidae_for_display = """
   SELECT *,'' as a FROM cooltogo_from_apidae WHERE id_apidae NOT IN (SELECT DISTINCT id_apidae FROM cooltogo_validated) ORDER BY id ASC; """
 
 select_cooltogo_from_apidae_one_id = """
@@ -55,7 +55,7 @@ delete_cooltogo_from_apidae_with_project_id = """
 
 ################ Tables des données validés par l'administrateur ################
 
-drop_cooltogo_validated ="""DROP TABLE IF EXISTS cooltogo_validated;"""
+drop_cooltogo_validated = """DROP TABLE IF EXISTS cooltogo_validated;"""
 
 cooltogo_validated = """
   CREATE TABLE IF NOT EXISTS cooltogo_validated (
@@ -139,28 +139,32 @@ delete_from_cooltogo_validated_with_id = """
 
 ################ Table des administrateurs ################
 
-drop_administrators = """DROP TABLE IF EXISTS administrators;"""
+# drop_administrators = """
+#                       DROP TABLE IF EXISTS administrators;
+#                       """
 
-administrators = """
-  CREATE TABLE IF NOT EXISTS administrators (
-        PKId_Admin BIGSERIAL PRIMARY KEY,
-        Admin_Name TEXT NOT NULL,
-        Admin_pwd_hash TEXT,
-        Admin_email TEXT
-  )"""
+# administrators = """
+#                 CREATE TABLE IF NOT EXISTS administrators (
+#                   PKId_Admin BIGSERIAL PRIMARY KEY,
+#                   Admin_Name TEXT NOT NULL,
+#                   Admin_pwd_hash TEXT,
+#                   Admin_email TEXT
+#                 )"""
 
-insert_administrators = """
-  INSERT INTO administrators (Admin_Name, Admin_pwd_hash, Admin_email)
-  VALUES (%(Admin_Name)s, %(Admin_pwd_hash)s, %(Admin_email)s) returning PKId_Admin;"""
+# insert_administrators = """
+#                         INSERT INTO administrators (Admin_Name, Admin_pwd_hash, Admin_email)
+#                         VALUES (%(Admin_Name)s, %(Admin_pwd_hash)s, %(Admin_email)s)
+#                         returning PKId_Admin;
+#                         """
 
-nombre_administrators = """
-  SELECT count(*) FROM administrators; """
+# nombre_administrators = """
+#   SELECT count(*) FROM administrators; """
 
-select_adminitrators_for_display = """
-  SELECT PKId_Admin as Id, Admin_Name as Name, Admin_email as Email,'' as Action FROM administrators ORDER BY PKId_Admin ASC;"""
+# select_adminitrators_for_display = """
+#   SELECT PKId_Admin as Id, Admin_Name as Name, Admin_email as Email,'' as Action FROM administrators ORDER BY PKId_Admin ASC;"""
 
-delete_administrators = """
-  DELETE FROM administrators WHERE PKId_Admin=%s; """
+# delete_administrators = """
+#   DELETE FROM administrators WHERE PKId_Admin=%s; """
 
 #################### Tables des messages ###################
 
@@ -243,89 +247,140 @@ select_selection_information = """
     FROM selection AS s LEFT JOIN projet AS p on s.id_projet=p.id LEFT OUTER JOIN selection_extraction AS se ON s.id = se.selection_id AND se.selection_extraction_date =(SELECT MAX(selection_extraction_date) FROM selection_extraction WHERE selection_id=se.selection_id);"""
 
 
-
 ################ Tables des niveaux de fraicheurs ################
 
-drop_niveau_de_fraicheur = """DROP TABLE IF EXISTS niveau_de_fraicheur;"""
+drop_niveau_de_fraicheur = """
+                            DROP TABLE IF EXISTS niveau_de_fraicheur;
+                            """
 
 niveau_de_fraicheur = """
-    CREATE TABLE IF NOT EXISTS niveau_de_fraicheur (
-        id SERIAL PRIMARY KEY,
-        niveau_de_fraicheur TEXT NOT NULL,
-        active BOOL NOT NULL DEFAULT TRUE
-    )"""
+                      CREATE TABLE IF NOT EXISTS niveau_de_fraicheur (
+                        id SERIAL PRIMARY KEY,
+                        niveau_de_fraicheur TEXT NOT NULL,
+                        active BOOL NOT NULL DEFAULT TRUE
+                      )"""
 
 insert_niveau_de_fraicheur = """
-  INSERT INTO niveau_de_fraicheur (niveau_de_fraicheur)
-  VALUES (%s) returning id;"""
+                            INSERT INTO niveau_de_fraicheur (niveau_de_fraicheur)
+                            VALUES (%s) returning id;
+                            """
 
-update_niveau_de_fraicheur ="""
-  UPDATE niveau_de_fraicheur 
-    SET niveau_de_fraicheur= %(niveau_de_fraicheur)s
-        active = %(active)s
-  WHERE id = %(id)s returning id;"""
+update_niveau_de_fraicheur = """
+                            UPDATE niveau_de_fraicheur 
+                            SET niveau_de_fraicheur= %(niveau_de_fraicheur)s
+                              active = %(active)s
+                            WHERE id = %(id)s returning id;
+                            """
 
 change_niveau_de_fraicheur_status = """
-  UPDATE niveau_de_fraicheur SET active = NOT active WHERE id =%s; """
+                                    UPDATE niveau_de_fraicheur 
+                                    SET active = NOT active 
+                                    WHERE id =%s; 
+                                    """
 
 select_niveau_de_fraicheur_for_diplay = """
-  SELECT id,niveau_de_fraicheur AS Fraicheur, active, '' AS Change FROM niveau_de_fraicheur;"""
+                                        SELECT id,niveau_de_fraicheur AS Fraicheur, active, '' AS Change 
+                                        FROM niveau_de_fraicheur;
+                                        """
 
 select_niveau_de_fraicheur_tous = """
-  SELECT id,niveau_de_fraicheur FROM niveau_de_fraicheur WHERE active ORDER BY niveau_de_fraicheur ASC;"""
+                                  SELECT id,niveau_de_fraicheur 
+                                  FROM niveau_de_fraicheur 
+                                  WHERE active 
+                                  ORDER BY niveau_de_fraicheur ASC;
+                                  """
 
-################ Tables des liens niveaux de fraicheurs - lieux active ################
+#------------ Tables des liens niveaux de fraicheurs - lieux active -------------#
 
-drop_lien_niveau_de_fraicheur_cooltogo_validated = """DROP TABLE IF EXISTS lien_niveau_de_fraicheur_cooltogo_validated;"""
+drop_lien_niveau_de_fraicheur_cooltogo_validated = """
+                                                  DROP TABLE IF EXISTS lien_niveau_de_fraicheur_cooltogo_validated;
+                                                  """
 
 lien_niveau_de_fraicheur_cooltogo_validated = """
-    CREATE TABLE IF NOT EXISTS lien_niveau_de_fraicheur_cooltogo_validated (
-        id SERIAL PRIMARY KEY,
-        id_cooltogo_validated BIGINT,
-        id_niveau_de_fraicheur BIGINT
-    )"""
+                                              CREATE TABLE IF NOT EXISTS lien_niveau_de_fraicheur_cooltogo_validated (
+                                                id SERIAL PRIMARY KEY,
+                                                id_cooltogo_validated BIGINT,
+                                                id_niveau_de_fraicheur BIGINT
+                                              )"""
 
 insert_lien_niveau_de_fraicheur_cooltogo_validated = """
-  INSERT INTO lien_niveau_de_fraicheur_cooltogo_validated (id_cooltogo_validated, id_niveau_de_fraicheur)
-  VALUES (%(id_cooltogo_validated)s, %(id_niveau_de_fraicheur)s) returning id;"""
+                                                    INSERT INTO lien_niveau_de_fraicheur_cooltogo_validated (id_cooltogo_validated, id_niveau_de_fraicheur)
+                                                    VALUES (%(id_cooltogo_validated)s, %(id_niveau_de_fraicheur)s) returning id;
+                                                    """
 
 select_lien_niveau_de_fraicheur_cooltogo_validated = """
-  SELECT id_niveau_de_fraicheur FROM lien_niveau_de_fraicheur_cooltogo_validated WHERE id_cooltogo_validated=%s; """
+                                                    SELECT id_niveau_de_fraicheur 
+                                                    FROM lien_niveau_de_fraicheur_cooltogo_validated 
+                                                    WHERE id_cooltogo_validated=%s; 
+                                                    """
 
-update_lien_niveau_de_fraicheur_cooltogo_validated ="""
-  UPDATE lien_niveau_de_fraicheur_cooltogo_validated 
-    SET id_niveau_de_fraicheur= %(id_niveau_de_fraicheur)s
-  WHERE id_cooltogo_validated = %(id_cooltogo_validated)s returning id;"""
+update_lien_niveau_de_fraicheur_cooltogo_validated = """
+                                                      UPDATE lien_niveau_de_fraicheur_cooltogo_validated 
+                                                      SET id_niveau_de_fraicheur= %(id_niveau_de_fraicheur)s
+                                                      WHERE id_cooltogo_validated = %(id_cooltogo_validated)s returning id;
+                                                      """
 
-delete_lien_niveau_de_fraicheur_cooltogo_validated ="""
-  DELETE FROM lien_niveau_de_fraicheur_cooltogo_validated WHERE id_cooltogo_validated = %s;"""
+delete_lien_niveau_de_fraicheur_cooltogo_validated = """
+                                                      DELETE 
+                                                      FROM lien_niveau_de_fraicheur_cooltogo_validated 
+                                                      WHERE id_cooltogo_validated = %s;
+                                                      """
 
-################ Tables des liens niveaux de fraicheurs - lieux active ################
+#------- Tables des liens niveaux de fraicheurs - lieux active -------#
 
-drop_projet = """DROP TABLE IF EXISTS projet;"""
+drop_projet = """
+              DROP TABLE IF EXISTS projet;
+              """
 
 projet = """
-    CREATE TABLE IF NOT EXISTS projet (
-        id SERIAL PRIMARY KEY,
-        project_ID TEXT NOT NULL,
-        api_key TEXT NOT NULL
-    )"""
+        CREATE TABLE IF NOT EXISTS projet (
+          id SERIAL PRIMARY KEY,
+          project_ID TEXT NOT NULL,
+          api_key TEXT NOT NULL
+        )"""
 
 insert_projet = """
-  INSERT INTO projet (project_ID, api_key)
-  VALUES (%(project_ID)s, %(api_key)s) returning id;"""
+                INSERT INTO projet (project_ID, api_key)
+                VALUES (%(project_ID)s, %(api_key)s) 
+                returning id;
+                """
 
 select_projet_with_id = """
-  SELECT project_ID, api_key FROM projet WHERE id=%s; """
+                        SELECT project_ID, api_key 
+                        FROM projet 
+                        WHERE id=%s; 
+                        """
 
-select_projet_information= """
-  SELECT id, project_ID, api_key,'' as Launch, '' as Del FROM projet; """
+select_projet_information = """
+                            SELECT id, project_ID, api_key,'' as Launch, '' as Del 
+                            FROM projet; 
+                            """
 
-select_selection_projet =  """
-  SELECT project_ID, api_key,selection FROM projet as p LEFT JOIN selection as s ON p.id=s.id_projet WHERE s.id=%s; """
+select_selection_projet = """
+                          SELECT project_ID, api_key,selection 
+                          FROM projet as p 
+                          LEFT JOIN selection as s 
+                          ON p.id=s.id_projet
+                           WHERE s.id=%s; 
+                           """
 
 delete_projet_with_id = """
-  DELETE FROM projet WHERE id=%s; """
+                        DELETE 
+                        FROM projet 
+                        WHERE id=%s; 
+                        """
 
+#------------------------ User profils -------------------------#
 
-############################ THE END ################################
+drop_profil = """
+                DROP TABLE IF EXISTS profils_usager;
+                """
+profil = """
+          CREATE TABLE IF NOT EXISTS profils_usager (
+            id SERIAL PRIMARY KEY,
+            profils VARCHAR(20)
+          )"""
+
+#---------------------------------------------------------------#
+#                          THE END                              #
+#---------------------------------------------------------------#

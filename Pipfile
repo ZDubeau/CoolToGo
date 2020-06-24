@@ -74,6 +74,9 @@ flask-login = "*"
 celery = "*"
 redis = "*"
 flask-restful = "*"
+flask-wtf = "*"
+wtforms = "*"
+email-validator = "*"
 
 [requires]
 python_version = "3.8"

@@ -7,10 +7,10 @@
         "port": 5454
     },
     "production": {
-        "dbname": "d2itutjrhom96p",
-        "user": "uscregocdiwpui",
-        "password": "c633cd75dbeb9c53c423a6b9dc28503c9f6709664e62ac5db9290a3e3a2d86d3",
-        "host": "ec2-54-247-78-30.eu-west-1.compute.amazonaws.com",
+        "dbname": "dcr5rrne6bhbld",
+        "user": "rrbrplvicbwxtl",
+        "password": "ef165e2fea7aa922f4dddefd444e8b3c6b1fbd414fad82f971adf77bf7afbac6",
+        "host": "ec2-46-137-100-204.eu-west-1.compute.amazonaws.com",
         "port": 5432
     },
     "staging": {

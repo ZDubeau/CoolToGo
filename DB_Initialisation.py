@@ -14,6 +14,7 @@ import Table_selection
 import Table_extraction
 import Table_admin
 import Table_category
+import Table_profil
 import Table_freshness
 import DB_Protocole
 import DB_Table_Definitions
@@ -31,6 +32,7 @@ full_actions_list = (DB_Table_Definitions.drop_message,
                      Table_freshness.drop_freshness_level,
                      Table_admin.drop_admin,
                      Table_category.drop_category,
+                     Table_profil.drop_user_profil,
                      DB_Table_Definitions.message,
                      Table_project.project,
                      Table_selection.selection,
@@ -39,7 +41,8 @@ full_actions_list = (DB_Table_Definitions.drop_message,
                      DB_Table_Definitions.cooltogo_validated,
                      Table_freshness.freshness_level,
                      Table_admin.admin,
-                     Table_category.category)
+                     Table_category.category,
+                     Table_profil.user_profil,)
 
 # ligth_actions_list = (DB_Table_Definitions.drop_message,
 #                       Table_project.drop_project,

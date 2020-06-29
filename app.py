@@ -1,19 +1,19 @@
+''' Last update : 2020-06-26 '''
+
+import Table_profil as prf
 from wtforms.validators import InputRequired, Email, Length, Regexp, AnyOf
 from wtforms import Form, StringField, PasswordField, validators
 from flask_wtf import FlaskForm
-from flask import Flask, render_template, request, redirect, url_for, make_response, jsonify, json, g, abort, session
+from flask import Flask, render_template, request, redirect, url_for, make_response, jsonify, json, g, abort, session, send_from_directory
 from flask_restful import Api
 import socket
 import os
 import pandas as pd
 from pandas import DataFrame
-from sqlalchemy import create_engine
 from geopy.geocoders import Nominatim
 import psycopg2
 import psycopg2.extras
 
-import DB_Protocole
-from DB_Protocole import ConnexionDB, DeconnexionDB, make_engine
 import DB_Table_Definitions
 import DB_Functions as functions   # insert database related code here
 import apidae_extraction as apex  # my function retrieving data from apiade
@@ -25,6 +25,7 @@ import Table_selection as slc
 import Table_extraction as extract
 import Table_message as msg
 import Table_freshness as fresh
+from DB_Connexion import DB_connexion
 
 app = Flask(__name__)
 
@@ -41,6 +42,11 @@ def after_request(response):
                          'GET,PUT,POST,DELETE,OPTIONS')
     return response
 
+
+# @app.route('/cooltogo.ico')
+# def favicon():
+#     return send_from_directory(os.path.join(app.root_path, 'static'),
+#                                'cooltogo.ico')
 #-------------------------- Homepage ---------------------------#
 
 
@@ -49,15 +55,14 @@ def get_homepage():
     session.clear()
 
     form = RegistrationForm(request.form)
-    ConnexionDB()
     modal_inscription = False
     modal_login = False
-    DB_Protocole.cur.execute(admin.nombre_admin)
-    nb_admin = DB_Protocole.cur.fetchone()[0]
+    connexion = DB_connexion()
+    nb_admin = connexion.Query_SQL_fetchone(admin.nombre_admin)[0]
+    connexion.close()
     inscription = False
     if nb_admin == 0:
         inscription = True
-    DeconnexionDB()
     return render_template('homepage.html', inscription=inscription, form=form, modal_inscription=modal_inscription, modal_login=modal_login)
 
 #*********************** Register - new version **************************#
@@ -69,13 +74,12 @@ class RegistrationForm(Form):
     email = StringField(
         '', validators=[validators.input_required(), validators.Email()])
     password = PasswordField('', validators=[validators.input_required(), validators.Regexp(
-        '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})', message='Le mot de passe doit être composé de 8 caractères dont 1 lettre minuscule, 1 letter majuscule, 1 chiffre et un caractère spécial')])
+        '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{6,})', message='Le mot de passe doit être composé de 6 caractères dont 1 lettre minuscule, 1 letter majuscule, 1 chiffre et un caractère spécial')])
     confirm = PasswordField('', validators=[validators.input_required()])
 
 
 @app.route('/inscription', methods=['GET', 'POST'])
 def register():
-    ConnexionDB()
     form = RegistrationForm(request.form)
     for fieldName, errorMessages in form.errors.items():
         for err in errorMessages:
@@ -91,15 +95,15 @@ def register():
             functions.insert_administrator(
                 form.username.data, form.password.data, form.email.data)
             ErrorMessage = "Merci de votre inscription!"
-            #flash('Thanks for registering')
+            # flash('Thanks for registering')
     modal_inscription = False
-    DB_Protocole.cur.execute(admin.nombre_admin)
-    nb_admin = DB_Protocole.cur.fetchone()[0]
+    connexion = DB_connexion()
+    nb_admin = connexion.Query_SQL_fetchone(admin.nombre_admin)[0]
+    connexion.close()
     inscription = False
     if nb_admin == 0:
         inscription = True
         modal_inscription = True
-    DeconnexionDB()
     return render_template('homepage.html', inscription=inscription, form=form, modal_inscription=modal_inscription)
 
 #*********************** Login - new version **************************#
@@ -121,34 +125,11 @@ def login():
         return 'Formulaire soumis avec succès !'
     return render_template('get_homepage', form=form)
 
-#---------------------- Inscription ----------------------#
-# @app.route("/inscription", methods=["POST"])
-# def post_inscription():
-#     ConnexionDB()
-#     username = request.form["uname"]
-#     email = request.form["email"]
-#     password = request.form["psw"]
-#     password_repeat = request.form.get("psw-repeat")
-#     if password_repeat == password:
-#         list_admin = functions.connexion_admin(username, password, True)
-#         # print(list_admin)
-#         if [username] in list_admin:
-#             ErrorMessage = "Username already existe!"
-#         else:
-#             functions.insert_administrator(username, password, email)
-#             ErrorMessage = "Well done, you've signed up!"
-#     else:
-#         ErrorMessage = "The passwords are not match!"
-#     DeconnexionDB()
-
-#     return redirect(url_for("get_homepage", ErrorMessage=ErrorMessage))
-
 #---------------------- Login page ----------------------#
 
 
 @app.route("/login", methods=["GET", "POST"])
 def post_login():
-    ConnexionDB()
     username = request.form.get("uname")
     password = request.form.get("psw")
     admin_ID = functions.recuperation_id(admin.select_id_admin, (username,))
@@ -161,7 +142,6 @@ def post_login():
         ErrorMessage = "The username existe but the password is wrong!"
     else:
         ErrorMessage = "The passwords are not match!"
-    DeconnexionDB()
 
     return redirect(url_for("get_homepage", ErrorMessage=ErrorMessage))
 
@@ -185,10 +165,10 @@ def get_tableApidae():
         return redirect(url_for("get_homepage"))
     else:
         username = session["username"]
-        engine = make_engine()
+        connexion = DB_connexion()
         df = pd.read_sql(
-            apidae.select_apidae_display, engine)
-
+            apidae.select_apidae_display, connexion.engine())
+        connexion.close()
         return render_template('pages/tableApidae.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableApidae', index=False)], username=username)
 
 #------------------ Valid tables interface --------------------#
@@ -204,154 +184,153 @@ def get_tableValide():
             ErrorMessage = request.args.get('ErrorMessage')
         else:
             ErrorMessage = ""
-        engine = make_engine()
+        connexion = DB_connexion()
         df = pd.read_sql(
-            DB_Table_Definitions.select_cooltogo_validated_for_display, engine)
+            DB_Table_Definitions.select_cooltogo_validated_for_display, connexion.engine())
+        connexion.close()
         return render_template('pages/tableValide.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableValid', index=False)], username=username, ErrorMessage=ErrorMessage)
 
 #---------------------- New data valid ------------------------#
 
 
-@app.route('/new_data_valid', methods=['GET', 'POST'])
-def get_new_data_valid():
-    lieu_event = request.form["lieu_event"]
-    name = request.form["name"]
-    niveau_fraicheur = request.form["niveau_fraicheur"]
-    type_ = request.form["type"]
-    adresse1 = request.form["adresse1"]
-    adresse2 = request.form["adresse2"]
-    codePostal = request.form["code_postal"]
-    City = request.form["City"]
-    telephone = request.form["telephone"]
-    email = request.form["email"]
-    site_web = request.form["site_web"]
-    Description_Teaser = request.form["Description_Teaser"]
-    Description = request.form["description"]
-    # styleUrl = request.form["styleUrl"]
-    # styleHash = request.form["styleHash"]
-    Images = request.form["Images"]
-    Categories = request.form["Categories"]
-    Accessibilite = request.form["Accessibilité"]
-    Payant = request.form["Payant"]
-    public = ""
-    first = True
-    if "senior" in request.form:
-        public += "senior"
-        first = False
-    if "enfant" in request.form:
-        if first:
-            public += "enfant"
-            first = False
-        else:
-            public += ",enfant"
-    if "jeune" in request.form:
-        if first:
-            public += "jeune"
-            first = False
-        else:
-            public += ",jeune"
-    if "adulte" in request.form:
-        if first:
-            public += "adulte"
-            first = False
-        else:
-            public += ",adulte"
-    if "solidaire" in request.form:
-        if first:
-            public += "solidaire"
-            first = False
-        else:
-            public += ",solidaire"
-    plus_d_infos = request.form["plus_d_infos"]
-    Date_debut = request.form["Date_début"]
-    Date_fin = request.form["Date_fin"]
-    adresse_to_geolocalize = ""
-    if adresse1 != "None":
-        adresse_to_geolocalize += adresse1
-    if adresse2 != "None":
-        adresse_to_geolocalize += " " + adresse2
-    geolocator = Nominatim(user_agent="cooltogo_api_backend")
-    location = geolocator.geocode(
-        adresse_to_geolocalize+" "+codePostal+" "+City)
-    if location == None:
-        x_lat = None
-        y_lon = None
-    else:
-        x_lat = location.latitude
-        y_lon = location.longitude
-    ConnexionDB()
-    DB_Protocole.cur.execute(
-        DB_Table_Definitions.select_max_id_from_cooltogo_validated)
-    id_max = DB_Protocole.cur.fetchone()[0]
-    if id_max == None:
-        id_max = "1"
-    else:
-        id_max = str(id_max+1)
-    id_apidae = "ManualEntry_"+id_max
-    functions.insert_cooltogo_validated(id_apidae,
-                                        lieu_event,
-                                        x_lat,
-                                        y_lon,
-                                        name,
-                                        niveau_fraicheur,
-                                        adresse1,
-                                        adresse2,
-                                        codePostal,
-                                        City,
-                                        telephone,
-                                        email,
-                                        site_web,
-                                        Description_Teaser,
-                                        Description,
-                                        Images,
-                                        public,
-                                        type_,
-                                        Categories,
-                                        Accessibilite,
-                                        Payant,
-                                        plus_d_infos,
-                                        Date_debut,
-                                        Date_fin)
-    DeconnexionDB()
-    return redirect(url_for("get_tableValide"))
+# @app.route('/new_data_valid', methods=['GET', 'POST'])
+# def get_new_data_valid():
+#     lieu_event = request.form["lieu_event"]
+#     name = request.form["name"]
+#     niveau_fraicheur = request.form["niveau_fraicheur"]
+#     type_ = request.form["type"]
+#     adresse1 = request.form["adresse1"]
+#     adresse2 = request.form["adresse2"]
+#     codePostal = request.form["code_postal"]
+#     City = request.form["City"]
+#     telephone = request.form["telephone"]
+#     email = request.form["email"]
+#     site_web = request.form["site_web"]
+#     Description_Teaser = request.form["Description_Teaser"]
+#     Description = request.form["description"]
+#     Images = request.form["Images"]
+#     Categories = request.form["Categories"]
+#     Accessibilite = request.form["Accessibilité"]
+#     Payant = request.form["Payant"]
+#     public = ""
+#     first = True
+#     if "senior" in request.form:
+#         public += "senior"
+#         first = False
+#     if "enfant" in request.form:
+#         if first:
+#             public += "enfant"
+#             first = False
+#         else:
+#             public += ",enfant"
+#     if "jeune" in request.form:
+#         if first:
+#             public += "jeune"
+#             first = False
+#         else:
+#             public += ",jeune"
+#     if "adulte" in request.form:
+#         if first:
+#             public += "adulte"
+#             first = False
+#         else:
+#             public += ",adulte"
+#     if "solidaire" in request.form:
+#         if first:
+#             public += "solidaire"
+#             first = False
+#         else:
+#             public += ",solidaire"
+#     plus_d_infos = request.form["plus_d_infos"]
+#     Date_debut = request.form["Date_début"]
+#     Date_fin = request.form["Date_fin"]
+#     adresse_to_geolocalize = ""
+#     if adresse1 != "None":
+#         adresse_to_geolocalize += adresse1
+#     if adresse2 != "None":
+#         adresse_to_geolocalize += " " + adresse2
+#     geolocator = Nominatim(user_agent="cooltogo_api_backend")
+#     location = geolocator.geocode(
+#         adresse_to_geolocalize+" "+codePostal+" "+City)
+#     if location == None:
+#         x_lat = None
+#         y_lon = None
+#     else:
+#         x_lat = location.latitude
+#         y_lon = location.longitude
+#     connexion = DB_connexion()
+#     DB_Protocole.cur.execute(
+#         DB_Table_Definitions.select_max_id_from_cooltogo_validated)
+#     id_max = DB_Protocole.cur.fetchone()[0]
+#     if id_max == None:
+#         id_max = "1"
+#     else:
+#         id_max = str(id_max+1)
+#     id_apidae = "ManualEntry_"+id_max
+#     functions.insert_cooltogo_validated(id_apidae,
+#                                         lieu_event,
+#                                         x_lat,
+#                                         y_lon,
+#                                         name,
+#                                         niveau_fraicheur,
+#                                         adresse1,
+#                                         adresse2,
+#                                         codePostal,
+#                                         City,
+#                                         telephone,
+#                                         email,
+#                                         site_web,
+#                                         Description_Teaser,
+#                                         Description,
+#                                         Images,
+#                                         public,
+#                                         type_,
+#                                         Categories,
+#                                         Accessibilite,
+#                                         Payant,
+#                                         plus_d_infos,
+#                                         Date_debut,
+#                                         Date_fin)
+#     connexion.close()
+#     return redirect(url_for("get_tableValide"))
 
 #-------------------- Validated lieu ------------------------#
 
 
-@app.route('/validate_lieu/<id>')
-def get_validate_lieu(id):
-    ConnexionDB()
-    DB_Protocole.cur.execute(
-        apidae.select_apidae_1_id, [id])
-    data = DB_Protocole.cur.fetchone()
-    functions.insert_cooltogo_validated(data[1],
-                                        data[3],
-                                        data[6],
-                                        data[7],
-                                        data[4],
-                                        "",
-                                        data[8],
-                                        data[9],
-                                        data[10],
-                                        data[11],
-                                        data[12],
-                                        data[13],
-                                        data[14],
-                                        data[15],
-                                        data[15],
-                                        data[16],
-                                        data[17],
-                                        "",
-                                        "",
-                                        data[5],
-                                        data[18],
-                                        data[19],
-                                        data[20],
-                                        data[21],
-                                        data[22],
-                                        data[23])
-    DeconnexionDB()
-    return redirect(url_for("get_tableApidae"))
+# @app.route('/validate_lieu/<id>')
+# def get_validate_lieu(id):
+#     connexion = DB_connexion()
+#     DB_Protocole.cur.execute(
+#         apidae.select_apidae_1_id, [id])
+#     data = DB_Protocole.cur.fetchone()
+#     functions.insert_cooltogo_validated(data[1],
+#                                         data[3],
+#                                         data[6],
+#                                         data[7],
+#                                         data[4],
+#                                         "",
+#                                         data[8],
+#                                         data[9],
+#                                         data[10],
+#                                         data[11],
+#                                         data[12],
+#                                         data[13],
+#                                         data[14],
+#                                         data[15],
+#                                         data[15],
+#                                         data[16],
+#                                         data[17],
+#                                         "",
+#                                         "",
+#                                         data[5],
+#                                         data[18],
+#                                         data[19],
+#                                         data[20],
+#                                         data[21],
+#                                         data[22],
+#                                         data[23])
+#     connexion.close()
+#     return redirect(url_for("get_tableApidae"))
 
 #________________________Add new administator interface_______________________#
 
@@ -366,10 +345,10 @@ def get_add_admin():
             ErrorMessage = request.args.get('ErrorMessage')
         else:
             ErrorMessage = ""
-
-        engine = make_engine()
+        connexion = DB_connexion()
         df = pd.read_sql(
-            admin.select_admin_for_display, engine)
+            admin.select_admin_for_display, connexion.engine())
+        connexion.close()
         return render_template('pages/Administators.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableAdmin', index=False)], username=username, ErrorMessage=ErrorMessage)
 
 # Add admin interface after adding
@@ -377,12 +356,10 @@ def get_add_admin():
 
 @app.route("/new_admin", methods=["POST"])
 def post_Administator():
-    ConnexionDB()
     username = request.form["adm_uname"]
     email = request.form["adm_email"]
     password = request.form["adm_psw"]
     password_repeat = request.form.get("adm_psw-repeat")
-    engine = make_engine()
     if password_repeat == password:
         list_admin = functions.connexion_admin(username, password, True)
         if [username] in list_admin:
@@ -391,7 +368,6 @@ def post_Administator():
             functions.insert_administrator(username, password, email)
     else:
         ErrorMessage = "The password inputs are differents !"
-    DeconnexionDB()
     return redirect(url_for("get_add_admin", ErrorMessage=ErrorMessage))
 
 # Remove an administator
@@ -399,26 +375,25 @@ def post_Administator():
 
 @app.route('/delete_admin/<id>')
 def get_delete_admin(id):
-    ConnexionDB()
-    DB_Protocole.cur.execute(admin.delete_admin, [id])
-    DB_Protocole.conn.commit()
-    DeconnexionDB()
+    connexion = DB_connexion()
+    connexion.Delete_SQL(admin.delete_admin, [id])
+    connexion.close()
     ErrorMessage = "Admin deleted successfully !"
     return redirect(url_for("get_add_admin", ErrorMessage=ErrorMessage))
 # ________________________________________________________________________
 #-------------------- Remove a lieu ------------------------#
 
 
-@app.route('/remove_lieu/<id>')
-def get_remove_lieu(id):
-    ConnexionDB()
-    DB_Protocole.cur.execute(
-        DB_Table_Definitions.delete_from_cooltogo_validated_with_id, [id])
-    DB_Protocole.cur.execute(
-        DB_Table_Definitions.delete_lien_niveau_de_fraicheur_cooltogo_validated, [id])
-    DB_Protocole.conn.commit()
-    DeconnexionDB()
-    return redirect(url_for("get_tableValide"))
+# @app.route('/remove_lieu/<id>')
+# def get_remove_lieu(id):
+#     connexion = DB_connexion()
+#     DB_Protocole.cur.execute(
+#         DB_Table_Definitions.delete_from_cooltogo_validated_with_id, [id])
+#     DB_Protocole.cur.execute(
+#         DB_Table_Definitions.delete_lien_niveau_de_fraicheur_cooltogo_validated, [id])
+#     DB_Protocole.conn.commit()
+#     connexion.close()
+#     return redirect(url_for("get_tableValide"))
 
 #----------------- Project Informations --------------------#
 
@@ -429,9 +404,10 @@ def get_projectInformation():
         return redirect(url_for("get_homepage"))
     else:
         username = session["username"]
-        engine = make_engine()
+        connexion = DB_connexion()
         df = pd.read_sql(
-            prj.select_project_information, engine)
+            prj.select_project_information, connexion.engine())
+        connexion.close()
         return render_template('pages/projectInformation.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableProjet', index=False)], username=username)
 
 #------------------- New Project --------------------#
@@ -439,11 +415,9 @@ def get_projectInformation():
 
 @app.route('/new_project_info', methods=['GET', 'POST'])
 def get_new_project_info():
-    ConnexionDB()
     project_ID = request.form["project_ID"]
     api_key = request.form["api_key"]
     functions.insert_project(project_ID, api_key)
-    DeconnexionDB()
     return redirect(url_for("get_projectInformation"))
 
 #--------------- Lancement(launch) d'extraction des selection --------------#
@@ -451,16 +425,13 @@ def get_new_project_info():
 
 @app.route('/launch_selection_extract/<id>')
 def get_launch_selection_extract(id):
-    ConnexionDB()
-    engine = make_engine()
-    DB_Protocole.cur.execute(prj.select_project_with_id, [id])
-    data = DB_Protocole.cur.fetchone()
+    connexion = DB_connexion()
+    data = connexion.Query_SQL_fetchone(prj.select_project_with_id, [id])
     df = apex.retrieve_selection_list(id, data[0], data[1])
-    DB_Protocole.cur.execute(
-        slc.delete_selection_with_project_id, [id])
-    DB_Protocole.conn.commit()
-    df.to_sql('selection', con=engine, index=False, if_exists='append')
-    DeconnexionDB()
+    connexion.Delete_SQL(slc.delete_selection_with_project_id, [id])
+    df.to_sql('selection', con=connexion.engine(),
+              index=False, if_exists='append')
+    connexion.close()
     return redirect(url_for("get_apidaeSelection"))
 
 #---------------- Remove project id -----------------#
@@ -468,16 +439,11 @@ def get_launch_selection_extract(id):
 
 @app.route('/delete_projet/<id>')
 def get_delete_projet(id):
-    ConnexionDB()
-    DB_Protocole.cur.execute(
-        apidae.delete_apidae_project_id, [id])
-    DB_Protocole.conn.commit()
-    DB_Protocole.cur.execute(
-        prj.delete_selection_with_project_id, [id])
-    DB_Protocole.conn.commit()
-    DB_Protocole.cur.execute(DB_Table_Definitions.delete_with_id, [id])
-    DB_Protocole.conn.commit()
-    DeconnexionDB()
+    connexion = DB_connexion()
+    connexion.Delete_SQL(apidae.delete_apidae_project_id, [id])
+    connexion.Delete_SQL(slc.delete_selection_with_project_id, [id])
+    connexion.Delete_SQL(prj.delete_project_with_id, [id])
+    connexion.close()
     return redirect(url_for("get_projectInformation"))
 
 #----------------- Apidae Selection --------------------#
@@ -489,9 +455,10 @@ def get_apidaeSelection():
         return redirect(url_for("get_homepage"))
     else:
         username = session["username"]
-        engine = make_engine()
+        connexion = DB_connexion()
         df = pd.read_sql(
-            slc.select_selection_information, engine)
+            slc.select_selection_information, connexion.engine())
+        connexion.close()
         return render_template('pages/apidaeSelection.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableSelection', index=False)], username=username)
 
 #------------------- Edit Selection --------------------#
@@ -503,11 +470,9 @@ def get_edit_selection(id):
         return redirect(url_for("get_homepage"))
     else:
         username = session["username"]
-        ConnexionDB()
-        DB_Protocole.cur.execute(
-            slc.select_selection_with_id, [id])
-        data = DB_Protocole.cur.fetchone()
-        DeconnexionDB()
+        connexion = DB_connexion()
+        data = connexion.Query_SQL_fetchone(slc.select_selection_with_id, [id])
+        connexion.close()
         return render_template('pages/editSelection.html', id_selection=id, selection=data[0], categories=data[1], selection_type=data[2], username=username)
 
 
@@ -515,11 +480,9 @@ def get_edit_selection(id):
 
 @app.route('/edit_selection_post', methods=['GET', 'POST'])
 def get_edit_selection_post():
-    ConnexionDB()
     id_selection = request.form["id"]
     lieu_event = request.form["lieu_event"]
     functions.edit_selection(id_selection, lieu_event)
-    DeconnexionDB()
     return redirect(url_for("get_apidaeSelection"))
 
 #--------------- Lancement(launch) d'extraction --------------#
@@ -527,201 +490,191 @@ def get_edit_selection_post():
 
 @app.route('/launch_extract/<id>')
 def get_launch_extract(id):
-    connection = DB_Protocole.Connexion()
-    curseur = connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    engine = make_engine()
-    curseur.execute(
-        prj.select_selection_project, [id])
-    data = curseur.fetchone()
+    connexion = DB_connexion()
+    data = connexion.Query_SQL_fetchone(prj.select_selection_project, [id])
     df = apex.retrive_data_by_selectionId(data[0], data[1], data[2])
-    curseur.execute(
-        apidae.delete_apidae_selection_id, [id])
-    connection.commit()
-    # df_in_db = pd.read_sql_table("data_from_apidae", engine)
-    # df_to_insert = df[~df.id_apidae.isin(df_in_db.id_apidae.values)]
+    connexion.Delete_SQL(apidae.delete_apidae_selection_id, [id])
     df_to_insert = df
-    df_to_insert.to_sql('data_from_apidae', con=engine,
+    df_to_insert.to_sql('data_from_apidae', con=connexion.engine(),
                         index=False, if_exists='append')
-    curseur.execute(extract.insert_selection_extraction, [
+    connexion.Insert_SQL(extract.insert_selection_extraction, [
         id, int(len(df_to_insert.index))])
-    connection.commit()
-    DB_Protocole.Deconnexion(connection, curseur)
+    connexion.close()
     return redirect(url_for("get_apidaeSelection"))
 
 #---------------- Remove Selection id -----------------#
 
 
-@app.route('/delete_selection/<id>')
-def get_delete_selection(id):
-    ConnexionDB()
-    DB_Protocole.cur.execute(slc.delete_selection, [id])
-    DB_Protocole.conn.commit()
-    DeconnexionDB()
-    return redirect(url_for("get_apidaeSelection"))
+# @app.route('/delete_selection/<id>')
+# def get_delete_selection(id):
+#     connexion = DB_connexion()
+
+#     DB_Protocole.cur.execute(slc.delete_selection, [id])
+#     DB_Protocole.conn.commit()
+#     connexion.close()
+#     return redirect(url_for("get_apidaeSelection"))
 
 
 #------------------ Edit lieu valid --------------------#
 
 
-@app.route('/edit_lieu_valide/<id>')
-def get_edit_data(id):
-    if "username" not in session:
-        return redirect(url_for("get_homepage"))
-    else:
-        username = session["username"]
-        ConnexionDB()
-        DB_Protocole.cur.execute(
-            DB_Table_Definitions.select_cooltogo_validate_with_id, [id])
-        data = DB_Protocole.cur.fetchall()
-        DB_Protocole.cur.execute(
-            DB_Table_Definitions.select_lien_niveau_de_fraicheur_cooltogo_validated, [id])
-        data_niveau_fraicheur = DB_Protocole.cur.fetchone()
-        DB_Protocole.cur.execute(
-            DB_Table_Definitions.select_niveau_de_fraicheur_tous)
-        data_liste_fraicheur = DB_Protocole.cur.fetchall()
-        if data[0][16] == None:
-            publics = None
-        else:
-            publics = data[0][16].split(",")
-        DeconnexionDB()
-        return render_template('pages/EditLieuValid.html', id_apidae=data[0][1], lieu_event=data[0][2], latitude=data[0][3], longitude=data[0][4], name=data[0][5], niveau_fraicheur=data_niveau_fraicheur, liste_niveau_fraicheur=data_liste_fraicheur, adresse1=data[0][6], adresse2=data[0][7], code_postal=data[0][8], city=data[0][9], telephone=data[0][10], email=data[0][11], ite_web=data[0][12], description_teaser=data[0][13], description=data[0][14], images=data[0][15], publics=publics, styleUrl=data[0][17], styleHash=data[0][18], type=data[0][19], categories=data[0][20], accessibilite=data[0][21], payant=data[0][22], plus_d_infos=data[0][23], date_debut=data[0][24], date_fin=data[0][25])
+# @app.route('/edit_lieu_valide/<id>')
+# def get_edit_data(id):
+#     if "username" not in session:
+#         return redirect(url_for("get_homepage"))
+#     else:
+#         username = session["username"]
+#         connexion = DB_connexion()
+#         DB_Protocole.cur.execute(
+#             DB_Table_Definitions.select_cooltogo_validate_with_id, [id])
+#         data = DB_Protocole.cur.fetchall()
+#         DB_Protocole.cur.execute(
+#             DB_Table_Definitions.select_lien_niveau_de_fraicheur_cooltogo_validated, [id])
+#         data_niveau_fraicheur = DB_Protocole.cur.fetchone()
+#         DB_Protocole.cur.execute(
+#             DB_Table_Definitions.select_niveau_de_fraicheur_tous)
+#         data_liste_fraicheur = DB_Protocole.cur.fetchall()
+#         if data[0][16] == None:
+#             publics = None
+#         else:
+#             publics = data[0][16].split(",")
+#         connexion.close()
+#         return render_template('pages/EditLieuValid.html', id_apidae=data[0][1], lieu_event=data[0][2], latitude=data[0][3], longitude=data[0][4], name=data[0][5], niveau_fraicheur=data_niveau_fraicheur, liste_niveau_fraicheur=data_liste_fraicheur, adresse1=data[0][6], adresse2=data[0][7], code_postal=data[0][8], city=data[0][9], telephone=data[0][10], email=data[0][11], ite_web=data[0][12], description_teaser=data[0][13], description=data[0][14], images=data[0][15], publics=publics, styleUrl=data[0][17], styleHash=data[0][18], type=data[0][19], categories=data[0][20], accessibilite=data[0][21], payant=data[0][22], plus_d_infos=data[0][23], date_debut=data[0][24], date_fin=data[0][25])
 
 #------------------ Edit DATA valid -------------------#
 
 
-@app.route('/edit_data_valid', methods=['GET', 'POST'])
-def get_edit_data_valid():
-    id_apidae = request.form["id_apidae"]
-    lieu_event = request.form["lieu_event"]
-    latitude = request.form["latitude"]
-    longitude = request.form["longitude"]
-    name = request.form["name"]
-    niveau_fraicheur = request.form["niveau_fraicheur"]
-    type_ = request.form["type"]
-    adresse1 = request.form["adresse1"]
-    adresse2 = request.form["adresse2"]
-    codePostal = request.form["code_postal"]
-    City = request.form["city"]
-    telephone = request.form["telephone"]
-    email = request.form["email"]
-    site_web = request.form["site_web"]
-    Description_Teaser = request.form["description_teaser"]
-    Description = request.form["description"]
-    styleUrl = request.form["styleUrl"]
-    styleHash = request.form["styleHash"]
-    Images = request.form["images"]
-    Categories = request.form["categories"]
-    Accessibilite = request.form["accessibilite"]
-    Payant = request.form["payant"]
-    public = ""
-    first = True
-    if "senior" in request.form:
-        public += "senior"
-        first = False
-    if "enfant" in request.form:
-        if first:
-            public += "enfant"
-            first = False
-        else:
-            public += ",enfant"
-    if "jeune" in request.form:
-        if first:
-            public += "jeune"
-            first = False
-        else:
-            public += ",jeune"
-    if "adulte" in request.form:
-        if first:
-            public += "adulte"
-            first = False
-        else:
-            public += ",adulte"
-    if "solidaire" in request.form:
-        if first:
-            public += "solidaire"
-            first = False
-        else:
-            public += ",solidaire"
-    plus_d_infos = request.form["plus_d_infos"]
-    Date_debut = request.form["date_debut"]
-    Date_fin = request.form["date_fin"]
-    geolocator = Nominatim(user_agent="cooltogo_api_backend")
-    location = geolocator.geocode(
-        adresse1+" "+adresse2+" "+codePostal+" "+City)
-    if location == None:
-        x_site = request.form["latitude"]
-        if x_site == "None":
-            x_lat = None
-        else:
-            x_lat = x_site
-        y_site = request.form["longitude"]
-        if y_site == "None":
-            y_lon = None
-        else:
-            y_lon = y_site
-    else:
-        x_lat = location.latitude
-        y_lon = location.longitude
-    ConnexionDB()
-    ErrorMessage = functions.update_cooltogo_validated(
-        id_apidae,
-        lieu_event,
-        x_lat,
-        y_lon,
-        name,
-        niveau_fraicheur,
-        adresse1,
-        adresse2,
-        codePostal,
-        City,
-        telephone,
-        email,
-        site_web,
-        Description_Teaser,
-        Description,
-        Images,
-        public,
-        styleUrl,
-        styleHash,
-        type_,
-        Categories,
-        Accessibilite,
-        Payant,
-        plus_d_infos,
-        Date_debut,
-        Date_fin)
+# @app.route('/edit_data_valid', methods=['GET', 'POST'])
+# def get_edit_data_valid():
+#     id_apidae = request.form["id_apidae"]
+#     lieu_event = request.form["lieu_event"]
+#     latitude = request.form["latitude"]
+#     longitude = request.form["longitude"]
+#     name = request.form["name"]
+#     niveau_fraicheur = request.form["niveau_fraicheur"]
+#     type_ = request.form["type"]
+#     adresse1 = request.form["adresse1"]
+#     adresse2 = request.form["adresse2"]
+#     codePostal = request.form["code_postal"]
+#     City = request.form["city"]
+#     telephone = request.form["telephone"]
+#     email = request.form["email"]
+#     site_web = request.form["site_web"]
+#     Description_Teaser = request.form["description_teaser"]
+#     Description = request.form["description"]
+#     Images = request.form["images"]
+#     Categories = request.form["categories"]
+#     Accessibilite = request.form["accessibilite"]
+#     Payant = request.form["payant"]
+#     public = ""
+#     first = True
+#     if "senior" in request.form:
+#         public += "senior"
+#         first = False
+#     if "enfant" in request.form:
+#         if first:
+#             public += "enfant"
+#             first = False
+#         else:
+#             public += ",enfant"
+#     if "jeune" in request.form:
+#         if first:
+#             public += "jeune"
+#             first = False
+#         else:
+#             public += ",jeune"
+#     if "adulte" in request.form:
+#         if first:
+#             public += "adulte"
+#             first = False
+#         else:
+#             public += ",adulte"
+#     if "solidaire" in request.form:
+#         if first:
+#             public += "solidaire"
+#             first = False
+#         else:
+#             public += ",solidaire"
+#     plus_d_infos = request.form["plus_d_infos"]
+#     Date_debut = request.form["date_debut"]
+#     Date_fin = request.form["date_fin"]
+#     geolocator = Nominatim(user_agent="cooltogo_api_backend")
+#     location = geolocator.geocode(
+#         adresse1+" "+adresse2+" "+codePostal+" "+City)
+#     if location == None:
+#         x_site = request.form["latitude"]
+#         if x_site == "None":
+#             x_lat = None
+#         else:
+#             x_lat = x_site
+#         y_site = request.form["longitude"]
+#         if y_site == "None":
+#             y_lon = None
+#         else:
+#             y_lon = y_site
+#     else:
+#         x_lat = location.latitude
+#         y_lon = location.longitude
+#     connexion = DB_connexion()
+#     ErrorMessage = functions.update_cooltogo_validated(
+#         id_apidae,
+#         lieu_event,
+#         x_lat,
+#         y_lon,
+#         name,
+#         niveau_fraicheur,
+#         adresse1,
+#         adresse2,
+#         codePostal,
+#         City,
+#         telephone,
+#         email,
+#         site_web,
+#         Description_Teaser,
+#         Description,
+#         Images,
+#         public,
+#         styleUrl,
+#         styleHash,
+#         type_,
+#         Categories,
+#         Accessibilite,
+#         Payant,
+#         plus_d_infos,
+#         Date_debut,
+#         Date_fin)
 
-    DeconnexionDB()
-    return redirect(url_for("get_tableValide", ErrorMessage=ErrorMessage))
+#     connexion.close()
+#     return redirect(url_for("get_tableValide", ErrorMessage=ErrorMessage))
 
-#------------------- extract locations --------------------#
+#_________________________extract locations__________________________#
 
 
-@app.route('/extract_locations')
-def get_extract_locations():
-    ConnexionDB()
-    DB_Protocole.cur.execute(DB_Table_Definitions.select_cooltogo_validated)
-    data = DB_Protocole.cur.fetchall()
-    DeconnexionDB()
-    list_feature = []
-    for value in data:
-        list_feature.append(functions.create_dict_for_lieu_validated(value))
-    dict_for_extract = dict()
-    dict_for_extract.update({"type": "FeatureCollection"})
-    dict_for_extract.update({"name": "cool2go"})
-    dict_for_extract_2 = {}
-    dict_for_extract_2.update({"name": "urn:ogc:def:crs:OGC:1.3:CRS84"})
-    dict_for_extract_1 = {}
-    dict_for_extract_1.update({"type": "name"})
-    dict_for_extract_1.update({"properties": dict_for_extract_2})
-    dict_for_extract.update({"crs": dict_for_extract_1})
-    dict_for_extract.update({"features": list_feature})
-    response = app.response_class(
-        response=json.dumps(dict_for_extract, indent=3, sort_keys=False),
-        status=200,
-        mimetype='application/json'
-    )
-    return response
+# @app.route('/extract_locations')
+# def get_extract_locations():
+#     connexion = DB_connexion()
+#     DB_Protocole.cur.execute(DB_Table_Definitions.select_cooltogo_validated)
+#     data = DB_Protocole.cur.fetchall()
+#     connexion.close()
+#     list_feature = []
+#     for value in data:
+#         list_feature.append(functions.create_dict_for_lieu_validated(value))
+#     dict_for_extract = dict()
+#     dict_for_extract.update({"type": "FeatureCollection"})
+#     dict_for_extract.update({"name": "cool2go"})
+#     dict_for_extract_2 = {}
+#     dict_for_extract_2.update({"name": "urn:ogc:def:crs:OGC:1.3:CRS84"})
+#     dict_for_extract_1 = {}
+#     dict_for_extract_1.update({"type": "name"})
+#     dict_for_extract_1.update({"properties": dict_for_extract_2})
+#     dict_for_extract.update({"crs": dict_for_extract_1})
+#     dict_for_extract.update({"features": list_feature})
+#     response = app.response_class(
+#         response=json.dumps(dict_for_extract, indent=3, sort_keys=False),
+#         status=200,
+#         mimetype='application/json'
+#     )
+#     return response
 
 #_____________________________Freshness______________________________#
 
@@ -732,34 +685,32 @@ def get_coolness_values():
         return redirect(url_for("get_homepage"))
     else:
         username = session["username"]
-        engine = make_engine()
+        connexion = DB_connexion()
         df = pd.read_sql(
-            fresh.select_freshness_level_for_diplay, engine)
+            fresh.select_freshness_level_for_diplay, connexion.engine())
+        connexion.close()
         return render_template('pages/coolness_values.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableCoolnessValues', index=False)], username=username)
 
 
 @app.route("/new_coolness_value", methods=["POST"])
 def post_new_coolness_value():
-    ConnexionDB()
+    connexion = DB_connexion()
     coolness_value = request.form["coolness_value"]
     score_freshness = request.form['score_freshness']
-    DB_Protocole.cur.execute(
-        fresh.insert_freshness_level, [coolness_value, score_freshness])
-    DB_Protocole.conn.commit()
-    DeconnexionDB()
+    connexion.Insert_SQL(fresh.insert_freshness_level, [
+                         coolness_value, score_freshness])
+    connexion.close()
     return redirect(url_for("get_coolness_values"))
 
 
 @app.route("/change_coolness_status/<id>", methods=['GET', 'POST'])
 def post_change_coolness_status(id):
-    ConnexionDB()
-    DB_Protocole.cur.execute(
-        fresh.change_freshness_level_status, [id])
-    DB_Protocole.conn.commit()
-    DeconnexionDB()
+    connexion = DB_connexion()
+    connexion.Update_SQL(fresh.change_freshness_level_status, [id])
+    connexion.close()
     return redirect(url_for("get_coolness_values"))
 
-#-------------------- Message button ----------------------#
+#_______________________Message button_________________________#
 
 
 @app.route('/message', methods=['GET'])
@@ -772,14 +723,14 @@ def get_message():
             ErrorMessage = request.args.get('ErrorMessage')
         else:
             ErrorMessage = ""
-        engine = make_engine()
-        df = pd.read_sql(msg.select_message_list, engine)
+        connexion = DB_connexion()
+        df = pd.read_sql(msg.select_message_list, connexion.engine())
+        connexion.close()
         return render_template('pages/message.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableMessage', index=False)], ErrorMessage=ErrorMessage, susername=username)
 
 
 @app.route("/new-message", methods=["POST"])
 def post_new_message():
-    ConnexionDB()
     message = request.form["message"]
     if 'start_date' in request.form:
         start_date = request.form['start_date']
@@ -789,10 +740,10 @@ def post_new_message():
         end_date = request.form['end_date']
     else:
         end_date = None
-    DB_Protocole.cur.execute(msg.insert_message, [
-                             message, start_date, end_date])
-    DB_Protocole.conn.commit()
-    DeconnexionDB()
+    connexion = DB_connexion()
+    connexion.Insert_SQL(msg.insert_message, [
+        message, start_date, end_date])
+    connexion.close()
     return redirect(url_for("get_message", ErrorMessage="Nouveau message créé !!"))
 
 
@@ -802,10 +753,10 @@ def get_edit_message(id):
         return redirect(url_for("get_homepage"))
     else:
         username = session["username"]
-        ConnexionDB()
-        DB_Protocole.cur.execute(DB_Table_Definitions.select_message, [id])
-        data = DB_Protocole.cur.fetchone()
-        DeconnexionDB()
+        connexion = DB_connexion()
+        data = connexion.Query_SQL_fetchone(
+            DB_Table_Definitions.select_message, [id])
+        connexion.close()
         message = data[1]
         start_date = data[2]
         end_date = data[3]
@@ -814,7 +765,6 @@ def get_edit_message(id):
 
 @app.route("/edit-message_save", methods=["POST"])
 def post_edit_message_save():
-    ConnexionDB()
     id = request.form["id"]
     message = request.form["message"]
     if 'start_date' in request.form:
@@ -825,22 +775,18 @@ def post_edit_message_save():
         end_date = request.form['end_date']
     else:
         end_date = None
-    DB_Protocole.cur.execute(msg.update_message, [
-                             message, start_date, end_date, id])
-    DB_Protocole.conn.commit()
-    DeconnexionDB()
-
+    connexion = DB_connexion()
+    connexion.Update_SQL(msg.update_message, [
+                         message, start_date, end_date, id])
+    connexion.close()
     return redirect(url_for("get_message"))
 
 
 @app.route('/publish_message/<id>')
 def get_publish_message(id):
-
-    ConnexionDB()
-    DB_Protocole.cur.execute(msg.select_message, [id])
-    data = DB_Protocole.cur.fetchone()
-    DeconnexionDB()
-
+    connexion = DB_connexion()
+    data = connexion.Query_SQL_fetchone(msg.select_message, [id])
+    connexion.close()
     message = data[1]
     start_date = data[2]
     end_date = data[3]
@@ -862,10 +808,9 @@ def get_publish_message(id):
 
 @app.route('/delete_message/<id>')
 def get_delete_message(id):
-    ConnexionDB()
-    DB_Protocole.cur.execute(msg.delete_message, [id])
-    DB_Protocole.conn.commit()
-    DeconnexionDB()
+    connexion = DB_connexion()
+    connexion.Delete_SQL(msg.delete_message, [id])
+    connexion.close()
     ErrorMessage = "Message deleted successfully !"
 
     return redirect(url_for("get_message", ErrorMessage=ErrorMessage))
@@ -883,26 +828,24 @@ def get_category():
             ErrorMessage = request.args.get('ErrorMessage')
         else:
             ErrorMessage = ""
-        engine = make_engine()
-        df = pd.read_sql(ctg.select_category, engine)
+        connexion = DB_connexion()
+        df = pd.read_sql(ctg.select_category, connexion.engine())
+        connexion.close()
         return render_template('pages/category.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableCategory', index=False)], ErrorMessage=ErrorMessage, username=username)
 
 
 @app.route("/new_category", methods=["POST"])
 def post_category():
-    conn, cur = ConnexionDB()
     category = request.form["category"]
-    cur.execute(ctg.select_category_with_description,
-                {"category": category})
-    if cur.rowcount > 0:
+    connexion = DB_connexion()
+    rowcount = connexion.Query_SQL_rowcount(ctg.select_category_with_description,
+                                            {"category_name": category})
+    if rowcount > 0:
         ErrorMessage = "La catégorie existe déjà !"
     else:
-        engine = make_engine()
-        cur.execute(
-            ctg.insert_category, {"category": category})
-        conn.commit()
+        connexion.Insert_SQL(ctg.insert_category, {"category_name": category})
         ErrorMessage = ""
-    DeconnexionDB()
+    connexion.close()
     return redirect(url_for("get_category", ErrorMessage=ErrorMessage))
 
 
@@ -912,42 +855,107 @@ def get_edit_categoriy(id):
         return redirect(url_for("get_homepage"))
     else:
         username = session["username"]
-        ConnexionDB()
-        DB_Protocole.cur.execute(ctg.select_category_with_id, [id])
-        data = DB_Protocole.cur.fetchone()
-        DeconnexionDB()
+        connexion = DB_connexion()
+        data = connexion.Query_SQL_fetchone(ctg.select_category_with_id, [id])
         category = data[1]
-        engine = make_engine()
-        df = pd.read_sql(ctg.select_category, engine)
+        df = pd.read_sql(ctg.select_category, connexion.engine())
+        connexion.close()
     return render_template('pages/category_edit.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableCategory', index=False)], id=id, category=category)
 
 
 @app.route("/edit_category_save", methods=["POST"])
-def post_edit_categpry():
-    ConnexionDB()
+def post_edit_category():
     id = request.form["id"]
     category = request.form["category"]
-    DB_Protocole.cur.execute(ctg.update_category, [
-                             category, id])
+    connexion = DB_connexion()
+    connexion.Update_SQL(ctg.update_category, [
+        category, id])
     DB_Protocole.conn.commit()
-    DeconnexionDB()
-
+    connexion.close()
     return redirect(url_for("get_category"))
 
 
 @app.route('/delete_category/<id>')
 def get_delete_category(id):
     try:
-        ConnexionDB()
-        DB_Protocole.cur.execute(ctg.delete_category, [id])
-        DB_Protocole.conn.commit()
-        DeconnexionDB()
+        connexion = DB_connexion()
+        connexion.Delete_SQL(ctg.delete_category, [id])
+        connexion.close()
         ErrorMessage = ""
     except Exception as e:
         ErrorMessage = e
-
     return redirect(url_for("get_category", ErrorMessage=ErrorMessage))
 
+
+#________________________User Profil_________________________#
+
+@app.route('/profil', methods=['GET'])
+def get_profil():
+    if "username" not in session:
+        return redirect(url_for("get_homepage"))
+    else:
+        username = session["username"]
+        if 'ErrorMessage' in request.args:
+            ErrorMessage = request.args.get('ErrorMessage')
+        else:
+            ErrorMessage = ""
+        connexion = ConnexionDB()
+        df = pd.read_sql(prf.select_user_profil, connexion.engine())
+        connexion.close()
+        return render_template('pages/profil.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableProfil', index=False)], ErrorMessage=ErrorMessage, username=username)
+
+
+@app.route("/new_profil", methods=["POST"])
+def post_profil():
+    profil = request.form["profil"]
+    connexion = DB_connexion()
+    rowcount = connexion.Query_SQL_rowcount(prf.select_user_profil_with_description,
+                                            {"profil": profil})
+    if rowcount > 0:
+        ErrorMessage = "Le profil existe déjà !"
+    else:
+        connexion.Insert_SQL(prf.insert_user_profil, {"profil": profil})
+        ErrorMessage = ""
+    connexion.close()
+    return redirect(url_for("get_profil", ErrorMessage=ErrorMessage))
+
+
+@app.route('/edit_profil/<id>')
+def get_edit_profil(id):
+    if "username" not in session:
+        return redirect(url_for("get_homepage"))
+    else:
+        username = session["username"]
+        connexion = DB_connexion()
+        data = connexion.Query_SQL_fetchone(
+            prf.select_user_profil_with_id, [id])
+        df = pd.read_sql(prf.select_user_profil, connexion.engine())
+        connexion.close()
+        profil = data[1]
+    return render_template('pages/profil_edit.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableProfil', index=False)], id=id, profil=profil)
+
+
+@app.route("/edit_profil_save", methods=["POST"])
+def post_edit_categpry():
+    id = request.form["id"]
+    profil = request.form["profil"]
+    connexion = DB_connexion()
+    connexion.Insert_SQL(prf.update_user_profil, [
+        profil, id])
+    connexion.close()
+    return redirect(url_for("get_profil"))
+
+
+@app.route('/delete_profil/<id>')
+def get_delete_profil(id):
+    try:
+        connexion = DB_connexion()
+        connexion.Delete_SQL(prf.delete_user_profil, [id])
+        connexion.close()
+        ErrorMessage = ""
+    except Exception as e:
+        ErrorMessage = e
+    return redirect(url_for("get_profil", ErrorMessage=ErrorMessage))
 
 #---------------------------------------------------#
 #                      The End                      #

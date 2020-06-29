@@ -5,40 +5,40 @@ drop_category = """
 category = """
             CREATE TABLE IF NOT EXISTS category (
                 id_category SERIAL PRIMARY KEY,
-                category VARCHAR(100)
+                category_name VARCHAR(100)
             )"""
 
 insert_category = """
-                INSERT INTO category (category)
-                VALUES (%(category)s) 
-                returning id_category;
-                """
+                    INSERT INTO category (category_name)
+                    VALUES (%(category_name)s) 
+                    returning id_category;
+                    """
 
 select_category = """
-                        SELECT id_category as id, category as catégorie, '' as modifier, '' as supprimer
-                        FROM category; 
-                        """
+                    SELECT id_category as id, category_name as catégories, '' as modifier, '' as supprimer
+                    FROM category; 
+                    """
 
 select_category_with_id = """
-                        SELECT id_category, category
-                        FROM category 
-                        WHERE id_category=%s; 
-                        """
+                            SELECT id_category, category_name
+                            FROM category 
+                            WHERE id_category=%s; 
+                            """
 
 select_category_with_description = """
                                     SELECT * 
                                     FROM category 
-                                    WHERE category=%(category)s
+                                    WHERE category_name=%(category_name)s
                                     """
 
 update_category = """
                     UPDATE category 
-                    SET category=%s 
+                    SET category_name=%s 
                     WHERE id_category=%s;
                     """
 
 delete_category = """
-                        DELETE 
-                        FROM category 
-                        WHERE id_category=%s; 
-                        """
+                    DELETE 
+                    FROM category 
+                    WHERE id_category=%s; 
+                    """

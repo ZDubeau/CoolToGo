@@ -14,95 +14,100 @@ $(document).ready(function () {
       "footer": false
     },
     "columnDefs": [
-      { "visible": false, "targets": 0 },   //id primary key
-      { "width": "20px", "targets": 1 },  //id_Apidae
-      { "width": "20px", "targets": 2 },  //id_selection
-      { "width": "80px", "targets": 3 },
-      { "width": "400px", "targets": 4 },
-      { "width": "250px", "targets": 5 },
+      { "visible": false, "targets": 0 },       //id primary key
+      { "width": "10px", "targets": 1 },        //id_Apidae
+      { "width": "8px", "targets": 2 },        //id_selection
+      { "width": "40px", "targets": 3 },
+      { "targets": 4, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" }, //titre
+      { "targets": 5, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" }, //adresse
       { "visible": false, "targets": 6 },
-      { "width": "60px", "targets": 7 },
-      { "width": "150px", "targets": 8 },
-      { "width": "50px", "targets": 9 },  //altitude
-      { "visible": false, "targets": 10 },  //latitude
-      { "visible": false, "targets": 11 },  //longitude
-      { "width": "80px", "targets": 12 }, //telephone
-      { "width": "250px", "targets": 13 },  //email
-      { "width": "300px", "targets": 14 },  //site web
-      { "visible": false, "targets": 15 },  //description courte
-      { "visible": false, "targets": 16 },  //description détaillée
-      { "visible": false, "targets": 17 },  //image
-      { "width": "1000px", "targets": 18 },  //publics
-      { "width": "300px", "targets": 19 },
-      { "width": "20", "targets": 20 },       //payant
-      { "width": "70px", "targets": 21 },     //animaux acceptés
-      { "width": "1200px", "targets": 22 },    //environnement
-      { "width": "1200px", "targets": 23 },    //equipement
-      { "width": "900px", "targets": 24 },    //services
-      { "width": "200px", "targets": 25 },    //periode
-      { "width": "500px", "targets": 26 },    //activites
-      { "visible": false, "targets": 27 },    //ouverture
-      { "width": "500px", "targets": 28 }       //typology
+      { "width": "50px", "targets": 7 },        // code_postal
+      { "targets": 8, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" }, //ville
+      { "width": "50px", "targets": 9 },        //altitude
+      { "visible": false, "targets": 10 },      //latitude
+      { "visible": false, "targets": 11 },      //longitude
+      { "width": "50px", "targets": 12 },       //telephone     
+      { "targets": 13, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },  //email 
+      { "targets": 14, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },  //site web
+      { "visible": false, "targets": 15 },      //description courte
+      { "visible": false, "targets": 16 },      //description détaillée
+      { "visible": false, "targets": 17 },      //image
+      { "targets": 18, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },  //publics
+      { "targets": 19, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },
+      { "width": "20", "targets": 20 },         //payant    
+      { "targets": 21, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },  //animaux acceptés
+      { "targets": 22, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },  //environnement
+      { "targets": 23, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },  //equipement
+      { "targets": 24, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },  //services
+      { "targets": 25, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },  //periode
+      { "targets": 26, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },  //activites
+      { "targets": 27, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },  //ouverture
+      { "targets": 28, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },  //typology      
+      { "width": "20px", "targets": 29 }
     ],
+    // createdRow: function (row) {
+    //   var td = $(row).find(".truncate");
+    //   td.attr("title", td.html());
+    // },
     "fnRowCallback": function (nRow, aData) {
-      // $('td:eq(29)', nRow).html(validate);
-      // $('td:eq(29)', nRow).click(function () {
-      //   var id = aData[0];
-      //   window.location.href = '/validate_lieu/' + id;
-      // });
-    }
-  });
-
-  $('#dataTableValid').DataTable({
-    "sScrollX": "100%",
-    "bScrollCollapse": true,
-    "fixedHeader": {
-      "header": false,
-      "footer": false
-    },
-    "columnDefs": [
-      { "visible": false, "targets": 0 },
-      { "width": "120px", "targets": 1 },
-      { "width": "70px", "targets": 2 },
-      { "width": "80px", "targets": 3 },
-      { "width": "80px", "targets": 4 },
-      { "width": "400px", "targets": 5 },
-      { "width": "200px", "targets": 6 },
-      { "width": "200px", "targets": 7 },
-      { "width": "70px", "targets": 8 },
-      { "width": "170px", "targets": 9 },
-      { "width": "100px", "targets": 10 },
-      { "width": "300px", "targets": 11 },
-      { "width": "800px", "targets": 12 },
-      { "width": "1400px", "targets": 13 },
-      { "width": "1400px", "targets": 14 },
-      { "width": "600px", "targets": 15 },
-      { "width": "180px", "targets": 16 },
-      { "width": "90px", "targets": 17 },
-      { "width": "90px", "targets": 18 },
-      { "width": "150px", "targets": 19 },
-      { "width": "180px", "targets": 20 },
-      { "width": "300px", "targets": 21 },
-      { "width": "70px", "targets": 22 },
-      { "width": "280px", "targets": 23 },
-      { "width": "80px", "targets": 24 },
-      { "width": "80px", "targets": 25 },
-      { "width": "20px", "targets": 26 },
-      { "width": "20px", "targets": 27 }
-    ],
-    "fnRowCallback": function (nRow, aData) {
-      // $('td:eq(25)', nRow).html(edit);
-      // $('td:eq(25)', nRow).click(function () {
-      //   var id = aData[0];
-      //   window.location.href = '/edit_lieu_valide/' + id;
-      // });
-      $('td:eq(26)', nRow).html(cancel);
-      $('td:eq(26)', nRow).click(function () {
+      $('td:eq(22)', nRow).html(edit);
+      $('td:eq(22)', nRow).click(function () {
         var id = aData[0];
-        window.location.href = '/remove_lieu/' + id;
+        window.location.href = '/edit_table_apidae/' + id;
       });
     }
   });
+
+  // $('#dataTableValid').DataTable({
+  //   "sScrollX": "100%",
+  //   "bScrollCollapse": true,
+  //   "fixedHeader": {
+  //     "header": false,
+  //     "footer": false
+  //   },
+  //   "columnDefs": [
+  //     { "visible": false, "targets": 0 },
+  //     { "width": "120px", "targets": 1 },
+  //     { "width": "70px", "targets": 2 },
+  //     { "width": "80px", "targets": 3 },
+  //     { "width": "80px", "targets": 4 },
+  //     { "width": "400px", "targets": 5 },
+  //     { "width": "200px", "targets": 6 },
+  //     { "width": "200px", "targets": 7 },
+  //     { "width": "70px", "targets": 8 },
+  //     { "width": "170px", "targets": 9 },
+  //     { "width": "100px", "targets": 10 },
+  //     { "width": "300px", "targets": 11 },
+  //     { "width": "800px", "targets": 12 },
+  //     { "width": "1400px", "targets": 13 },
+  //     { "width": "1400px", "targets": 14 },
+  //     { "width": "600px", "targets": 15 },
+  //     { "width": "180px", "targets": 16 },
+  //     { "width": "90px", "targets": 17 },
+  //     { "width": "90px", "targets": 18 },
+  //     { "width": "150px", "targets": 19 },
+  //     { "width": "180px", "targets": 20 },
+  //     { "width": "300px", "targets": 21 },
+  //     { "width": "70px", "targets": 22 },
+  //     { "width": "280px", "targets": 23 },
+  //     { "width": "80px", "targets": 24 },
+  //     { "width": "80px", "targets": 25 },
+  //     { "width": "20px", "targets": 26 },
+  //     { "width": "20px", "targets": 27 }
+  //   ],
+  //   "fnRowCallback": function (nRow, aData) {
+  // $('td:eq(25)', nRow).html(edit);
+  // $('td:eq(25)', nRow).click(function () {
+  //   var id = aData[0];
+  //   window.location.href = '/edit_lieu_valide/' + id;
+  // });
+  //     $('td:eq(26)', nRow).html(cancel);
+  //     $('td:eq(26)', nRow).click(function () {
+  //       var id = aData[0];
+  //       window.location.href = '/remove_lieu/' + id;
+  //     });
+  //   }
+  // });
 
   $('#dataTableAdmin').DataTable({
     "columnDefs": [
@@ -122,7 +127,7 @@ $(document).ready(function () {
 
   $('#dataTableSelection').DataTable({
     "columnDefs": [
-      { "visible": false, "targets": 0 },
+      { "width": "15px", "targets": 0 },
       { "width": "25px", "targets": 1 },
       { "width": "40px", "targets": 2 },
       { "width": "90px", "targets": 3 },
@@ -132,8 +137,8 @@ $(document).ready(function () {
     ],
     "fnRowCallback": function (nRow, aData) {
 
-      $('td:eq(5)', nRow).html(validate);
-      $('td:eq(5)', nRow).click(function () {
+      $('td:eq(6)', nRow).html(validate);
+      $('td:eq(6)', nRow).click(function () {
         var id = aData[0];
         window.location.href = '/launch_extract/' + id;
       });
@@ -237,4 +242,27 @@ $(document).ready(function () {
       });
     }
   });
+
+  $('#dataTableProfil').DataTable({
+    "columnDefs": [
+      { "width": "10px", "targets": 0 },
+      { "width": "180px", "targets": 1 },
+      { "width": "30px", "targets": 2 },
+      { "width": "30px", "targets": 3 }
+    ],
+    "order": [[0, "desc"]],
+    "fnRowCallback": function (nRow, aData) {
+      $('td:eq(2)', nRow).html(edit);
+      $('td:eq(2)', nRow).click(function () {
+        var id = aData[0];
+        window.location.href = '/edit_profil/' + id;
+      });
+      $('td:eq(3)', nRow).html(cancel);
+      $('td:eq(3)', nRow).click(function () {
+        var id = aData[0];
+        window.location.href = '/delete_profil/' + id;
+      });
+    }
+  });
+
 });

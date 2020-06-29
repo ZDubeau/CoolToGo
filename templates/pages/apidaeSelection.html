@@ -1,9 +1,15 @@
 {% extends "layout.html" %}
 {% block bootstrap_2 %}
-<div>
-    {% for table in tables %}
-    {{ table|safe }}
-    {% endfor %}
+<div class="card-header"
+    style="background-color: #1778b8b6; color: black; border-radius: 4px 4px 0px 0px; font-size: large; font-weight: bold;">
+    Selection d'Apidae
+</div>
+<div class="card-body" style="border-radius: 0px 0px 4px 4px;background-color: #1778b825;">
+    <div class="table-responsive">
+        {% for table in tables %}
+        {{ table|safe }}
+        {% endfor %}
+    </div>
 </div>
 
 <h4 style="color: red;">{{ErrorMessage}}</h4>

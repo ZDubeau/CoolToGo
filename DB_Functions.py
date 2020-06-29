@@ -2,7 +2,7 @@
 Projet CoolToGo
 ----------------------------
 Creation date  : 2020-03-06
-Last update    : 2020-06-11
+Last update    : 2020-06-26
 Estimate time  : 30 minutes
 Spend time     : 15 minutes
 ----------------------------
@@ -26,16 +26,17 @@ import Table_admin as admin
 import Table_Apidae as api
 import Table_project as project
 import Table_selection as selection
+from DB_Connexion import DB_connexion
 # _______________________________________________________________________
 
 
 def recuperation_id(sql_select: str, valeur_inserer: tuple):
-
-    DB_Protocole.cur.execute(sql_select, valeur_inserer)
+    connexion = DB_connexion()
     try:
-        id_table = DB_Protocole.cur.fetchone()[0]
+        id_table = connexion.Query_SQL_fetchone(sql_select, valeur_inserer)[0]
     except:
         id_table = None
+    connexion.close()
     return id_table
 # _______________________________________________________________________
 
@@ -48,21 +49,24 @@ def insert_selection(project_ID: str, api_key: str, selection_name: str, descrip
         'description': description
     }
     try:
-        DB_Protocole.Insert_SQL(selection.insert_selection, dico)
+        connexion = DB_connexion()
+        connexion.Insert_SQL(selection.insert_selection, dico)
+        connexion.close()
         return "That's ok !"
     except (psycopg2.Error, AttributeError) as Error:
         return Error
 # _______________________________________________________________________
 
 
-def edit_selection(id_selection: str):
-    dico = {'id': int(id_selection)}
-    print(dico)
-    try:
-        DB_Protocole.Insert_SQL(dico)
-        return "Ok"
-    except (psycopg2.Error, AttributeError) as Error:
-        return Error
+# def edit_selection(id_selection: str):
+#     dico = {'id': int(id_selection)}
+#     print(dico)
+#     try:
+
+#         DB_connexion.Insert_SQL(dico)
+#         return "Ok"
+#     except (psycopg2.Error, AttributeError) as Error:
+#         return Error
 # _______________________________________________________________________
 
 
@@ -73,142 +77,141 @@ def insert_project(project_ID: str, api_key: str):
     }
     print(dico)
     try:
-        DB_Protocole.Insert_SQL(project.insert_project, dico)
+        connexion = DB_connexion()
+        connexion.Insert_SQL(project.insert_project, dico)
+        connexion.close()
         return "Ok"
     except (psycopg2.Error, AttributeError) as Error:
         print(Error)
 # _______________________________________________________________________
 
 
-def insert_cooltogo_validated(id_apidae: str, X: float, Y: float, niveau_fraicheur: str,
-                              Adresse1: str, Adresse2: str, Code_postal: int,
-                              Ville: str, Telephone: str, Email: str, Site_web: str,
-                              Description_Teaser: str, Description: str, Images: str, Publics: str,
-                              styleUrl: str, styleHash: str, Type: str, Categories: str,
-                              Accessibilite: str, payant: bool, Plus_d_infos_et_horaires: str,
-                              Dates_debut: str, Dates_fin: str):
+# def insert_cooltogo_validated(id_apidae: str, X: float, Y: float, niveau_fraicheur: str,
+#                               Adresse1: str, Adresse2: str, Code_postal: int,
+#                               Ville: str, Telephone: str, Email: str, Site_web: str,
+#                               Description_Teaser: str, Description: str, Images: str, Publics: str,
+#                               Type: str, Categories: str, Accessibilite: str, payant: bool,
+#                               Plus_d_infos_et_horaires: str, Dates_debut: str, Dates_fin: str):
 
-    sql_cooltogo_validated = "SELECT id AS id_valide FROM cooltogo_validated WHERE id_apidae = %s "
-    id_cooltogo_validated = recuperation_id(
-        sql_cooltogo_validated, (id_apidae,))
+#     sql_cooltogo_validated = "SELECT id AS id_valide FROM cooltogo_validated WHERE id_apidae = %s "
+#     id_cooltogo_validated = recuperation_id(
+#         sql_cooltogo_validated, (id_apidae,))
 
-    if type(id_cooltogo_validated) != type(int()):
+#     if type(id_cooltogo_validated) != type(int()):
 
-        dico: dict[str, bool] = {
-            'id_apidae': id_apidae,
-            'Lieu_event': Lieu_event,
-            'X': X,
-            'Y': Y,
-            'name': name,
-            'Adresse1': Adresse1,
-            'Adresse2': Adresse2,
-            'Code_postal': Code_postal,
-            'Ville': Ville,
-            'telephone': Telephone,
-            'email': Email,
-            'site_web': Site_web,
-            'Description_Teaser': Description_Teaser,
-            'Description': Description,
-            'Images': Images,
-            'Publics': Publics,
-            'styleUrl': styleUrl,
-            'styleHash': styleHash,
-            'Type': Type,
-            'Catégories': Categories,
-            'Accessibilité': Accessibilite,
-            'payant': payant,
-            'Plus_d_infos_et_horaires': Plus_d_infos_et_horaires,
-            'Dates_début': Dates_debut,
-            'Dates_fin': Dates_fin
-        }
+#         dico: dict[str, bool] = {
+#             'id_apidae': id_apidae,
+#             'Lieu_event': Lieu_event,
+#             'X': X,
+#             'Y': Y,
+#             'name': name,
+#             'Adresse1': Adresse1,
+#             'Adresse2': Adresse2,
+#             'Code_postal': Code_postal,
+#             'Ville': Ville,
+#             'telephone': Telephone,
+#             'email': Email,
+#             'site_web': Site_web,
+#             'Description_Teaser': Description_Teaser,
+#             'Description': Description,
+#             'Images': Images,
+#             'Publics': Publics,
+#             'Type': Type,
+#             'Catégories': Categories,
+#             'Accessibilité': Accessibilite,
+#             'payant': payant,
+#             'Plus_d_infos_et_horaires': Plus_d_infos_et_horaires,
+#             'Dates_début': Dates_debut,
+#             'Dates_fin': Dates_fin
+#         }
 
-        try:
-            print(DB_Table_Definitions.insert_cooltogo_validated, dico)
-            DB_Protocole.Insert_SQL(
-                DB_Table_Definitions.insert_cooltogo_validated, dico)
-            if (niveau_fraicheur != None):
-                sql_id = "SELECT id FROM cooltogo_validated WHERE id_apidae='"+id_apidae+"'"
-                DB_Protocole.cur.execute(sql_id)
-                id_cooltogo_validated = DB_Protocole.cur.fetchone()[0]
-                sql_insert_lien = "INSERT INTO lien_niveau_de_fraicheur_cooltogo_validated (id_cooltogo_validated, id_niveau_de_fraicheur) VALUES (" + str(
-                    id_cooltogo_validated) + ", " + niveau_fraicheur + ")"
-                DB_Protocole.cur.execute(sql_insert_lien)
-                DB_Protocole.Commit()
-        except (psycopg2.Error, AttributeError) as Error:
-            print(Error)
-    else:
-        print('There is already a validated id_apidae')
+#         try:
+#             print(DB_Table_Definitions.insert_cooltogo_validated, dico)
+#             DB_connexion.Insert_SQL(
+#                 DB_Table_Definitions.insert_cooltogo_validated, dico)
+#             if (niveau_fraicheur != None):
+#                 sql_id = "SELECT id FROM cooltogo_validated WHERE id_apidae='"+id_apidae+"'"
+#                 DB_connexion.cur.execute(sql_id)
+#                 id_cooltogo_validated = DB_connexion.cur.fetchone()[0]
+#                 sql_insert_lien = "INSERT INTO lien_niveau_de_fraicheur_cooltogo_validated (id_cooltogo_validated, id_niveau_de_fraicheur) VALUES (" + str(
+#                     id_cooltogo_validated) + ", " + niveau_fraicheur + ")"
+#                 DB_connexion.cur.execute(sql_insert_lien)
+#                 DB_connexion.Commit()
+#         except (psycopg2.Error, AttributeError) as Error:
+#             print(Error)
+#     else:
+#         print('There is already a validated id_apidae')
 # _______________________________________________________________________
 
 
-def update_cooltogo_validated(id_apidae: str, Lieu_event: str, X: float, Y: float,
-                              name: str, niveau_fraicheur: str, Adresse1: str, Adresse2: str, Code_postal: int,
-                              Ville: str, Telephone: str, Email: str, Site_web: str, Description_Teaser: str,
-                              Description: str, Images: str, Publics: str,
-                              Type: str, Categories: str,
-                              Accessibilite: str, payant: bool, Plus_d_infos_et_horaires: str,
-                              Dates_debut: str, Dates_fin: str):
+# def update_cooltogo_validated(id_apidae: str, Lieu_event: str, X: float, Y: float,
+#                               name: str, niveau_fraicheur: str, Adresse1: str, Adresse2: str,
+#                               Code_postal: int, Ville: str, Telephone: str, Email: str,
+#                               Site_web: str, Description_Teaser: str, Description: str,
+#                               Images: str, Publics: str, Type: str, Categories: str,
+#                               Accessibilite: str, payant: bool, Plus_d_infos_et_horaires: str,
+#                               Dates_debut: str, Dates_fin: str):
 
-    sql_cooltogo_validated = "select id as id_valide from cooltogo_validated where id_apidae = %s "
-    id_cooltogo_validated = recuperation_id(
-        sql_cooltogo_validated, (id_apidae,))
+#     sql_cooltogo_validated = "select id as id_valide from cooltogo_validated where id_apidae = %s "
+#     id_cooltogo_validated = recuperation_id(
+#         sql_cooltogo_validated, (id_apidae,))
 
-    if type(id_cooltogo_validated) == type(int()):
+#     if type(id_cooltogo_validated) == type(int()):
 
-        dico: dict[str, bool] = {
-            'id_apidae': id_apidae,
-            'Lieu_event': Lieu_event,
-            'X': X,
-            'Y': Y,
-            'name': name,
-            'Adresse1': Adresse1,
-            'Adresse2': Adresse2,
-            'Code_postal': Code_postal,
-            'Ville': Ville,
-            'telephone': Telephone,
-            'email': Email,
-            'site_web': Site_web,
-            'Description_Teaser': Description_Teaser,
-            'Description': Description,
-            'Images': Images,
-            'Publics': Publics,
-            'Type': Type,
-            'Catégories': Categories,
-            'Accessibilité': Accessibilite,
-            'payant': payant,
-            'Plus_d_infos_et_horaires': Plus_d_infos_et_horaires,
-            'Dates_début': Dates_debut,
-            'Dates_fin': Dates_fin
-        }
+#         dico: dict[str, bool] = {
+#             'id_apidae': id_apidae,
+#             'Lieu_event': Lieu_event,
+#             'X': X,
+#             'Y': Y,
+#             'name': name,
+#             'Adresse1': Adresse1,
+#             'Adresse2': Adresse2,
+#             'Code_postal': Code_postal,
+#             'Ville': Ville,
+#             'telephone': Telephone,
+#             'email': Email,
+#             'site_web': Site_web,
+#             'Description_Teaser': Description_Teaser,
+#             'Description': Description,
+#             'Images': Images,
+#             'Publics': Publics,
+#             'Type': Type,
+#             'Catégories': Categories,
+#             'Accessibilité': Accessibilite,
+#             'payant': payant,
+#             'Plus_d_infos_et_horaires': Plus_d_infos_et_horaires,
+#             'Dates_début': Dates_debut,
+#             'Dates_fin': Dates_fin
+#         }
 
-        try:
-            ErrorMessage = DB_Protocole.Update_SQL(
-                DB_Table_Definitions.update_cooltogo_validated, dico)
-            sql_id = "SELECT id FROM cooltogo_validated WHERE id_apidae='"+id_apidae+"'"
-            DB_Protocole.cur.execute(sql_id)
-            id_cooltogo_validated = DB_Protocole.cur.fetchone()[0]
-            sql_in_lien_niveau_fraicheur_cooltogo_validated = "SELECT id FROM lien_niveau_de_fraicheur_cooltogo_validated WHERE id_cooltogo_validated=" + \
-                str(id_cooltogo_validated)
-            DB_Protocole.cur.execute(
-                sql_in_lien_niveau_fraicheur_cooltogo_validated)
-            if (DB_Protocole.cur.fetchone() == None):
-                sql_insert_lien = "INSERT INTO lien_niveau_de_fraicheur_cooltogo_validated (id_cooltogo_validated, id_niveau_de_fraicheur) VALUES (" + str(
-                    id_cooltogo_validated) + ", " + niveau_fraicheur + ")"
-                DB_Protocole.cur.execute(sql_insert_lien)
-            else:
-                sql_update_lien = "UPDATE lien_niveau_de_fraicheur_cooltogo_validated SET id_niveau_de_fraicheur=" + \
-                    niveau_fraicheur + "WHERE id_cooltogo_validated=" + \
-                    str(id_cooltogo_validated)
-                DB_Protocole.cur.execute(sql_update_lien)
-            DB_Protocole.Commit()
-        except (psycopg2.Error, AttributeError) as Error:
-            return Error
-    else:
-        return 'Aucun enregistrement correpondant à mettre à jour'
-    if ErrorMessage == "OK":
-        return "Lieu mis à jour !!"
-    else:
-        return ErrorMessage
+#         try:
+#             ErrorMessage = DB_connexion.Update_SQL(
+#                 DB_Table_Definitions.update_cooltogo_validated, dico)
+#             sql_id = "SELECT id FROM cooltogo_validated WHERE id_apidae='"+id_apidae+"'"
+#             DB_connexion.cur.execute(sql_id)
+#             id_cooltogo_validated = DB_connexion.cur.fetchone()[0]
+#             sql_in_lien_niveau_fraicheur_cooltogo_validated = "SELECT id FROM lien_niveau_de_fraicheur_cooltogo_validated WHERE id_cooltogo_validated=" + \
+#                 str(id_cooltogo_validated)
+#             DB_connexion.cur.execute(
+#                 sql_in_lien_niveau_fraicheur_cooltogo_validated)
+#             if (DB_connexion.cur.fetchone() == None):
+#                 sql_insert_lien = "INSERT INTO lien_niveau_de_fraicheur_cooltogo_validated (id_cooltogo_validated, id_niveau_de_fraicheur) VALUES (" + str(
+#                     id_cooltogo_validated) + ", " + niveau_fraicheur + ")"
+#                 DB_connexion.cur.execute(sql_insert_lien)
+#             else:
+#                 sql_update_lien = "UPDATE lien_niveau_de_fraicheur_cooltogo_validated SET id_niveau_de_fraicheur=" + \
+#                     niveau_fraicheur + "WHERE id_cooltogo_validated=" + \
+#                     str(id_cooltogo_validated)
+#                 DB_connexion.cur.execute(sql_update_lien)
+#             DB_connexion.Commit()
+#         except (psycopg2.Error, AttributeError) as Error:
+#             return Error
+#     else:
+#         return 'Aucun enregistrement correpondant à mettre à jour'
+#     if ErrorMessage == "OK":
+#         return "Lieu mis à jour !!"
+#     else:
+#         return ErrorMessage
 # _______________________________________________________________________
 
 
@@ -226,9 +229,10 @@ def insert_administrator(username: str, password: str, mail: str = None):
             'admin_email': mail
         }
         try:
-            DB_Protocole.Insert_SQL(
-                admin.insert_admin, dico)
-            id_admin = DB_Protocole.cur.fetchone()[0]
+            connexion = DB_connexion()
+            id_admin = connexion.Insert_SQL_fetchone(
+                admin.insert_admin, dico)[0]
+            connexion.close()
         except Error:
             print('Failed user insert !' + Error)
     else:
@@ -242,19 +246,21 @@ def connexion_admin(nom_admin: str, password: str, inscription: bool = False):
     '''
     permet de verifier si un utilisateur existe ou pas!
     '''
-    DB_Protocole.cur.execute(admin.select_admin)
-    list_admin: list = DB_Protocole.cur.fetchall()
+    connexion = DB_connexion()
+
+    list_admin: list = connexion.Query_SQL_fetchall(admin.select_admin)
 
     if inscription == False:
-        DB_Protocole.cur.execute(admin.select_password, [nom_admin, ])
-
         try:
-            mdp_base: str = DB_Protocole.cur.fetchone()[0]
+            mdp_base: str = connexion.Query_SQL_fetchone(
+                admin.select_password, [nom_admin, ])[0]
             existe: bool = check_password_hash(mdp_base, password)
         except:
             existe: bool = False
+        connexion.close()
         return existe, list_admin
     else:
+        connexion.close()
         return list_admin
 # _______________________________________________________________________
 
@@ -291,12 +297,14 @@ def create_dict_for_lieu_validated(thelist: list):
     Plus_d_infos_et_horaires = thelist[23]
     Dates_debut = thelist[24]
     Dates_fin = thelist[25]
-    DB_Protocole.ConnexionDB()
+    DB_connexion.ConnexionDB()
     sql_select_niveau_de_fraicheur = "SELECT nf.niveau_de_fraicheur AS fraicheur FROM niveau_de_fraicheur AS nf INNER JOIN lien_niveau_de_fraicheur_cooltogo_validated AS lnfcv ON nf.id=lnfcv.id_niveau_de_fraicheur WHERE id_cooltogo_validated=" + \
         str(id_)
-    DB_Protocole.cur.execute(sql_select_niveau_de_fraicheur)
-    data = DB_Protocole.cur.fetchone()
-    DB_Protocole.DeconnexionDB()
+
+    connexion = DB_connexion()
+    data = connexion.Query_SQL_fetchone(sql_select_niveau_de_fraicheur)
+    connexion.close()
+
     if data == None:
         niveau_de_fraicheur = None
     else:

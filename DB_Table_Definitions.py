@@ -42,7 +42,9 @@ insert_cooltogo_from_apidae = """
   VALUES (%(id_apidae)s,%(id_selection)s, %(lieu_event)s, %(names)s, %(types)s, %(latitude)s, %(longitude)s, %(adresse1)s, %(adresse2)s, %(code_postal)s, %(ville)s, %(telephone)s, %(email)s, %(site_web)s, %(description_teaser)s, %(images)s, %(publics)s, %(categories)s, %(accessibilité)s, %(payant)s, %(plus_d_infos_et_horaires)s, %(date_début)s, %(date_fin)s) returning id;"""
 
 select_cooltogo_from_apidae_for_display = """
-  SELECT *,'' as a FROM cooltogo_from_apidae WHERE id_apidae NOT IN (SELECT DISTINCT id_apidae FROM cooltogo_validated) ORDER BY id ASC; """
+  SELECT *,'' as a 
+  FROM cooltogo_from_apidae 
+  WHERE id_apidae NOT IN (SELECT DISTINCT id_apidae FROM cooltogo_validated) ORDER BY id ASC; """
 
 select_cooltogo_from_apidae_one_id = """
   SELECT * FROM cooltogo_from_apidae WHERE id=%s; """

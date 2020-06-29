@@ -27,6 +27,25 @@ class transformation():
             if 'libelleFr' in self.__request_json['nom']:
                 self.__dict_id['titre'] = self.__request_json['nom']['libelleFr']
 
+    def __communication(self):
+
+        self.__dict_id['telephone'] = None
+        self.__dict_id['email'] = None
+        self.__dict_id['site_web'] = None
+
+        if 'informations' in self.__request_json:
+            if 'moyensCommunication' in self.__request_json['informations']:
+                moyenCommunications = self.__request_json['informations']['moyensCommunication']
+                for values in moyenCommunications:
+                    if 'type' in values and 'coordonnees' in values:
+                        if 'libelleFr' in values['type'] and 'fr' in values['coordonnees']:
+                            if values['type']['libelleFr'] == "Site web (URL)":
+                                self.__dict_id['site_web'] = values['coordonnees']['fr']
+                            elif values['type']['libelleFr'] == "Téléphone":
+                                self.__dict_id['telephone'] = values['coordonnees']['fr']
+                            elif values['type']['libelleFr'] == "Mél":
+                                self.__dict_id['email'] = values['coordonnees']['fr']
+
     def __benefit(self):
 
         self.__dict_id['tourisme_adapte'] = None
@@ -299,6 +318,7 @@ class transformation():
     def Execute(self):
         self.__general_information()
         self.__benefit()
+        self.__communication()
         self.__environment()
         self.__description()
         self.__typology()

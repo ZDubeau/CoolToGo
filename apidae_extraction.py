@@ -2,7 +2,7 @@
 Projet CoolToGo
 ----------------------------
 Creation date : 2020-04-02
-Last update   : 2020-06-11
+Last update   : 2020-06-26
 Estimate time :  ?
 Spend time    :  ?
 ----------------------------
@@ -35,6 +35,7 @@ import queue
 # My functions
 import DB_Protocole
 import Table_selection as slc
+from DB_Connexion import DB_connexion
 
 # Transformation function of data by id
 #from apidae_id_tranformation import restauration_transformation
@@ -66,14 +67,11 @@ def retrieve_data_by_id(project_ID, api_KEY, select_id, selectionId):
     # # print(transfo.special_elements_descriptions())
     # print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
 
-    connection = DB_Protocole.Connexion()
-    curseur = connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    curseur.execute(
+    connexion = DB_connexion()
+    data = connexion.Query_SQL_fetchone(
         slc.select_selection_with_type, [selectionId])
-    data = curseur.fetchone()
-    DB_Protocole.Deconnexion(connection, curseur)
+    connexion.close()
     dict_for_id['id_selection'] = data[0]
-
     result_df = result_df.append(dict_for_id, ignore_index=True)
     return result_df
 # _______________________________________________________________________
@@ -195,18 +193,17 @@ def retrieve_selection_list(id_projet, project_ID, api_KEY):
     import pandas as pd
     result_df = pd.DataFrame(
         columns=['id_project', 'selection', 'description'])
-
     url = 'http://api.apidae-tourisme.com/api/v002/referentiel/selections/?query={'
     url += '"apiKey": "'+api_KEY+'",'
     url += '"projetId":'+project_ID
     url += '}'
     req = requests.get(url).json()
     for line in req:
-        dict_for_id = {}
-        dict_for_id['id_project'] = id_projet
-        dict_for_id['selection'] = line['id']
-        dict_for_id['description'] = line['nom']
-        result_df = result_df.append(dict_for_id, ignore_index=True)
-
+        if 'id' in line and 'nom' in line:
+            dict_for_id = {}
+            dict_for_id['id_project'] = id_projet
+            dict_for_id['selection'] = line['id']
+            dict_for_id['description'] = line['nom']
+            result_df = result_df.append(dict_for_id, ignore_index=True)
     return result_df
 # _______________________________________________________________________

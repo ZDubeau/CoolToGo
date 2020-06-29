@@ -2,7 +2,7 @@
 {% block bootstrap_2 %}
 <div class="card-header"
     style="background-color: #1778b8b6; color: black; border-radius: 4px 4px 0px 0px; font-size: large; font-weight: bold;">
-    Catégories
+    Profil usagers
 </div>
 <div class="card-body" style="border-radius: 0px 0px 4px 4px;background-color: #1778b825;">
     <div class="table-responsive">
@@ -21,13 +21,13 @@
             <div class="columns" style="padding: 0 !important;">
                 <div class="column is-half is-offset-one-quarter"
                     style="width: 80%;margin-left: 0 !important;transform: translate(-27px, 0px)">
-                    <p class="title" style="font-size: 1.25rem;">Modifier la catégorie</p>
+                    <p class="title" style="font-size: 1.25rem;">Modifier le profil</p>
                     <div>
-                        <form action="/edit_category_save" method="post">
+                        <form action="/edit_profil_save" method="post">
                             <div class="field" style="padding-top: 30px;">
-                                <textarea name="category" value="{{category}}" class="textarea" maxlength="500"
-                                    style="color: #363434;min-height: 3em !important;width: 30%;min-width: 45% !important;"
-                                    required>{{category}}</textarea>
+                                <textarea name="profil" value="{{profil}}" class="textarea" maxlength="500"
+                                    style="color: #363434;min-height: 3em !important;width: 30%;min-width: 20% !important;"
+                                    required>{{profil}}</textarea>
                             </div>
                             <!-- ------- -->
                             <div class="field is-grouped is-grouped-left">

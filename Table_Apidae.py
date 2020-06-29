@@ -2,7 +2,7 @@
 Projet CoolToGo
 ----------------------------
 𐤟 Creation date : 2020-06-11
-𐤟 Last update : 2020-06-19
+𐤟 Last update : 2020-06-29
 Estimate time : 60 minutes
 PASSED TIME UNTIL NOW: 1H
 ----------------------------
@@ -12,7 +12,7 @@ PASSED TIME UNTIL NOW: 1H
 drop_apidae = """
                 DROP TABLE IF EXISTS data_from_apidae CASCADE;
                 """
-# selection TEXT REFERENCES selection ON DELETE CASCADE,
+
 apidae = """
         CREATE TABLE IF NOT EXISTS data_from_apidae (
             id SERIAL PRIMARY KEY,
@@ -27,7 +27,7 @@ apidae = """
             altitude TEXT,
             latitude FLOAT,
             longitude FLOAT,
-            telephone VARCHAR(20),
+            telephone VARCHAR(50),
             email VARCHAR(1004),
             site_web TEXT,
             description_courte TEXT,
@@ -48,7 +48,7 @@ apidae = """
 
 insert_apidae = """
                 INSERT INTO data_from_apidae (
-                    id_apidae,id_selection, type_apidae, titre, types,adresse1, adresse2, code_postal, 
+                    id_apidae, id_selection, type_apidae, titre, types, adresse1, adresse2, code_postal, 
                     ville, altitude, latitude, longitude, telephone, email, site_web, description_courte, 
                     description_detaillee, image, publics, tourisme_adapte, payant, animaux_acceptes,
                     environnement, equipement, services, periode, activites, ouverture, typologie)
@@ -63,7 +63,7 @@ insert_apidae = """
                 """
 
 select_apidae_display = """
-                        SELECT * 
+                        SELECT *, '' as modifier
                         FROM data_from_apidae 
                         ORDER BY id ASC; 
                         """
@@ -86,5 +86,5 @@ delete_apidae_project_id = """
                             WHERE id_selection IN (
                                 SELECT id 
                                 FROM selection 
-                                WHERE id_projet=%s); 
+                                WHERE id_project=%s); 
                             """

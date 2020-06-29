@@ -27,7 +27,7 @@ apidae = """
             altitude TEXT,
             latitude FLOAT,
             longitude FLOAT,
-            telephone VARCHAR(70),
+            telephone TEXT,
             email VARCHAR(1004),
             site_web TEXT,
             description_courte TEXT,

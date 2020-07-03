@@ -2,300 +2,229 @@
 {% block bootstrap_2 %}
 <section id="app" class="hero is-fullheight">
     <div class="hero-body">
-      <div class="container">
-        <div class="columns">
-          <div class="column is-half is-offset-one-quarter" style="width: 55%;">
-            <p class="title">Add new informations</p>
-            <div>
-                {% for table in tables %}
-                    {{ table|safe }}
-                {% endfor %}
-            <form action="/new_data_valid" method="post">
-                <!-- ---------- Choose a lieu or an event ----------- -->
-                <div class="field">
-                    <label class="label">lieu_event</label>
-                        <span class="select">
-                            <select name="lieu_event" required>
-                            <option></option>
-                            <option>Lieu</option>
-                            <option>Event</option>
-                            </select>
-                        </span>
-                </div>
-                <!-- --------------- name of responsible --------------- -->
-                <div class="field">
-                    <label class="label">name</label>
-                        <input
-                        name="name"
-                        class="input"
-                        type="text"
-                        maxlength="50"
-                        placeholder="Ex. Office de Tourisme de Grenoble-Alpes Métropole"
-                        style="color: #3f3d3d;"
-                        required>
-                </div>
-                <!-- ----------------- Niveau Fraicheur ------------------- -->
-                <div class="field">
-                    <label class="label">Niveau Fraicheur</label>
-                    <span class="select">
-                        <select name="niveau_fraicheur" required>
-                            <option value=""></option>
-                            {% for row in liste_niveau_fraicheur %}
-                                <option value="{{row[0]}}">{{row[1]}}</option>
-                            {% endfor %}
-                        </select>
-                    </span>
-                </div>
-                <!-- ------------------ Choose a type ------------------- -->
-                <div class="field">
-                    <label class="label">type</label>
-                        <span class="select">
-                            <select name="type">
-                                <option></option>
-                                <option>ACTIVITE</option>
-                                <option>COMMERCE_ET_SERVICE</option>
-                                <option>EQUIPEMENT</option>
-                                <option>FETE_ET_MANIFESTATION</option>
-                                <option>HEBERGEMENT_LOCATIF</option>
-                                <option>HOTELLERIE_PLEIN_AIR</option>
-                                <option>PATRIMOINE_NATUREL</option>
-                                <option>RESTAURATION</option>
-                                <option>STRUCTURE</option>
-                            </select>
-                        </span>
-                </div>
-                <!-- --------------------- Adresse 1 ---------------------- -->
-                <div class="field">
-                    <label class="label">adresse1</label>
-                        <input
-                        name="adresse1"
-                        class="input"
-                        type="text"
-                        maxlength="50"
-                        placeholder="Ex. 1 rue Casimir Brenier"
-                        style="color: #3f3d3d;"
-                        required>
-                </div>
-                <!-- --------------------- Adresse 2 --------------------- -->
-                <div class="field">
-                    <label class="label">adresse2</label>
-                        <input
-                        name="adresse2"
-                        class="input"
-                        type="text"
-                        maxlength="50"
-                        placeholder="Ex. Champ Clotury"
-                        style="color: #3f3d3d;"
-                        >
-                </div>
-                <!-- -------------------- Code postal --------------------- -->
-                <div class="field">
-                    <label class="label">Code postal</label>
-                        <input
-                        name="code_postal"
-                        class="input"
-                        type="text"
-                        maxlength="50"
-                        placeholder="Ex. 38000"
-                        style="color: #3f3d3d;"
-                        required>
-                </div>
-                <!-- ----------------------- City ------------------------ -->
-                <div class="field">
-                    <label class="label">City</label>
-                        <input
-                        name="City"
-                        class="input"
-                        type="text"
-                        maxlength="70"
-                        placeholder="Ex. Grenoble"
-                        style="color: #3f3d3d;"
-                        required>
-                </div>
-                 <!-- ----------------------- telephone ------------------------ -->
-                 <div class="field">
-                    <label class="label">Telephone</label>
-                        <input
-                        name="telephone"
-                        class="input"
-                        type="text"
-                        maxlength="70"
-                        placeholder="Ex. 01.02.03.04.05"
-                        style="color: #3f3d3d;"
-                        required>
-                </div>
-                 <!-- ----------------------- Email ------------------------ -->
-                 <div class="field">
-                    <label class="label">Email</label>
-                        <input
-                        name="email"
-                        class="input"
-                        type="text"
-                        maxlength="70"
-                        placeholder="Ex. example@example.fr"
-                        style="color: #3f3d3d;"
-                        required>
-                </div>
-                 <!-- ----------------------- site web ------------------------ -->
-                 <div class="field">
-                    <label class="label">Site Web</label>
-                        <input
-                        name="site_web"
-                        class="input"
-                        type="text"
-                        maxlength="70"
-                        placeholder="Ex. www.siteweb.com"
-                        style="color: #3f3d3d;"
-                        required>
-                </div>
-                <!-- ----------------- Description Teaser ---------------- -->
-                <div class="field">
-                    <label class="label">Description Teaser</label>
-                        <textarea
-                        name="Description_Teaser"
-                        class="textarea"
-                        maxlength="300"
-                        placeholder="Ex. La bibliothèque Maison de Barnave de Saint Egrève."
-                        style="color: #3f3d3d;"
-                        ></textarea>
-                </div>
-                <!-- ----------------- Description  ---------------------- -->
-                <div class="field">
-                    <label class="label">Description</label>
-                    <textarea
-                    name="description"
-                    class="textarea"
-                    maxlength="1000"
-                    placeholder="Ex. La bibliothèque Maison de Barnave de Saint Egrève dispose d'un grand nombre de livres, revues et CD à consulter sur place ou à emporter !"
-                    style="color: #3f3d3d;"
-                    ></textarea>
-                </div>
-                 <!-- ---------- Style url ----------- -->
-                 <div class="field">
-                    <label class="label">Style Url</label>
-                        <input
-                        name="styleUrl"
-                        class="input"
-                        type="text"
-                        maxlength="50"
-                        placeholder="Ex. #icon-1694-0288D1-nodesc"
-                        style="color: #3f3d3d;"
-                        required>
-                </div>
-                 <!-- ---------- style Hash ----------- -->
-                 <div class="field">
-                    <label class="label">Style Hash</label>
-                        <input
-                        name="styleHash"
-                        class="input"
-                        type="text"
-                        maxlength="50"
-                        placeholder="Ex. 1e0dd1186"
-                        style="color: #3f3d3d;"
-                        required>
-                </div>
-                <!-- ---------- Upload url of an image ----------- -->
-                <div class="field">
-                    <label class="label">Images</label>
-                        <input
-                        name="Images"
-                        class="input"
-                        type="text"
-                        maxlength="50"
-                        placeholder="Ex. http://  ...............  .jpeg"
-                        style="color: #3f3d3d;"
-                        required>
-                </div>
-                <!-- ----------------- Publics ------------------------ -->
-                <div class="field">
-                    <label class="label">Publics</label>
-                        <label><input name="senior" type="checkbox" value ="Senior">Senior&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                        <label><input name="enfant" type="checkbox" value ="Enfant">Enfant&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                        <label><input name="jeune" type="checkbox" value="Jeune">Jeune&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                        <label><input name="jeune" type="checkbox" value="Adulte">Adulte&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                        <label><input name="adult" type="checkbox" value="Solidaire">Solidaire</label>
-                </div>
-                <!-- ---------------- Categories --------------------- -->
-                <div class="field">
-                    <label class="label">Categories</label>
-                        <span class="select">
-                            <select name="Categories">
-                                <option></option>
-                                <option>Etre a l’ombre en nature</option>
-                                <option>Etre au contact de l'eau</option>
-                                <option>Ressources solidaires</option>
-                                <option>Se divertir en fraicheur</option>
-                                <option>Sport a la fraich</option>
-                                <option>Un point d’info</option>
-                            </select>
-                        </span>
-                </div>
-                <!-- ---------------- Accessibilité ------------------- -->
-                <div class="field">
-                    <label class="label">Accessibilité</label>
-                        <input
-                        name="Accessibilité"
-                        class="input"
-                        type="text"
-                        maxlength="50"
-                        placeholder="Ex. Accessible en fauteuil roulant en autonomie"
-                        style="color: #3f3d3d;"
-                        required>
-                </div>
-                <!-- ------------------- Payant ----------------------- -->
-                <div class="field">
-                    <label class="label">Payant</label>
-                        <span class="select">
-                            <select name="Payant" required>
-                            <option></option>
-                            <option>True</option>
-                            <option>False</option>
-                            </select>
-                        </span>
-                </div>
-                <!-- ------------ plus d'infos et horaires ------------- -->
-                <div class="field">
-                    <label class="label">plus d'infos et horaires</label>
-                        <input
-                        name="plus_d_infos"
-                        class="input"
-                        type="text"
-                        maxlength="50"
-                        placeholder="Ex. http://www.grenoble-tourisme.com"
-                        style="color: #3f3d3d;"
-                        >
-                </div>
-                <!-- ----------------- Date début ---------------------- -->
-                <div class="field">
-                    <label class="label">Date début</label>
-                        <input
-                        name="Date_début"
-                        class="input"
-                        type="date"
-                        style="color: #3f3d3d;"
-                        >
-                </div>
-                <!-- -------------------- Date fin --------------------- -->
-                <div class="field">
-                    <label class="label">Date fin</label>
-                        <input
-                        name="Date_fin"
-                        class="input"
-                        type="date"
-                        style="color: #3f3d3d;"
-                        >
-                </div>
-                <!-- ------------------Add button ---------------------- -->
-              <div class="field is-grouped is-grouped-left">
-                <div class="control">
-                  <button class="button is-link" style="background-color: #007bff; border-radius: 5px; border-color: #007bff; margin: 28px 0; padding: 5px 25px;">Add</button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
+        <div class="container">
+            <div class="columns">
+                <div class="column is-half is-offset-one-quarter" style="width: 55%;">
+                    <p class="title">Ajouter nouvelles informations</p>
+                    <div>
+                        {% for table in tables %}
+                        {{ table|safe }}
+                        {% endfor %}
+                        <form action="/new_data_valid" method="post">
+                            <!-- --------------- name of responsible --------------- -->
+                            <div class="field">
+                                <label class="label">titre</label>
+                                <input name="titre" class="input" type="text" maxlength="50"
+                                    placeholder="Ex. Office de Tourisme de Grenoble-Alpes Métropole"
+                                    style="color: #3f3d3d;" required>
 
-<h3 style="color: red;">{{errorMessage}}</h3>
-{% endblock bootstrap_2 %}
+                                <label class="label">profil_c2g</label>
+                                <input name="profil_c2g" class="input" type="text" maxlength="50"
+                                    placeholder="Ex. Office de Tourisme de Grenoble-Alpes Métropole"
+                                    style="color: #3f3d3d;" required>
+                            </div>
+                            <!-- -------------------------------------------- -->
+                            <div class="field">
+                                <label class="label">sous_type</label>
+                                <input name="sous_type" class="input" type="text" maxlength="50"
+                                    placeholder="Ex. Office de Tourisme de Grenoble-Alpes Métropole"
+                                    style="color: #3f3d3d;" required>
+
+                                <label class="label">adresse1</label>
+                                <input name="adresse1" class="input" type="text" maxlength="50"
+                                    placeholder="Ex. Office de Tourisme de Grenoble-Alpes Métropole"
+                                    style="color: #3f3d3d;" required>
+                            </div>
+                            <!-- -------------------------------------------- -->
+                            <div class="field">
+                                <label class="label">profil_c2g</label>
+                                <span class="select">
+                                    <select name="profil_c2g" required>
+                                        <option value=""></option>
+                                        {% for row in profil_usager %}
+                                        <option value="{{row[0]}}">{{row[1]}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </span>
+                            </div>
+                            <!-- ----------------- Niveau Fraicheur ------------------- -->
+                            <div class="field">
+                                <label class="label">Niveau Fraicheur</label>
+                                <span class="select">
+                                    <select name="niveau_fraicheur" required>
+                                        <option value=""></option>
+                                        {% for row in liste_niveau_fraicheur %}
+                                        <option value="{{row[0]}}">{{row[1]}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </span>
+                            </div>
+                            <!-- ------------------ Choose a type ------------------- -->
+                            <div class="field">
+                                <label class="label">type</label>
+                                <span class="select">
+                                    <select name="type">
+                                        <option></option>
+                                        <option>ACTIVITE</option>
+                                        <option>COMMERCE_ET_SERVICE</option>
+                                        <option>EQUIPEMENT</option>
+                                        <option>FETE_ET_MANIFESTATION</option>
+                                        <option>HEBERGEMENT_LOCATIF</option>
+                                        <option>HOTELLERIE_PLEIN_AIR</option>
+                                        <option>PATRIMOINE_NATUREL</option>
+                                        <option>RESTAURATION</option>
+                                        <option>STRUCTURE</option>
+                                    </select>
+                                </span>
+                            </div>
+                            <!-- --------------------- Adresse 1 ---------------------- -->
+                            <div class="field">
+                                <label class="label">adresse1</label>
+                                <input name="adresse1" class="input" type="text" maxlength="50"
+                                    placeholder="Ex. 1 rue Casimir Brenier" style="color: #3f3d3d;" required>
+                            </div>
+                            <!-- --------------------- Adresse 2 --------------------- -->
+                            <div class="field">
+                                <label class="label">adresse2</label>
+                                <input name="adresse2" class="input" type="text" maxlength="50"
+                                    placeholder="Ex. Champ Clotury" style="color: #3f3d3d;">
+                            </div>
+                            <!-- -------------------- Code postal --------------------- -->
+                            <div class="field">
+                                <label class="label">Code postal</label>
+                                <input name="code_postal" class="input" type="text" maxlength="50"
+                                    placeholder="Ex. 38000" style="color: #3f3d3d;" required>
+                            </div>
+                            <!-- ----------------------- City ------------------------ -->
+                            <div class="field">
+                                <label class="label">City</label>
+                                <input name="City" class="input" type="text" maxlength="70" placeholder="Ex. Grenoble"
+                                    style="color: #3f3d3d;" required>
+                            </div>
+                            <!-- ----------------------- telephone ------------------------ -->
+                            <div class="field">
+                                <label class="label">Telephone</label>
+                                <input name="telephone" class="input" type="text" maxlength="70"
+                                    placeholder="Ex. 01.02.03.04.05" style="color: #3f3d3d;" required>
+                            </div>
+                            <!-- ----------------------- Email ------------------------ -->
+                            <div class="field">
+                                <label class="label">Email</label>
+                                <input name="email" class="input" type="text" maxlength="70"
+                                    placeholder="Ex. example@example.fr" style="color: #3f3d3d;" required>
+                            </div>
+                            <!-- ----------------------- site web ------------------------ -->
+                            <div class="field">
+                                <label class="label">Site Web</label>
+                                <input name="site_web" class="input" type="text" maxlength="70"
+                                    placeholder="Ex. www.siteweb.com" style="color: #3f3d3d;" required>
+                            </div>
+                            <!-- ----------------- Description Teaser ---------------- -->
+                            <div class="field">
+                                <label class="label">Description Teaser</label>
+                                <textarea name="Description_Teaser" class="textarea" maxlength="300"
+                                    placeholder="Ex. La bibliothèque Maison de Barnave de Saint Egrève."
+                                    style="color: #3f3d3d;"></textarea>
+                            </div>
+                            <!-- ----------------- Description  ---------------------- -->
+                            <div class="field">
+                                <label class="label">Description</label>
+                                <textarea name="description" class="textarea" maxlength="1000"
+                                    placeholder="Ex. La bibliothèque Maison de Barnave de Saint Egrève dispose d'un grand nombre de livres, revues et CD à consulter sur place ou à emporter !"
+                                    style="color: #3f3d3d;"></textarea>
+                            </div>
+                            <!-- ---------- Style url ----------- -->
+                            <div class="field">
+                                <label class="label">Style Url</label>
+                                <input name="styleUrl" class="input" type="text" maxlength="50"
+                                    placeholder="Ex. #icon-1694-0288D1-nodesc" style="color: #3f3d3d;" required>
+                            </div>
+                            <!-- ---------- style Hash ----------- -->
+                            <div class="field">
+                                <label class="label">Style Hash</label>
+                                <input name="styleHash" class="input" type="text" maxlength="50"
+                                    placeholder="Ex. 1e0dd1186" style="color: #3f3d3d;" required>
+                            </div>
+                            <!-- ---------- Upload url of an image ----------- -->
+                            <div class="field">
+                                <label class="label">Images</label>
+                                <input name="Images" class="input" type="text" maxlength="50"
+                                    placeholder="Ex. http://  ...............  .jpeg" style="color: #3f3d3d;" required>
+                            </div>
+                            <!-- ----------------- Publics ------------------------ -->
+                            <div class="field">
+                                <label class="label">Publics</label>
+                                <label><input name="senior" type="checkbox"
+                                        value="Senior">Senior&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                <label><input name="enfant" type="checkbox"
+                                        value="Enfant">Enfant&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                <label><input name="jeune" type="checkbox"
+                                        value="Jeune">Jeune&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                <label><input name="jeune" type="checkbox"
+                                        value="Adulte">Adulte&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                <label><input name="adult" type="checkbox" value="Solidaire">Solidaire</label>
+                            </div>
+                            <!-- ---------------- Categories --------------------- -->
+                            <div class="field">
+                                <label class="label">Categories</label>
+                                <span class="select">
+                                    <select name="Categories">
+                                        <option></option>
+                                        <option>Etre a l’ombre en nature</option>
+                                        <option>Etre au contact de l'eau</option>
+                                        <option>Ressources solidaires</option>
+                                        <option>Se divertir en fraicheur</option>
+                                        <option>Sport a la fraich</option>
+                                        <option>Un point d’info</option>
+                                    </select>
+                                </span>
+                            </div>
+                            <!-- ---------------- Accessibilité ------------------- -->
+                            <div class="field">
+                                <label class="label">Accessibilité</label>
+                                <input name="Accessibilité" class="input" type="text" maxlength="50"
+                                    placeholder="Ex. Accessible en fauteuil roulant en autonomie"
+                                    style="color: #3f3d3d;" required>
+                            </div>
+                            <!-- ------------------- Payant ----------------------- -->
+                            <div class="field">
+                                <label class="label">Payant</label>
+                                <span class="select">
+                                    <select name="Payant" required>
+                                        <option></option>
+                                        <option>True</option>
+                                        <option>False</option>
+                                    </select>
+                                </span>
+                            </div>
+                            <!-- ------------ plus d'infos et horaires ------------- -->
+                            <div class="field">
+                                <label class="label">plus d'infos et horaires</label>
+                                <input name="plus_d_infos" class="input" type="text" maxlength="50"
+                                    placeholder="Ex. http://www.grenoble-tourisme.com" style="color: #3f3d3d;">
+                            </div>
+                            <!-- ----------------- Date début ---------------------- -->
+                            <div class="field">
+                                <label class="label">Date début</label>
+                                <input name="Date_début" class="input" type="date" style="color: #3f3d3d;">
+                            </div>
+                            <!-- -------------------- Date fin --------------------- -->
+                            <div class="field">
+                                <label class="label">Date fin</label>
+                                <input name="Date_fin" class="input" type="date" style="color: #3f3d3d;">
+                            </div>
+                            <!-- ------------------Add button ---------------------- -->
+                            <div class="field is-grouped is-grouped-left">
+                                <div class="control">
+                                    <button class="button is-link"
+                                        style="background-color: #007bff; border-radius: 5px; border-color: #007bff; margin: 28px 0; padding: 5px 25px;">Add</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h3 style="color: red;">{{errorMessage}}</h3>
+        {% endblock bootstrap_2 %}

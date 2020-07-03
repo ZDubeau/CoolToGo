@@ -18,7 +18,13 @@ insert_project = """
 select_project_with_id = """
                         SELECT project_ID, api_key 
                         FROM project 
-                        WHERE id_project=%s; 
+                        WHERE id_project=%s;
+                        """
+
+select_project_with_project_ID = """
+                        SELECT project_ID
+                        FROM project 
+                        WHERE project_ID=%s; 
                         """
 
 select_project_information = """

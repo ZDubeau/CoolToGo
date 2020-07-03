@@ -1,3 +1,11 @@
+""" 
+Project CoolToGo
+----------------------------
+Creation date : 2020-06-30
+Last update : 2020-07-01
+----------------------------
+"""
+
 drop_selection_extraction = """
                             DROP TABLE IF EXISTS selection_extraction CASCADE;
                             """
@@ -11,6 +19,8 @@ selection_extraction = """
                         )"""
 
 insert_selection_extraction = """
-                                INSERT INTO selection_extraction (id_selection,selection_extraction_date,selection_extraction_nb_records) 
-                                VALUES (%s,NOW(),%s);
+                                INSERT INTO selection_extraction (
+                                    id_selection,selection_extraction_date,selection_extraction_nb_records) 
+                                VALUES (
+                                    %s,NOW(),%s);
                                 """

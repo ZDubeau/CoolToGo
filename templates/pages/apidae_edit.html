@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="static/css/homepage.css">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='cooltogo.ico') }}">
+</head>
+
+<body>
+    <!-- --La page d'accueil avec deux boutons de l'iscription et la connexion-- -->
+    <div class="content">
+        <center>
+            <button onclick="document.getElementById('edit').style.display='block'" style="width:auto;"
+                id="Edit">modifier</button>
+        </center>
+    </div>
+    <!-- ---------------La fenetre de la connection d'utilisateur------------------ -->
+    <div id="id_1" class="modal">
+        <form class="modal-content animate" action="/edit" method="post">
+            <div class="logcontainer">
+                <h2>Modification</h2>
+                <img alt="" class="log">
+            </div>
+            <div class="container">
+                <label class="label">id_apidae</label>
+                <input name="id_apidae" value="{{id_apidae}}" class="input" type="text" maxlength="40"
+                    style="color: #3f3d3d;" readonly>
+
+                <label id="forme" for="profil"><b>profil_C2G</b></label>
+                <input type="text" name="profil_c2g" value="{{profil_c2g}}">
+
+                <label id="forme" for="ctg"><b>Sous_type</b></label>
+                <input type="text" name="ctg" value="{{ctg}}">
+
+                <button type="submit">Confirm</button>
+            </div>
+            <div class="container" style="background-color:#e7f3f8">
+                <button type="button" class="cancelbtn"
+                    onclick="document.getElementById('edit').style.display='none'">Annuler</button>
+            </div>
+        </form>
+    </div>
+    <!-- -------------------------------------------------------------------- -->
+    <script>
+        // Get the modal
+        var modal1 = document.getElementById('edit');
+    </script>
+    {% if modal_login %}
+    <script>
+        modal1.style.display = "block";
+    </script>
+    {% endif %}
+    <script>
+        var ctg = document.getElementById("ctg");
+        password.onchange = validatePassword;
+
+        var btn = document.getElementById("myBtn");
+    </script>
+</body>
+
+</html>

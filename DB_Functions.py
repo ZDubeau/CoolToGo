@@ -2,9 +2,7 @@
 Projet CoolToGo
 ----------------------------
 Creation date  : 2020-03-06
-Last update    : 2020-06-26
-Estimate time  : 30 minutes
-Spend time     : 15 minutes
+Last update    : 2020-07-01
 ----------------------------
 """
 # _______________________________________________________________________
@@ -78,9 +76,10 @@ def insert_project(project_ID: str, api_key: str):
     print(dico)
     try:
         connexion = DB_connexion()
-        connexion.Insert_SQL(project.insert_project, dico)
+        id_project = connexion.Insert_SQL_fetchone(
+            project.insert_project, dico)[0]
         connexion.close()
-        return "Ok"
+        return id_project
     except (psycopg2.Error, AttributeError) as Error:
         print(Error)
 # _______________________________________________________________________
@@ -297,13 +296,14 @@ def create_dict_for_lieu_validated(thelist: list):
     Plus_d_infos_et_horaires = thelist[23]
     Dates_debut = thelist[24]
     Dates_fin = thelist[25]
-    DB_connexion.ConnexionDB()
-    sql_select_niveau_de_fraicheur = "SELECT nf.niveau_de_fraicheur AS fraicheur FROM niveau_de_fraicheur AS nf INNER JOIN lien_niveau_de_fraicheur_cooltogo_validated AS lnfcv ON nf.id=lnfcv.id_niveau_de_fraicheur WHERE id_cooltogo_validated=" + \
-        str(id_)
 
-    connexion = DB_connexion()
-    data = connexion.Query_SQL_fetchone(sql_select_niveau_de_fraicheur)
-    connexion.close()
+    data = None
+    # sql_select_niveau_de_fraicheur = "SELECT nf.niveau_de_fraicheur AS fraicheur FROM niveau_de_fraicheur AS nf INNER JOIN lien_niveau_de_fraicheur_cooltogo_validated AS lnfcv ON nf.id=lnfcv.id_niveau_de_fraicheur WHERE id_cooltogo_validated=" + \
+    #     str(id_)
+
+    # connexion = DB_connexion()
+    # data = connexion.Query_SQL_fetchone(sql_select_niveau_de_fraicheur)
+    # connexion.close()
 
     if data == None:
         niveau_de_fraicheur = None

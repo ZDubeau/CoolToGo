@@ -170,63 +170,63 @@ delete_from_cooltogo_validated_with_id = """
 
 #################### Tables des messages ###################
 
-drop_message = """DROP TABLE IF EXISTS message;"""
+# drop_message = """DROP TABLE IF EXISTS message;"""
 
-message = """
-  CREATE TABLE IF NOT EXISTS message (
-        id SERIAL PRIMARY KEY,
-        message TEXT NOT NULL,
-        start_date DATE,
-        end_date DATE
-    )"""
+# message = """
+#   CREATE TABLE IF NOT EXISTS message (
+#         id SERIAL PRIMARY KEY,
+#         message TEXT NOT NULL,
+#         start_date DATE,
+#         end_date DATE
+#     )"""
 
-insert_message = """
-  INSERT INTO message (message, start_date, end_date)
-  VALUES (%s,%s,%s) returning id;"""
+# insert_message = """
+#   INSERT INTO message (message, start_date, end_date)
+#   VALUES (%s,%s,%s) returning id;"""
 
-update_message = """
-  UPDATE message SET message=%s, start_date=%s, end_date=%s WHERE id=%s;"""
+# update_message = """
+#   UPDATE message SET message=%s, start_date=%s, end_date=%s WHERE id=%s;"""
 
-delete_message = """
-  DELETE FROM message WHERE id=%s;"""
+# delete_message = """
+#   DELETE FROM message WHERE id=%s;"""
 
-select_message = """ 
-  SELECT * FROM message WHERE id=%s;"""
+# select_message = """
+#   SELECT * FROM message WHERE id=%s;"""
 
-select_message_list = """ 
-  SELECT id,message, start_date, end_date, '' as Edit, '' as Publish, '' as Delete FROM message; """
+# select_message_list = """
+#   SELECT id,message, start_date, end_date, '' as Edit, '' as Publish, '' as Delete FROM message; """
 
 ################### Tables des selection ####################
 
-drop_selection = """DROP TABLE IF EXISTS selection;"""
+# drop_selection = """DROP TABLE IF EXISTS selection;"""
 
-selection = """
-    CREATE TABLE IF NOT EXISTS selection (
-        id SERIAL PRIMARY KEY,
-        id_projet BIGINT NULL,
-        selection TEXT NOT NULL,
-        description TEXT NOT NULL,
-        selection_type TEXT NOT NULL
-    )"""
+# selection = """
+#     CREATE TABLE IF NOT EXISTS selection (
+#         id SERIAL PRIMARY KEY,
+#         id_projet BIGINT NULL,
+#         selection TEXT NOT NULL,
+#         description TEXT NOT NULL,
+#         selection_type TEXT NOT NULL
+#     )"""
 
-insert_selection = """
-  INSERT INTO selection (id_projet,selection, description, selection_type)
-  VALUES (%(id_project)s, %(selection)s, %(description)s, %(selection_type)s) returning id;"""
+# insert_selection = """
+#   INSERT INTO selection (id_projet,selection, description, selection_type)
+#   VALUES (%(id_project)s, %(selection)s, %(description)s, %(selection_type)s) returning id;"""
 
-edit_selection = """
-  UPDATE selection SET selection_type= %(selection_type)s WHERE id=%(id)s;"""
+# edit_selection = """
+#   UPDATE selection SET selection_type= %(selection_type)s WHERE id=%(id)s;"""
 
-select_selection_with_id = """
-  SELECT selection,description,selection_type,id_projet FROM selection WHERE id=%s; """
+# select_selection_with_id = """
+#   SELECT selection,description,selection_type,id_projet FROM selection WHERE id=%s; """
 
-select_selection_with_type = """
-  SELECT id, selection_type FROM selection WHERE selection=%s; """
+# select_selection_with_type = """
+#   SELECT id, selection_type FROM selection WHERE selection=%s; """
 
-delete_selection_with_project_id = """
-  DELETE FROM selection WHERE id_projet=%s; """
+# delete_selection_with_project_id = """
+#   DELETE FROM selection WHERE id_projet=%s; """
 
-delete_selection = """
-  DELETE FROM selection WHERE id=%s; """
+# delete_selection = """
+#   DELETE FROM selection WHERE id=%s; """
 
 ################ Tables des selection extraction ################
 
@@ -374,14 +374,14 @@ delete_projet_with_id = """
 
 #------------------------ User profils -------------------------#
 
-drop_profil = """
-                DROP TABLE IF EXISTS profils_usager;
-                """
-profil = """
-          CREATE TABLE IF NOT EXISTS profils_usager (
-            id SERIAL PRIMARY KEY,
-            profils VARCHAR(20)
-          )"""
+# drop_profil = """
+#                 DROP TABLE IF EXISTS profils_usager;
+#                 """
+# profil = """
+#           CREATE TABLE IF NOT EXISTS profils_usager (
+#             id SERIAL PRIMARY KEY,
+#             profils VARCHAR(20)
+#           )"""
 
 #---------------------------------------------------------------#
 #                          THE END                              #

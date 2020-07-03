@@ -12,12 +12,12 @@
         "password": "ef165e2fea7aa922f4dddefd444e8b3c6b1fbd414fad82f971adf77bf7afbac6",
         "host": "ec2-46-137-100-204.eu-west-1.compute.amazonaws.com",
         "port": 5432
-    },
-    "staging": {
-        "dbname": "d74ievmpccqdh6",
-        "user": "pecrslpcwmptbf",
-        "password": "3f48aaeb90fa4b6b1aa0d93cd78e67635047214b80b323c584fabcc29b66a160",
-        "host": "ec2-46-137-177-160.eu-west-1.compute.amazonaws.com",
-        "port": 5432
     }
 }
+// "staging": {
+//     "dbname": "d74ievmpccqdh6",
+//     "user": "pecrslpcwmptbf",
+//     "password": "3f48aaeb90fa4b6b1aa0d93cd78e67635047214b80b323c584fabcc29b66a160",
+//     "host": "ec2-46-137-177-160.eu-west-1.compute.amazonaws.com",
+//     "port": 5432
+// }

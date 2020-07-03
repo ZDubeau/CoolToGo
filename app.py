@@ -1,4 +1,7 @@
-''' Last update : 2020-06-26 '''
+"""----------------------------
+Creation date : 2020-06-11
+Last update : 2020-07-02
+----------------------------"""
 
 import Table_profil as prf
 from wtforms.validators import InputRequired, Email, Length, Regexp, AnyOf
@@ -6,6 +9,8 @@ from wtforms import Form, StringField, PasswordField, validators
 from flask_wtf import FlaskForm
 from flask import Flask, render_template, request, redirect, url_for, make_response, jsonify, json, g, abort, session, send_from_directory
 from flask_restful import Api
+from celery import Celery
+import redis
 import socket
 import os
 import pandas as pd
@@ -13,23 +18,34 @@ from pandas import DataFrame
 from geopy.geocoders import Nominatim
 import psycopg2
 import psycopg2.extras
-
+from LoggerModule.FileLogger import FileLogger as FileLogger
 import DB_Table_Definitions
 import DB_Functions as functions   # insert database related code here
-import apidae_extraction as apex  # my function retrieving data from apiade
 import Table_admin as admin
 import Table_Apidae as apidae
 import Table_category as ctg
 import Table_project as prj
 import Table_selection as slc
-import Table_extraction as extract
 import Table_message as msg
 import Table_freshness as fresh
 from DB_Connexion import DB_connexion
+import urllib.parse
+import api as ctg_api
+
+url = urllib.parse.urlparse(os.environ.get('REDISCLOUD_URL'))
+r = redis.Redis(host=url.hostname, port=url.port, password=url.password)
+# https://devcenter.heroku.com/articles/heroku-redis#using-the-cli :  r = redis.from_url(os.environ.get("REDIS_URL"))
+
+if os.getenv("FLASK_ENV") == "development":
+    FileLogger.InitLoggerByFile(
+        os.getenv("FileLogger_path"), os.getenv("FileLogger_name"))
 
 app = Flask(__name__)
 
 app.secret_key = os.getenv("SECRET_KEY")
+
+app.config['CELERY_BROKER_URL'] = os.getenv("CELERY_BROKER_URL")
+app.config['CELERY_RESULT_BACKEND'] = os.getenv("CELERY_RESULT_BACKEND")
 
 api = Api(app)
 # to allow angular to your python app
@@ -43,6 +59,33 @@ def after_request(response):
     return response
 
 
+celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+celery.conf.update(app.config)
+
+#-------------------------------------------------------------------#
+#                            Celery Tasks                           #
+#-------------------------------------------------------------------#
+
+
+@celery.task
+def asynchronous_extract_for_selection(id):
+    data_from_apidae = apidae.Data_from_apidae(id)
+    data_from_apidae.Execute()
+
+
+@celery.task
+def asynchronous_selection_extract(id):
+    selection = slc.Selection(id)
+    selection.Execute()
+    connexion = DB_connexion()
+    data = connexion.Query_SQL_fetchall(
+        slc.select_selection_with_id_project, [id])
+    connexion.close()
+    for line in data:
+        asynchronous_extract_for_selection.apply_async(
+            args=[line[0]], countdown=2)
+
+
 # @app.route('/cooltogo.ico')
 # def favicon():
 #     return send_from_directory(os.path.join(app.root_path, 'static'),
@@ -53,7 +96,6 @@ def after_request(response):
 @app.route('/', methods=['GET'])
 def get_homepage():
     session.clear()
-
     form = RegistrationForm(request.form)
     modal_inscription = False
     modal_login = False
@@ -83,7 +125,6 @@ def register():
     form = RegistrationForm(request.form)
     for fieldName, errorMessages in form.errors.items():
         for err in errorMessages:
-            # do something with your errorMessages for fieldName
             print(fieldName, err)
     if request.method == 'POST' and form.validate():
         list_admin = functions.connexion_admin(
@@ -171,6 +212,33 @@ def get_tableApidae():
         connexion.close()
         return render_template('pages/tableApidae.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableApidae', index=False)], username=username)
 
+
+@app.route('/edit_ctg_profil/<id>')
+def get_edit(id):
+    if "username" not in session:
+        return redirect(url_for("get_homepage"))
+    else:
+        username = session["username"]
+        connexion = DB_connexion()
+        # connexion.Execute_SQL(apidae.select_apidae_1_id, [id])
+        # data = connexion.Query_SQL_fetchone(ctg.select_category_with_id, [id])
+        # category = data[1]
+        # df = pd.read_sql(ctg.select_category, connexion.engine())
+        connexion.close()
+    return render_template('pages/apidae_edit.html', tables=[df.to_html(classes='table table-bordered', index=False)], id=id)
+
+
+@app.route("/edit_save", methods=["POST"])
+def post_edit():
+    id_apidae = request.form["id_apidae"]
+    profil_c2g = request.form["profil_c2g"]
+    ctg = request.form["ctg"]
+    connexion = DB_connexion()
+    connexion.Update_SQL(ctg.update_elem, [
+        ctg, id])
+    connexion.close()
+    return redirect(url_for("get_tableApidae"))
+
 #------------------ Valid tables interface --------------------#
 
 
@@ -193,106 +261,106 @@ def get_tableValide():
 #---------------------- New data valid ------------------------#
 
 
-# @app.route('/new_data_valid', methods=['GET', 'POST'])
-# def get_new_data_valid():
-#     lieu_event = request.form["lieu_event"]
-#     name = request.form["name"]
-#     niveau_fraicheur = request.form["niveau_fraicheur"]
-#     type_ = request.form["type"]
-#     adresse1 = request.form["adresse1"]
-#     adresse2 = request.form["adresse2"]
-#     codePostal = request.form["code_postal"]
-#     City = request.form["City"]
-#     telephone = request.form["telephone"]
-#     email = request.form["email"]
-#     site_web = request.form["site_web"]
-#     Description_Teaser = request.form["Description_Teaser"]
-#     Description = request.form["description"]
-#     Images = request.form["Images"]
-#     Categories = request.form["Categories"]
-#     Accessibilite = request.form["Accessibilité"]
-#     Payant = request.form["Payant"]
-#     public = ""
-#     first = True
-#     if "senior" in request.form:
-#         public += "senior"
-#         first = False
-#     if "enfant" in request.form:
-#         if first:
-#             public += "enfant"
-#             first = False
-#         else:
-#             public += ",enfant"
-#     if "jeune" in request.form:
-#         if first:
-#             public += "jeune"
-#             first = False
-#         else:
-#             public += ",jeune"
-#     if "adulte" in request.form:
-#         if first:
-#             public += "adulte"
-#             first = False
-#         else:
-#             public += ",adulte"
-#     if "solidaire" in request.form:
-#         if first:
-#             public += "solidaire"
-#             first = False
-#         else:
-#             public += ",solidaire"
-#     plus_d_infos = request.form["plus_d_infos"]
-#     Date_debut = request.form["Date_début"]
-#     Date_fin = request.form["Date_fin"]
-#     adresse_to_geolocalize = ""
-#     if adresse1 != "None":
-#         adresse_to_geolocalize += adresse1
-#     if adresse2 != "None":
-#         adresse_to_geolocalize += " " + adresse2
-#     geolocator = Nominatim(user_agent="cooltogo_api_backend")
-#     location = geolocator.geocode(
-#         adresse_to_geolocalize+" "+codePostal+" "+City)
-#     if location == None:
-#         x_lat = None
-#         y_lon = None
-#     else:
-#         x_lat = location.latitude
-#         y_lon = location.longitude
-#     connexion = DB_connexion()
-#     DB_Protocole.cur.execute(
-#         DB_Table_Definitions.select_max_id_from_cooltogo_validated)
-#     id_max = DB_Protocole.cur.fetchone()[0]
-#     if id_max == None:
-#         id_max = "1"
-#     else:
-#         id_max = str(id_max+1)
-#     id_apidae = "ManualEntry_"+id_max
-#     functions.insert_cooltogo_validated(id_apidae,
-#                                         lieu_event,
-#                                         x_lat,
-#                                         y_lon,
-#                                         name,
-#                                         niveau_fraicheur,
-#                                         adresse1,
-#                                         adresse2,
-#                                         codePostal,
-#                                         City,
-#                                         telephone,
-#                                         email,
-#                                         site_web,
-#                                         Description_Teaser,
-#                                         Description,
-#                                         Images,
-#                                         public,
-#                                         type_,
-#                                         Categories,
-#                                         Accessibilite,
-#                                         Payant,
-#                                         plus_d_infos,
-#                                         Date_debut,
-#                                         Date_fin)
-#     connexion.close()
-#     return redirect(url_for("get_tableValide"))
+@app.route('/new_data_valid', methods=['GET', 'POST'])
+def get_new_data_valid():
+    titre = request.form["titre"]
+    profil_c2g = request.form["profil_c2g"]
+    sous_type_ = request.form["sous_type"]
+    adresse1 = request.form["adresse1"]
+    adresse2 = request.form["adresse2"]
+    codePostal = request.form["code_postal"]
+    ville = request.form["ville"]
+    altitude = request.form["altitude"]
+    telephone = request.form["telephone"]
+    email = request.form["email"]
+    site_web = request.form["site_web"]
+    description_courte = request.form["description_courte"]
+    description_detaillee = request.form["description_detaillee"]
+    images = request.form["images"]
+    Categories = request.form["Categories"]
+    Accessibilite = request.form["Accessibilité"]
+    Payant = request.form["Payant"]
+    public = ""
+    first = True
+    if "senior" in request.form:
+        public += "senior"
+        first = False
+    if "enfant" in request.form:
+        if first:
+            public += "enfant"
+            first = False
+        else:
+            public += ",enfant"
+    if "jeune" in request.form:
+        if first:
+            public += "jeune"
+            first = False
+        else:
+            public += ",jeune"
+    if "adulte" in request.form:
+        if first:
+            public += "adulte"
+            first = False
+        else:
+            public += ",adulte"
+    if "solidaire" in request.form:
+        if first:
+            public += "solidaire"
+            first = False
+        else:
+            public += ",solidaire"
+    plus_d_infos = request.form["plus_d_infos"]
+    Date_debut = request.form["Date_début"]
+    Date_fin = request.form["Date_fin"]
+    adresse_to_geolocalize = ""
+    if adresse1 != "None":
+        adresse_to_geolocalize += adresse1
+    if adresse2 != "None":
+        adresse_to_geolocalize += " " + adresse2
+    geolocator = Nominatim(user_agent="cooltogo_api_backend")
+    location = geolocator.geocode(
+        adresse_to_geolocalize+" "+codePostal+" "+City)
+    if location == None:
+        x_lat = None
+        y_lon = None
+    else:
+        x_lat = location.latitude
+        y_lon = location.longitude
+    connexion = DB_connexion()
+    DB_Protocole.cur.execute(
+        DB_Table_Definitions.select_max_id_from_cooltogo_validated)
+    id_max = DB_Protocole.cur.fetchone()[0]
+    if id_max == None:
+        id_max = "1"
+    else:
+        id_max = str(id_max+1)
+    id_apidae = "ManualEntry_"+id_max
+    functions.insert_cooltogo_validated(id_apidae,
+                                        x_lat,
+                                        y_lon,
+                                        name,
+                                        niveau_fraicheur,
+                                        adresse1,
+                                        adresse2,
+                                        codePostal,
+                                        City,
+                                        telephone,
+                                        email,
+                                        site_web,
+                                        Description_Teaser,
+                                        Description,
+                                        Images,
+                                        public,
+                                        type_,
+                                        Categories,
+                                        Accessibilite,
+                                        Payant,
+                                        plus_d_infos,
+                                        Date_debut,
+                                        Date_fin
+                                        )
+    connexion.close()
+    return redirect(url_for("get_tableValide"))
 
 #-------------------- Validated lieu ------------------------#
 
@@ -404,11 +472,15 @@ def get_projectInformation():
         return redirect(url_for("get_homepage"))
     else:
         username = session["username"]
+        if 'ErrorMessage' in request.args:
+            ErrorMessage = request.args.get('ErrorMessage')
+        else:
+            ErrorMessage = ""
         connexion = DB_connexion()
         df = pd.read_sql(
             prj.select_project_information, connexion.engine())
         connexion.close()
-        return render_template('pages/projectInformation.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableProjet', index=False)], username=username)
+        return render_template('pages/projectInformation.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableProjet', index=False)], username=username, ErrorMessage=ErrorMessage)
 
 #------------------- New Project --------------------#
 
@@ -417,21 +489,25 @@ def get_projectInformation():
 def get_new_project_info():
     project_ID = request.form["project_ID"]
     api_key = request.form["api_key"]
-    functions.insert_project(project_ID, api_key)
-    return redirect(url_for("get_projectInformation"))
+    connexion = DB_connexion()
+    nb_project = connexion.Query_SQL_rowcount(
+        prj.select_project_with_project_ID, [project_ID])
+    connexion.close()
+    errormessage = 'Projet déjà dans la base de donnée !!!'
+    if nb_project == 0:
+        id_project = functions.insert_project(project_ID, api_key)
+        asynchronous_selection_extract.apply_async(
+            args=[id_project], countdown=2)
+        errormessage = ''
+    return redirect(url_for("get_projectInformation", ErrorMessage=errormessage))
 
 #--------------- Lancement(launch) d'extraction des selection --------------#
 
 
 @app.route('/launch_selection_extract/<id>')
 def get_launch_selection_extract(id):
-    connexion = DB_connexion()
-    data = connexion.Query_SQL_fetchone(prj.select_project_with_id, [id])
-    df = apex.retrieve_selection_list(id, data[0], data[1])
-    connexion.Delete_SQL(slc.delete_selection_with_project_id, [id])
-    df.to_sql('selection', con=connexion.engine(),
-              index=False, if_exists='append')
-    connexion.close()
+    asynchronous_selection_extract.apply_async(
+        args=[id], countdown=2)
     return redirect(url_for("get_apidaeSelection"))
 
 #---------------- Remove project id -----------------#
@@ -490,16 +566,7 @@ def get_edit_selection_post():
 
 @app.route('/launch_extract/<id>')
 def get_launch_extract(id):
-    connexion = DB_connexion()
-    data = connexion.Query_SQL_fetchone(prj.select_selection_project, [id])
-    df = apex.retrive_data_by_selectionId(data[0], data[1], data[2])
-    connexion.Delete_SQL(apidae.delete_apidae_selection_id, [id])
-    df_to_insert = df
-    df_to_insert.to_sql('data_from_apidae', con=connexion.engine(),
-                        index=False, if_exists='append')
-    connexion.Insert_SQL(extract.insert_selection_extraction, [
-        id, int(len(df_to_insert.index))])
-    connexion.close()
+    asynchronous_extract_for_selection.apply_async(args=[id], countdown=2)
     return redirect(url_for("get_apidaeSelection"))
 
 #---------------- Remove Selection id -----------------#
@@ -650,31 +717,30 @@ def get_launch_extract(id):
 #_________________________extract locations__________________________#
 
 
-# @app.route('/extract_locations')
-# def get_extract_locations():
-#     connexion = DB_connexion()
-#     DB_Protocole.cur.execute(DB_Table_Definitions.select_cooltogo_validated)
-#     data = DB_Protocole.cur.fetchall()
-#     connexion.close()
-#     list_feature = []
-#     for value in data:
-#         list_feature.append(functions.create_dict_for_lieu_validated(value))
-#     dict_for_extract = dict()
-#     dict_for_extract.update({"type": "FeatureCollection"})
-#     dict_for_extract.update({"name": "cool2go"})
-#     dict_for_extract_2 = {}
-#     dict_for_extract_2.update({"name": "urn:ogc:def:crs:OGC:1.3:CRS84"})
-#     dict_for_extract_1 = {}
-#     dict_for_extract_1.update({"type": "name"})
-#     dict_for_extract_1.update({"properties": dict_for_extract_2})
-#     dict_for_extract.update({"crs": dict_for_extract_1})
-#     dict_for_extract.update({"features": list_feature})
-#     response = app.response_class(
-#         response=json.dumps(dict_for_extract, indent=3, sort_keys=False),
-#         status=200,
-#         mimetype='application/json'
-#     )
-#     return response
+@app.route('/extract_locations')
+def get_extract_locations():
+    connexion = DB_connexion()
+    data = connexion.Query_SQL_fetchall(apidae.select_apidae)
+    connexion.close()
+    list_feature = []
+    for value in data:
+        list_feature.append(functions.create_dict_for_lieu_validated(value))
+    dict_for_extract = dict()
+    dict_for_extract.update({"type": "FeatureCollection"})
+    dict_for_extract.update({"name": "cool2go"})
+    dict_for_extract_2 = {}
+    dict_for_extract_2.update({"name": "urn:ogc:def:crs:OGC:1.3:CRS84"})
+    dict_for_extract_1 = {}
+    dict_for_extract_1.update({"type": "name"})
+    dict_for_extract_1.update({"properties": dict_for_extract_2})
+    dict_for_extract.update({"crs": dict_for_extract_1})
+    dict_for_extract.update({"features": list_feature})
+    response = app.response_class(
+        response=json.dumps(dict_for_extract, indent=3, sort_keys=False),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
 
 #_____________________________Freshness______________________________#
 
@@ -870,7 +936,6 @@ def post_edit_category():
     connexion = DB_connexion()
     connexion.Update_SQL(ctg.update_category, [
         category, id])
-    DB_Protocole.conn.commit()
     connexion.close()
     return redirect(url_for("get_category"))
 
@@ -899,7 +964,7 @@ def get_profil():
             ErrorMessage = request.args.get('ErrorMessage')
         else:
             ErrorMessage = ""
-        connexion = ConnexionDB()
+        connexion = DB_connexion()
         df = pd.read_sql(prf.select_user_profil, connexion.engine())
         connexion.close()
         return render_template('pages/profil.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableProfil', index=False)], ErrorMessage=ErrorMessage, username=username)
@@ -958,9 +1023,60 @@ def get_delete_profil(id):
     return redirect(url_for("get_profil", ErrorMessage=ErrorMessage))
 
 #---------------------------------------------------#
-#                      The End                      #
+#                      api for front-end            #
 #---------------------------------------------------#
 
 
+@app.route('/api/categories', methods=['GET'])
+def categories():
+    c = ctg_api.query_database_for_list_of_categories()
+    response = app.response_class(
+        response=json.dumps(c, indent=3, sort_keys=False),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
+
+
+@app.route('/api/profiles', methods=['GET'])
+def profiles():
+    p = ctg_api.query_database_for_list_of_profiles()
+    response = app.response_class(
+        response=json.dumps(p, indent=3, sort_keys=False),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
+
+
+@app.route('/api/locations', methods=['POST'])
+def locations():
+    """
+    the post request will be sent with a JSON body 
+    which defined the categories and profiles 
+    we want to filter the locations by
+    formatted like:
+    {
+        categories: ['category1', 'category2', ...],
+        profiles: ['profile1', 'profile2', ...]
+    }
+    """
+    req_data = request.get_json()
+    categories = req_data['categories']
+    profiles = req_data['profiles']
+    # filter all locations by the categories and profiles defined in the req_data
+    l = ctg_api.query_database_for_list_of_filtered_locations(
+        categories, profiles)
+    response = app.response_class(
+        response=json.dumps(l, indent=3, sort_keys=False),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
+
+
+#---------------------------------------------------#
+#                      The End                      #
+#---------------------------------------------------#
 if __name__ == '__main__':
     app.run(debug=True)

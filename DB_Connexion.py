@@ -1,9 +1,5 @@
-""" Projet CoolToGo Alone """
-
-""" Module by Zahra
-𐤟 Création : 2020-03-06
-𐤟 Dernière MàJ : 2020-06-29
-"""
+"""   Création : 2020-03-06   """
+""" Dernière MàJ : 2020-06-30 """
 
 
 
@@ -13,25 +9,22 @@ from sqlalchemy import create_engine
 import os
 from psycopg2 import Error
 import psycopg2
-import psycopg2.extras, sys, json
+import psycopg2.extras, sys
 class DB_connexion():
 
     def __init__(self):
-        with open('info_connection.json') as json_file:
-            data = json.load(json_file)
-            environnement = os.getenv("FLASK_ENV")
-            dbname = data[environnement]['dbname']
-            user = data[environnement]['user']
-            password = data[environnement]['password']
-            host = data[environnement]['host']
-            port = data[environnement]['port']
-            db_connect_url = sqla_url.URL(
-                drivername='postgresql+psycopg2',
-                username=user,
-                password=password,
-                host=host,
-                port=port,
-                database=dbname)
+        dbname = os.getenv("DB_NAME")
+        user = os.getenv("USER")
+        password = os.getenv("PASSWORD")
+        host = os.getenv("HOST")
+        port = os.getenv("PORTE")
+        db_connect_url = sqla_url.URL(
+            drivername='postgresql+psycopg2',
+            username=user,
+            password=password,
+            host=host,
+            port=port,
+            database=dbname)
         try:
             self.__conn = psycopg2.connect(dbname=dbname, user=user,
                                            password=password, host=host, port=port)
@@ -70,7 +63,7 @@ class DB_connexion():
             self.__cur.execute(codeSQL, liste)
             self.__commit()
         except (psycopg2.Error, AttributeError) as Error:
-            print(Error)
+            print("Erreur insert_SQL", Error)
 
     def Insert_SQL_fetchone(self, codeSQL, liste=[]):
         try:
@@ -78,7 +71,7 @@ class DB_connexion():
             self.__commit()
             return self.__cur.fetchone()
         except (psycopg2.Error, AttributeError) as Error:
-            print(Error)
+            print("Erreur insert_SQL_fetchone", Error)
 
     def Update_SQL(self, codeSQL, liste=[]):
         try:
@@ -92,7 +85,7 @@ class DB_connexion():
             self.__cur.execute(codeSQL, liste)
             self.__commit()
         except (psycopg2.Error, AttributeError) as Error:
-            print(Error)
+            print("Erreur Delete_SQL", Error)
             return Error
 
     def Create_Table(self, codeSQL):

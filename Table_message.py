@@ -23,7 +23,7 @@ select_message = """
                 """
 
 select_message_list = """ 
-                        SELECT id,message, start_date, end_date, '' as Edit, '' as Publish, '' as Delete 
+                        SELECT id,message, start_date, end_date, '' as Modifier, '' as Publier, '' as Supprimer 
                         FROM message; 
                         """
 

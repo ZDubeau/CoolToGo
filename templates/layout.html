@@ -16,6 +16,7 @@
     <link rel="stylesheet" type="text/css"
         href="https://cdn.datatables.net/fixedheader/3.1.2/css/fixedHeader.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.6.2/css/buttons.dataTables.min.css">
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 </head>
@@ -71,6 +72,13 @@
                             </div>
                             Apidae Extraction
                         </a>
+                        <!-- ----------------------------------------------------------------- -->
+                        <a class="nav-link" href="{{ url_for('get_new_data_valid')}}">
+                            <div class="sb-nav-link-icon">
+                                <i class="fas fa-pencil-alt"></i>
+                            </div>
+                            Saisie Manuelle
+                        </a>
                         <!-- ------------------------ Layout of Tables ----------------------- -->
                         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayouts"
                             aria-expanded="false" aria-controls="collapseLayouts">
@@ -102,7 +110,7 @@
                             <div class="sb-nav-link-icon">
                                 <i class="fas fa-list-alt"></i>
                             </div>
-                            Profils usager
+                            Descriptifs thématisés
                         </a> -->
                         <!-- ----------------------------------------------------------------- -->
                         <!-- <a class="nav-link" href="{{ url_for('get_category')}}">
@@ -161,6 +169,8 @@
         type="text/javascript"></script>
     <script src="https://cdn.datatables.net/fixedcolumns/3.3.0/js/dataTables.fixedColumns.min.js"
         type="text/javascript"></script>
+    <script src="https://cdn.datatables.net/buttons/1.6.2/js/dataTables.buttons.min.js" type="text/javascript"></script>
+    <script src="https://cdn.datatables.net/buttons/1.6.2/js/buttons.colVis.min.js" type="text/javascript"></script>
     <script src="https://cdn.datatables.net/plug-ins/1.10.21/dataRender/ellipsis.js" crossorigin="anonymous"></script>
     <script src="{{ url_for('static', filename='/js/scripts.js') }}"></script>
     <script src="{{ url_for('static', filename='/js/datatables.js') }}"></script>

@@ -12,7 +12,7 @@ class transformation():
 
     def __general_information(self):
 
-        self.__dict_id['id_selection'] = None
+        self.__dict_id['id_apidae'] = None
         self.__dict_id['type_apidae'] = None
         self.__dict_id['titre'] = None
 
@@ -138,16 +138,16 @@ class transformation():
 
         if 'prestations' in self.__request_json:
             if 'services' in self.__request_json['prestations']:
-                Service = ""
+                Services = ""
                 first = True
                 for value in self.__request_json['prestations']['services']:
                     if 'libelleFr' in value:
                         if first:
-                            Service += value['libelleFr']
+                            Services += value['libelleFr']
                             first = False
                         else:
-                            Service += ", " + value['libelleFr']
-                self.__dict_id['services'] = Service
+                            Services += ", " + value['libelleFr']
+                self.__dict_id['services'] = Services
 
     def __opening(self):
 
@@ -164,16 +164,16 @@ class transformation():
 
         if 'ouverture' in self.__request_json:
             if 'indicationsPeriode' in self.__request_json['ouverture']:
-                Opening = ""
+                opening = ""
                 first = True
                 for element in self.__request_json['ouverture']['indicationsPeriode']:
                     if 'libelleFr' in element:
                         if first:
-                            Opening += element['libelleFr']
+                            opening += element['libelleFr']
                             first = False
                         else:
-                            Opening += ", " + element['libelleFr']
-                self.__dict_id['periode'] = Opening
+                            opening += ", " + element['libelleFr']
+                self.__dict_id['periode'] = opening
 
     def __activity(self):
 
@@ -238,13 +238,17 @@ class transformation():
                         if 'nom' in self.__request_json['localisation']['adresse']['commune']:
                             self.__dict_id['ville'] = self.__request_json['localisation']['adresse']['commune']['nom']
             # altitude
+            if 'informations' in self.__request_json:
+                if 'structureGestion' in self.__request_json['informations']:
+                    if 'geolocalisation' in self.__request_json['informations']['structureGestion']:
+                        if 'altitude' in self.__request_json['informations']['structureGestion']['geolocalisation']:
+                            self.__dict_id['altitude'] = self.__request_json['informations'][
+                                'structureGestion']['geolocalisation']['altitude']
             if self.__dict_id['altitude'] is None:
-                if 'informations' in self.__request_json:
-                    if 'structureGestion' in self.__request_json['informations']:
-                        if 'geolocalisation' in self.__request_json['informations']['structureGestion']:
-                            if 'altitude' in self.__request_json['informations']['structureGestion']['geolocalisation']:
-                                self.__dict_id['altitude'] = self.__request_json['informations'][
-                                    'structureGestion']['geolocalisation']['altitude']
+                if 'localisation' in self.__request_json:
+                    if 'geolocalisation' in self.__request_json['localisation']:
+                        if 'altitude' in self.__request_json['localisation']['geolocalisation']:
+                            self.__dict_id['altitude'] = self.__request_json['localisation']['geolocalisation']['altitude']
             # latitude, longitude
             if 'localisation' in self.__request_json:
                 if 'geolocalisation' in self.__request_json['localisation']:
@@ -268,6 +272,59 @@ class transformation():
                         else:
                             typology += ", " + value['libelleFr']
                 self.__dict_id['typologie'] = typology
+
+    def __descriptifsThematises(self):
+
+        self.__dict_id['bons_plans'] = None
+        self.__dict_id['dispositions_speciales'] = None
+        self.__dict_id['service_enfants'] = None
+        self.__dict_id['service_cyclistes'] = None
+        self.__dict_id['nouveaute_2020'] = None
+
+        if 'presentation' in self.__request_json:
+            if 'descriptifsThematises' in self.__request_json['presentation']:
+                firstBP = True
+                firstDS = True
+                firstSE = True
+                firstSC = True
+                firstN2 = True
+                for value in self.__request_json['presentation']['descriptifsThematises']:
+                    if 'theme' in value:
+                        if 'libelleFr' in value['theme']:
+                            if value['theme']['libelleFr'] == 'Bons plans':
+                                if firstBP:
+                                    self.__dict_id['bons_plans'] = value['theme']['libelleFr']
+                                    firstBP = False
+                                else:
+                                    self.__dict_id['bons_plans'] = value['theme']['libelleFr']
+
+                            elif value['theme']['libelleFr'] == 'Dispositions spéciales COVID 19':
+                                if firstDS:
+                                    self.__dict_id['dispositions_speciales'] = value['theme']['libelleFr']
+                                    firstDS = False
+                                else:
+                                    self.__dict_id['dispositions_speciales'] = value['theme']['libelleFr']
+
+                            elif value['theme']['libelleFr'] == 'Services pour les enfants':
+                                if firstSE:
+                                    self.__dict_id['service_enfants'] = value['theme']['libelleFr']
+                                    firstSE = False
+                                else:
+                                    self.__dict_id['service_enfants'] = value['theme']['libelleFr']
+
+                            elif value['theme']['libelleFr'] == 'Services pour les cyclistes':
+                                if firstSC:
+                                    self.__dict_id['service_cyclistes'] = value['theme']['libelleFr']
+                                    firstSC = False
+                                else:
+                                    self.__dict_id['service_cyclistes'] = value['theme']['libelleFr']
+
+                            elif value['theme']['libelleFr'] == 'Nouveauté 2020':
+                                if firstN2:
+                                    self.__dict_id['nouveaute_2020'] = value['theme']['libelleFr']
+                                    firstN2 = False
+                                else:
+                                    self.__dict_id['nouveaute_2020'] = value['dtheme']['libelleFr']
 
     def __find_element_reference_in_json(self, jsonfile):
         list_element_reference = []
@@ -331,13 +388,14 @@ class transformation():
         self.__equipment()
         self.__public()
         self.__image()
+        self.__descriptifsThematises()
         self.__identify_all_elements_de_reference()
         self.__identify_all_special_elements_descriptions()
-        if 'descriptifsThematises' in self.__request_json['presentation']:
-            nb_description_thematise = len(
-                self.__request_json['presentation']['descriptifsThematises'])
-            if nb_description_thematise > 2:
-                print(self.__dict_id['id_apidae'], nb_description_thematise)
+        # if 'descriptifsThematises' in self.__request_json['presentation']:
+        #     nb_description_thematise = len(
+        #         self.__request_json['presentation']['descriptifsThematises'])
+        #     if nb_description_thematise > 2:
+        #         print(self.__dict_id['id_apidae'], nb_description_thematise)
 
     def dict_id(self):
         return self.__dict_id

@@ -1,5 +1,3 @@
-image: node:latest
-
 before_script:
     - apt-get update -qy
     - gem install dpl

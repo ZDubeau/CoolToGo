@@ -30,7 +30,7 @@ import queue
 # My functions
 import DB_Protocole
 import Table_selection as slc
-from DB_Connexion import DB_connexion
+
 
 # Transformation function of data by id
 #from apidae_id_tranformation import restauration_transformation
@@ -39,7 +39,7 @@ from transformation import transformation
 # _______________________________________________________________________
 
 
-def retrieve_data_by_id(project_ID, api_KEY, select_id, selectionId):
+def retrieve_data_by_id(project_ID, api_KEY, select_id, selectionId, id_selection):
     result_df = pd.DataFrame(columns=['id_apidae', 'id_selection', 'type_apidae', 'titre', 'profil_c2g', 'sous_type',
                                       'adresse1', 'adresse2', 'code_postal', 'ville', 'altitude', 'latitude',
                                       'longitude', 'telephone', 'email', 'site_web', 'description_courte',
@@ -64,11 +64,7 @@ def retrieve_data_by_id(project_ID, api_KEY, select_id, selectionId):
     # # print(transfo.special_elements_descriptions())
     # print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
 
-    connexion = DB_connexion()
-    data = connexion.Query_SQL_fetchone(
-        slc.select_selection_with_type, [selectionId])
-    connexion.close()
-    dict_for_id['id_selection'] = data[0]
+    dict_for_id['id_selection'] = id_selection
     result_df = result_df.append(dict_for_id, ignore_index=True)
     return result_df
 # _______________________________________________________________________
@@ -102,7 +98,7 @@ count_ = "100"              # "count":20
 first = "0"                 # start from 0
 
 
-def retrive_data_by_selectionId(project_ID, api_KEY, selectionId):
+def retrive_data_by_selectionId(project_ID, api_KEY, selectionId, id_selection):
     import pandas as pd
     result_df = pd.DataFrame(columns=['id_apidae', 'id_selection', 'type_apidae', 'titre', 'profil_c2g', 'sous_type',
                                       'adresse1', 'adresse2', 'code_postal', 'ville', 'altitude', 'latitude',
@@ -127,7 +123,7 @@ def retrive_data_by_selectionId(project_ID, api_KEY, selectionId):
         i = 0
         while count*i < nb_object:
             result_df = result_df.append(retrive_data_by_selectionId_by_cent(
-                project_ID, api_KEY, selectionId, count*i, count))
+                project_ID, api_KEY, selectionId, id_selection, count*i, count))
             i += 1
     except ValueError:
         print("problème d'extraction")
@@ -135,7 +131,7 @@ def retrive_data_by_selectionId(project_ID, api_KEY, selectionId):
 # _______________________________________________________________________
 
 
-def retrive_data_by_selectionId_by_cent(project_ID, api_KEY, selectionId, first, count):
+def retrive_data_by_selectionId_by_cent(project_ID, api_KEY, selectionId, id_selection, first, count):
     import pandas as pd
     result_df = pd.DataFrame(columns=['id_apidae', 'id_selection', 'type_apidae', 'titre', 'profil_c2g', 'sous_type',
                                       'adresse1', 'adresse2', 'code_postal', 'ville', 'altitude', 'latitude',
@@ -159,8 +155,8 @@ def retrive_data_by_selectionId_by_cent(project_ID, api_KEY, selectionId, first,
         threads_list = list()
         for index, row in df.iterrows():
             #result_df = result_df.append(retrieve_data_by_id(project_ID,api_KEY,str(row['id']),selectionId))
-            t = Thread(target=lambda q, arg1, arg2, arg3, arg4: q.put(retrieve_data_by_id(
-                arg1, arg2, arg3, arg4)), args=(que, project_ID, api_KEY, str(row['id']), selectionId), daemon=True)
+            t = Thread(target=lambda q, arg1, arg2, arg3, arg4, arg5: q.put(retrieve_data_by_id(
+                arg1, arg2, arg3, arg4, arg5)), args=(que, project_ID, api_KEY, str(row['id']), selectionId, id_selection), daemon=True)
             t.start()
             threads_list.append(t)
         for t in threads_list:
@@ -174,7 +170,7 @@ def retrive_data_by_selectionId_by_cent(project_ID, api_KEY, selectionId, first,
 # _______________________________________________________________________
 
 
-def retrive_data_by_multiple_selectionId(project_ID, api_KEY, list_selectionId):
+def retrive_data_by_multiple_selectionId(project_ID, api_KEY, dict_selectionId):
     import pandas as pd
     result_df = pd.DataFrame(columns=['id_apidae', 'id_selection', 'type_apidae', 'titre', 'profil_c2g', 'sous_type',
                                       'adresse1', 'adresse2', 'code_postal', 'ville', 'altitude', 'latitude',
@@ -183,9 +179,9 @@ def retrive_data_by_multiple_selectionId(project_ID, api_KEY, list_selectionId):
                                       'animaux_acceptes', 'environnement', 'equipement', 'services', 'periode',
                                       'activites', 'ouverture', 'typologie', 'bons_plans', 'dispositions_speciales',
                                       'service_enfants', 'service_cyclistes', 'nouveaute_2020'])
-    for value in list_selectionId:
+    for key in dict_selectionId:
         result_df = result_df.append(
-            retrive_data_by_selectionId(project_ID, api_KEY, value))
+            retrive_data_by_selectionId(project_ID, api_KEY, dict_selectionId[key], key))
     result_df.reset_index(inplace=True)
     del result_df['index']
     return result_df

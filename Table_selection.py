@@ -284,6 +284,9 @@ class Selection():
         except Exception:
             FileLogger.log(logging.ERROR, traceback.print_exc())
 
+    def Close(self):
+        self.__connexion.close()
+
 
 drop_selection = """
                     DROP TABLE IF EXISTS selection CASCADE;

@@ -697,7 +697,7 @@ class Data_from_apidae():
             listInsert_data_from_apidae = []
             listOfKeys = []
             data_from_apidae_df = apex.retrive_data_by_selectionId(
-                self.__project_ID, self.__api_KEY, self.__selection)
+                self.__project_ID, self.__api_KEY, self.__selection, self.__id_selection)
             for _i, row in data_from_apidae_df.iterrows():
                 adata_from_apidae = data_from_apidaeModel(
                     row['id_apidae'],
@@ -773,6 +773,9 @@ class Data_from_apidae():
 
         except Exception:
             FileLogger.log(logging.ERROR, traceback.print_exc())
+
+    def Close(self):
+        self.__connexion.close()
 
 
 drop_apidae = """

@@ -13,7 +13,7 @@ from psycopg2 import Error
 
 # Comprehensive WSGI web application library
 from werkzeug.security import generate_password_hash, check_password_hash
-
+import json
 # enumerations
 from enum import Enum
 
@@ -268,34 +268,47 @@ def create_dict_for_lieu_validated(thelist: list):
 
     id_ = thelist[0]
     id_apidae = thelist[1]
-    Lieu_event = thelist[2]
-    X = thelist[3]
-    Y = thelist[4]
-    name = thelist[5]
-    Adresse1 = thelist[6]
-    Adresse2 = thelist[7]
-    Code_postal = thelist[8]
-    Ville = thelist[9]
-    telephone = thelist[10]
-    email = thelist[11]
-    site_web = thelist[12]
-    Description_Teaser = thelist[13]
-    Description = thelist[14]
-    Images = thelist[15]
-    if thelist[16] == None:
-        Publics = None
-    else:
-        Publics = thelist[16].split(",")
-    Type = thelist[19]
-    if thelist[20] == None:
-        Categories = None
-    else:
-        Categories = thelist[20].split(",")
-    Accessibilite = thelist[21]
+    id_selecton = thelist[2]
+    type_apidae = thelist[3]
+    titre = thelist[4]
+    profil_c2g = thelist[5]
+    sous_type = thelist[6]
+    adresse1 = thelist[7]
+    adresse2 = thelist[8]
+    code_postal = thelist[9]
+    ville = thelist[10]
+    altitude = thelist[11]
+    latitude = thelist[12]
+    longitude = thelist[13]
+    telephone = thelist[14]
+    email = thelist[15]
+    site_web = thelist[16]
+    description_courte = thelist[17]
+    description_detaillee = thelist[18]
+    image = thelist[19]
+    publics = thelist[20]
+    # if thelist[16] == None:
+    #     Publics = None
+    # else:
+    #     Publics = thelist[16].split(",")
+    # Type = thelist[19]
+    # if thelist[20] == None:
+    #     Categories = None
+    # else:
+    #     Categories = thelist[20].split(",")
+    tourisme_adapte = thelist[21]
     payant = thelist[22]
-    Plus_d_infos_et_horaires = thelist[23]
-    Dates_debut = thelist[24]
-    Dates_fin = thelist[25]
+    animaux_acceptes = thelist[23]
+    environnement = thelist[24]
+    equipement = thelist[25]
+    services = thelist[26]
+    periode = thelist[27]
+    activites = thelist[28]
+    ouverture = thelist[29]
+    typologie = thelist[30]
+    bons_plans = thelist[31]
+    dispositions_speciales = thelist[32]
+    service_enfants = thelist[33]
 
     data = None
     # sql_select_niveau_de_fraicheur = "SELECT nf.niveau_de_fraicheur AS fraicheur FROM niveau_de_fraicheur AS nf INNER JOIN lien_niveau_de_fraicheur_cooltogo_validated AS lnfcv ON nf.id=lnfcv.id_niveau_de_fraicheur WHERE id_cooltogo_validated=" + \
@@ -311,38 +324,50 @@ def create_dict_for_lieu_validated(thelist: list):
         niveau_de_fraicheur = data[0]
 
     dict_for_properties = {}
-    dict_for_properties.update({"lieu_event": Lieu_event})
-    dict_for_properties.update({"x": X})
-    dict_for_properties.update({"y": Y})
-    dict_for_properties.update({"name": name})
-    dict_for_properties.update({"niveau_de_fraicheur": niveau_de_fraicheur})
-    dict_for_properties.update({"adresse_1": Adresse1})
-    dict_for_properties.update({"adresse_2": Adresse2})
-    dict_for_properties.update({"code_postal": Code_postal})
-    dict_for_properties.update({"ville": Ville})
+    dict_for_properties.update({"id_apidae": id_apidae})
+    dict_for_properties.update({"type_apidae": type_apidae})
+    dict_for_properties.update({"titre": titre})
+    dict_for_properties.update({"profil_c2g": profil_c2g})
+    dict_for_properties.update({"sous_type": sous_type})
+    dict_for_properties.update({"adresse_1": adresse1})
+    dict_for_properties.update({"adresse_2": adresse2})
+    dict_for_properties.update({"code_postal": code_postal})
+    dict_for_properties.update({"ville": ville})
+    dict_for_properties.update({"latitude": latitude})
+    dict_for_properties.update({"latitude": latitude})
+    dict_for_properties.update({"longitude": longitude})
     dict_for_properties.update({"telephone": telephone})
     dict_for_properties.update({"email": email})
     dict_for_properties.update({"site_web": site_web})
-    dict_for_properties.update({"description_teaser": Description_Teaser})
-    dict_for_properties.update({"images": Images})
-    dict_for_properties.update({"publics": Publics})
-    dict_for_properties.update({"type": Type})
-    dict_for_properties.update({"categories": Categories})
-    dict_for_properties.update({"description": Description})
-    dict_for_properties.update({"accessibility": Accessibilite})
-    dict_for_properties.update({"paid": payant})
-    dict_for_properties.update({"info_hours": Plus_d_infos_et_horaires})
-    dict_for_properties.update({"start_date": Dates_debut})
-    dict_for_properties.update({"end_date": Dates_fin})
-    dict_for_properties.update({"id": id_})
+    dict_for_properties.update({"description_courte": description_courte})
+    dict_for_properties.update(
+        {"description_detaillee": description_detaillee})
+    dict_for_properties.update({"image": [image]})
+    dict_for_properties.update({"publics": publics})
+    dict_for_properties.update({"tourisme_adapte": tourisme_adapte})
+    dict_for_properties.update({"payant": payant})
+    dict_for_properties.update({"aanimaux_acceptes": animaux_acceptes})
+    dict_for_properties.update({"environnement": environnement})
+    dict_for_properties.update({"equipement": equipement})
+    dict_for_properties.update({"services": services})
+    dict_for_properties.update({"periode": periode})
+    dict_for_properties.update({"activites": activites})
+    dict_for_properties.update({"ouverture": ouverture})
+    dict_for_properties.update({"typologie": typologie})
+    dict_for_properties.update({"bons_plans": bons_plans})
+    dict_for_properties.update(
+        {"dispositions_speciales": dispositions_speciales})
+    dict_for_properties.update({"service_enfants": service_enfants})
+    # dict_for_properties.update({"id": id})
 
     dict_for_geometry = {}
     dict_for_geometry.update({"type": "Point"})
-    dict_for_geometry.update({"coordinates": [X, Y]})
+    dict_for_geometry.update({"coordinates": [latitude, longitude]})
 
     dict_for_lieu_validated = {}
     dict_for_lieu_validated.update({"properties": dict_for_properties})
     dict_for_lieu_validated.update({"geometry": dict_for_geometry})
     dict_for_lieu_validated.update({"type": "Feature"})
+    #jsons = json.dumps(dict_for_lieu_validated).encode('utf8')
     return dict_for_lieu_validated
 # _______________________________________________________________________

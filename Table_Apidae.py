@@ -776,6 +776,7 @@ class Data_from_apidae():
 
     def Close(self):
         self.__connexion.close()
+        self.__instance.close()
 
 
 drop_apidae = """

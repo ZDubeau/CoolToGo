@@ -286,6 +286,7 @@ class Selection():
 
     def Close(self):
         self.__connexion.close()
+        self.__instance.close()
 
 
 drop_selection = """

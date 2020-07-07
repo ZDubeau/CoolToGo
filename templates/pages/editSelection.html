@@ -4,50 +4,58 @@
     <div class="hero-body">
         <div class="container">
             <div class="columns">
-                <div class="column is-half is-offset-one-quarter" style="width: 35%;">
-                    <p class="title">
-                        Edit selection
+                <div class="column is-half is-offset-one-quarter"
+                    style="width: 100%;transform: translate(-300px, -90px);">
+                    <p class="title" style="font-size: x-large;color: #01289f;padding-bottom: 10px;padding-top: 30px;">
+                        Modifier la selection
                     </p>
                     <form action="/edit_selection_post" method="post">
-                        <!-- ----------------------- Selection ------------------------- -->
-                        <div class="field">
-                            <label class="label">Selection</label>
-                            <input name="selection" class="input" value="{{selection}}" type="text" maxlength="70"
-                                style="color: #292727;" readonly>
+                        <div class="form-row">
+                            <div class="col-md-2">
+                                <label class="label" style="font-size: 17px;color: #01289f;">ID
+                                    selection</label>
+                                <input type="text" name="selection" class="form-control" value="{{selection}}" readonly>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="label" style="font-size: 17px;color: #01289f;">Selection</label>
+                                <input type="text" name="selection" class="form-control" value="{{description}}"
+                                    readonly>
+                            </div>
                         </div>
-                        <!-- ---------------------- Categories ------------------------ -->
-                        <div class="field">
-                            <label class="label">Categories</label>
-                            <input name="categories" class="input" value="{{categories}}" type="text" maxlength="80"
-                                style="color: #292727;" required>
+                        <div class="container">
+                            <div class="row">
+                                <div class="column">
+                                    <div class="col-md-9 offset-md-3" style="margin-left: 0 !important;">
+                                        <div class="card"
+                                            style="margin:45px 0;max-width: 59%;transform: translate(-33px, -25px);background-color: #e8f0f6;">
+                                            <div class="card-header"
+                                                style="font-size: 17px;font-weight: 600;color: #ffffff;background-color: #01289f8d;">
+                                                Catégorie(s)</div>
+                                            <!-- <label class="label"
+                                            style="padding-top: 15px;font-size: 17px;color: #01289f;">Catégorie(s)</label> -->
+                                            {% for line in categories  %}
+                                            {% if line[2] == None %}
+                                            <label class="customcheck"
+                                                style="font-size: 14x;padding-left: 7px;padding-top: 10px;"><input
+                                                    name="categories-{{line[0]}}" value="{{line[1]}}"
+                                                    type="checkbox">&nbsp;&nbsp;{{line[1]}}&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                            {% else %}
+                                            <label class="customcheck"
+                                                style="font-size: 14px;padding-left: 7px;padding-top: 10px;"><input
+                                                    name="categories-{{line[0]}}" value="{{line[1]}}" type="checkbox"
+                                                    checked>&nbsp;&nbsp;{{line[1]}}&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <!-- --------------------- lieu or event --------------------- -->
-                        <!-- <div class="field">
-                            <label class="label">Lieu ou Event</label>
-                            <span class="select">
-                                <select name="lieu_event" required>
-                                    {% if selection_type=="Lieu" %}
-                                    <option></option>
-                                    <option selected>Lieu</option>
-                                    <option>Event</option>
-                                    {% elif selection_type=="Event" %}
-                                    <option></option>
-                                    <option>Lieu</option>
-                                    <option selected>Event</option>
-                                    {% else %}
-                                    <option></option>
-                                    <option>Lieu</option>
-                                    <option>Event</option>
-                                    {% endif %}
-                                </select>
-                            </span>
-                        </div>
-                        </br> -->
-                        <!-- -------------------------------------------------------- -->
                         <div class="field is-grouped is-grouped-left">
-                            <div class="control">
+                            <div class="control" style="transform: translate(0px, -55px);padding-left: 2px;">
                                 <input name="id" value="{{id_selection}}" type="hidden">
-                                <button class="button is-link" style="padding: 5px 25px;">Add</button>
+                                <button class="button is-link"
+                                    style="padding: 5px 25px;background: #01289f;">Confirm</button>
                             </div>
                         </div>
                     </form>

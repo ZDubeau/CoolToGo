@@ -1,7 +1,7 @@
 class transformation():
     """First step for retrieve Data from Apidae"""
 
-    def __init__(self, request_json, list_of_special_element=[]):
+    def __init__(self, request_json, list_of_special_element=[], categories_list=[]):
         self.__request_json = request_json
         self.__dict_id = {}
         self.__list_elements_de_references = []
@@ -9,6 +9,8 @@ class transformation():
         self.__special_elements_descriptions = dict()
         for element in self.__special_elements:
             self.__special_elements_descriptions[element] = ""
+        # self.__dict_id['profil_c2g'] = profils_list
+        self.__dict_id['sous_type'] = categories_list
 
     def __general_information(self):
 

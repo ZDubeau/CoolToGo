@@ -12,6 +12,10 @@ import Table_category
 import Table_profil
 import Table_freshness
 import Table_message
+import Table_elementReference
+import Table_relation_selection_category
+import Table_relation_selection_profil
+
 from DB_Connexion import DB_connexion
 # _____________________________________________
 
@@ -25,6 +29,9 @@ full_actions_list = (
     Table_admin.drop_admin,
     Table_category.drop_category,
     Table_profil.drop_user_profil,
+    Table_elementReference.drop_elementRef,
+    Table_relation_selection_category.drop_relation_selection_category,
+    Table_relation_selection_profil.drop_relation_selection_profil,
     Table_message.message,
     Table_project.project,
     Table_selection.selection,
@@ -33,7 +40,10 @@ full_actions_list = (
     Table_freshness.freshness_level,
     Table_admin.admin,
     Table_category.category,
-    Table_profil.user_profil
+    Table_profil.user_profil,
+    Table_elementReference.elementRef,
+    Table_relation_selection_category.relation_selection_category,
+    Table_relation_selection_profil.relation_selection_profil
 )
 
 if __name__ == "__main__":

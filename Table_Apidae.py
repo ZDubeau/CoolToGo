@@ -15,6 +15,8 @@ from LoggerModule.FileLogger import FileLogger as FileLogger
 from DB_Connexion import DB_connexion
 import Table_project as prj
 import Table_extraction as extract
+import Table_category as ctg
+import Table_profil as prf
 import apidae_extraction as apex  # my function retrieving data from apiade
 
 
@@ -409,6 +411,18 @@ class Data_from_apidae():
         self.__project_ID = data[0]
         self.__api_KEY = data[1]
         self.__selection = data[2]
+        self.__categories_for_selection_list = []
+        data_ctg = self.__connexion.Query_SQL_fetchall(
+            ctg.select_category_for_selection_id, [self.__id_selection])
+        for line in data_ctg:
+            if line[2] is not None:
+                self.__categories_for_selection_list.append(line[0])
+        # self.__profil_for_selection_list = []
+        # data_prf = self.__connexion.Query_SQL_fetchall(
+        #     prf.select_profil_for_selection_id, [self.__id_selection])
+        # for line in data_prf:
+        #     if line[2] is not None:
+        #         self.__profil_for_selection_list.append(line[0])
 
     def __Create(self, data_from_apidae=[]):
         """Insertion des sélections dans la table des data_from_apidaes
@@ -697,7 +711,7 @@ class Data_from_apidae():
             listInsert_data_from_apidae = []
             listOfKeys = []
             data_from_apidae_df = apex.retrive_data_by_selectionId(
-                self.__project_ID, self.__api_KEY, self.__selection, self.__id_selection)
+                self.__project_ID, self.__api_KEY, self.__selection, self.__id_selection, self.__categories_for_selection_list)
             for _i, row in data_from_apidae_df.iterrows():
                 adata_from_apidae = data_from_apidaeModel(
                     row['id_apidae'],
@@ -776,6 +790,7 @@ class Data_from_apidae():
 
     def Close(self):
         self.__connexion.close()
+        self.__instance.close()
 
 
 drop_apidae = """

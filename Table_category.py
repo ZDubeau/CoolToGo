@@ -27,6 +27,11 @@ select_category = """
                     FROM category; 
                     """
 
+select_category_for_selection_id = """
+                    SELECT c.id_category AS id, c.category_name AS catégories, sc.id AS link
+                    FROM category AS c LEFT JOIN (SELECT * FROM selection_category WHERE id_selection=%s) AS sc ON c.id_category=sc.id_category; 
+                    """
+
 select_category_with_id = """
                             SELECT id_category, category_name
                             FROM category 

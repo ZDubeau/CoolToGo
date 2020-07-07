@@ -286,6 +286,7 @@ class Selection():
 
     def Close(self):
         self.__connexion.close()
+        self.__instance.close()
 
 
 drop_selection = """
@@ -327,16 +328,22 @@ select_selection_with_id_project = """
                             """
 
 select_selection_information = """
-                                SELECT s.id_selection as id, p.project_ID as id_projet, s.selection as id_selection, s.description as selection, se.selection_extraction_date AS dernier_extract, se.selection_extraction_nb_records AS Nb_records, '' as lancement
+                                SELECT s.id_selection as id, p.project_ID as ID_p, s.selection as ID_s, s.description as selection, to_char(se.selection_extraction_date,'DD/MM/YY HH24:MI:SS') AS dernier_extract, se.selection_extraction_nb_records AS Nb, array_to_string(array_agg(c.category_name), ', ', '*') AS Catégorie,'' as lancer, '' as modifier
                                 FROM selection AS s 
                                 LEFT JOIN project AS p 
-                                ON s.id_project=p.id_project 
+                                ON s.id_project=p.id_project
+                                LEFT JOIN selection_category AS sc
+                                ON s.id_selection=sc.id_selection
+                                LEFT JOIN category AS c
+                                ON sc.id_category=c.id_category
                                 LEFT OUTER JOIN selection_extraction AS se 
-                                ON s.id_selection = se.id_selection 
+                                ON s.id_selection = se.id_selection
                                 AND se.selection_extraction_date =(
                                     SELECT MAX(selection_extraction_date) 
                                     FROM selection_extraction 
-                                    WHERE id_selection=se.id_selection);
+                                    WHERE id_selection=se.id_selection)
+                                GROUP BY s.id_selection, p.project_ID, s.selection, s.description, 
+                                    se.selection_extraction_date, se.selection_extraction_nb_records;
                                 """
 
 delete_selection_with_project_id = """

@@ -3,7 +3,7 @@ Creation date : 2020-06-11
 Last update : 2020-07-02
 ----------------------------"""
 
-import Table_profil as prf
+
 from wtforms.validators import InputRequired, Email, Length, Regexp, AnyOf
 from wtforms import Form, StringField, PasswordField, validators
 from flask_wtf import FlaskForm
@@ -28,6 +28,10 @@ import Table_project as prj
 import Table_selection as slc
 import Table_message as msg
 import Table_freshness as fresh
+import Table_profil as prf
+import Table_relation_selection_category as slc_ctg
+import Table_elementReference as eltRef
+# import Table_relation_selection_profil as slc_prf
 from DB_Connexion import DB_connexion
 import urllib.parse
 import api as ctg_api
@@ -199,6 +203,47 @@ def get_home():
         username = session["username"]
         return render_template('pages/home.html', username=username)
 
+# _______________________Element Reference _____________________
+
+
+@app.route('/element_reference', methods=['GET'])
+def get_elementReference():
+    if "username" not in session:
+        return redirect(url_for("get_homepage"))
+    else:
+        username = session["username"]
+        return render_template('pages/elementRef.html', username=username)
+
+
+@app.route('/add_element_reference', methods=['POST'])
+def get_add_eltRef():
+    connexion = DB_connexion()
+    file = request.files['file']
+    id_eltRef = request.form["id_eltRef"]
+    if file and allowed_file(file.filename):
+        file_type = request.form["file_type"]
+        Execute_SQL(cur, td.insert_files, {
+            'id_pa': id_pa, 'file_type': file_type})
+        Commit(conn)
+        id_f = cur.fetchone()[0]
+        filename = os.path.join(
+            os.getcwd(), app.config['UPLOAD_FOLDER'], str(id_f) + "." + file.filename.rsplit('.', 1)[1].lower())
+        Path(os.path.join(
+            os.getcwd(), app.config['UPLOAD_FOLDER'])).mkdir(parents=True, exist_ok=True)
+        file.save(filename)
+        dispatching_info, df = identification.identification(filename)
+        if (not dispatching_info.find("File extension ")):
+            errorMessage = "Fichier non valide"
+        else:
+            file_treatment.apply_async(
+                args=[id_f, df.to_json(orient='table'), dispatching_info], countdown=2)
+
+        errorMessage = "Fichier ajouté au projet"
+    else:
+        errorMessage = "Fichier non valide"
+    os.remove(filename)
+    return redirect(url_for("get_project_edit", id=id_pa, errorMessage=errorMessage))
+
 #----------------- Apidae tables interface --------------------#
 
 
@@ -263,8 +308,18 @@ def get_tableValide():
 #---------------------- New data valid ------------------------#
 
 
-@app.route('/new_data_valid', methods=['GET', 'POST'])
-def get_new_data_valid():
+@app.route('/entreManuelle', methods=['GET'])
+def get_manualEntry():
+    if "username" not in session:
+        return redirect(url_for("get_homepage"))
+    else:
+        username = session["username"]
+        return render_template('pages/manualEntry.html', username=username)
+
+
+@app.route('/entreManuelleValide', methods=['GET', 'POST'])
+def post_manualEntry():
+    selection = request.form["selection"]
     titre = request.form["titre"]
     profil_c2g = request.form["profil_c2g"]
     sous_type_ = request.form["sous_type"]
@@ -278,42 +333,43 @@ def get_new_data_valid():
     site_web = request.form["site_web"]
     description_courte = request.form["description_courte"]
     description_detaillee = request.form["description_detaillee"]
-    images = request.form["images"]
-    Categories = request.form["Categories"]
-    Accessibilite = request.form["Accessibilité"]
-    Payant = request.form["Payant"]
-    public = ""
+    image = request.form["image"]
+    # Categories = request.form["Categories"]
+    tourisme_adaptes = request.form["accessibilité"]
+    payant = request.form["payant"]
+    publics = ""
     first = True
     if "senior" in request.form:
-        public += "senior"
+        publics += "senior"
         first = False
     if "enfant" in request.form:
         if first:
-            public += "enfant"
+            publics += "enfant"
             first = False
         else:
-            public += ",enfant"
+            publics += ",enfant"
     if "jeune" in request.form:
         if first:
-            public += "jeune"
+            publics += "jeune"
             first = False
         else:
-            public += ",jeune"
+            publics += ",jeune"
     if "adulte" in request.form:
         if first:
-            public += "adulte"
+            publics += "adulte"
             first = False
         else:
-            public += ",adulte"
+            publics += ",adulte"
     if "solidaire" in request.form:
         if first:
-            public += "solidaire"
+            publics += "solidaire"
             first = False
         else:
-            public += ",solidaire"
-    plus_d_infos = request.form["plus_d_infos"]
-    Date_debut = request.form["Date_début"]
-    Date_fin = request.form["Date_fin"]
+            publics += ",solidaire"
+    animaux_acceptes = request.form["animaux_acceptes"]
+    environment = request.form["environment"]
+    equipment = request.form["equipment"]
+    ouverture = request.form["ouverture"]
     adresse_to_geolocalize = ""
     if adresse1 != "None":
         adresse_to_geolocalize += adresse1
@@ -323,11 +379,11 @@ def get_new_data_valid():
     location = geolocator.geocode(
         adresse_to_geolocalize+" "+codePostal+" "+City)
     if location == None:
-        x_lat = None
-        y_lon = None
+        latitude = None
+        longitude = None
     else:
-        x_lat = location.latitude
-        y_lon = location.longitude
+        latitude = location.latitude
+        longitude = location.longitude
     connexion = DB_connexion()
     DB_Protocole.cur.execute(
         DB_Table_Definitions.select_max_id_from_cooltogo_validated)
@@ -337,29 +393,27 @@ def get_new_data_valid():
     else:
         id_max = str(id_max+1)
     id_apidae = "ManualEntry_"+id_max
-    functions.insert_cooltogo_validated(id_apidae,
-                                        x_lat,
-                                        y_lon,
-                                        name,
-                                        niveau_fraicheur,
+    functions.insert_cooltogo_validated(titre,
+                                        profil_c2g,
+                                        sous_type,
                                         adresse1,
                                         adresse2,
                                         codePostal,
-                                        City,
+                                        ville,
+                                        altitude,
                                         telephone,
                                         email,
                                         site_web,
-                                        Description_Teaser,
-                                        Description,
-                                        Images,
-                                        public,
-                                        type_,
-                                        Categories,
-                                        Accessibilite,
-                                        Payant,
-                                        plus_d_infos,
-                                        Date_debut,
-                                        Date_fin
+                                        description_courte,
+                                        description_detaillee,
+                                        image,
+                                        tourisme_adaptes,
+                                        payant,
+                                        publics,
+                                        animaux_acceptes,
+                                        environment,
+                                        equipment,
+                                        ouverture
                                         )
     connexion.close()
     return redirect(url_for("get_tableValide"))
@@ -367,40 +421,38 @@ def get_new_data_valid():
 #-------------------- Validated lieu ------------------------#
 
 
-# @app.route('/validate_lieu/<id>')
-# def get_validate_lieu(id):
-#     connexion = DB_connexion()
-#     DB_Protocole.cur.execute(
-#         apidae.select_apidae_1_id, [id])
-#     data = DB_Protocole.cur.fetchone()
-#     functions.insert_cooltogo_validated(data[1],
-#                                         data[3],
-#                                         data[6],
-#                                         data[7],
-#                                         data[4],
-#                                         "",
-#                                         data[8],
-#                                         data[9],
-#                                         data[10],
-#                                         data[11],
-#                                         data[12],
-#                                         data[13],
-#                                         data[14],
-#                                         data[15],
-#                                         data[15],
-#                                         data[16],
-#                                         data[17],
-#                                         "",
-#                                         "",
-#                                         data[5],
-#                                         data[18],
-#                                         data[19],
-#                                         data[20],
-#                                         data[21],
-#                                         data[22],
-#                                         data[23])
-#     connexion.close()
-#     return redirect(url_for("get_tableApidae"))
+@app.route('/validate_lieu/<id>')
+def get_validate_lieu(id):
+    connexion = DB_connexion()
+    DB_Protocole.cur.execute(
+        apidae.select_apidae_1_id, [id])
+    data = DB_Protocole.cur.fetchone()
+    functions.insert_cooltogo_validated(data[1],
+                                        data[3],
+                                        data[6],
+                                        data[7],
+                                        data[4],
+                                        "",
+                                        data[8],
+                                        data[9],
+                                        data[10],
+                                        data[11],
+                                        data[12],
+                                        data[13],
+                                        data[14],
+                                        data[15],
+                                        data[15],
+                                        data[16],
+                                        data[17],
+                                        data[5],
+                                        data[18],
+                                        data[19],
+                                        data[20],
+                                        data[21],
+                                        data[22],
+                                        data[23])
+    connexion.close()
+    return redirect(url_for("get_tableApidae"))
 
 #________________________Add new administator interface_______________________#
 
@@ -451,9 +503,6 @@ def get_delete_admin(id):
     ErrorMessage = "Admin deleted successfully !"
     return redirect(url_for("get_add_admin", ErrorMessage=ErrorMessage))
 # ________________________________________________________________________
-#-------------------- Remove a lieu ------------------------#
-
-
 # @app.route('/remove_lieu/<id>')
 # def get_remove_lieu(id):
 #     connexion = DB_connexion()
@@ -550,17 +599,45 @@ def get_edit_selection(id):
         username = session["username"]
         connexion = DB_connexion()
         data = connexion.Query_SQL_fetchone(slc.select_selection_with_id, [id])
+        data_ctg = connexion.Query_SQL_fetchall(
+            ctg.select_category_for_selection_id, [id])
+        # data_prf = connexion.Query_SQL_fetchall(
+        #     prf.select_profil_for_selection_id, [id])
         connexion.close()
-        return render_template('pages/editSelection.html', id_selection=id, selection=data[0], categories=data[1], selection_type=data[2], username=username)
+        return render_template('pages/editSelection.html', id_selection=id, selection=data[0], description=data[1], categories=data_ctg, username=username)
 
 
-#------------------- New Selection --------------------#
+#------------------- New category _ Selection --------------------#
 
 @app.route('/edit_selection_post', methods=['GET', 'POST'])
 def get_edit_selection_post():
-    id_selection = request.form["id"]
-    lieu_event = request.form["lieu_event"]
-    functions.edit_selection(id_selection, lieu_event)
+    selection = request.form["id"]
+    connexion = DB_connexion()
+    data_ctg = connexion.Query_SQL_fetchall(
+        ctg.select_category_for_selection_id, [selection])
+    # data_prf = connexion.Query_SQL_fetchall(
+    #     prf.select_profil_for_selection_id, [selection])
+    for line in data_ctg:
+        try:
+            category = request.form["categories-"+str(line[0])]
+            if line[2] is None:
+                connexion.Insert_SQL(slc_ctg.insert_relation_selection_category, [
+                                     selection, line[0]])
+        except KeyError:
+            if line[2] is not None:
+                connexion.Delete_SQL(slc_ctg.delete_relation_selection_category, [
+                                     selection, line[0]])
+    # for line in data_prf:
+    #     try:
+    #         profil = request.form["profil-"+str(line[0])]
+    #         if line[2] is None:
+    #             connexion.Insert_SQL(slc_prf.insert_relation_selection_profil, [
+    #                                  selection, line[0]])
+    #     except KeyError:
+    #         if line[2] is not None:
+    #             connexion.Delete_SQL(slc_prf.delete_relation_selection_profil, [
+    #                                  selection, line[0]])
+    connexion.close()
     return redirect(url_for("get_apidaeSelection"))
 
 #--------------- Lancement(launch) d'extraction --------------#

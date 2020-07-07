@@ -1,6 +1,6 @@
 """ ----------------------------
 Creation date : 2020-04-02
-Last update   : 2020-07-02
+Last update   : 2020-07-06
 ----------------------------"""
 # _______________________________________________________________________
 
@@ -39,7 +39,7 @@ from transformation import transformation
 # _______________________________________________________________________
 
 
-def retrieve_data_by_id(project_ID, api_KEY, select_id, selectionId, id_selection):
+def retrieve_data_by_id(project_ID, api_KEY, select_id, selectionId, id_selection, categories_list):
     result_df = pd.DataFrame(columns=['id_apidae', 'id_selection', 'type_apidae', 'titre', 'profil_c2g', 'sous_type',
                                       'adresse1', 'adresse2', 'code_postal', 'ville', 'altitude', 'latitude',
                                       'longitude', 'telephone', 'email', 'site_web', 'description_courte',
@@ -55,7 +55,7 @@ def retrieve_data_by_id(project_ID, api_KEY, select_id, selectionId, id_selectio
     re = requests.get(url)
     req = re.json()
 
-    transfo = transformation(req, [5154, 6143])
+    transfo = transformation(req, [5154, 6143], categories_list)
     transfo.Execute()
     dict_for_id = transfo.dict_id()
     # if 596 in transfo.list_elements_de_references():
@@ -98,7 +98,7 @@ count_ = "100"              # "count":20
 first = "0"                 # start from 0
 
 
-def retrive_data_by_selectionId(project_ID, api_KEY, selectionId, id_selection):
+def retrive_data_by_selectionId(project_ID, api_KEY, selectionId, id_selection, categories_list):
     import pandas as pd
     result_df = pd.DataFrame(columns=['id_apidae', 'id_selection', 'type_apidae', 'titre', 'profil_c2g', 'sous_type',
                                       'adresse1', 'adresse2', 'code_postal', 'ville', 'altitude', 'latitude',
@@ -118,12 +118,11 @@ def retrive_data_by_selectionId(project_ID, api_KEY, selectionId, id_selection):
         if "numFound" in req:
             nb_object = int(req["numFound"])
         else:
-            print(url)
             return result_df
         i = 0
         while count*i < nb_object:
             result_df = result_df.append(retrive_data_by_selectionId_by_cent(
-                project_ID, api_KEY, selectionId, id_selection, count*i, count))
+                project_ID, api_KEY, selectionId, id_selection, categories_list, count*i, count))
             i += 1
     except ValueError:
         print("problème d'extraction")
@@ -131,7 +130,7 @@ def retrive_data_by_selectionId(project_ID, api_KEY, selectionId, id_selection):
 # _______________________________________________________________________
 
 
-def retrive_data_by_selectionId_by_cent(project_ID, api_KEY, selectionId, id_selection, first, count):
+def retrive_data_by_selectionId_by_cent(project_ID, api_KEY, selectionId, id_selection, categories_list, first, count):
     import pandas as pd
     result_df = pd.DataFrame(columns=['id_apidae', 'id_selection', 'type_apidae', 'titre', 'profil_c2g', 'sous_type',
                                       'adresse1', 'adresse2', 'code_postal', 'ville', 'altitude', 'latitude',
@@ -155,8 +154,8 @@ def retrive_data_by_selectionId_by_cent(project_ID, api_KEY, selectionId, id_sel
         threads_list = list()
         for index, row in df.iterrows():
             #result_df = result_df.append(retrieve_data_by_id(project_ID,api_KEY,str(row['id']),selectionId))
-            t = Thread(target=lambda q, arg1, arg2, arg3, arg4, arg5: q.put(retrieve_data_by_id(
-                arg1, arg2, arg3, arg4, arg5)), args=(que, project_ID, api_KEY, str(row['id']), selectionId, id_selection), daemon=True)
+            t = Thread(target=lambda q, arg1, arg2, arg3, arg4, arg5, arg6: q.put(retrieve_data_by_id(
+                arg1, arg2, arg3, arg4, arg5, arg6)), args=(que, project_ID, api_KEY, str(row['id']), selectionId, id_selection, categories_list), daemon=True)
             t.start()
             threads_list.append(t)
         for t in threads_list:

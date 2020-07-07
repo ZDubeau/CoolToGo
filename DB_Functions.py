@@ -73,7 +73,6 @@ def insert_project(project_ID: str, api_key: str):
         'project_ID': project_ID,
         'api_key': api_key
     }
-    print(dico)
     try:
         connexion = DB_connexion()
         id_project = connexion.Insert_SQL_fetchone(

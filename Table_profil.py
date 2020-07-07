@@ -16,8 +16,14 @@ insert_user_profil = """
 
 select_user_profil = """
                     SELECT id_profil as id, profil as profil_usagers, '' as modifier, '' as supprimer
-                    FROM profil; 
+                    FROM profil;
                     """
+
+select_profil_for_selection_id = """
+                                SELECT p.id_profil AS id, p.profil AS profil_usagers, sp.id AS link
+                                FROM profil AS p LEFT JOIN (SELECT * FROM selection_profil WHERE id_selection=%s) AS sp ON p.id_profil=sp.id_profil; 
+                                """
+
 
 select_user_profil_with_id = """
                             SELECT id_profil, profil

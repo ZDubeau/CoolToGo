@@ -5,7 +5,7 @@ drop_relation_eltRef_ctg = """
 relation_eltRef_ctg = """
                     CREATE TABLE IF NOT EXISTS eltRef_ctg (
                         id_eltRef_ctg SERIAL PRIMARY KEY,
-                        id_category BIGINT REFERENCES category ON DELETE CASCADE
+                        id_category BIGINT REFERENCES category ON DELETE CASCADE,
                         id_eltRef BIGINT REFERENCES elementReference ON DELETE CASCADE
                     )"""
 

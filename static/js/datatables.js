@@ -6,7 +6,7 @@ var on_off = '<img src="/static/image/toggle.jpeg" style="height:18px;"/>';
 
 // Call the dataTables jQuery plugin
 $(document).ready(function () {
-  var tableApidae = $('#dataTableApidae').DataTable({
+  $('#dataTableApidae').DataTable({
     "sScrollX": "100%",
     "bScrollCollapse": true,
     "fixedHeader": {
@@ -140,26 +140,28 @@ $(document).ready(function () {
   $('#dataTableSelection').DataTable({
     "columnDefs": [
       { "width": "15px", "targets": 0 },
-      { "width": "25px", "targets": 1 },
-      { "width": "40px", "targets": 2 },
-      { "width": "90px", "targets": 3 },
-      { "width": "80px", "targets": 4 },
-      { "width": "40px", "targets": 5 },
-      { "width": "20px", "targets": 6 }
+      { "width": "40px", "targets": 1 },
+      { "width": "50px", "targets": 2 },
+      { "width": "130px", "targets": 3 },
+      { "width": "100px", "targets": 4 },
+      { "width": "35px", "targets": 5 },
+      { "targets": 6, "render": $.fn.dataTable.render.ellipsis(40, false), className: "truncate" }, // CATEGORIES
+      { "width": "36px", "targets": 7 },
+      { "width": "49px", "targets": 8 }
     ],
     "fnRowCallback": function (nRow, aData) {
 
-      $('td:eq(6)', nRow).html(validate);
-      $('td:eq(6)', nRow).click(function () {
+      $('td:eq(7)', nRow).html(validate);
+      $('td:eq(7)', nRow).click(function () {
         var id = aData[0];
         window.location.href = '/launch_extract/' + id;
       });
 
-      // $('td:eq(6)', nRow).html(edit);
-      // $('td:eq(6)', nRow).click(function () {
-      //   var id = aData[0];
-      //   window.location.href = '/edit_selection/' + id;
-      // });
+      $('td:eq(8)', nRow).html(edit);
+      $('td:eq(8)', nRow).click(function () {
+        var id = aData[0];
+        window.location.href = '/edit_selection/' + id;
+      });
     }
   });
 

@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block bootstrap_2 %}
 <div class="card-header"
-    style="background-color: #1778b8b6; color: rgb(255, 255, 255); border-radius: 4px 4px 0px 0px; font-size: large; font-weight: bold;">
+    style="background-color: #01289fe3; color: #d0eeed; border-radius: 4px 4px 0px 0px; font-size: large; font-weight: bold;">
     Element Reference
 </div>
 <div class="card-body" style="border-radius: 0px 0px 4px 4px;background-color: #1778b825;">
@@ -11,7 +11,7 @@
         {% endfor %}
     </div>
 </div>
-<p class="title" style="color: #1f3492;padding-top: 40px;font-size:larger;">
+<p class="title" style="color: #1f3492;padding-top: 30px;font-size:larger;margin-bottom: 0.5rem !important;">
     Ajouter le fichier elementReference
 </p>
 </br>
@@ -19,7 +19,7 @@
     <h2 style="color: khaki; text-align: center;">{{ErrorMessage}}</h2>
 </center>
 <form action="/add_element_reference" method="post" enctype=multipart/form-data>
-    <div class="form-row">
+    <div class="form-row" style="transform: translate(5px, 0px);">
         <div class="custom-file" style="width: 30%;">
             <input type="file" name="file" class="custom-file-input" id="validatedCustomFile" required>
             <label class="custom-file-label" for="validatedCustomFile">Choississez votre
@@ -29,7 +29,7 @@
             <div class="control">
                 <input name="id_eltRef" value="{{id_eltRef}}" type="hidden">
                 <button type="submit" class="button is-link"
-                    style="background-color: #01289f; border-radius: 5px;padding: 0 20px;margin-left: 15px;border: 0px !important;">Upload</button>
+                    style="background-color: #01289f; border-radius: 5px;border-width: 0;border-color: #01289f;padding: 0 20px;margin-left: 15px;font-size: 15px;color: #d0eeed;">Upload</button>
             </div>
         </div>
     </div>

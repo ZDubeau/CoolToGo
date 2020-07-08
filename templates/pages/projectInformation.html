@@ -1,49 +1,41 @@
 ﻿{% extends "layout.html" %}
 {% block bootstrap_2 %}
+
 <div class="card-header"
-    style="background-color: #1778b8b6; color: black; border-radius: 4px 4px 0px 0px; font-size: large; font-weight: bold;">
+    style="background-color: #01289fe3; color: #d0eeed; border-radius: 4px 4px 0px 0px; font-size: large; font-weight: bold;">
     Information de projet
 </div>
 <div class="card-body" style="border-radius: 0px 0px 4px 4px;background-color: #1778b825;">
     <div class="table-responsive">
-        {% for table in tables %}
-        {{ table|safe }}
-        {% endfor %}
+        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+            {% for table in tables %}
+            {{ table|safe }}
+            {% endfor %}
+        </table>
     </div>
 </div>
-
 <center>
-    <h2 style="color: red; text-align: center;transform: translate(0px, 18px);">{{ErrorMessage}}</h2>
+    <h2 style="color: khaki; text-align: center;transform: translate(0px, 18px);">{{ErrorMessage}}</h2>
 </center>
-
-<form id="app" action="/new_project_info " class="form-inline" method="post">
-    <!-- ----------------------- project_ID ------------------------- -->
-    <div class="column is-half is-offset-one-quarter" style="transform: translate(-280px, 0px);padding-top: 50px;">
-        <p class="title" style="font-size: 1.20rem;">
-            Ajouter nouveau projet</p>
-    </div>
-    <div class="field" style="padding-top: 10px;">
-        <!-- <label class="label" style="font-size: 14px;">project ID</label> -->
-        <input name="project_ID" class="input" type="text" maxlength="70" placeholder="Ex. 4364"
-            style="color: #292828; width: 30%;" required>
-        <!-- </div> -->
-        <!-- ----------------------- api_key ------------------------- -->
-        <!-- <div class="field"> -->
-        <!-- <label class="label">API key</label> -->
-        <input name="api_key" class="input" type="text" maxlength="70" placeholder="Ex. ALrtqQmv"
-            style="color: #292828; width: 30%;transform: translate(8px, 0px);" required>
-        <!-- </div> -->
-        <!-- -------------------------------------------------------- -->
-        <!-- <div class=" field is-grouped is-grouped-left">
-                            <div class="control"> -->
-        <button class="button is-link" type="submit"
-            style="background-color: #17a2b8; border-radius: 4px; border-color: #17a2b8;border:0;transform: translate(18px, 0px); padding: 5px 20px;">Ajouter</button>
-        <!-- </div> -->
-    </div>
-</form>
-<!-- </div>
-            </div>
+<div class="column" style="margin-left: 0 !important;transform: translate(5px, 20px);">
+    <p class="title" style="font-size: 1.25rem;color: #01289f;">Ajouter nouveau projet</p>
+    <form id="app" action="/new_project_info " class="form-inline" method="post">
+        <!-- INPUT PROJECT ID -->
+        <div class="col-md-3 mb-3" style="transform: translate(-20px, 0px);">
+            <label class="label" style="font-size: 12px;display: inherit !important;">ID projet</label>
+            <input name="project_ID" class="input" type="text" maxlength="70" required>
         </div>
-    </div>
-</section> -->
+        <!-- INPUT API KEY -->
+        <div class="col-md-3 mb-3" style="transform: translate(-20px, 0px);">
+            <label class="label" style="font-size: 12px;display: inherit !important;">API key</label>
+            <input name="api_key" class="input" type="text" maxlength="70" required>
+        </div>
+        <!-- BUTTON ADD -->
+        <div class="field is-grouped is-grouped-left" style="transform: translate(-20px, 4px);">
+            <button class="button is-link" type="submit"
+                style="background-color: #01289f; border-radius: 4px; border-width: 0;border-color: #01289f;transform: translate(18px, 0px); padding: 5px 20px;font-size: 15px;">Ajouter</button>
+        </div>
+    </form>
+</div>
+
 {% endblock bootstrap_2 %}

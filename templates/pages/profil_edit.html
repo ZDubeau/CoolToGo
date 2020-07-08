@@ -44,4 +44,39 @@
         </div>
     </div>
 </section>
+<div class="card-body" style="border-radius: 0px 0px 4px 4px;background-color: #1778b825;">
+    <div class="table-responsive">
+        {% for table in tables_elt_prf %}
+        {{ table|safe }}
+        {% endfor %}
+    </div>
+</div>
+<section id="app" class="hero is-fullheight">
+    <div class="hero-body" style="padding: 2rem 0.5rem;flex-grow: 0;">
+        <div class="container">
+            <div class="columns" style="padding: 0 !important;">
+                <div class="column is-half is-offset-one-quarter"
+                    style="width: 80%;margin-left: 0 !important;transform: translate(-27px, 0px)">
+                    <span class="title" style="font-size: 1.25rem;">
+                        Ajouter un profil
+                    </span>
+                    <!-- -------------------------------------------------------- -->
+                    <form action="/new_profil" method="post">
+                        <!-- -------------------------------------------------------- -->
+                        <div class="field" style="padding-top: 50px;">
+                            <label class="label" style="font-size: 14px;">Profil usagers</label>
+                            <input name="profil" class="input" type="text" maxlength="50"
+                                style="color: #3f3e3e; width: 30%;" required>
+                        </div>
+                        <div class="field is-grouped is-grouped-left">
+                            <div class="control">
+                                <button class="button is-link"
+                                    style="background-color: #17a2b8; border-radius: 4px; border-color: #17a2b8; margin: 28px 0; padding: 5px 25px;">Confirm</button>
+                            </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock bootstrap_2 %}

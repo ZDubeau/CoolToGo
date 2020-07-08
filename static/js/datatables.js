@@ -137,6 +137,14 @@ $(document).ready(function () {
     }
   });
 
+  $('#dataelementreference').DataTable({
+    "columnDefs": [
+      { "visible": false, "targets": 0 },
+      { "width": "50px", "targets": 1 },
+      { "width": "80px", "targets": 2 },
+    ]
+  });
+
   $('#dataTableSelection').DataTable({
     "columnDefs": [
       { "width": "15px", "targets": 0 },

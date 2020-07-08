@@ -3,11 +3,11 @@
 <div class="column" style="margin-left: 0 !important;transform: translate(-15px, 0px)">
     <p class="title" style="font-size: 1.25rem;color: #01289f;">Ajouter nouvelles informations</p>
     <!-- --------------------- FORM ------------------------ -->
-    <form action="/manual_entry" method="post">
+    <form action="/ManualEntryValide" method="post">
         <div class="form-row">
-            <!-- SELECTION -->
+            <!-- CATEGORY COOLTOGO -->
             <div class="col-md-3 mb-3">
-                <label class="label" style="font-size: 13px;">Selection</label>
+                <label class="label" style="font-size: 13px;">Catégorie CoolToGo</label>
                 <select class="custom-select" name="selection" required>
                     <option></option>
                     <option>Au bord de l'eau</option>
@@ -19,87 +19,75 @@
                     <option>Se rafraichir en urgence</option>
                 </select>
             </div>
-            <!-- TITRE -->
+            <!-- TYPE (TYPE_APIDAE) -->
             <div class="col-md-3 mb-3">
-                <label class="label" style="font-size: 13px;">Titre</label>
-                <input name="titre" class="input" type="text" placeholder="Titre" style="color: #5f5b5b;" required>
+                <label class="label" style="font-size: 13px;">Type</label>
+                <input name="type_apidae" class="input" type="text" placeholder="PATRIMOINE_CULTUREL"
+                    style="color: #5f5b5b;" required>
             </div>
+            <!-- TITRE (NOM) -->
+            <div class="col-md-3 mb-3">
+                <label class="label" style="font-size: 13px;">Nom</label>
+                <input name="titre" class="input" type="text" placeholder="A ma table" style="color: #5f5b5b;" required>
+            </div>
+            <!-- ADRESSE -->
             <div class="col-md-4 mb-3">
-                <label class="label" style="font-size: 13px;">adresse1</label>
-                <input name="adresse1" class="input" type="text" placeholder="Adresse 1" style="color: #5f5b5b;"
-                    required>
+                <label class="label" style="font-size: 13px;">Adresse</label>
+                <input name="adresse" class="input" type="text" placeholder="19 Avenue Marcellin Berthelot"
+                    style="color: #5f5b5b;" required>
             </div>
-            <div class="col-md-4 mb-3">
-                <!--                                                        -->
-                <label class="label" style="font-size: 13px;">adresse2</label>
-                <input name="adresse2" class="input" type="text" placeholder="Adresse 2" style="color: #5f5b5b;">
-            </div>
-            <!-- ---------------------------------------------------------- -->
+            <!-- CODE POSTAL -->
             <div class="col-md-2 mb-3">
                 <label class="label" style="font-size: 13px;">Code Postal</label>
                 <input name="code_postal" class="input" type="text" placeholder="38000" style="color: #5f5b5b;"
                     required>
             </div>
+            <!-- VILLE -->
             <div class="col-md-3 mb-3">
                 <label class="label" style="font-size: 13px;">Ville</label>
-                <input name="ville" class="input" type="text" maxlength="70" placeholder="Ville" style="color: #5f5b5b;"
-                    required>
+                <input name="ville" class="input" type="text" placeholder="Ville" style="color: #5f5b5b;" required>
             </div>
             <!-- ALTITUDE -->
             <div class="col-md-2 mb-3">
                 <label class="label" style="font-size: 13px;">Altitude</label>
-                <input name="altitude" class="input" type="text" maxlength="70" placeholder="Ex. 271"
-                    style="color: #5f5b5b;" required>
+                <input name="altitude" class="input" type="text" placeholder="Ex. 271" style="color: #5f5b5b;" required>
             </div>
+            <!-- TELEPHONE -->
             <div class="col-md-2 mb-3">
-                <!-- TELEPHONE -->
                 <label class="label" style="font-size: 13px;">Telephone</label>
-                <input name="telephone" class="input" type="text" maxlength="70" placeholder="Ex. 01.02.03.04.05"
+                <input name="telephone" class="input" type="text" placeholder="Ex. 01.02.03.04.05"
                     style="color: #5f5b5b;" required>
             </div>
-            <!-- ----------------------- Email ------------------------ -->
+            <!--E-MAIL -->
             <div class="col-md-4 mb-3">
                 <label class="label" style="font-size: 13px;">Email</label>
-                <input name="email" class="input" type="text" maxlength="70" placeholder="Ex. example@example.fr"
+                <input name="email" class="input" type="text" placeholder="Ex. example@example.fr"
                     style="color: #5f5b5b;" required>
             </div>
+            <!-- URLs -->
             <div class="col-md-4 mb-3">
                 <label class="label" style="font-size: 13px;">Site Web</label>
-                <input name="site_web" class="input" type="text" maxlength="70" placeholder="Ex. www.siteweb.com"
+                <input name="site_web" class="input" type="text" placeholder="Ex. www.siteweb.com"
                     style="color: #5f5b5b;" required>
             </div>
-            <!-- ----------------- Description Teaser ---------------- -->
-            <div class="col-md-5 mb-3">
-                <label class="label" style="font-size: 13px;">Description Courte</label>
-                <textarea name="description_courte" class="textarea" maxlength="300"
-                    placeholder="Ex. La bibliothèque Maison de Barnave de Saint Egrève."
-                    style="color: #5f5b5b;min-height: 6em;"></textarea>
-            </div>
+            <!-- USER PROFIL -->
             <div class="col-md-6 mb-3">
-                <label class="label" style="font-size: 13px;">Description detaillee</label>
-                <textarea name="description_detaillee" class="textarea" maxlength="1000"
-                    placeholder="Ex. La bibliothèque Maison de Barnave de Saint Egrève dispose d'un grand nombre de livres, revues et CD à consulter sur place ou à emporter !"
-                    style="color: #5f5b5b;height: 22px;min-height: 6em;"></textarea>
-            </div>
-            <!-- ---------- Upload url of an image ----------- -->
-            <div class="col-md-5 mb-3">
-                <label class="label" style="font-size: 13px;">Image</label>
-                <input name="image" class="input" type="text" maxlength="50"
-                    placeholder="Ex. http://  ...............  .jpeg" style="color: #5f5b5b;" required>
-            </div>
-            <div class="col-md-5 mb-3">
-                <label class="label" style="font-size: 13px;padding-bottom: 12px;">Publics</label>
+                <label class="label" style="font-size: 13px;padding-bottom: 12px;">Profil CoolToGo</label>
                 <label><input name="senior" type="checkbox" value="Senior">Senior&nbsp;&nbsp;&nbsp;&nbsp;</label>
                 <label><input name="enfant" type="checkbox" value="Enfant">Enfant&nbsp;&nbsp;&nbsp;&nbsp;</label>
                 <label><input name="jeune" type="checkbox" value="Jeune">Jeune&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                <label><input name="jeune" type="checkbox" value="Adulte">Adulte&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                <label><input name="adult" type="checkbox" value="Solidaire">Solidaire</label>
+                <label><input name="adult" type="checkbox" value="Adulte">Adulte&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                <label><input name="solidaire" type="checkbox"
+                        value="Solidaire">Solidaire&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                <label><input name="mobilite_reduite" type="checkbox" value="Mobilite_reduite">Mobilité réduite</label>
             </div>
+            <!-- TOURISME ADAPTES -->
             <div class="col-md-4 mb-3">
                 <label class="label" style="font-size: 13px;">Tourisme Adaptés</label>
-                <input name="accessibilité" class="input" type="text" maxlength="50"
+                <input name="accessibilite" class="input" type="text"
                     placeholder="Ex. Accessible en fauteuil roulant..." style="color: #5f5b5b;" required>
             </div>
+            <!-- PAYANT -->
             <div class="col-md-1 mb-3">
                 <label class="label" style="font-size: 13px;">Payant</label>
                 <select class="custom-select" name="payant" required>
@@ -108,172 +96,41 @@
                     <option>Non</option>
                 </select>
             </div>
-            <!-- Animaux acceptés -->
-            <div class="col-md-3 mb-3">
-                <label class="label" style="font-size: 13px;">Animaux acceptés</label>
-                <input name="animaux_acceptes" class="input" type="text" maxlength="50" placeholder="Ex. NON_ACCEPTES"
-                    style="color: #5f5b5b;">
+            <!-- IMAGE -->
+            <div class="col-md-5 mb-3">
+                <label class="label" style="font-size: 13px;">Image</label>
+                <input name="image" class="input" type="text"
+                    placeholder="Ex. http://static.apidae-tourisme.com/filestore/... .jpg" style="color: #5f5b5b;"
+                    required>
             </div>
-            <!-- Environnement -->
-            <div class="col-md-3 mb-3">
-                <label class="label" style="font-size: 13px;">Environnement</label>
-                <input name="environment" class="input" type="text" maxlength="50" placeholder="Ex. A la campagne"
-                    style="color: #5f5b5b;">
-            </div>
-            <!-- Equipement -->
-            <div class="col-md-3 mb-3">
-                <label class="label" style="font-size: 13px;">Equipement</label>
-                <input name="equipment" class="input" type="text" maxlength="50" placeholder="Ex. WC public…"
-                    style="color: #5f5b5b;">
-            </div>
-            <!-- Ouverture -->
+            <!-- OUVERTURE -->
             <div class="col-md-4 mb-3">
                 <label class="label" style="font-size: 13px;">Ouverture</label>
-                <input name="ouverture" class="input" type="text" maxlength="50" placeholder="Ex. De juillet …"
+                <input name="ouverture" class="input" type="text" placeholder="Ex. De juillet …"
                     style="color: #5f5b5b;">
             </div>
-            <!-- ------------------Add button ---------------------- -->
+            <!-- DESCRIPTION -->
+            <div class="col-md-6 mb-3">
+                <label class="label" style="font-size: 13px;">Description</label>
+                <textarea name="description" class="textarea" maxlength="1200"
+                    placeholder="Ex. La bibliothèque Maison de Barnave de Saint Egrève dispose d'un grand nombre de livres, revues et CD à consulter sur place ou à emporter !"
+                    style="color: #5f5b5b;height: 22px;min-height: 6em;"></textarea>
+            </div>
+            <!-- Environnement -->
+            <div class="col-md-4 mb-3">
+                <label class="label" style="font-size: 13px;">Environnement</label>
+                <input name="environment" class="input" type="text" placeholder="Ex. A la campagne"
+                    style="color: #5f5b5b;">
+            </div>
+            <!-- BOTTUN "ADD" -->
             <div class="field is-grouped is-grouped-left">
                 <div class="control">
-                    <button class="button is-link"
-                        style="background-color: #01289f; border-radius: 5px; margin: 28px 10px; padding: 0 25px;">Ajouter</button>
+                    <button class="button is-link" type="submit"
+                        style="background-color: #01289f; border-radius: 5px; margin: 28px 10px; padding: 0 25px;font-size: 15px;">Ajouter</button>
                 </div>
             </div>
         </div>
     </form>
 </div>
-</div>
-</div>
-</div>
 
-<!-- <h3 style="color: red;">{{errorMessage}}</h3> -->
 {% endblock bootstrap_2 %}
-
-<!-- <span class="select">
-                                    <select name="niveau_fraicheur" required>
-                                        <option value=""></option>
-                                        {% for row in liste_niveau_fraicheur %}
-                                        <option value="{{row[0]}}">{{row[1]}}</option>
-                                        {% endfor %}
-                                    </select>
-                                </span> -->
-
-<!-- <div class="field">
-                                <label class="label">type</label>
-                                <span class="select">
-                                    <select name="type">
-                                        <option></option>
-                                        <option>ACTIVITE</option>
-                                        <option>COMMERCE_ET_SERVICE</option>
-                                        <option>EQUIPEMENT</option>
-                                        <option>FETE_ET_MANIFESTATION</option>
-                                        <option>HEBERGEMENT_LOCATIF</option>
-                                        <option>HOTELLERIE_PLEIN_AIR</option>
-                                        <option>PATRIMOINE_NATUREL</option>
-                                        <option>RESTAURATION</option>
-                                        <option>STRUCTURE</option>
-                                    </select>
-                                </span>
-                            </div> -->
-
-<!-- ---------------- Categories --------------------- -->
-<!-- <div class="field">
-                                <label class="label">Categories</label>
-                                <span class="select">
-                                    <select name="Categories">
-                                        <option></option>
-                                        <option>Etre a l’ombre en nature</option>
-                                        <option>Etre au contact de l'eau</option>
-                                        <option>Ressources solidaires</option>
-                                        <option>Se divertir en fraicheur</option>
-                                        <option>Sport a la fraich</option>
-                                        <option>Un point d’info</option>
-                                    </select>
-                                </span>
-                            </div> -->
-<!-- ---------------- Accessibilité ------------------- -->
-<!-- <div class="field" style="padding-top: 30px;">
-                                <label class="label" style="font-size: 13px;">profil_c2g</label>
-                                <input name="profil_c2g" class="input" type="text" maxlength="50"
-                                    placeholder="profil CoolToGo" style="color: #5f5b5b;" required>
-
-                                <label class="label" style="font-size: 13px;">Sous type</label>
-                                <input name="sous_type" class="input" type="text" maxlength="50" placeholder="Sous type"
-                                    style="color: #3f3d3d;" required>
-                            </div> -->
-<!-- ---------------------------------------------------------- -->
-<!-- --------------------------------------------------------->
-<!-- <form class="needs-validation" action="/manual_entry" method="post" novalidate>
-    <div class="form-row">
-        <div class="col-md-4 mb-3">
-            <select class="custom-select" name="selection">
-                <option></option>
-                <option>Au bord de l'eau</option>
-                <option>Faire du sport à la fraich</option>
-                <option>Se cultiver à la fraich</option>
-                <option>Se divertir à la fraich</option>
-                <option>Se mettre au vert</option>
-                <option>Se promener à la fraich</option>
-                <option>Se rafraichir en urgence</option>
-            </select>
-        </div>
-        <div class="col-md-4 mb-3">
-            <label for="validationTooltip02">Titre</label>
-            <input type="text" class="form-control" placeholder="Titre" name="titre" required>
-        </div>
-        <div class="form-row">
-            <div class="col-md-4 mb-3">
-                <label for="validationTooltip01">Adresse</label>
-                <input type="text" class="form-control" placeholder="Adresse" name="adresse1" required>
-            </div>
-            <div class="col-md-4 mb-3">
-                <label for="validationTooltipUsername">Username</label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="validationTooltipUsernamePrepend">@</span>
-                    </div>
-                    <input type="text" class="form-control" id="validationTooltipUsername" placeholder="Username"
-                        aria-describedby="validationTooltipUsernamePrepend" required>
-                    <div class="invalid-tooltip">
-                        Please choose a unique and valid username.
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="col-md-6 mb-3">
-                <label for="validationTooltip03">City</label>
-                <input type="text" class="form-control" id="validationTooltip03" placeholder="City" required>
-                <div class="invalid-tooltip">
-                    Please provide a valid city.
-                </div>
-            </div>
-            <div class="col-md-3 mb-3">
-                <label for="validationTooltip04">State</label>
-                <input type="text" class="form-control" id="validationTooltip04" placeholder="State" required>
-                <div class="invalid-tooltip">
-                    Please provide a valid state.
-                </div>
-            </div>
-            <div class="col-md-3 mb-3">
-                <label for="validationTooltip05">Zip</label>
-                <input type="text" class="form-control" id="validationTooltip05" placeholder="Zip" required>
-                <div class="invalid-tooltip">
-                    Please provide a valid zip.
-                </div>
-            </div>
-        </div>
-        <button class="btn btn-primary" type="submit">Submit form</button>
-</form> -->
-<!-- ------------------------------------------------------ -->
-<!-- <section id="app" class="hero is-fullheight">
-    <div class="hero-body" style="padding: 2rem 0.5rem;flex-grow: 0;">
-        <div class="container">
-            <div class="columns" style="padding: 0 !important;">
-                <div class="column is-half is-offset-one-quarter"
-                    style="margin-left: 0 !important;transform: translate(-27px, 0px)">
-                    <p class="title" style="font-size: 1.25rem;color: #01289f;">Ajouter nouvelles informations</p>
-                    <div>
-                        {% for table in tables %}
-                        {{ table|safe }}
-                        {% endfor %} -->

@@ -50,14 +50,25 @@ class transformation():
 
     def __benefit(self):
 
+        list_mobilite_reduite = ['Accessible en fauteuil roulant, accompagnant recommandé',
+                                 'Accessible en fauteuil roulant avec aide',
+                                 "Critères d'accessibilité pour personnes à mobilité réduite",
+                                 'les personnes à mobilité réduite',
+                                 'Chambre pour personnes à mobilité réduite']
+
         self.__dict_id['tourisme_adapte'] = None
+        self.__dict_id['profil_c2g'] = None
         self.__dict_id['animaux_acceptes'] = None
 
-        # tourisme_adapte
+        # tourisme_adapte + profil_C2G
         if 'prestations' in self.__request_json:
             if 'tourismesAdaptes' in self.__request_json['prestations']:
                 if 'libelleFr' in self.__request_json['prestations']['tourismesAdaptes'][0]:
                     self.__dict_id['tourisme_adapte'] = self.__request_json['prestations']['tourismesAdaptes'][0]['libelleFr']
+                    for value in list_mobilite_reduite:
+                        if value in self.__dict_id['tourisme_adapte']:
+                            self.__dict_id['profil_c2g'] = 'mobilité réduite'
+
         # Animaux_acceptes
         if 'prestations' in self.__request_json:
             if 'animauxAcceptes' in self.__request_json['prestations']:

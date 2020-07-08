@@ -1,30 +1,30 @@
-drop_relation_eltRef_ctg = """
-                            DROP TABLE IF EXISTS eltRef_ctg;
+drop_relation_eltref_ctg = """
+                            DROP TABLE IF EXISTS eltref_ctg;
                             """
 
-relation_eltRef_ctg = """
-                    CREATE TABLE IF NOT EXISTS eltRef_ctg (
-                        id_eltRef_ctg SERIAL PRIMARY KEY,
+relation_eltref_ctg = """
+                    CREATE TABLE IF NOT EXISTS eltref_ctg (
+                        id_eltref_ctg SERIAL PRIMARY KEY,
                         id_category BIGINT REFERENCES category ON DELETE CASCADE,
-                        id_eltRef BIGINT REFERENCES elementReference ON DELETE CASCADE
+                        id_eltref BIGINT REFERENCES elementreference ON DELETE CASCADE
                     )"""
 
-insert_relation_eltRef_ctg = """
-                            INSERT INTO eltRef_ctg (
-                                id_category, id_eltRef)
+insert_relation_eltref_ctg = """
+                            INSERT INTO eltref_ctg (
+                                id_category, id_eltref)
                             VALUES (
-                                %(id_category)s, %(id_eltRef)s)
-                                returning id_eltRef_ctg;
+                                %(id_category)s, %(id_eltref)s)
+                                returning id_eltref_ctg;
                             """
 
-select_relation_eltRef_ctg_with_id = """
+select_relation_eltref_ctg_with_id = """
                                     SELECT *
-                                    FROM eltRef_ctg
-                                    WHERE id_eltRef_ctg=%s; 
+                                    FROM eltref_ctg
+                                    WHERE id_eltref_ctg=%s; 
                                     """
 
-delete_relation_eltRef_ctg = """
+delete_relation_eltref_ctg = """
                             DELETE 
-                            FROM eltRef_ctg
-                            WHERE id_eltRef_ctg=%s; 
+                            FROM eltref_ctg
+                            WHERE id_eltref_ctg=%s; 
                             """

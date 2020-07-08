@@ -4,6 +4,7 @@ Last update : 2020-07-02
 ----------------------------"""
 
 
+import Table_ManualEntry as me
 from wtforms.validators import InputRequired, Email, Length, Regexp, AnyOf
 from wtforms import Form, StringField, PasswordField, validators
 from flask_wtf import FlaskForm
@@ -13,9 +14,11 @@ from celery import Celery
 import redis
 import socket
 import os
+from IPython.display import HTML
 import pandas as pd
 from pandas import DataFrame
 from geopy.geocoders import Nominatim
+from pathlib import Path
 import psycopg2
 import psycopg2.extras
 from LoggerModule.FileLogger import FileLogger as FileLogger
@@ -30,6 +33,7 @@ import Table_message as msg
 import Table_freshness as fresh
 import Table_profil as prf
 import Table_relation_selection_category as slc_ctg
+import Table_relation_eltref_prf as elt_prf
 import Table_elementReference as eltRef
 # import Table_relation_selection_profil as slc_prf
 from DB_Connexion import DB_connexion
@@ -44,10 +48,18 @@ if os.getenv("FLASK_ENV") == "development":
     FileLogger.InitLoggerByFile(
         os.getenv("FileLogger_path"), os.getenv("FileLogger_name"))
 
+
+UPLOAD_FOLDER = 'tmp'
+RESULT_FOLDER = 'tmp/result'
+DOWNLOAD_FOLDER = 'tmp/download'
+ALLOWED_EXTENSIONS = {'xlsx', 'xls'}
+
 app = Flask(__name__)
 
 app.secret_key = os.getenv("SECRET_KEY")
-
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['RESULT_FOLDER'] = RESULT_FOLDER
+app.config['DOWNLOAD_FOLDER'] = DOWNLOAD_FOLDER
 app.config['CELERY_BROKER_URL'] = os.getenv("CELERY_BROKER_URL")
 app.config['CELERY_RESULT_BACKEND'] = os.getenv("CELERY_RESULT_BACKEND")
 
@@ -65,6 +77,11 @@ def after_request(response):
 
 celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
 celery.conf.update(app.config)
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 #-------------------------------------------------------------------#
 #                            Celery Tasks                           #
@@ -90,6 +107,15 @@ def asynchronous_selection_extract(id):
     for line in data:
         asynchronous_extract_for_selection.apply_async(
             args=[line[0]], countdown=2)
+
+
+@celery.task
+def file_elementReference_treatment(dfjson):
+    df = pd.read_json(dfjson, typ='frame', orient='table',
+                      convert_dates=False, convert_axes=False)
+    elt_Ref = eltRef.elementReference(dataframe=df)
+    elt_Ref.Execute()
+    elt_Ref.Close()
 
 
 # @app.route('/cooltogo.ico')
@@ -135,7 +161,6 @@ def register():
     if request.method == 'POST' and form.validate():
         list_admin = functions.connexion_admin(
             form.username.data, form.password.data, True)
-        # print(list_admin)
         if [form.username.data] in list_admin:
             ErrorMessage = "Nom d'utilisateur déjà existant!"
         else:
@@ -212,7 +237,11 @@ def get_elementReference():
         return redirect(url_for("get_homepage"))
     else:
         username = session["username"]
-        return render_template('pages/elementRef.html', username=username)
+        connexion = DB_connexion()
+        df = pd.read_sql(
+            eltRef.select_elementRef, connexion.engine())
+        connexion.close()
+        return render_template('pages/elementRef.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataelementreference', index=False)], username=username)
 
 
 @app.route('/add_element_reference', methods=['POST'])
@@ -221,28 +250,21 @@ def get_add_eltRef():
     file = request.files['file']
     id_eltRef = request.form["id_eltRef"]
     if file and allowed_file(file.filename):
-        file_type = request.form["file_type"]
-        Execute_SQL(cur, td.insert_files, {
-            'id_pa': id_pa, 'file_type': file_type})
-        Commit(conn)
-        id_f = cur.fetchone()[0]
         filename = os.path.join(
-            os.getcwd(), app.config['UPLOAD_FOLDER'], str(id_f) + "." + file.filename.rsplit('.', 1)[1].lower())
+            os.getcwd(), app.config['UPLOAD_FOLDER'], "elementreference." + file.filename.rsplit('.', 1)[1].lower())
         Path(os.path.join(
             os.getcwd(), app.config['UPLOAD_FOLDER'])).mkdir(parents=True, exist_ok=True)
         file.save(filename)
-        dispatching_info, df = identification.identification(filename)
-        if (not dispatching_info.find("File extension ")):
-            errorMessage = "Fichier non valide"
-        else:
-            file_treatment.apply_async(
-                args=[id_f, df.to_json(orient='table'), dispatching_info], countdown=2)
-
+        elt_Ref = eltRef.elementReference(filename)
+        df = elt_Ref.df
+        file_elementReference_treatment.apply_async(
+            args=[df.to_json(orient='table')], countdown=2)
+        elt_Ref.Close()
         errorMessage = "Fichier ajouté au projet"
     else:
         errorMessage = "Fichier non valide"
     os.remove(filename)
-    return redirect(url_for("get_project_edit", id=id_pa, errorMessage=errorMessage))
+    return redirect(url_for("get_elementReference", errorMessage=errorMessage))
 
 #----------------- Apidae tables interface --------------------#
 
@@ -257,7 +279,7 @@ def get_tableApidae():
         df = pd.read_sql(
             apidae.select_apidae_display, connexion.engine())
         connexion.close()
-        return render_template('pages/tableApidae.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableApidae', index=False)], username=username)
+        return render_template('pages/tableApidae.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableApidae', index=False)], username=username)
 
 
 @app.route('/edit_ctg_profil/<id>')
@@ -272,7 +294,7 @@ def get_edit(id):
         # category = data[1]
         # df = pd.read_sql(ctg.select_category, connexion.engine())
         connexion.close()
-    return render_template('pages/apidae_edit.html', tables=[df.to_html(classes='table table-bordered', index=False)], id=id)
+    return render_template('pages/apidae_edit.html', tables=[df.to_html(classes='table table-bordered table-hover', index=False)], id=id)
 
 
 @app.route("/edit_save", methods=["POST"])
@@ -303,12 +325,12 @@ def get_tableValide():
         df = pd.read_sql(
             DB_Table_Definitions.select_cooltogo_validated_for_display, connexion.engine())
         connexion.close()
-        return render_template('pages/tableValide.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableValid', index=False)], username=username, ErrorMessage=ErrorMessage)
+        return render_template('pages/tableValide.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableValid', index=False)], username=username, ErrorMessage=ErrorMessage)
 
 #---------------------- New data valid ------------------------#
 
 
-@app.route('/entreManuelle', methods=['GET'])
+@app.route('/ManualEntry', methods=['GET'])
 def get_manualEntry():
     if "username" not in session:
         return redirect(url_for("get_homepage"))
@@ -317,142 +339,147 @@ def get_manualEntry():
         return render_template('pages/manualEntry.html', username=username)
 
 
-@app.route('/entreManuelleValide', methods=['GET', 'POST'])
+@app.route('/ManualEntryValide', methods=['GET', 'POST'])
 def post_manualEntry():
-    selection = request.form["selection"]
-    titre = request.form["titre"]
-    profil_c2g = request.form["profil_c2g"]
-    sous_type_ = request.form["sous_type"]
-    adresse1 = request.form["adresse1"]
-    adresse2 = request.form["adresse2"]
-    codePostal = request.form["code_postal"]
-    ville = request.form["ville"]
-    altitude = request.form["altitude"]
-    telephone = request.form["telephone"]
-    email = request.form["email"]
-    site_web = request.form["site_web"]
-    description_courte = request.form["description_courte"]
-    description_detaillee = request.form["description_detaillee"]
-    image = request.form["image"]
-    # Categories = request.form["Categories"]
-    tourisme_adaptes = request.form["accessibilité"]
-    payant = request.form["payant"]
-    publics = ""
-    first = True
-    if "senior" in request.form:
-        publics += "senior"
-        first = False
-    if "enfant" in request.form:
-        if first:
-            publics += "enfant"
-            first = False
-        else:
-            publics += ",enfant"
-    if "jeune" in request.form:
-        if first:
-            publics += "jeune"
-            first = False
-        else:
-            publics += ",jeune"
-    if "adulte" in request.form:
-        if first:
-            publics += "adulte"
-            first = False
-        else:
-            publics += ",adulte"
-    if "solidaire" in request.form:
-        if first:
-            publics += "solidaire"
-            first = False
-        else:
-            publics += ",solidaire"
-    animaux_acceptes = request.form["animaux_acceptes"]
-    environment = request.form["environment"]
-    equipment = request.form["equipment"]
-    ouverture = request.form["ouverture"]
-    adresse_to_geolocalize = ""
-    if adresse1 != "None":
-        adresse_to_geolocalize += adresse1
-    if adresse2 != "None":
-        adresse_to_geolocalize += " " + adresse2
-    geolocator = Nominatim(user_agent="cooltogo_api_backend")
-    location = geolocator.geocode(
-        adresse_to_geolocalize+" "+codePostal+" "+City)
-    if location == None:
-        latitude = None
-        longitude = None
+    if "username" not in session:
+        return redirect(url_for("get_homepage"))
     else:
-        latitude = location.latitude
-        longitude = location.longitude
-    connexion = DB_connexion()
-    DB_Protocole.cur.execute(
-        DB_Table_Definitions.select_max_id_from_cooltogo_validated)
-    id_max = DB_Protocole.cur.fetchone()[0]
-    if id_max == None:
-        id_max = "1"
-    else:
-        id_max = str(id_max+1)
-    id_apidae = "ManualEntry_"+id_max
-    functions.insert_cooltogo_validated(titre,
-                                        profil_c2g,
-                                        sous_type,
-                                        adresse1,
-                                        adresse2,
-                                        codePostal,
-                                        ville,
-                                        altitude,
-                                        telephone,
-                                        email,
-                                        site_web,
-                                        description_courte,
-                                        description_detaillee,
-                                        image,
-                                        tourisme_adaptes,
-                                        payant,
-                                        publics,
-                                        animaux_acceptes,
-                                        environment,
-                                        equipment,
-                                        ouverture
-                                        )
-    connexion.close()
-    return redirect(url_for("get_tableValide"))
+        username = session["username"]
+        if 'ErrorMessage' in request.args:
+            ErrorMessage = request.args.get('ErrorMessage')
+        else:
+            ErrorMessage = ""
+        connexion = DB_connexion()
+        category_c2g = request.form["selection"]
+        type_c2g = request.form["type_apidae"]
+        title = request.form["titre"]
+        address = request.form["adresse"]
+        codePostal = request.form["code_postal"]
+        city = request.form["ville"]
+        altitude = request.form["altitude"]
+        tel = request.form["telephone"]
+        mail = request.form["email"]
+        url = request.form["site_web"]
+        profil_c2g = ""
+        first = True
+        if "senior" in request.form:
+            profil_c2g += "senior"
+            first = False
+        if "enfant" in request.form:
+            if first:
+                profil_c2g += "enfant"
+                first = False
+            else:
+                profil_c2g += ",enfant"
+        if "jeune" in request.form:
+            if first:
+                profil_c2g += "jeune"
+                first = False
+            else:
+                profil_c2g += ",jeune"
+        if "adulte" in request.form:
+            if first:
+                profil_c2g += "adulte"
+                first = False
+            else:
+                profil_c2g += ",adulte"
+        if "solidaire" in request.form:
+            if first:
+                profil_c2g += "solidaire"
+                first = False
+            else:
+                profil_c2g += ",solidaire"
+        if "mobilite_reduite" in request.form:
+            if first:
+                profil_c2g += "mobilite_reduite"
+                first = False
+            else:
+                profil_c2g += ",solidaire"
+        accessibility = request.form["accessibilite"]
+        paying = request.form["payant"]
+        image = request.form["image"]
+        opening = request.form["ouverture"]
+        description = request.form["description"]
+        environment = request.form["environment"]
+        address_to_geolocalize = ""
+        if address != "None":
+            address_to_geolocalize += address
+        # if adresse2 != "None":
+        #     adresse_to_geolocalize += " " + adresse2
+        geolocator = Nominatim(user_agent="cooltogo_api_backend")
+        location = geolocator.geocode(
+            address_to_geolocalize+" "+codePostal+" "+city)
+        if location == None:
+            latitude = None
+            longitude = None
+        else:
+            lat = location.latitude
+            lng = location.longitude
+        # connexion.Insert_SQL(
+        #     me.select_max_id_from_cooltogo_validated)
+        # id_max = DB_Protocole.cur.fetchone()[0]
+        # if id_max == None:
+        #     id_max = "1"
+        # else:
+        #     id_max = str(id_max+1)
+        # id_apidae = "ManualEntry_"+id_max
+        connexion.Insert_SQL(me.insert_manualEntry, [category_c2g,
+                                                     type_c2g,
+                                                     title,
+                                                     address,
+                                                     codePostal,
+                                                     city,
+                                                     altitude,
+                                                     lat,
+                                                     lng,
+                                                     tel,
+                                                     mail,
+                                                     url,
+                                                     profil_c2g,
+                                                     accessibility,
+                                                     paying,
+                                                     image,
+                                                     opening,
+                                                     description,
+                                                     environment
+                                                     ])
+        connexion.close()
+        return redirect(url_for("get_manualEntry", ErrorMessage="Nouvelle entrée a été ajouté dans la table manualEntry !"))
 
 #-------------------- Validated lieu ------------------------#
 
-
-@app.route('/validate_lieu/<id>')
-def get_validate_lieu(id):
-    connexion = DB_connexion()
-    DB_Protocole.cur.execute(
-        apidae.select_apidae_1_id, [id])
-    data = DB_Protocole.cur.fetchone()
-    functions.insert_cooltogo_validated(data[1],
-                                        data[3],
-                                        data[6],
-                                        data[7],
-                                        data[4],
-                                        "",
-                                        data[8],
-                                        data[9],
-                                        data[10],
-                                        data[11],
-                                        data[12],
-                                        data[13],
-                                        data[14],
-                                        data[15],
-                                        data[15],
-                                        data[16],
-                                        data[17],
-                                        data[5],
-                                        data[18],
-                                        data[19],
-                                        data[20],
-                                        data[21],
-                                        data[22],
-                                        data[23])
-    connexion.close()
-    return redirect(url_for("get_tableApidae"))
+# @app.route('/validate_lieu/<id>')
+# def get_validate_lieu(id):
+#     connexion = DB_connexion()
+#     DB_Protocole.cur.execute(
+#         apidae.select_apidae_1_id, [id])
+#     data = DB_Protocole.cur.fetchone()
+#     functions.insert_cooltogo_validated(data[1],
+#                                         data[3],
+#                                         data[6],
+#                                         data[7],
+#                                         data[4],
+#                                         "",
+#                                         data[8],
+#                                         data[9],
+#                                         data[10],
+#                                         data[11],
+#                                         data[12],
+#                                         data[13],
+#                                         data[14],
+#                                         data[15],
+#                                         data[15],
+#                                         data[16],
+#                                         data[17],
+#                                         data[5],
+#                                         data[18],
+#                                         data[19],
+#                                         data[20],
+#                                         data[21],
+#                                         data[22],
+#                                         data[23])
+#     connexion.close()
+#     return redirect(url_for("get_tableApidae"))
 
 #________________________Add new administator interface_______________________#
 
@@ -471,7 +498,7 @@ def get_add_admin():
         df = pd.read_sql(
             admin.select_admin_for_display, connexion.engine())
         connexion.close()
-        return render_template('pages/Administators.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableAdmin', index=False)], username=username, ErrorMessage=ErrorMessage)
+        return render_template('pages/Administators.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableAdmin', index=False)], username=username, ErrorMessage=ErrorMessage)
 
 # Add admin interface after adding
 
@@ -531,7 +558,7 @@ def get_projectInformation():
         df = pd.read_sql(
             prj.select_project_information, connexion.engine())
         connexion.close()
-        return render_template('pages/projectInformation.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableProjet', index=False)], username=username, ErrorMessage=ErrorMessage)
+        return render_template('pages/projectInformation.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableProjet', index=False)], username=username, ErrorMessage=ErrorMessage)
 
 #------------------- New Project --------------------#
 
@@ -586,7 +613,7 @@ def get_apidaeSelection():
         df = pd.read_sql(
             slc.select_selection_information, connexion.engine())
         connexion.close()
-        return render_template('pages/apidaeSelection.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableSelection', index=False)], username=username)
+        return render_template('pages/apidaeSelection.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableSelection', index=False)], username=username)
 
 #------------------- Edit Selection --------------------#
 
@@ -834,7 +861,7 @@ def get_coolness_values():
         df = pd.read_sql(
             fresh.select_freshness_level_for_diplay, connexion.engine())
         connexion.close()
-        return render_template('pages/coolness_values.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableCoolnessValues', index=False)], username=username)
+        return render_template('pages/coolness_values.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableCoolnessValues', index=False)], username=username)
 
 
 @app.route("/new_coolness_value", methods=["POST"])
@@ -871,7 +898,7 @@ def get_message():
         connexion = DB_connexion()
         df = pd.read_sql(msg.select_message_list, connexion.engine())
         connexion.close()
-        return render_template('pages/message.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableMessage', index=False)], ErrorMessage=ErrorMessage, susername=username)
+        return render_template('pages/message.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableMessage', index=False)], ErrorMessage=ErrorMessage, susername=username)
 
 
 @app.route("/new-message", methods=["POST"])
@@ -976,7 +1003,7 @@ def get_category():
         connexion = DB_connexion()
         df = pd.read_sql(ctg.select_category, connexion.engine())
         connexion.close()
-        return render_template('pages/category.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableCategory', index=False)], ErrorMessage=ErrorMessage, username=username)
+        return render_template('pages/category.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableCategory', index=False)], ErrorMessage=ErrorMessage, username=username)
 
 
 @app.route("/new_category", methods=["POST"])
@@ -1005,7 +1032,7 @@ def get_edit_categoriy(id):
         category = data[1]
         df = pd.read_sql(ctg.select_category, connexion.engine())
         connexion.close()
-    return render_template('pages/category_edit.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableCategory', index=False)], id=id, category=category)
+    return render_template('pages/category_edit.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableCategory', index=False)], id=id, category=category)
 
 
 @app.route("/edit_category_save", methods=["POST"])
@@ -1046,7 +1073,7 @@ def get_profil():
         connexion = DB_connexion()
         df = pd.read_sql(prf.select_user_profil, connexion.engine())
         connexion.close()
-        return render_template('pages/profil.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableProfil', index=False)], ErrorMessage=ErrorMessage, username=username)
+        return render_template('pages/profil.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableProfil', index=False)], ErrorMessage=ErrorMessage, username=username)
 
 
 @app.route("/new_profil", methods=["POST"])
@@ -1074,9 +1101,11 @@ def get_edit_profil(id):
         data = connexion.Query_SQL_fetchone(
             prf.select_user_profil_with_id, [id])
         df = pd.read_sql(prf.select_user_profil, connexion.engine())
+        df_eltref_prf = pd.read_sql(
+            elt_prf.select_relation_eltref_prf, connexion.engine())
         connexion.close()
         profil = data[1]
-    return render_template('pages/profil_edit.html', tables=[df.to_html(classes='table table-bordered', table_id='dataTableProfil', index=False)], id=id, profil=profil)
+    return render_template('pages/profil_edit.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableProfil', index=False)], tables_elt_prf=[df_eltref_prf.to_html(classes='table table-bordered table-hover', table_id='dataEltPrf', index=False)], id=id, profil=profil)
 
 
 @app.route("/edit_profil_save", methods=["POST"])

@@ -57,7 +57,7 @@ class transformation():
                                  'Chambre pour personnes à mobilité réduite']
 
         self.__dict_id['tourisme_adapte'] = None
-        self.__dict_id['profil_c2g'] = None
+        #self.__dict_id['profil_c2g'] = None
         self.__dict_id['animaux_acceptes'] = None
 
         # tourisme_adapte + profil_C2G
@@ -65,9 +65,9 @@ class transformation():
             if 'tourismesAdaptes' in self.__request_json['prestations']:
                 if 'libelleFr' in self.__request_json['prestations']['tourismesAdaptes'][0]:
                     self.__dict_id['tourisme_adapte'] = self.__request_json['prestations']['tourismesAdaptes'][0]['libelleFr']
-                    for value in list_mobilite_reduite:
-                        if value in self.__dict_id['tourisme_adapte']:
-                            self.__dict_id['profil_c2g'] = 'mobilité réduite'
+                    # for value in list_mobilite_reduite:
+                    #     if value in self.__dict_id['tourisme_adapte']:
+                    #         self.__dict_id['profil_c2g'] = 'mobilité réduite'
 
         # Animaux_acceptes
         if 'prestations' in self.__request_json:
@@ -130,7 +130,23 @@ class transformation():
 
     def __public(self):
 
+        list_enfant = ['Animation enfants', 'Spécial famille avec enfants',
+                       'Spécial enfants', 'Enfants', 'Accueil enfants', 'Club enfants',
+                       "Gîte d'enfants", 'Jeux pour enfants', 'Services pour les enfants',
+                       "les enfants accompagnés d'un adulte", 'Location de matériel pour bébés et enfants']
+
+        list_jeune = ['Club Adolescents', 'Adolescent', 'Spécial adolescents',
+                      'Spécial étudiants', 'Etudiant', 'Etudiant 1/2 journée',
+                      'Etudiant 1 jour']
+
+        list_adulte_senior = ['Motards', 'Pratiquants de plongée sous-marine',
+                              'Réservé à un public majeur', 'Réservé aux experts/confirmés',
+                              'Spécial amoureux', 'Spécial célibataires', 'Spécial LGBT']
+
+        list_senior = ['Spécial retraités']
+
         self.__dict_id['publics'] = None
+        self.__dict_id['profil_c2g'] = None
 
         if 'prestations' in self.__request_json:
             if 'typesClientele' in self.__request_json['prestations']:
@@ -144,6 +160,25 @@ class transformation():
                         else:
                             Public += ", " + value['libelleFr']
                 self.__dict_id['publics'] = Public
+
+                self.__dict_id['profil_c2g'] = ""
+                count = True
+                for value_e, value_j, value_as in zip(list_enfant, list_jeune, list_adulte_senior):
+                    if value_e in Public:
+                        self.__dict_id['profil_c2g'] += 'enfant'
+                        count = False
+                    if value_j in Public:
+                        if count:
+                            self.__dict_id['profil_c2g'] += 'jeune'
+                            count = False
+                        else:
+                            self.__dict_id['profil_c2g'] += ', jeune'
+                    if value_as in Public:
+                        if count:
+                            self.__dict_id['profil_c2g'] += 'senior, adulte'
+                            count = False
+                        else:
+                            self.__dict_id['profil_c2g'] += ', senior, adulte'
 
     def __service(self):
 
@@ -376,7 +411,7 @@ class transformation():
                                                          ] += " *********** " + jsonfileparent['description']['libelleFr']
         except Exception:
             pass
-            #print(jsonfile, jsonfileparent)
+            # print(jsonfile, jsonfileparent)
 
     def __identify_all_special_elements_descriptions(self):
         for key in self.__request_json:

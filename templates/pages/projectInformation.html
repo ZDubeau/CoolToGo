@@ -7,11 +7,9 @@
 </div>
 <div class="card-body" style="border-radius: 0px 0px 4px 4px;background-color: #1778b825;">
     <div class="table-responsive">
-        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-            {% for table in tables %}
-            {{ table|safe }}
-            {% endfor %}
-        </table>
+        {% for table in tables %}
+        {{ table|safe }}
+        {% endfor %}
     </div>
 </div>
 <center>
@@ -33,7 +31,7 @@
         <!-- BUTTON ADD -->
         <div class="field is-grouped is-grouped-left" style="transform: translate(-20px, 4px);">
             <button class="button is-link" type="submit"
-                style="background-color: #01289f; border-radius: 4px; border-width: 0;border-color: #01289f;transform: translate(18px, 0px); padding: 5px 20px;font-size: 15px;">Ajouter</button>
+                style="background-color: #01289f; border-radius: 4px; border-width: 0;color: #d0eeed;transform: translate(18px, 0px); padding: 5px 20px;font-size: 15px;">Ajouter</button>
         </div>
     </form>
 </div>

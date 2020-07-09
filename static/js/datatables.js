@@ -24,7 +24,7 @@ $(document).ready(function () {
       { "width": "6px", "targets": 2 },        //id_selection
       { "width": "40px", "targets": 3 },
       { "targets": 4, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" }, //titre
-      { "width": "40px", "targets": 5 },          //profil
+      { "targets": 5, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" }, //profil
       { "width": "40px", "targets": 6 },          //categorie
       { "visible": false, "targets": 7 },         //adresse
       { "visible": false, "targets": 8 },

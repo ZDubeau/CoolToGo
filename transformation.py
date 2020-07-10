@@ -343,26 +343,36 @@ class transformation():
                                 if firstBP:
                                     self.__dict_id['bons_plans'] = value['description']['libelleFr']
                                     firstBP = False
+                                # else:
+                                #     dict_id['bons_plans'] += value['description']['libelleFr']
 
                             elif value['theme']['libelleFr'] == 'Dispositions spéciales COVID 19':
                                 if firstDS:
                                     self.__dict_id['dispositions_speciales'] = value['description']['libelleFr']
                                     firstDS = False
+                                # else:
+                                #     dict_id['dispositions_speciales'] += value['description']['libelleFr']
 
                             elif value['theme']['libelleFr'] == 'Services pour les enfants':
                                 if firstSE:
                                     self.__dict_id['service_enfants'] = value['description']['libelleFr']
                                     firstSE = False
+                                # else:
+                                #     dict_id['service_enfants'] += value['description']['libelleFr']
 
                             elif value['theme']['libelleFr'] == 'Services pour les cyclistes':
                                 if firstSC:
                                     self.__dict_id['service_cyclistes'] = value['description']['libelleFr']
                                     firstSC = False
+                                # else:
+                                #     dict_id['service_cyclistes'] += value['theme']['libelleFr']
 
                             elif value['theme']['libelleFr'] == 'Nouveauté 2020':
                                 if firstN2:
                                     self.__dict_id['nouveaute_2020'] = value['description']['libelleFr']
                                     firstN2 = False
+                                # else:
+                                #     dict_id['nouveaute_2020'] += value['dtheme']['libelleFr']
 
     def __find_element_reference_in_json(self, jsonfile):
         list_element_reference = []

@@ -821,7 +821,7 @@ apidae = """
             image VARCHAR(400),
             publics VARCHAR(1007),
             tourisme_adapte VARCHAR(201),
-            payant VARCHAR(4),
+            payant VARCHAR(5),
             animaux_acceptes VARCHAR(1006),
             environnement VARCHAR(1000),
             equipement VARCHAR(1001),

@@ -124,9 +124,9 @@ class transformation():
         if 'descriptionTarif' in self.__request_json:
             if 'gratuit' in self.__request_json['descriptionTarif']:
                 if self.__request_json['descriptionTarif']['gratuit'] == False:
-                    self.__dict_id['payant'] = 'Oui'
+                    self.__dict_id['payant'] = True
                 else:
-                    self.__dict_id['payant'] = 'Non'
+                    self.__dict_id['payant'] = False
 
     def __public(self):
 

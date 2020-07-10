@@ -1102,7 +1102,7 @@ def get_edit_profil(id):
             prf.select_user_profil_with_id, [id])
         df = pd.read_sql(prf.select_user_profil, connexion.engine())
         df_eltref_prf = pd.read_sql(
-            elt_prf.select_relation_eltref_prf, connexion.engine())
+            elt_prf.select_relation_eltref_profil, connexion.engine())
         connexion.close()
         profil = data[1]
     return render_template('pages/profil_edit.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableProfil', index=False)], tables_elt_prf=[df_eltref_prf.to_html(classes='table table-bordered table-hover', table_id='dataEltPrf', index=False)], id=id, profil=profil)

@@ -1262,11 +1262,28 @@ def locations():
     }
     """
     req_data = request.get_json()
-    categories = req_data['categories']
-    profiles = req_data['profiles']
-    # filter all locations by the categories and profiles defined in the req_data
-    nb, l = ctg_api.query_database_for_list_of_filtered_locations(
-        categories, profiles)
+    nb = 0
+    l = dict()
+    if req_data is None:
+        categories = []
+        profiles = []
+    else:
+        if ('categories' in req_data) and (profiles in req_data):
+            categories = req_data['categories']
+            profiles = req_data['profiles']
+            # filter all locations by the categories and profiles defined in the req_data
+            nb, l = ctg_api.query_database_for_list_of_filtered_locations(
+                categories, profiles)
+        elif ('categories' in req_data):
+            categories = req_data['categories']
+            profiles = []
+
+        elif ('profiles' in req_data):
+            categories = []
+            profiles = req_data['profiles']
+        else:
+            categories = []
+            profiles = []
     dict_for_extract = dict()
     dict_for_extract.update({"type": "FeatureCollection"})
     dict_for_extract.update({"name": "cool2go"})

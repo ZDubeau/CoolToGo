@@ -1268,7 +1268,7 @@ def locations():
         categories = []
         profiles = []
     else:
-        if ('categories' in req_data) and (profiles in req_data):
+        if ('categories' in req_data) and ('profiles' in req_data):
             categories = req_data['categories']
             profiles = req_data['profiles']
             # filter all locations by the categories and profiles defined in the req_data

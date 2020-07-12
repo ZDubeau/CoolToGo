@@ -53,7 +53,7 @@ if os.getenv("FLASK_ENV") == "development":
 UPLOAD_FOLDER = 'tmp'
 RESULT_FOLDER = 'tmp/result'
 DOWNLOAD_FOLDER = 'tmp/download'
-ALLOWED_EXTENSIONS = {'xlsx', 'xls'}
+ALLOWED_EXTENSIONS = {'xls'}
 
 app = Flask(__name__)
 

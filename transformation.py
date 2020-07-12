@@ -1,7 +1,13 @@
+from geopy.geocoders import Nominatim
+from geopy.exc import GeocoderTimedOut
+import logging
+from LoggerModule.FileLogger import FileLogger as FileLogger
+
+
 class transformation():
     """First step for retrieve Data from Apidae"""
 
-    def __init__(self, request_json, list_of_special_element=[], categories_list=[]):
+    def __init__(self, request_json, list_of_special_element=[], categories_list=[], element_reference_by_profil_dict={}, element_reference_by_category_dict={}):
         self.__request_json = request_json
         self.__dict_id = {}
         self.__list_elements_de_references = []
@@ -9,7 +15,8 @@ class transformation():
         self.__special_elements_descriptions = dict()
         for element in self.__special_elements:
             self.__special_elements_descriptions[element] = ""
-        # self.__dict_id['profil_c2g'] = profils_list
+        self.__element_reference_by_profil_dict = element_reference_by_profil_dict
+        self.__element_reference_by_category_dict = element_reference_by_category_dict
         self.__dict_id['sous_type'] = categories_list
 
     def __general_information(self):
@@ -50,14 +57,7 @@ class transformation():
 
     def __benefit(self):
 
-        list_mobilite_reduite = ['Accessible en fauteuil roulant, accompagnant recommandé',
-                                 'Accessible en fauteuil roulant avec aide',
-                                 "Critères d'accessibilité pour personnes à mobilité réduite",
-                                 'les personnes à mobilité réduite',
-                                 'Chambre pour personnes à mobilité réduite']
-
         self.__dict_id['tourisme_adapte'] = None
-        #self.__dict_id['profil_c2g'] = None
         self.__dict_id['animaux_acceptes'] = None
 
         # tourisme_adapte + profil_C2G
@@ -65,9 +65,6 @@ class transformation():
             if 'tourismesAdaptes' in self.__request_json['prestations']:
                 if 'libelleFr' in self.__request_json['prestations']['tourismesAdaptes'][0]:
                     self.__dict_id['tourisme_adapte'] = self.__request_json['prestations']['tourismesAdaptes'][0]['libelleFr']
-                    # for value in list_mobilite_reduite:
-                    #     if value in self.__dict_id['tourisme_adapte']:
-                    #         self.__dict_id['profil_c2g'] = 'mobilité réduite'
 
         # Animaux_acceptes
         if 'prestations' in self.__request_json:
@@ -130,23 +127,7 @@ class transformation():
 
     def __public(self):
 
-        list_enfant = ['Animation enfants', 'Spécial famille avec enfants',
-                       'Spécial enfants', 'Enfants', 'Accueil enfants', 'Club enfants',
-                       "Gîte d'enfants", 'Jeux pour enfants', 'Services pour les enfants',
-                       "les enfants accompagnés d'un adulte", 'Location de matériel pour bébés et enfants']
-
-        list_jeune = ['Club Adolescents', 'Adolescent', 'Spécial adolescents',
-                      'Spécial étudiants', 'Etudiant', 'Etudiant 1/2 journée',
-                      'Etudiant 1 jour']
-
-        list_adulte_senior = ['Motards', 'Pratiquants de plongée sous-marine',
-                              'Réservé à un public majeur', 'Réservé aux experts/confirmés',
-                              'Spécial amoureux', 'Spécial célibataires', 'Spécial LGBT']
-
-        list_senior = ['Spécial retraités']
-
         self.__dict_id['publics'] = None
-        self.__dict_id['profil_c2g'] = None
 
         if 'prestations' in self.__request_json:
             if 'typesClientele' in self.__request_json['prestations']:
@@ -160,25 +141,6 @@ class transformation():
                         else:
                             Public += ", " + value['libelleFr']
                 self.__dict_id['publics'] = Public
-
-                self.__dict_id['profil_c2g'] = ""
-                count = True
-                for value_e, value_j, value_as in zip(list_enfant, list_jeune, list_adulte_senior):
-                    if value_e in Public:
-                        self.__dict_id['profil_c2g'] += 'enfant'
-                        count = False
-                    if value_j in Public:
-                        if count:
-                            self.__dict_id['profil_c2g'] += 'jeune'
-                            count = False
-                        else:
-                            self.__dict_id['profil_c2g'] += ', jeune'
-                    if value_as in Public:
-                        if count:
-                            self.__dict_id['profil_c2g'] += 'senior, adulte'
-                            count = False
-                        else:
-                            self.__dict_id['profil_c2g'] += ', senior, adulte'
 
     def __service(self):
 
@@ -304,6 +266,31 @@ class transformation():
                         if 'coordinates' in self.__request_json['localisation']['geolocalisation']['geoJson']:
                             self.__dict_id['longitude'] = self.__request_json['localisation']['geolocalisation']['geoJson']['coordinates'][0]
                             self.__dict_id['latitude'] = self.__request_json['localisation']['geolocalisation']['geoJson']['coordinates'][1]
+        if self.__dict_id['longitude'] is None or self.__dict_id['latitude'] is None:
+            geolocator = Nominatim(user_agent="cooltogo_api_backend")
+            address_to_geolocalize = ""
+            if self.__dict_id['adresse1'] is not None:
+                address_to_geolocalize += " " + self.__dict_id['adresse1']
+            if self.__dict_id['adresse2'] is not None:
+                address_to_geolocalize += " " + self.__dict_id['adresse2']
+            if self.__dict_id['code_postal'] is not None:
+                address_to_geolocalize += " " + self.__dict_id['code_postal']
+            if self.__dict_id['ville'] is not None:
+                address_to_geolocalize += " " + self.__dict_id['ville']
+            try:
+                location = geolocator.geocode(
+                    address_to_geolocalize, timeout=10)
+                if location is not None:
+                    self.__dict_id['latitude'] = location.latitude
+                    self.__dict_id['longitude'] = location.longitude
+                    FileLogger.log(
+                        logging.DEBUG, f"{address_to_geolocalize} resolved with latitute {location.latitude} and longitute {location.longitude}")
+                else:
+                    FileLogger.log(
+                        logging.DEBUG, f"{address_to_geolocalize} not resolved !!!!")
+            except GeocoderTimedOut as e:
+                FileLogger.log(logging.ERROR, "Error: geocode failed on input %s with message %s" %
+                               (address_to_geolocalize, e.message))
 
     def __typology(self):
 
@@ -337,42 +324,47 @@ class transformation():
                 firstSC = True
                 firstN2 = True
                 for value in self.__request_json['presentation']['descriptifsThematises']:
-                    if 'theme' in value:
-                        if 'libelleFr' in value['theme']:
-                            if value['theme']['libelleFr'] == 'Bons plans':
-                                if firstBP:
-                                    self.__dict_id['bons_plans'] = value['theme']['libelleFr']
-                                    firstBP = False
-                                else:
-                                    self.__dict_id['bons_plans'] = value['theme']['libelleFr']
+                    libeleFr = None
+                    if 'description' in value:
+                        if 'libelleFr' in value['description']:
+                            libeleFr = value['description']['libelleFr']
+                    if libeleFr is not None:
+                        if 'theme' in value:
+                            if 'libelleFr' in value['theme']:
+                                if value['theme']['libelleFr'] == 'Bons plans':
+                                    if firstBP:
+                                        self.__dict_id['bons_plans'] = libeleFr
+                                        firstBP = False
+                                    else:
+                                        dict_id['bons_plans'] += libeleFr
 
-                            elif value['theme']['libelleFr'] == 'Dispositions spéciales COVID 19':
-                                if firstDS:
-                                    self.__dict_id['dispositions_speciales'] = value['theme']['libelleFr']
-                                    firstDS = False
-                                else:
-                                    self.__dict_id['dispositions_speciales'] = value['theme']['libelleFr']
+                                elif value['theme']['libelleFr'] == 'Dispositions spéciales COVID 19':
+                                    if firstDS:
+                                        self.__dict_id['dispositions_speciales'] = libeleFr
+                                        firstDS = False
+                                    else:
+                                        dict_id['dispositions_speciales'] += libeleFr
 
-                            elif value['theme']['libelleFr'] == 'Services pour les enfants':
-                                if firstSE:
-                                    self.__dict_id['service_enfants'] = value['theme']['libelleFr']
-                                    firstSE = False
-                                else:
-                                    self.__dict_id['service_enfants'] = value['theme']['libelleFr']
+                                elif value['theme']['libelleFr'] == 'Services pour les enfants':
+                                    if firstSE:
+                                        self.__dict_id['service_enfants'] = libeleFr
+                                        firstSE = False
+                                    else:
+                                        dict_id['service_enfants'] += libeleFr
 
-                            elif value['theme']['libelleFr'] == 'Services pour les cyclistes':
-                                if firstSC:
-                                    self.__dict_id['service_cyclistes'] = value['theme']['libelleFr']
-                                    firstSC = False
-                                else:
-                                    self.__dict_id['service_cyclistes'] = value['theme']['libelleFr']
+                                elif value['theme']['libelleFr'] == 'Services pour les cyclistes':
+                                    if firstSC:
+                                        self.__dict_id['service_cyclistes'] = libeleFr
+                                        firstSC = False
+                                    else:
+                                        dict_id['service_cyclistes'] += libeleFr
 
-                            elif value['theme']['libelleFr'] == 'Nouveauté 2020':
-                                if firstN2:
-                                    self.__dict_id['nouveaute_2020'] = value['theme']['libelleFr']
-                                    firstN2 = False
-                                else:
-                                    self.__dict_id['nouveaute_2020'] = value['dtheme']['libelleFr']
+                                elif value['theme']['libelleFr'] == 'Nouveauté 2020':
+                                    if firstN2:
+                                        self.__dict_id['nouveaute_2020'] = libeleFr
+                                        firstN2 = False
+                                    else:
+                                        dict_id['nouveaute_2020'] += libeleFr
 
     def __find_element_reference_in_json(self, jsonfile):
         list_element_reference = []
@@ -420,6 +412,21 @@ class transformation():
                 self.__identify_special_elements_descriptions(
                     intermediatejson, self.__request_json)
 
+    def __identify_profil_for_apidae_id(self):
+        list_of_profil = []
+        for key in self.__element_reference_by_profil_dict:
+            if bool(set(self.__element_reference_by_profil_dict[key]) & set(self.__list_elements_de_references)):
+                list_of_profil.append(key)
+        self.__dict_id['profil_c2g'] = list_of_profil
+
+    def __identify_category_for_apidae_id(self):
+        list_of_category = []
+        for key in self.__element_reference_by_category_dict:
+            if bool(set(self.__element_reference_by_category_dict[key]) & set(self.__list_elements_de_references)):
+                list_of_category.append(key)
+        self.__dict_id['sous_type'] = self.__dict_id['sous_type'] + \
+            list(set(list_of_category) - set(self.__dict_id['sous_type']))
+
     def Execute(self):
         self.__general_information()
         self.__benefit()
@@ -439,6 +446,8 @@ class transformation():
         self.__descriptifsThematises()
         self.__identify_all_elements_de_reference()
         self.__identify_all_special_elements_descriptions()
+        self.__identify_profil_for_apidae_id()
+        self.__identify_category_for_apidae_id()
         # if 'descriptifsThematises' in self.__request_json['presentation']:
         #     nb_description_thematise = len(
         #         self.__request_json['presentation']['descriptifsThematises'])

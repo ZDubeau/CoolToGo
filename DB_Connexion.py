@@ -31,9 +31,13 @@ class DB_connexion():
             self.__cur = self.__conn.cursor(
                 cursor_factory=psycopg2.extras.DictCursor)
             self.__engine = create_engine(db_connect_url, echo=False)
-        except:
-            print("Connection impossible !!!")
-            sys.exit()
+        except Error as e:
+            if e == 'TooManyConnections':
+                sleep(10)
+                self.__init__()
+            else:
+                print("Connection impossible !!!")
+                sys.exit()
 
     def close(self):
         self.__cur.close()

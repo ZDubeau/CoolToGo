@@ -248,7 +248,6 @@ def get_elementReference():
 
 @app.route('/add_element_reference', methods=['POST'])
 def get_add_eltRef():
-    connexion = DB_connexion()
     file = request.files['file']
     id_eltRef = request.form["id_eltRef"]
     if file and allowed_file(file.filename):
@@ -267,6 +266,19 @@ def get_add_eltRef():
         errorMessage = "Fichier non valide"
     os.remove(filename)
     return redirect(url_for("get_elementReference", errorMessage=errorMessage))
+
+
+@app.route('/delete_elt_ref_not_used', methods=['GET'])
+def get_delete_elt_ref_not_used():
+    if "username" not in session:
+        return redirect(url_for("get_homepage"))
+    else:
+        username = session["username"]
+        connexion = DB_connexion()
+        connexion.Delete_SQL(eltRef.delete_elementRef_not_used)
+        connexion.close()
+        errorMessage = "Ménage effectué!"
+        return redirect(url_for("get_elementReference", errorMessage=errorMessage))
 
 #----------------- Apidae tables interface --------------------#
 

@@ -303,3 +303,13 @@ delete_elementRef = """
                     FROM elementreference 
                     WHERE id_eltref=%s; 
                     """
+
+delete_elementRef_not_used = """
+                    DELETE 
+                    FROM elementreference 
+                    WHERE id_eltref IN (SELECT DISTINCT(er.id_eltref) 
+                                            FROM elementreference AS er 
+                                                LEFT JOIN eltref_category AS ec ON er.id_eltref=ec.id_eltref 
+                                                LEFT JOIN eltref_profil AS ep ON er.id_eltref=ep.id_eltref 
+                                            WHERE ep.id_eltref IS NULL AND ec.id_eltref IS NULL); 
+                    """

@@ -1273,7 +1273,7 @@ def locations():
             profiles = req_data['profiles']
             # filter all locations by the categories and profiles defined in the req_data
             nb, l = ctg_api.query_database_for_list_of_filtered_locations(
-                categories, profiles)
+                tuple(categories), tuple(profiles))
         elif ('categories' in req_data):
             categories = req_data['categories']
             profiles = []

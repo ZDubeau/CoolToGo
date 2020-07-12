@@ -345,7 +345,7 @@ def create_dict_for_lieu_validated(thelist: list):
     dict_for_properties.update({"publics": publics})
     dict_for_properties.update({"tourisme_adapte": tourisme_adapte})
     dict_for_properties.update({"payant": payant})
-    dict_for_properties.update({"aanimaux_acceptes": animaux_acceptes})
+    dict_for_properties.update({"animaux_acceptes": animaux_acceptes})
     dict_for_properties.update({"environnement": environnement})
     dict_for_properties.update({"equipement": equipement})
     dict_for_properties.update({"services": services})

@@ -34,6 +34,7 @@ import Table_freshness as fresh
 import Table_profil as prf
 import Table_relation_selection_category as slc_ctg
 import Table_relation_eltref_prf as elt_prf
+import Table_relation_eltref_ctg as elt_ctg
 import Table_elementReference as eltRef
 # import Table_relation_selection_profil as slc_prf
 from DB_Connexion import DB_connexion
@@ -62,6 +63,28 @@ app.config['RESULT_FOLDER'] = RESULT_FOLDER
 app.config['DOWNLOAD_FOLDER'] = DOWNLOAD_FOLDER
 app.config['CELERY_BROKER_URL'] = os.getenv("CELERY_BROKER_URL")
 app.config['CELERY_RESULT_BACKEND'] = os.getenv("CELERY_RESULT_BACKEND")
+
+#*********************** Register - new version **************************#
+
+
+class RegistrationForm(Form):
+    username = StringField(
+        '', validators=[validators.input_required(), validators.Length(min=4, max=25)])
+    email = StringField(
+        '', validators=[validators.input_required(), validators.Email()])
+    password = PasswordField('', validators=[validators.input_required(), validators.Regexp(
+        '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{6,})', message='Le mot de passe doit être composé de 6 caractères dont 1 lettre minuscule, 1 letter majuscule, 1 chiffre et un caractère spécial')])
+    confirm = PasswordField('', validators=[validators.input_required()])
+
+#*********************** Login - new version **************************#
+
+
+class LoginForm(Form):
+    username = StringField('username', [validators.Length(
+        min=6, max=15, message='Nom d\'utilisteur incorrect')])
+    password = PasswordField('password', [validators.Length(
+        min=6, max=12, message='Mot de passe incorrect'), AnyOf(['secret', 'password'])])
+
 
 api = Api(app)
 # to allow angular to your python app
@@ -139,18 +162,6 @@ def get_homepage():
         inscription = True
     return render_template('homepage.html', inscription=inscription, form=form, modal_inscription=modal_inscription, modal_login=modal_login)
 
-#*********************** Register - new version **************************#
-
-
-class RegistrationForm(Form):
-    username = StringField(
-        '', validators=[validators.input_required(), validators.Length(min=4, max=25)])
-    email = StringField(
-        '', validators=[validators.input_required(), validators.Email()])
-    password = PasswordField('', validators=[validators.input_required(), validators.Regexp(
-        '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{6,})', message='Le mot de passe doit être composé de 6 caractères dont 1 lettre minuscule, 1 letter majuscule, 1 chiffre et un caractère spécial')])
-    confirm = PasswordField('', validators=[validators.input_required()])
-
 
 @app.route('/inscription', methods=['GET', 'POST'])
 def register():
@@ -177,15 +188,6 @@ def register():
         inscription = True
         modal_inscription = True
     return render_template('homepage.html', inscription=inscription, form=form, modal_inscription=modal_inscription)
-
-#*********************** Login - new version **************************#
-
-
-class LoginForm(Form):
-    username = StringField('username', [validators.Length(
-        min=6, max=15, message='Nom d\'utilisteur incorrect')])
-    password = PasswordField('password', [validators.Length(
-        min=6, max=12, message='Mot de passe incorrect'), AnyOf(['secret', 'password'])])
 
 
 @app.route('/login_1', methods=['GET', 'POST'])
@@ -633,8 +635,8 @@ def get_edit_selection(id):
         connexion.close()
         return render_template('pages/editSelection.html', id_selection=id, selection=data[0], description=data[1], categories=data_ctg, username=username)
 
-
 #------------------- New category _ Selection --------------------#
+
 
 @app.route('/edit_selection_post', methods=['GET', 'POST'])
 def get_edit_selection_post():
@@ -822,7 +824,6 @@ def get_launch_extract(id):
 
 #_________________________extract locations__________________________#
 
-
 @app.route('/extract_locations')
 def get_extract_locations():
     connexion = DB_connexion()
@@ -987,8 +988,8 @@ def get_delete_message(id):
 
     return redirect(url_for("get_message", ErrorMessage=ErrorMessage))
 
-
 #__________________________Category___________________________#
+
 
 @app.route('/category', methods=['GET'])
 def get_category():
@@ -1022,7 +1023,7 @@ def post_category():
 
 
 @app.route('/edit_category/<id>')
-def get_edit_categoriy(id):
+def get_edit_category(id):
     if "username" not in session:
         return redirect(url_for("get_homepage"))
     else:
@@ -1031,8 +1032,10 @@ def get_edit_categoriy(id):
         data = connexion.Query_SQL_fetchone(ctg.select_category_with_id, [id])
         category = data[1]
         df = pd.read_sql(ctg.select_category, connexion.engine())
+        df_eltref_ctg = pd.read_sql(
+            elt_ctg.select_relation_eltref_category, connexion.engine(), params={"id_category": id})
         connexion.close()
-    return render_template('pages/category_edit.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableCategory', index=False)], id=id, category=category)
+    return render_template('pages/category_edit.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableCategory', index=False)], tables_elt_ctg=[df_eltref_ctg.to_html(classes='table table-bordered table-hover', table_id='dataEltCtg', index=False)], id=id, category=category)
 
 
 @app.route("/edit_category_save", methods=["POST"])
@@ -1046,6 +1049,36 @@ def post_edit_category():
     return redirect(url_for("get_category"))
 
 
+@app.route("/new_element_for_category", methods=["POST"])
+def post_element_for_category():
+    id = request.form["id"]
+    element_de_reference = request.form["element_de_reference"]
+    connexion = DB_connexion()
+    data = connexion.Query_SQL_fetchone(
+        eltRef.select_elementRef_with_id_in_apidae, [element_de_reference])
+    if data is not None:
+        id_element_de_reference = data[0]
+        data2 = connexion.Query_SQL_fetchone(
+            elt_ctg.select_relation_eltref_category_with_category_element_reference, [id, id_element_de_reference])
+        if data2 is None:
+            connexion.Insert_SQL(elt_ctg.insert_relation_eltref_category, [
+                id, id_element_de_reference])
+    connexion.close()
+    return redirect(url_for("get_edit_category", id=id))
+
+
+@app.route('/delete_eltref_for_category/<id>/<id_category>')
+def get_delete_eltref_for_category(id, id_category):
+    try:
+        connexion = DB_connexion()
+        connexion.Delete_SQL(elt_ctg.delete_relation_eltref_category, [id])
+        connexion.close()
+        ErrorMessage = ""
+    except Exception as e:
+        ErrorMessage = e
+    return redirect(url_for("get_edit_category", id=id_category, ErrorMessage=ErrorMessage))
+
+
 @app.route('/delete_category/<id>')
 def get_delete_category(id):
     try:
@@ -1057,8 +1090,8 @@ def get_delete_category(id):
         ErrorMessage = e
     return redirect(url_for("get_category", ErrorMessage=ErrorMessage))
 
-
 #________________________User Profil_________________________#
+
 
 @app.route('/profil', methods=['GET'])
 def get_profil():
@@ -1097,26 +1130,58 @@ def get_edit_profil(id):
         return redirect(url_for("get_homepage"))
     else:
         username = session["username"]
+        if 'id' in request.args:
+            id = request.args.get('id')
         connexion = DB_connexion()
         data = connexion.Query_SQL_fetchone(
             prf.select_user_profil_with_id, [id])
         df = pd.read_sql(prf.select_user_profil, connexion.engine())
         df_eltref_prf = pd.read_sql(
-            elt_prf.select_relation_eltref_profil, connexion.engine())
+            elt_prf.select_relation_eltref_profil, connexion.engine(), params={"id_profil": id})
         connexion.close()
         profil = data[1]
     return render_template('pages/profil_edit.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableProfil', index=False)], tables_elt_prf=[df_eltref_prf.to_html(classes='table table-bordered table-hover', table_id='dataEltPrf', index=False)], id=id, profil=profil)
 
 
 @app.route("/edit_profil_save", methods=["POST"])
-def post_edit_categpry():
+def post_edit_profil():
     id = request.form["id"]
     profil = request.form["profil"]
     connexion = DB_connexion()
     connexion.Insert_SQL(prf.update_user_profil, [
         profil, id])
     connexion.close()
-    return redirect(url_for("get_profil"))
+    return redirect(url_for("get_edit_profil"))
+
+
+@app.route("/new_element_for_profil", methods=["POST"])
+def post_element_for_profil():
+    id = request.form["id"]
+    element_de_reference = request.form["element_de_reference"]
+    connexion = DB_connexion()
+    data = connexion.Query_SQL_fetchone(
+        eltRef.select_elementRef_with_id_in_apidae, [element_de_reference])
+    if data is not None:
+        id_element_de_reference = data[0]
+        data2 = connexion.Query_SQL_fetchone(
+            elt_prf.select_relation_eltref_profil_with_profil_element_reference, [id, id_element_de_reference])
+        if data2 is None:
+            connexion.Insert_SQL(elt_prf.insert_relation_eltref_profil, [
+                id, id_element_de_reference])
+    connexion.close()
+    return redirect(url_for("get_edit_profil", id=id))
+
+
+@app.route('/delete_eltref_for_profil/<id>/<id_profil>')
+def get_delete_eltref_for_profil(id, id_profil):
+    try:
+        connexion = DB_connexion()
+        connexion.Delete_SQL(elt_prf.delete_relation_eltref_profil, [id])
+        connexion.close()
+        ErrorMessage = ""
+    except Exception as e:
+        ErrorMessage = e
+    return redirect(url_for("get_edit_profil", id=id_profil, ErrorMessage=ErrorMessage))
 
 
 @app.route('/delete_profil/<id>')
@@ -1133,6 +1198,21 @@ def get_delete_profil(id):
 #---------------------------------------------------#
 #                      api for front-end            #
 #---------------------------------------------------#
+
+
+@app.route('/api', methods=['GET', 'POST'])
+def get_api():
+    if "username" not in session:
+        return redirect(url_for("get_homepage"))
+    else:
+        username = session["username"]
+        connexion = DB_connexion()
+        data_ctg = connexion.Query_SQL_fetchall(
+            ctg.select_category)
+        data_prf = connexion.Query_SQL_fetchall(
+            prf.select_user_profil)
+        connexion.close()
+        return render_template('pages/api.html', username=username, categories=data_ctg, profiles=data_prf)
 
 
 @app.route('/api/categories', methods=['GET'])
@@ -1173,10 +1253,20 @@ def locations():
     categories = req_data['categories']
     profiles = req_data['profiles']
     # filter all locations by the categories and profiles defined in the req_data
-    l = ctg_api.query_database_for_list_of_filtered_locations(
+    nb, l = ctg_api.query_database_for_list_of_filtered_locations(
         categories, profiles)
+    dict_for_extract = dict()
+    dict_for_extract.update({"type": "FeatureCollection"})
+    dict_for_extract.update({"name": "cool2go"})
+    dict_for_extract_1 = {}
+    dict_for_extract_1.update({"locations number": nb})
+    dict_for_extract_1.update({"categories": categories})
+    dict_for_extract_1.update({"profiles": profiles})
+
+    dict_for_extract.update({"properties": dict_for_extract_1})
+    dict_for_extract.update({"features": l})
     response = app.response_class(
-        response=json.dumps(l, indent=3, sort_keys=False),
+        response=json.dumps(dict_for_extract, indent=3, sort_keys=False),
         status=200,
         mimetype='application/json'
     )

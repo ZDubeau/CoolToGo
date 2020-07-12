@@ -26,13 +26,13 @@ $(document).ready(function () {
       { "targets": 4, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" }, //titre
       { "targets": 5, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" }, //profil
       { "width": "40px", "targets": 6 },          //categorie
-      { "visible": false, "targets": 7 },         //adresse
-      { "visible": false, "targets": 8 },
-      { "visible": false, "targets": 9 },       // code_postal
+      { "targets": 7, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" }, //adresse1
+      { "targets": 8, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" }, //adresse2
+      { "visible": "50px", "targets": 9 },       // code_postal
       { "visible": false, "targets": 10 },      //ville
       { "width": "50px", "targets": 11 },       //altitude
-      { "visible": false, "targets": 12 },      //latitude
-      { "visible": false, "targets": 13 },      //longitude
+      { "visible": "60px", "targets": 12 },      //latitude
+      { "visible": "60px", "targets": 13 },      //longitude
       { "visible": false, "targets": 14 },      //telephone     
       { "visible": false, "targets": 15 },      //email 
       { "visible": false, "targets": 16 },      //site web
@@ -62,8 +62,8 @@ $(document).ready(function () {
     //   td.attr("title", td.html());
     // },
     "fnRowCallback": function (nRow, aData) {
-      $('td:eq(23)', nRow).html(edit);
-      $('td:eq(23)', nRow).click(function () {
+      $('td:eq(28)', nRow).html(edit);
+      $('td:eq(28)', nRow).click(function () {
         var id = aData[0];
         window.location.href = '/edit_ctg_profil/' + id;
       });
@@ -233,7 +233,7 @@ $(document).ready(function () {
       { "width": "15px", "targets": 3 },
       { "width": "15px", "targets": 4 }
     ],
-    "order": [[0, "desc"]],
+    "order": [[0, "asc"]],
     "fnRowCallback": function (nRow, aData) {
       $('td:eq(3)', nRow).html(on_off);
       $('td:eq(3)', nRow).click(function () {
@@ -250,7 +250,7 @@ $(document).ready(function () {
       { "width": "20px", "targets": 2 },
       { "width": "20px", "targets": 3 }
     ],
-    "order": [[0, "desc"]],
+    "order": [[0, "asc"]],
     "fnRowCallback": function (nRow, aData) {
       $('td:eq(2)', nRow).html(edit);
       $('td:eq(2)', nRow).click(function () {
@@ -272,7 +272,7 @@ $(document).ready(function () {
       { "width": "30px", "targets": 2 },
       { "width": "30px", "targets": 3 }
     ],
-    "order": [[0, "desc"]],
+    "order": [[0, "asc"]],
     "fnRowCallback": function (nRow, aData) {
       $('td:eq(2)', nRow).html(edit);
       $('td:eq(2)', nRow).click(function () {
@@ -283,6 +283,43 @@ $(document).ready(function () {
       $('td:eq(3)', nRow).click(function () {
         var id = aData[0];
         window.location.href = '/delete_profil/' + id;
+      });
+    }
+  });
+  $('#dataEltPrf').DataTable({
+    "columnDefs": [
+      { "visible": false, "targets": 0 },
+      { "visible": false, "targets": 1 },
+      { "width": "30px", "targets": 2 },
+      { "width": "30px", "targets": 3 },
+      { "width": "30px", "targets": 4 }
+    ],
+    "order": [[0, "desc"]],
+    "fnRowCallback": function (nRow, aData) {
+      $('td:eq(2)', nRow).html(cancel);
+      $('td:eq(2)', nRow).click(function () {
+        var id = aData[0];
+        var id_profil = aData[1];
+        window.location.href = '/delete_eltref_for_profil/' + id + '/' + id_profil;
+      });
+    }
+  });
+
+  $('#dataEltCtg').DataTable({
+    "columnDefs": [
+      { "visible": false, "targets": 0 },
+      { "visible": false, "targets": 1 },
+      { "width": "30px", "targets": 2 },
+      { "width": "30px", "targets": 3 },
+      { "width": "30px", "targets": 4 }
+    ],
+    "order": [[0, "desc"]],
+    "fnRowCallback": function (nRow, aData) {
+      $('td:eq(2)', nRow).html(cancel);
+      $('td:eq(2)', nRow).click(function () {
+        var id = aData[0];
+        var id_category = aData[1];
+        window.location.href = '/delete_eltref_for_category/' + id + '/' + id_category;
       });
     }
   });

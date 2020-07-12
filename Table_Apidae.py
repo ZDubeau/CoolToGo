@@ -17,6 +17,10 @@ import Table_project as prj
 import Table_extraction as extract
 import Table_category as ctg
 import Table_profil as prf
+import Table_relation_eltref_prf as elt_prf
+import Table_relation_eltref_ctg as elt_ctg
+import Table_relation_category_data_from_apidae as rel_ctg_apidae
+import Table_relation_profil_data_from_apidae as rel_prf_apidae
 import apidae_extraction as apex  # my function retrieving data from apiade
 
 
@@ -417,6 +421,28 @@ class Data_from_apidae():
         for line in data_ctg:
             if line[2] is not None:
                 self.__categories_for_selection_list.append(line[0])
+
+        self.__element_reference_by_profil_dict = {}
+        data_prf = self.__connexion.Query_SQL_fetchall(prf.select_user_profil)
+        for profil in data_prf:
+            id_profil = profil[0]
+            element_reference_list = []
+            data_element_reference_by_profil = self.__connexion.Query_SQL_fetchall(
+                elt_prf.select_relation_eltref_profil, {'id_profil': id_profil})
+            for element_reference in data_element_reference_by_profil:
+                element_reference_list.append(element_reference[2])
+            self.__element_reference_by_profil_dict[id_profil] = element_reference_list
+
+        self.__element_reference_by_category_dict = {}
+        data_prf = self.__connexion.Query_SQL_fetchall(ctg.select_category)
+        for category in data_prf:
+            id_category = category[0]
+            element_reference_list = []
+            data_element_reference_by_category = self.__connexion.Query_SQL_fetchall(
+                elt_ctg.select_relation_eltref_category, {'id_category': id_category})
+            for element_reference in data_element_reference_by_category:
+                element_reference_list.append(element_reference[2])
+            self.__element_reference_by_category_dict[id_category] = element_reference_list
         # self.__profil_for_selection_list = []
         # data_prf = self.__connexion.Query_SQL_fetchall(
         #     prf.select_profil_for_selection_id, [self.__id_selection])
@@ -443,35 +469,35 @@ class Data_from_apidae():
                     tInfo_data_from_apidae.insert(None),
                     [
                         {
-                            'id_apidae': adata_from_apidae.id_apidae,
-                            'id_selection': adata_from_apidae.id_selection,
-                            'type_apidae': adata_from_apidae.type_apidae,
-                            'titre': adata_from_apidae.titre,
+                            'id_apidae': adata_from_apidae.id_apidae,  # mandatory
+                            'id_selection': adata_from_apidae.id_selection,  # mandatory
+                            'type_apidae': adata_from_apidae.type_apidae,  # needed
+                            'titre': adata_from_apidae.titre,  # needed
                             'profil_c2g': adata_from_apidae.profil_c2g,
                             'sous_type': adata_from_apidae.sous_type,
-                            'adresse1': adata_from_apidae.adresse1,
-                            'adresse2': adata_from_apidae.adresse2,
-                            'code_postal': adata_from_apidae.code_postal,
-                            'ville': adata_from_apidae.ville,
-                            'altitude': adata_from_apidae.altitude,
-                            'latitude': adata_from_apidae.latitude,
-                            'longitude': adata_from_apidae.longitude,
-                            'telephone': adata_from_apidae.telephone,
-                            'email': adata_from_apidae.email,
-                            'site_web': adata_from_apidae.site_web,
+                            'adresse1': adata_from_apidae.adresse1,  # needed
+                            'adresse2': adata_from_apidae.adresse2,  # needed
+                            'code_postal': adata_from_apidae.code_postal,  # needed
+                            'ville': adata_from_apidae.ville,  # needed
+                            'altitude': adata_from_apidae.altitude,  # needed
+                            'latitude': adata_from_apidae.latitude,  # needed
+                            'longitude': adata_from_apidae.longitude,  # needed
+                            'telephone': adata_from_apidae.telephone,  # needed
+                            'email': adata_from_apidae.email,  # needed
+                            'site_web': adata_from_apidae.site_web,  # needed
                             'description_courte': adata_from_apidae.description_courte,
-                            'description_detaillee': adata_from_apidae.description_detaillee,
-                            'image': adata_from_apidae.image,
+                            'description_detaillee': adata_from_apidae.description_detaillee,  # needed
+                            'image': adata_from_apidae.image,  # needed
                             'publics': adata_from_apidae.publics,
-                            'tourisme_adapte': adata_from_apidae.tourisme_adapte,
-                            'payant': adata_from_apidae.payant,
+                            'tourisme_adapte': adata_from_apidae.tourisme_adapte,  # needed
+                            'payant': adata_from_apidae.payant,  # needed
                             'animaux_acceptes': adata_from_apidae.animaux_acceptes,
-                            'environnement': adata_from_apidae.environnement,
+                            'environnement': adata_from_apidae.environnement,  # needed
                             'equipement': adata_from_apidae.equipement,
                             'services': adata_from_apidae.services,
                             'periode': adata_from_apidae.periode,
                             'activites': adata_from_apidae.activites,
-                            'ouverture': adata_from_apidae.ouverture,
+                            'ouverture': adata_from_apidae.ouverture,  # needed
                             'typologie': adata_from_apidae.typologie,
                             'bons_plans': adata_from_apidae.bons_plans,
                             'dispositions_speciales': adata_from_apidae.dispositions_speciales,
@@ -481,7 +507,15 @@ class Data_from_apidae():
                         } for adata_from_apidae in data_from_apidae
                     ]
                 )
-
+            for adata_from_apidae in data_from_apidae:
+                id_data_from_apidae = self.__connexion.Query_SQL_fetchone(select_apidae_with_id_apidae_and_selection, [
+                                                                          adata_from_apidae.id_apidae, adata_from_apidae.id_selection])[0]
+                for profil in adata_from_apidae.profil_c2g:
+                    self.__connexion.Insert_SQL(
+                        rel_prf_apidae.insert_relation_profil_apidae, [profil, id_data_from_apidae])
+                for category in adata_from_apidae.sous_type:
+                    self.__connexion.Insert_SQL(
+                        rel_ctg_apidae.insert_relation_category_apidae, [category, id_data_from_apidae])
             FileLogger.log(
                 logging.DEBUG, f"{lines.rowcount} data_from_apidae(s) for selection: {self.__id_selection} of project_ID: {self.__project_ID} inserted!")
         except Exception:
@@ -663,6 +697,19 @@ class Data_from_apidae():
                                                     } for adata_from_apidae in data_from_apidae
                                                 ]
                                                 )
+            for adata_from_apidae in data_from_apidae:
+                id_data_from_apidae = self.__connexion.Query_SQL_fetchone(select_apidae_with_id_apidae_and_selection, [
+                                                                          adata_from_apidae.id_apidae, adata_from_apidae.id_selection])[0]
+                self.__connexion.Delete_SQL(
+                    rel_prf_apidae.delete_relation_profil_apidae_with_id_data_from_apidae, [id_data_from_apidae])
+                self.__connexion.Delete_SQL(
+                    rel_ctg_apidae.delete_relation_category_apidae_with_id_data_from_apidae, [id_data_from_apidae])
+                for profil in adata_from_apidae.profil_c2g:
+                    self.__connexion.Insert_SQL(
+                        rel_prf_apidae.insert_relation_profil_apidae, [profil, id_data_from_apidae])
+                for category in adata_from_apidae.sous_type:
+                    self.__connexion.Insert_SQL(
+                        rel_ctg_apidae.insert_relation_category_apidae, [category, id_data_from_apidae])
             FileLogger.log(
                 logging.DEBUG, f"{lines.rowcount} data_from_apidae(s) for selection: {self.__id_selection} of project_ID: {self.__project_ID} updated!")
 
@@ -711,7 +758,7 @@ class Data_from_apidae():
             listInsert_data_from_apidae = []
             listOfKeys = []
             data_from_apidae_df = apex.retrive_data_by_selectionId(
-                self.__project_ID, self.__api_KEY, self.__selection, self.__id_selection, self.__categories_for_selection_list)
+                self.__project_ID, self.__api_KEY, self.__selection, self.__id_selection, self.__categories_for_selection_list,  self.__element_reference_by_profil_dict, self.__element_reference_by_category_dict)
             for _i, row in data_from_apidae_df.iterrows():
                 adata_from_apidae = data_from_apidaeModel(
                     row['id_apidae'],
@@ -799,7 +846,7 @@ drop_apidae = """
 
 apidae = """
         CREATE TABLE IF NOT EXISTS data_from_apidae (
-            id SERIAL PRIMARY KEY,
+            id_data_from_apidae SERIAL PRIMARY KEY,
             id_apidae BIGINT,
             id_selection INTEGER REFERENCES selection ON DELETE CASCADE,
             type_apidae VARCHAR(500),
@@ -821,7 +868,7 @@ apidae = """
             image VARCHAR(400),
             publics VARCHAR(1007),
             tourisme_adapte VARCHAR(201),
-            payant VARCHAR(5),
+            payant BOOLEAN,
             animaux_acceptes VARCHAR(1006),
             environnement VARCHAR(1000),
             equipement VARCHAR(1001),
@@ -853,19 +900,19 @@ insert_apidae = """
                     %(animaux_acceptes)s, %(environnement)s, %(equipement)s, %(services)s, %(periode)s,
                     %(activites)s, %(ouverture)s, %(typologie)s, %(bons_plans)s, %(dispositions_speciales)s,
                     %(service_enfants)s, %(service_cyclistes)s, %(nouveaute_2020)s)
-                returning id;
+                returning id_data_from_apidae;
                 """
 
 select_apidae_display = """
                         SELECT *, '' as modifier
                         FROM data_from_apidae
-                        ORDER BY id ASC;
+                        ORDER BY id_data_from_apidae ASC;
                         """
 
 select_apidae = """
                         SELECT *
                         FROM data_from_apidae
-                        ORDER BY id ASC;
+                        ORDER BY id_data_from_apidae ASC;
                         """
 
 select_apidae_selection_display = """
@@ -873,14 +920,35 @@ select_apidae_selection_display = """
                                 FROM selection
                                 RIGHT JOIN data_from_apidae
                                 ON selection.id_selection = data_from_apidae.id_selection
-                                ORDER BY id ASC;
+                                ORDER BY id_data_from_apidae ASC;
                                 """
 
 select_apidae_1_id = """
                     SELECT *
                     FROM data_from_apidae
-                    WHERE id = %s;
+                    WHERE id_data_from_apidae = %s;
                     """
+
+select_apidae_with_id_apidae_and_selection = """
+                    SELECT id_data_from_apidae
+                    FROM data_from_apidae
+                    WHERE id_apidae = %s and id_selection =%s;
+                    """
+
+select_apidae_with_categorie_list_and_profil_list = """
+                    SELECT DISTINCT(id_apidae)
+                    FROM data_from_apidae as dfa
+                    LEFT JOIN relation_category_data_from_apidae AS rcdfa ON dfa.id_data_from_apidae = rcdfa.id_data_from_apidae
+                    LEFT JOIN relation_profil_data_from_apidae AS rpdfa ON dfa.id_data_from_apidae = rpdfa.id_data_from_apidae
+                    WHERE rpdfa.id_profil IN %s AND rcdfa.id_category IN %s;
+                    """
+
+select_apidae_1_id_apidae = """
+                    SELECT *
+                    FROM data_from_apidae
+                    WHERE id_apidae = %s LIMIT 1;
+                    """
+
 
 delete_apidae_selection_id = """
                                 DELETE
@@ -892,7 +960,7 @@ delete_apidae_project_id = """
                             DELETE
                             FROM data_from_apidae
                             WHERE id_selection IN (
-                                SELECT id
+                                SELECT id_data_from_apidae
                                 FROM selection
                                 WHERE id_project=%s);
                             """

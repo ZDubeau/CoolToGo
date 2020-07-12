@@ -1,5 +1,5 @@
 drop_relation_eltref_profil = """
-                            DROP TABLE IF EXISTS eltref_profil;
+                            DROP TABLE IF EXISTS eltref_profil CASCADE;
                             """
 
 relation_eltref_profil = """
@@ -15,14 +15,23 @@ insert_relation_eltref_profil = """
                                 """
 
 select_relation_eltref_profil = """
-                                SELECT *
-                                FROM eltref_profil; 
+                                SELECT ep.id_eltref_prf,ep.id_profil, er.id_elref_in_apidae, er.description,'' as Supprimer
+                                FROM eltref_profil as ep
+                                LEFT JOIN elementreference as er
+                                ON ep.id_eltref = er.id_eltref
+                                WHERE id_profil = %(id_profil)s; 
                                 """
 
 select_relation_eltref_profil_with_id = """
                                         SELECT *
                                         FROM eltref_profil
                                         WHERE id_eltref_prf=%s; 
+                                        """
+
+select_relation_eltref_profil_with_profil_element_reference = """
+                                        SELECT id_eltref_prf
+                                        FROM eltref_profil
+                                        WHERE id_profil=%s AND id_eltref=%s; 
                                         """
 
 delete_relation_eltref_profil = """

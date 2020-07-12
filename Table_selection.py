@@ -328,7 +328,12 @@ select_selection_with_id_project = """
                             """
 
 select_selection_information = """
-                                SELECT s.id_selection as id, p.project_ID as ID_p, s.selection as ID_s, s.description as selection, to_char(se.selection_extraction_date,'DD/MM/YY HH24:MI:SS') AS dernier_extract, se.selection_extraction_nb_records AS Nb, array_to_string(array_agg(c.category_name), ', ', '*') AS Catégorie,'' as lancer, '' as modifier
+                                SELECT s.id_selection AS id, p.project_ID AS ID_p, 
+                                    s.selection AS ID_s, s.description AS selection, 
+                                    to_char(se.selection_extraction_date,'DD/MM/YY HH24:MI:SS') AS dernier_extract, 
+                                    se.selection_extraction_nb_records AS Nb, 
+                                    array_to_string(array_agg(c.category_name), ', ', '*') AS Catégorie,
+                                    '' AS lancer, '' AS modifier
                                 FROM selection AS s 
                                 LEFT JOIN project AS p 
                                 ON s.id_project=p.id_project

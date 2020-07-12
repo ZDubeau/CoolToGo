@@ -15,7 +15,7 @@
     <h2 style="color: khaki; text-align: center;">{{ErrorMessage}}</h2>
 </center>
 <div class="column" style="margin-left: 0 !important;transform: translate(0px, 10px);">
-    <p class="title" style="font-size: 1.25rem;color: #01289f;transform: translate(-8px, 0px);">Ajouter nouveau profil
+    <p class="title" style="font-size: 1.25rem;color: #01289f;transform: translate(-8px, 0px);">Editer le profil
     </p>
     <form action="/edit_profil_save" method="post" style="padding-bottom: 30px;">
         <div class="form-row">
@@ -28,7 +28,7 @@
                 <div class="control">
                     <input name="id" value="{{id}}" hidden>
                     <button class="button is-link" type="submit"
-                        style="background-color: #01289f; border-radius: 4px; border-width: 0;color: #d0eeed; padding: 5px 20px;font-size: 15px;transform: translate(0px, 21px);">Confirm</button>
+                        style="background-color: #01289f; border-radius: 4px; border-width: 0;color: #d0eeed; padding: 5px 20px;font-size: 15px;transform: translate(0px, 21px);">Valider</button>
                 </div>
             </div>
         </div>
@@ -50,19 +50,20 @@
     <h2 style="color: khaki; text-align: center;">{{ErrorMessage}}</h2>
 </center>
 <div class="column" style="margin-left: 0 !important;transform: translate(0px, 10px);">
-    <p class="title" style="font-size: 1.25rem;color: #01289f;transform: translate(-8px, 0px);">Ajouter nouveau profil
+    <p class="title" style="font-size: 1.25rem;color: #01289f;transform: translate(-8px, 0px);">Ajouter un élément de
+        référence
     </p>
-    <form action="/new_profil" method="post" style="padding-bottom: 30px;">
+    <form action="/new_element_for_profil" method="post" style="padding-bottom: 30px;">
         <div class="form-row">
             <div class="col-md-3 mb-3" style="transform: translate(-10px, 0px);">
-                <label class="label" style="font-size: 12px;display: inherit !important;">Profil
-                    utilisateur???</label>
-                <input name="profil" class="input" type="text" maxlength="50" style="color: #3f3e3e;" required>
+                <label class="label" style="font-size: 12px;display: inherit !important;">Elément de référence</label>
+                <input name="element_de_reference" class="input" type="number" style="color: #3f3e3e;" required>
             </div>
             <div class="field is-grouped is-grouped-left" style="transform: translate(10px, 4px);">
                 <div class="control">
+                    <input name="id" value="{{id}}" hidden>
                     <button class="button is-link"
-                        style="background-color: #01289f; border-radius: 4px; border-width: 0;color: #d0eeed; padding: 5px 20px;font-size: 15px;transform: translate(0px, 21px);">Confirm</button>
+                        style="background-color: #01289f; border-radius: 4px; border-width: 0;color: #d0eeed; padding: 5px 20px;font-size: 15px;transform: translate(0px, 21px);">Ajouter</button>
                 </div>
             </div>
         </div>

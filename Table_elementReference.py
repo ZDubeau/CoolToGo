@@ -263,7 +263,7 @@ class elementReference():
 
 
 drop_elementRef = """
-                    DROP TABLE IF EXISTS elementreference;
+                    DROP TABLE IF EXISTS elementreference CASCADE;
                     """
 
 elementRef = """
@@ -290,6 +290,12 @@ select_elementRef_with_id = """
                             SELECT *
                             FROM elementreference 
                             WHERE id_eltref=%s; 
+                            """
+
+select_elementRef_with_id_in_apidae = """
+                            SELECT er.id_eltref
+                            FROM elementreference AS er
+                            WHERE er.id_elref_in_apidae=%s; 
                             """
 
 delete_elementRef = """

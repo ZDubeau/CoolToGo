@@ -24,37 +24,38 @@ class DB_connexion():
 
     def __init__(self):
 
-        dbname = os.getenv('DB_NAME')
-        user = os.getenv('USER')
-        password = os.getenv('PASSWORD')
-        host = os.getenv('HOST')
-        port = os.getenv('PORTE')
-        db_connect_url = sqla_url.URL(
+        self.__dbname = os.getenv('DB_NAME')
+        self.__user = os.getenv('USER')
+        self.__password = os.getenv('PASSWORD')
+        self.__host = os.getenv('HOST')
+        self.__port = os.getenv('PORTE')
+        self.__db_connect_url = sqla_url.URL(
             drivername='postgresql+psycopg2',
-            username=user,
-            password=password,
-            host=host,
-            port=port,
-            database=dbname)
+            username=self.__user,
+            password=self.__password,
+            host=self.__host,
+            port=self.__port,
+            database=self.__dbname)
         try:
-            self.__conn = psycopg2.connect(dbname=dbname, user=user,
-                                           password=password, host=host, port=port)
+            self.__conn = psycopg2.connect(dbname=self.__dbname, user=self.__user,
+                                           password=self.__password, host=self.__host, port=self.__port)
             self.__cur = self.__conn.cursor(
                 cursor_factory=psycopg2.extras.DictCursor)
-            self.__engine = create_engine(db_connect_url, echo=False)
+            self.__engine = create_engine(self.__db_connect_url, echo=False)
             nb_connexion = self.Query_SQL_fetchone(
-                "SELECT sum(numbackends) FROM pg_stat_database")[0]
+                f"SELECT sum(numbackends) FROM pg_stat_database WHERE datname='{self.__dbname}'")[0]
             FileLogger.log(
                 logging.DEBUG, f"New connection created, number of connexion : {nb_connexion}")
         except Error as e:
             if e == 'TooManyConnections':
                 sleep(1)
                 self.__init__()
-            elif e == f'too many connections for role "{user}"':
+            elif e == f'too many connections for role "{self.__user}"':
                 sleep(1)
                 self.__init__()
             else:
-                print('Connection impossible !!!')
+                FileLogger.log(
+                    logging.DEBUG, f'Connection impossible !!! error {e}')
                 sys.exit()
 
     def close(self):
@@ -159,14 +160,14 @@ class DB_connexion():
         try:
             return self.__engine.connect()
             nb_connexion = self.Query_SQL_fetchone(
-                "SELECT sum(numbackends) FROM pg_stat_database")[0]
+                f"SELECT sum(numbackends) FROM pg_stat_database WHERE datname='{self.__dbname}'")[0]
             FileLogger.log(
                 logging.DEBUG, f"New instance created, number of connexion : {nb_connexion}")
         except Error as e:
             if e == 'TooManyConnections':
                 sleep(1)
                 self.instance()
-            elif e == f'too many connections for role "{user}"':
+            elif e == f'too many connections for role "{self.__user}"':
                 sleep(1)
                 self.instance()
             else:

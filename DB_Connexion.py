@@ -14,6 +14,9 @@ from psycopg2 import Error
 import psycopg2
 import psycopg2.extras
 import sys
+
+import logging
+from LoggerModule.FileLogger import FileLogger as FileLogger
 # _______________________________________________________________________
 
 
@@ -39,6 +42,10 @@ class DB_connexion():
             self.__cur = self.__conn.cursor(
                 cursor_factory=psycopg2.extras.DictCursor)
             self.__engine = create_engine(db_connect_url, echo=False)
+            nb_connexion = self.Query_SQL_fetchone(
+                "SELECT sum(numbackends) FROM pg_stat_database")[0]
+            FileLogger.log(
+                logging.DEBUG, f"New connection created, number of connexion : {nb_connexion}")
         except Error as e:
             if e == 'TooManyConnections':
                 sleep(1)
@@ -54,6 +61,8 @@ class DB_connexion():
         self.__cur.close()
         self.__conn.close()
         self.__engine.dispose()
+        FileLogger.log(
+            logging.DEBUG, f"Connexion engine closed !!!!")
 
     def __commit(self):
         self.__conn.commit()
@@ -149,6 +158,10 @@ class DB_connexion():
     def instance(self):
         try:
             return self.__engine.connect()
+            nb_connexion = self.Query_SQL_fetchone(
+                "SELECT sum(numbackends) FROM pg_stat_database")[0]
+            FileLogger.log(
+                logging.DEBUG, f"New instance created, number of connexion : {nb_connexion}")
         except Error as e:
             if e == 'TooManyConnections':
                 sleep(1)

@@ -302,7 +302,7 @@ class Data_from_apidae():
             return
         self.__id_selection = id_selection
         self.__connexion = DB_connexion()
-        self.__instance = self.__connexion.engine().connect()
+        self.__instance = self.__connexion.instance()
         data = self.__connexion.Query_SQL_fetchone(
             prj.select_selection_project, [self.__id_selection])
         self.__project_ID = data[0]
@@ -837,7 +837,7 @@ select_apidae_1_id = """
                     """
 
 select_apidae_with_id_apidae_and_selection = """
-                                            SELECT id_data_from_apidae,
+                                            SELECT id_data_from_apidae
                                             FROM data_from_apidae
                                             WHERE id_apidae = %s and id_selection =%s;
                                             """

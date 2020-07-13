@@ -1,10 +1,10 @@
 {% extends "layout.html" %}
 {% block bootstrap_2 %}
 <div class="card-header"
-    style="background-color: #01289fe3; color: #d0eeed; border-radius: 4px 4px 0px 0px; font-size: large; font-weight: bold;">
+    style="background-color: #01289fe3; color: #d0eeed; border-radius: 4px 4px 0px 0px; font-size: medium; font-weight: bold;">
     Profil usagers
 </div>
-<div class="card-body" style="border-radius: 0px 0px 4px 4px;background-color: #1778b825;">
+<div class="card-body" style="border-radius: 0px 0px 4px 4px;background-color: #17a3b825;">
     <div class="table-responsive">
         {% for table in tables %}
         {{ table|safe }}
@@ -31,7 +31,7 @@
             <div class="field is-grouped is-grouped-left" style="transform: translate(10px, 4px);">
                 <div class="control">
                     <button class="button is-link" type="submit"
-                        style="background-color: #01289f; border-radius: 4px; border-width: 0;color: #d0eeed; padding: 5px 20px;font-size: 15px;transform: translate(0px, 21px);">Confirm</button>
+                        style="background-color: #01289f; border-radius: 4px; border-width: 0;color: #d0eeed; padding: 5px 20px;font-size: 15px;transform: translate(0px, 21px);">Valider</button>
                 </div>
             </div>
     </form>

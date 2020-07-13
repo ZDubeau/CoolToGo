@@ -1,13 +1,16 @@
+# FIND COORDINATE FROM ADDRESS & CODE POSTAL
 from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut
+
 import logging
 from LoggerModule.FileLogger import FileLogger as FileLogger
 
 
 class transformation():
-    """First step for retrieve Data from Apidae"""
+    """ Ca prends un JSON et ca returne un DICTIONAIRE """
 
     def __init__(self, request_json, list_of_special_element=[], categories_list=[], element_reference_by_profil_dict={}, element_reference_by_category_dict={}):
+
         self.__request_json = request_json
         self.__dict_id = {}
         self.__list_elements_de_references = []
@@ -25,13 +28,13 @@ class transformation():
         self.__dict_id['type_apidae'] = None
         self.__dict_id['titre'] = None
 
-        # selection id
+        # ID (selection)
         if 'id' in self.__request_json:
             self.__dict_id['id_apidae'] = self.__request_json['id']
-        # type Apidae
+        # TYPE
         if 'type' in self.__request_json:
             self.__dict_id['type_apidae'] = self.__request_json['type']
-        # titre
+        # NOM
         if 'nom' in self.__request_json:
             if 'libelleFr' in self.__request_json['nom']:
                 self.__dict_id['titre'] = self.__request_json['nom']['libelleFr']
@@ -60,7 +63,7 @@ class transformation():
         self.__dict_id['tourisme_adapte'] = None
         self.__dict_id['animaux_acceptes'] = None
 
-        # tourisme_adapte + profil_C2G
+        # tourisme_adapte
         if 'prestations' in self.__request_json:
             if 'tourismesAdaptes' in self.__request_json['prestations']:
                 if 'libelleFr' in self.__request_json['prestations']['tourismesAdaptes'][0]:
@@ -266,6 +269,7 @@ class transformation():
                         if 'coordinates' in self.__request_json['localisation']['geolocalisation']['geoJson']:
                             self.__dict_id['longitude'] = self.__request_json['localisation']['geolocalisation']['geoJson']['coordinates'][0]
                             self.__dict_id['latitude'] = self.__request_json['localisation']['geolocalisation']['geoJson']['coordinates'][1]
+
         if self.__dict_id['longitude'] is None or self.__dict_id['latitude'] is None:
             geolocator = Nominatim(user_agent="cooltogo_api_backend")
             address_to_geolocalize = ""
@@ -295,6 +299,7 @@ class transformation():
     def __typology(self):
 
         self.__dict_id['typologie'] = None
+
         if 'presentation' in self.__request_json:
             if 'typologiesPromoSitra' in self.__request_json['presentation']:
                 typology = ""
@@ -335,38 +340,39 @@ class transformation():
                                     if firstBP:
                                         self.__dict_id['bons_plans'] = libeleFr
                                         firstBP = False
-                                    else:
-                                        dict_id['bons_plans'] += libeleFr
+                                    # else:
+                                    #     dict_id['bons_plans'] += libeleFr
 
                                 elif value['theme']['libelleFr'] == 'Dispositions spéciales COVID 19':
                                     if firstDS:
                                         self.__dict_id['dispositions_speciales'] = libeleFr
                                         firstDS = False
-                                    else:
-                                        dict_id['dispositions_speciales'] += libeleFr
+                                    # else:
+                                    #     dict_id['dispositions_speciales'] += libeleFr
 
                                 elif value['theme']['libelleFr'] == 'Services pour les enfants':
                                     if firstSE:
                                         self.__dict_id['service_enfants'] = libeleFr
                                         firstSE = False
-                                    else:
-                                        dict_id['service_enfants'] += libeleFr
+                                    # else:
+                                    #     dict_id['service_enfants'] += libeleFr
 
                                 elif value['theme']['libelleFr'] == 'Services pour les cyclistes':
                                     if firstSC:
                                         self.__dict_id['service_cyclistes'] = libeleFr
                                         firstSC = False
-                                    else:
-                                        dict_id['service_cyclistes'] += libeleFr
+                                    # else:
+                                    #     dict_id['service_cyclistes'] += libeleFr
 
                                 elif value['theme']['libelleFr'] == 'Nouveauté 2020':
                                     if firstN2:
                                         self.__dict_id['nouveaute_2020'] = libeleFr
                                         firstN2 = False
-                                    else:
-                                        dict_id['nouveaute_2020'] += libeleFr
+                                    # else:
+                                    #     dict_id['nouveaute_2020'] += libeleFr
 
     def __find_element_reference_in_json(self, jsonfile):
+
         list_element_reference = []
         for key in jsonfile:
             intermediatejson = jsonfile[key]
@@ -383,10 +389,12 @@ class transformation():
         return sorted(list(dict.fromkeys(list_element_reference)))
 
     def __identify_all_elements_de_reference(self):
+
         self.__list_elements_de_references = self.__find_element_reference_in_json(
             self.__request_json)
 
     def __identify_special_elements_descriptions(self, jsonfile, jsonfileparent):
+
         try:
             for key in jsonfile:
                 intermediatejson = jsonfile[key]
@@ -403,9 +411,9 @@ class transformation():
                                                          ] += " *********** " + jsonfileparent['description']['libelleFr']
         except Exception:
             pass
-            # print(jsonfile, jsonfileparent)
 
     def __identify_all_special_elements_descriptions(self):
+
         for key in self.__request_json:
             intermediatejson = self.__request_json[key]
             if isinstance(intermediatejson, dict):
@@ -413,6 +421,7 @@ class transformation():
                     intermediatejson, self.__request_json)
 
     def __identify_profil_for_apidae_id(self):
+
         list_of_profil = []
         for key in self.__element_reference_by_profil_dict:
             if bool(set(self.__element_reference_by_profil_dict[key]) & set(self.__list_elements_de_references)):
@@ -420,6 +429,7 @@ class transformation():
         self.__dict_id['profil_c2g'] = list_of_profil
 
     def __identify_category_for_apidae_id(self):
+
         list_of_category = []
         for key in self.__element_reference_by_category_dict:
             if bool(set(self.__element_reference_by_category_dict[key]) & set(self.__list_elements_de_references)):
@@ -428,6 +438,7 @@ class transformation():
             list(set(list_of_category) - set(self.__dict_id['sous_type']))
 
     def Execute(self):
+
         self.__general_information()
         self.__benefit()
         self.__communication()
@@ -455,10 +466,13 @@ class transformation():
         #         print(self.__dict_id['id_apidae'], nb_description_thematise)
 
     def dict_id(self):
+
         return self.__dict_id
 
     def list_elements_de_references(self):
+
         return self.__list_elements_de_references
 
     def special_elements_descriptions(self):
+
         return self.__special_elements_descriptions

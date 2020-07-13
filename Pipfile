@@ -77,6 +77,7 @@ flask-restful = "*"
 flask-wtf = "*"
 wtforms = "*"
 email-validator = "*"
+xlrd = "*"
 
 [requires]
 python_version = "3.8"

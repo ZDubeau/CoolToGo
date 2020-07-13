@@ -1,6 +1,6 @@
 """----------------------------
 Creation date : 2020-06-11
-Last update : 2020-07-02
+Last update : 2020-07-13
 ----------------------------"""
 
 
@@ -22,7 +22,6 @@ from pathlib import Path
 import psycopg2
 import psycopg2.extras
 from LoggerModule.FileLogger import FileLogger as FileLogger
-import DB_Table_Definitions
 import DB_Functions as functions   # insert database related code here
 import Table_admin as admin
 import Table_Apidae as apidae
@@ -53,7 +52,7 @@ if os.getenv("FLASK_ENV") == "development":
 UPLOAD_FOLDER = 'tmp'
 RESULT_FOLDER = 'tmp/result'
 DOWNLOAD_FOLDER = 'tmp/download'
-ALLOWED_EXTENSIONS = {'xlsx', 'xls'}
+ALLOWED_EXTENSIONS = {'xls'}
 
 app = Flask(__name__)
 
@@ -248,7 +247,6 @@ def get_elementReference():
 
 @app.route('/add_element_reference', methods=['POST'])
 def get_add_eltRef():
-    connexion = DB_connexion()
     file = request.files['file']
     id_eltRef = request.form["id_eltRef"]
     if file and allowed_file(file.filename):
@@ -267,6 +265,19 @@ def get_add_eltRef():
         errorMessage = "Fichier non valide"
     os.remove(filename)
     return redirect(url_for("get_elementReference", errorMessage=errorMessage))
+
+
+@app.route('/delete_elt_ref_not_used', methods=['GET'])
+def get_delete_elt_ref_not_used():
+    if "username" not in session:
+        return redirect(url_for("get_homepage"))
+    else:
+        username = session["username"]
+        connexion = DB_connexion()
+        connexion.Delete_SQL(eltRef.delete_elementRef_not_used)
+        connexion.close()
+        errorMessage = "Ménage effectué!"
+        return redirect(url_for("get_elementReference", errorMessage=errorMessage))
 
 #----------------- Apidae tables interface --------------------#
 
@@ -1250,11 +1261,28 @@ def locations():
     }
     """
     req_data = request.get_json()
-    categories = req_data['categories']
-    profiles = req_data['profiles']
-    # filter all locations by the categories and profiles defined in the req_data
-    nb, l = ctg_api.query_database_for_list_of_filtered_locations(
-        categories, profiles)
+    nb = 0
+    l = dict()
+    if req_data is None:
+        categories = []
+        profiles = []
+    else:
+        if ('categories' in req_data) and ('profiles' in req_data):
+            categories = req_data['categories']
+            profiles = req_data['profiles']
+            # filter all locations by the categories and profiles defined in the req_data
+            nb, l = ctg_api.query_database_for_list_of_filtered_locations(
+                tuple(categories), tuple(profiles))
+        elif ('categories' in req_data):
+            categories = req_data['categories']
+            profiles = []
+
+        elif ('profiles' in req_data):
+            categories = []
+            profiles = req_data['profiles']
+        else:
+            categories = []
+            profiles = []
     dict_for_extract = dict()
     dict_for_extract.update({"type": "FeatureCollection"})
     dict_for_extract.update({"name": "cool2go"})

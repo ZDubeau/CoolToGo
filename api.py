@@ -1,3 +1,6 @@
+import logging
+from LoggerModule.FileLogger import FileLogger as FileLogger
+
 from DB_Connexion import DB_connexion
 import DB_Functions as functions
 import Table_category as ctg
@@ -27,9 +30,10 @@ def query_database_for_list_of_profiles():
 
 def query_database_for_list_of_filtered_locations(categories, profiles):
     connexion = DB_connexion()
+    FileLogger.log(
+        logging.DEBUG, f"{categories} categories and {profiles} profiles")
     list_of_location = connexion.Query_SQL_fetchall(
         apidae.select_apidae_with_categorie_list_and_profil_list, [profiles, categories])
-    connexion.close()
     locations_list = []
     nb_location = 0
     for location in list_of_location:

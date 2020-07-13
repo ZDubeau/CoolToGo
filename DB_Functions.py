@@ -2,7 +2,7 @@
 Projet CoolToGo
 ----------------------------
 Creation date  : 2020-03-06
-Last update    : 2020-07-01
+Last update    : 2020-07-12
 ----------------------------
 """
 # _______________________________________________________________________
@@ -18,8 +18,6 @@ import json
 from enum import Enum
 
 # My functions
-import DB_Protocole
-import DB_Table_Definitions
 import Table_admin as admin
 import Table_Apidae as api
 import Table_project as project
@@ -36,10 +34,10 @@ def recuperation_id(sql_select: str, valeur_inserer: tuple):
         id_table = None
     connexion.close()
     return id_table
-# _______________________________________________________________________
 
 
 def insert_selection(project_ID: str, api_key: str, selection_name: str, description: str):
+
     dico = {
         'project_ID': project_ID,
         'api_key': api_key,
@@ -53,22 +51,20 @@ def insert_selection(project_ID: str, api_key: str, selection_name: str, descrip
         return "That's ok !"
     except (psycopg2.Error, AttributeError) as Error:
         return Error
-# _______________________________________________________________________
 
 
 # def edit_selection(id_selection: str):
 #     dico = {'id': int(id_selection)}
 #     print(dico)
 #     try:
-
 #         DB_connexion.Insert_SQL(dico)
 #         return "Ok"
 #     except (psycopg2.Error, AttributeError) as Error:
 #         return Error
-# _______________________________________________________________________
 
 
 def insert_project(project_ID: str, api_key: str):
+
     dico = {
         'project_ID': project_ID,
         'api_key': api_key
@@ -81,7 +77,6 @@ def insert_project(project_ID: str, api_key: str):
         return id_project
     except (psycopg2.Error, AttributeError) as Error:
         print(Error)
-# _______________________________________________________________________
 
 
 # def insert_cooltogo_validated(id_apidae: str, X: float, Y: float, niveau_fraicheur: str,
@@ -90,13 +85,10 @@ def insert_project(project_ID: str, api_key: str):
 #                               Description_Teaser: str, Description: str, Images: str, Publics: str,
 #                               Type: str, Categories: str, Accessibilite: str, payant: bool,
 #                               Plus_d_infos_et_horaires: str, Dates_debut: str, Dates_fin: str):
-
 #     sql_cooltogo_validated = "SELECT id AS id_valide FROM cooltogo_validated WHERE id_apidae = %s "
 #     id_cooltogo_validated = recuperation_id(
 #         sql_cooltogo_validated, (id_apidae,))
-
 #     if type(id_cooltogo_validated) != type(int()):
-
 #         dico: dict[str, bool] = {
 #             'id_apidae': id_apidae,
 #             'Lieu_event': Lieu_event,
@@ -122,7 +114,6 @@ def insert_project(project_ID: str, api_key: str):
 #             'Dates_début': Dates_debut,
 #             'Dates_fin': Dates_fin
 #         }
-
 #         try:
 #             print(DB_Table_Definitions.insert_cooltogo_validated, dico)
 #             DB_connexion.Insert_SQL(
@@ -139,7 +130,6 @@ def insert_project(project_ID: str, api_key: str):
 #             print(Error)
 #     else:
 #         print('There is already a validated id_apidae')
-# _______________________________________________________________________
 
 
 # def update_cooltogo_validated(id_apidae: str, Lieu_event: str, X: float, Y: float,
@@ -149,13 +139,10 @@ def insert_project(project_ID: str, api_key: str):
 #                               Images: str, Publics: str, Type: str, Categories: str,
 #                               Accessibilite: str, payant: bool, Plus_d_infos_et_horaires: str,
 #                               Dates_debut: str, Dates_fin: str):
-
 #     sql_cooltogo_validated = "select id as id_valide from cooltogo_validated where id_apidae = %s "
 #     id_cooltogo_validated = recuperation_id(
 #         sql_cooltogo_validated, (id_apidae,))
-
 #     if type(id_cooltogo_validated) == type(int()):
-
 #         dico: dict[str, bool] = {
 #             'id_apidae': id_apidae,
 #             'Lieu_event': Lieu_event,
@@ -181,7 +168,6 @@ def insert_project(project_ID: str, api_key: str):
 #             'Dates_début': Dates_debut,
 #             'Dates_fin': Dates_fin
 #         }
-
 #         try:
 #             ErrorMessage = DB_connexion.Update_SQL(
 #                 DB_Table_Definitions.update_cooltogo_validated, dico)
@@ -210,8 +196,6 @@ def insert_project(project_ID: str, api_key: str):
 #         return "Lieu mis à jour !!"
 #     else:
 #         return ErrorMessage
-# _______________________________________________________________________
-
 
 def insert_administrator(username: str, password: str, mail: str = None):
 
@@ -237,13 +221,11 @@ def insert_administrator(username: str, password: str, mail: str = None):
         print('There is already an user !')
 
     return id_admin
-# _______________________________________________________________________
 
 
 def connexion_admin(nom_admin: str, password: str, inscription: bool = False):
-    '''
-    permet de verifier si un utilisateur existe ou pas!
-    '''
+    '''permet de verifier si un utilisateur existe ou pas!'''
+
     connexion = DB_connexion()
 
     list_admin: list = connexion.Query_SQL_fetchall(admin.select_admin)
@@ -260,7 +242,6 @@ def connexion_admin(nom_admin: str, password: str, inscription: bool = False):
     else:
         connexion.close()
         return list_admin
-# _______________________________________________________________________
 
 
 def create_dict_for_lieu_validated(thelist: list):
@@ -286,15 +267,6 @@ def create_dict_for_lieu_validated(thelist: list):
     description_detaillee = thelist[18]
     image = thelist[19]
     publics = thelist[20]
-    # if thelist[16] == None:
-    #     Publics = None
-    # else:
-    #     Publics = thelist[16].split(",")
-    # Type = thelist[19]
-    # if thelist[20] == None:
-    #     Categories = None
-    # else:
-    #     Categories = thelist[20].split(",")
     tourisme_adapte = thelist[21]
     payant = thelist[22]
     animaux_acceptes = thelist[23]
@@ -324,49 +296,45 @@ def create_dict_for_lieu_validated(thelist: list):
 
     dict_for_properties = {}
     dict_for_properties.update({"id_apidae": id_apidae})
-    dict_for_properties.update({"type_apidae": type_apidae})
-    dict_for_properties.update({"titre": titre})
-    dict_for_properties.update({"profil_c2g": profil_c2g})
-    dict_for_properties.update({"sous_type": sous_type})
-    dict_for_properties.update({"adresse_1": adresse1})
-    dict_for_properties.update({"adresse_2": adresse2})
-    dict_for_properties.update({"code_postal": code_postal})
-    dict_for_properties.update({"ville": ville})
-    dict_for_properties.update({"latitude": latitude})
-    dict_for_properties.update({"latitude": latitude})
-    dict_for_properties.update({"longitude": longitude})
-    dict_for_properties.update({"telephone": telephone})
-    dict_for_properties.update({"email": email})
-    dict_for_properties.update({"site_web": site_web})
-    dict_for_properties.update({"description_courte": description_courte})
-    dict_for_properties.update(
-        {"description_detaillee": description_detaillee})
-    dict_for_properties.update({"image": [image]})
-    dict_for_properties.update({"publics": publics})
-    dict_for_properties.update({"tourisme_adapte": tourisme_adapte})
-    dict_for_properties.update({"payant": payant})
-    dict_for_properties.update({"animaux_acceptes": animaux_acceptes})
-    dict_for_properties.update({"environnement": environnement})
-    dict_for_properties.update({"equipement": equipement})
-    dict_for_properties.update({"services": services})
-    dict_for_properties.update({"periode": periode})
-    dict_for_properties.update({"activites": activites})
+    dict_for_properties.update({"Type_Apidae": type_apidae})
+    dict_for_properties.update({"Title": titre})
+    dict_for_properties.update({"profil_C2G": profil_c2g})
+    dict_for_properties.update({"category_C2G": sous_type})
+    dict_for_properties.update({"Address": adresse1})
+    #dict_for_properties.update({"adresse_2": adresse2})
+    dict_for_properties.update({"codePostal": code_postal})
+    dict_for_properties.update({"City": ville})
+    #dict_for_properties.update({"atitude": latitude})
+    dict_for_properties.update({"Longitude": longitude})
+    dict_for_properties.update({"Latitude": latitude})
+    dict_for_properties.update({"Tel": telephone})
+    dict_for_properties.update({"Mail": email})
+    dict_for_properties.update({"URL": site_web})
+    #dict_for_properties.update({"description_courte": description_courte})
+    dict_for_properties.update({"Description": description_detaillee})
+    dict_for_properties.update({"Image": [image]})
+    dict_for_properties.update({"Public": publics})
+    dict_for_properties.update({"Accessibility": tourisme_adapte})
+    dict_for_properties.update({"Paying": payant})
+    #dict_for_properties.update({"animaux_acceptes": animaux_acceptes})
+    dict_for_properties.update({"Environment": environnement})
+    #dict_for_properties.update({"equipement": equipement})
+    #dict_for_properties.update({"services": services})
+    #dict_for_properties.update({"periode": periode})
+    #dict_for_properties.update({"activites": activites})
     dict_for_properties.update({"ouverture": ouverture})
-    dict_for_properties.update({"typologie": typologie})
-    dict_for_properties.update({"bons_plans": bons_plans})
-    dict_for_properties.update(
-        {"dispositions_speciales": dispositions_speciales})
-    dict_for_properties.update({"service_enfants": service_enfants})
+    #dict_for_properties.update({"typologie": typologie})
+    #dict_for_properties.update({"bons_plans": bons_plans})
+    #dict_for_properties.update({"dispositions_speciales": dispositions_speciales})
+    #dict_for_properties.update({"service_enfants": service_enfants})
     # dict_for_properties.update({"id": id})
 
     dict_for_geometry = {}
     dict_for_geometry.update({"type": "Point"})
-    dict_for_geometry.update({"coordinates": [latitude, longitude]})
+    dict_for_geometry.update({"Coordinates": [longitude, latitude]})
 
     dict_for_lieu_validated = {}
     dict_for_lieu_validated.update({"properties": dict_for_properties})
     dict_for_lieu_validated.update({"geometry": dict_for_geometry})
     dict_for_lieu_validated.update({"type": "Feature"})
-    #jsons = json.dumps(dict_for_lieu_validated).encode('utf8')
     return dict_for_lieu_validated
-# _______________________________________________________________________

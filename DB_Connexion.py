@@ -1,23 +1,31 @@
-"""   Création : 2020-03-06   """
-""" Dernière MàJ : 2020-06-30 """
-
-
-
+""" 
+Projet CoolToGo
+----------------------------
+Creation date  : 2020-03-06
+Last update    : 2020-06-30
+----------------------------
+"""
+# _______________________________________________________________________
 
 from sqlalchemy.engine import url as sqla_url
 from sqlalchemy import create_engine
 import os
 from psycopg2 import Error
 import psycopg2
-import psycopg2.extras, sys
+import psycopg2.extras
+import sys
+# _______________________________________________________________________
+
+
 class DB_connexion():
 
     def __init__(self):
-        dbname = os.getenv("DB_NAME")
-        user = os.getenv("USER")
-        password = os.getenv("PASSWORD")
-        host = os.getenv("HOST")
-        port = os.getenv("PORTE")
+
+        dbname = os.getenv('DB_NAME')
+        user = os.getenv('USER')
+        password = os.getenv('PASSWORD')
+        host = os.getenv('HOST')
+        port = os.getenv('PORTE')
         db_connect_url = sqla_url.URL(
             drivername='postgresql+psycopg2',
             username=user,
@@ -36,7 +44,7 @@ class DB_connexion():
                 sleep(10)
                 self.__init__()
             else:
-                print("Connection impossible !!!")
+                print('Connection impossible !!!')
                 sys.exit()
 
     def close(self):
@@ -67,7 +75,7 @@ class DB_connexion():
             self.__cur.execute(codeSQL, liste)
             self.__commit()
         except (psycopg2.Error, AttributeError) as Error:
-            print("Erreur insert_SQL", Error)
+            print('Erreur insert_SQL', Error)
 
     def Insert_SQL_fetchone(self, codeSQL, liste=[]):
         try:
@@ -75,7 +83,7 @@ class DB_connexion():
             self.__commit()
             return self.__cur.fetchone()
         except (psycopg2.Error, AttributeError) as Error:
-            print("Erreur insert_SQL_fetchone", Error)
+            print('Erreur insert_SQL_fetchone', Error)
 
     def Update_SQL(self, codeSQL, liste=[]):
         try:
@@ -89,34 +97,34 @@ class DB_connexion():
             self.__cur.execute(codeSQL, liste)
             self.__commit()
         except (psycopg2.Error, AttributeError) as Error:
-            print("Erreur Delete_SQL", Error)
+            print('Erreur Delete_SQL', Error)
             return Error
 
     def Create_Table(self, codeSQL):
         try:
             self.__cur.execute(codeSQL)
             self.__commit()
-            return "Create table is OK!"
+            return 'Create table is OK!'
         except (psycopg2.Error, AttributeError) as Error:
             return Error
 
     def Drop_Table(self, table):
         try:
-            sql = f"""DROP TABLE IF EXISTS {table}"""
+            sql = f'DROP TABLE IF EXISTS {table}'
             self.__cur.execute(sql)
         except (psycopg2.Error, AttributeError) as Error:
             print(Error)
 
     def Drop_Table_Casscade(self, table):
         try:
-            sql = f"""DROP TABLE IF EXISTS {table} CASCADE"""
+            sql = f'DROP TABLE IF EXISTS {table} CASCADE'
             sel.__cur.execute(sql)
         except (psycopg2.Error, AttributeError) as Error:
             print(Error)
 
     def Delete(self, table, condition, liste=[]):
         self.__cur.execute(
-            f"""DELETE FROM {table} WHERE {condition} = %s;""", liste)
+            f'DELETE FROM {table} WHERE {condition} = %s;', liste)
         self.__commit()
 
     # SQLAlchemy engine for pandas

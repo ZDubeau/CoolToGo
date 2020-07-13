@@ -11,7 +11,8 @@ admin = """
         )"""
 
 insert_admin = """
-                INSERT INTO administrators (admin_name, admin_pwd_hash, admin_email)
+                INSERT INTO administrators (
+                    admin_name, admin_pwd_hash, admin_email)
                 VALUES (%(admin_name)s, %(admin_pwd_hash)s, %(admin_email)s) 
                 returning id_admin;
                 """

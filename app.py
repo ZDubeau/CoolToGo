@@ -1,6 +1,6 @@
 """----------------------------
 Creation date : 2020-06-11
-Last update : 2020-07-02
+Last update : 2020-07-13
 ----------------------------"""
 
 
@@ -22,7 +22,6 @@ from pathlib import Path
 import psycopg2
 import psycopg2.extras
 from LoggerModule.FileLogger import FileLogger as FileLogger
-import DB_Table_Definitions
 import DB_Functions as functions   # insert database related code here
 import Table_admin as admin
 import Table_Apidae as apidae

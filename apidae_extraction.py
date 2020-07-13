@@ -28,12 +28,7 @@ import time
 import queue
 
 # My functions
-import DB_Protocole
 import Table_selection as slc
-
-
-# Transformation function of data by id
-#from apidae_id_tranformation import restauration_transformation
 from transformation import transformation
 
 # _______________________________________________________________________

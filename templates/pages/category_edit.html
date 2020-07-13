@@ -1,55 +1,45 @@
 {% extends "layout.html" %}
 {% block bootstrap_2 %}
 <div class="card-header"
-    style="background-color: #1778b8b6; color: black; border-radius: 4px 4px 0px 0px; font-size: large; font-weight: bold;">
+    style="background-color: #01289fe3; color: #d0eeed; border-radius: 4px 4px 0px 0px; font-size: medium; font-weight: bold;">
     Catégories
 </div>
-<div class="card-body" style="border-radius: 0px 0px 4px 4px;background-color: #1778b825;">
+<div class="card-body" style="border-radius: 0px 0px 4px 4px;background-color: #17a3b825;">
     <div class="table-responsive">
         {% for table in tables %}
         {{ table|safe }}
         {% endfor %}
     </div>
 </div>
-</br>
 <center>
     <h2 style="color: red; text-align: center;">{{ErrorMessage}}</h2>
 </center>
-<section id="app" class="hero is-fullheight">
-    <div class="hero-body" style="padding: 2rem 0.5rem;flex-grow: 0;">
-        <div class="container">
-            <div class="columns" style="padding: 0 !important;">
-                <div class="column is-half is-offset-one-quarter"
-                    style="width: 80%;margin-left: 0 !important;transform: translate(-27px, 0px)">
-                    <p class="title" style="font-size: 1.25rem;">Modifier la catégorie</p>
-                    <div>
-                        <form action="/edit_category_save" method="post">
-                            <div class="field" style="padding-top: 30px;">
-                                <textarea name="category" value="{{category}}" class="textarea" maxlength="500"
-                                    style="color: #363434;min-height: 3em !important;width: 30%;min-width: 45% !important;"
-                                    required>{{category}}</textarea>
-                            </div>
-                            <!-- ------- -->
-                            <div class="field is-grouped is-grouped-left">
-                                <div class="control">
-                                    <input name="id" value="{{id}}" hidden>
-                                    <button class="button is-link"
-                                        style="background-color: #01289f; border-radius: 4px; border-color: #01289f; margin: 28px 0; padding: 5px 25px;">Confirm</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+<div class="column" style="margin-left: 0 !important;transform: translate(0px, 10px);">
+    <p class="title" style="font-size: 1.25rem;color: #01289f;transform: translate(-8px, 0px);">Editer la catégorie</p>
+    <!-- FORM -->
+    <form action="/edit_category_save" method="post" style="padding-bottom: 30px;">
+        <div class="form-row">
+            <div class="col-md-3 mb-3" style="transform: translate(-10px, 0px);">
+                <label class="label" style="font-size: 12px;display: inherit !important;"></label>
+                <input name="category" value="{{category}}" class="input" type="text" maxlength="200" required>
+            </div>
+            <!-- ------- -->
+            <div class="field is-grouped is-grouped-left" style="transform: translate(10px, 4px);">
+                <div class="control">
+                    <input name="id" value="{{id}}" hidden>
+                    <button class="button is-link"
+                        style="background-color: #01289f; border-radius: 4px; border-width: 0;color: #d0eeed; padding: 5px 20px;font-size: 15px;transform: translate(0px, 3px);">Valider</button>
                 </div>
             </div>
         </div>
-    </div>
-</section>
-<!-- ELEMENT REFERENCE + PROFIL -->
+    </form>
+</div>
+<!-- ELEMENT REFERENCE + CATEGORY -->
 <div class="card-header"
-    style="background-color: #01289fe3; color: #d0eeed; border-radius: 4px 4px 0px 0px; font-size: large; font-weight: bold;">
+    style="background-color: #01289fe3; color: #d0eeed; border-radius: 4px 4px 0px 0px; font-size: medium; font-weight: bold;">
     Relation Catégorie et Element reference
 </div>
-<div class="card-body" style="border-radius: 0px 0px 4px 4px;background-color: #1778b825;">
+<div class="card-body" style="border-radius: 0px 0px 4px 4px;background-color: #17a3b825;">
     <div class="table-responsive">
         {% for table in tables_elt_ctg %}
         {{ table|safe }}
@@ -60,20 +50,21 @@
     <h2 style="color: khaki; text-align: center;">{{ErrorMessage}}</h2>
 </center>
 <div class="column" style="margin-left: 0 !important;transform: translate(0px, 10px);">
-    <p class="title" style="font-size: 1.25rem;color: #01289f;transform: translate(-8px, 0px);">Ajouter un élément de
+    <p class="title" style="font-size: 1.25rem;color: #01289f;transform: translate(-8px, 0px);">Ajouter un élément
+        de
         référence
     </p>
     <form action="/new_element_for_category" method="post" style="padding-bottom: 30px;">
         <div class="form-row">
             <div class="col-md-3 mb-3" style="transform: translate(-10px, 0px);">
-                <label class="label" style="font-size: 12px;display: inherit !important;">Elément de référence</label>
+                <label class="label" style="font-size: 12px;display: inherit !important;"></label>
                 <input name="element_de_reference" class="input" type="number" style="color: #3f3e3e;" required>
             </div>
             <div class="field is-grouped is-grouped-left" style="transform: translate(10px, 4px);">
                 <div class="control">
                     <input name="id" value="{{id}}" hidden>
                     <button class="button is-link"
-                        style="background-color: #01289f; border-radius: 4px; border-width: 0;color: #d0eeed; padding: 5px 20px;font-size: 15px;transform: translate(0px, 21px);">Ajouter</button>
+                        style="background-color: #01289f; border-radius: 4px; border-width: 0;color: #d0eeed; padding: 5px 20px;font-size: 15px;transform: translate(0px, 3px);">Ajouter</button>
                 </div>
             </div>
         </div>

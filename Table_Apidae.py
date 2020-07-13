@@ -78,72 +78,6 @@ class data_from_apidaeModel():
             raise Exception("'id_apidae' should not be empty!")
         if not id_selection:
             raise Exception("'id_selection' should not be empty!")
-        # if not type_apidae:
-        #     raise Exception("'type_apidae' should not be empty!")
-        # if not titre:
-        #     raise Exception("'titre' should not be empty!")
-        # if not profil_c2g:
-        #     raise Exception("'profil_c2g' should not be empty!")
-        # if not sous_type:
-        #     raise Exception("'sous_type' should not be empty!")
-        # if not adresse1:
-        #     raise Exception("'adresse1' should not be empty!")
-        # if not adresse2:
-        #     raise Exception("'adresse2' should not be empty!")
-        # if not code_postal:
-        #     raise Exception("'code_postal' should not be empty!")
-        # if not ville:
-        #     raise Exception("'ville' should not be empty!")
-        # if not altitude:
-        #     raise Exception("'altitude' should not be empty!")
-        # if not latitude:
-        #     raise Exception("'latitude' should not be empty!")
-        # if not longitude:
-        #     raise Exception("'longitude' should not be empty!")
-        # if not telephone:
-        #     raise Exception("'telephone' should not be empty!")
-        # if not email:
-        #     raise Exception("'email' should not be empty!")
-        # if not site_web:
-        #     raise Exception("'site_web' should not be empty!")
-        # if not description_courte:
-        #     raise Exception("'description_courte' should not be empty!")
-        # if not description_detaillee:
-        #     raise Exception("'description_detaillee' should not be empty!")
-        # if not image:
-        #     raise Exception("'image' should not be empty!")
-        # if not publics:
-        #     raise Exception("'publics' should not be empty!")
-        # if not tourisme_adapte:
-        #     raise Exception("'tourisme_adapte' should not be empty!")
-        # if not payant:
-        #     raise Exception("'payant' should not be empty!")
-        # if not animaux_acceptes:
-        #     raise Exception("'animaux_acceptes' should not be empty!")
-        # if not environnement:
-        #     raise Exception("'environnement' should not be empty!")
-        # if not equipement:
-        #     raise Exception("'equipement' should not be empty!")
-        # if not services:
-        #     raise Exception("'services' should not be empty!")
-        # if not periode:
-        #     raise Exception("'periode' should not be empty!")
-        # if not activites:
-        #     raise Exception("'activites' should not be empty!")
-        # if not ouverture:
-        #     raise Exception("'ouverture' should not be empty!")
-        # if not typologie:
-        #     raise Exception("'typologie' should not be empty!")
-        # if not bons_plans:
-        #     raise Exception("'bons_plans' should not be empty!")
-        # if not dispositions_speciales:
-        #     raise Exception("'dispositions_speciales' should not be empty!")
-        # if not service_enfants:
-        #     raise Exception("'service_enfants' should not be empty!")
-        # if not service_cyclistes:
-        #     raise Exception("'service_cyclistes' should not be empty!")
-        # if not nouveaute_2020:
-        #     raise Exception("'nouveaute_2020' should not be empty!")
 
         self.__id_apidae = id_apidae
         self.__id_selection = id_selection
@@ -180,14 +114,7 @@ class data_from_apidaeModel():
         self.__service_enfants = service_enfants
         self.__service_cyclistes = service_cyclistes
         self.__nouveaute_2020 = nouveaute_2020
-    # def __str__(self):
-    #     """Représentation sous forme de string d'une selection.
-    #     """
-    #     return "id_apidae: {0} -- id_selection : {1} -- type_apidae : {2}
-    #     -- titre: {3} -- id_selection : {1} -- type_apidae : {2}
-    #     -- id_apidae: {0} -- id_selection : {1} -- type_apidae : {2}
-    #     -- id_apidae: {0} -- id_selection : {1} -- type_apidae : {2}
-    #     -- id_apidae: {0} -- id_selection : {1} -- type_apidae : {2} --".format(self.__id_project, self.__selection, self.__description)
+
     @property
     def id_apidae(self):
         """Retourne la variable __id_apidae.
@@ -400,8 +327,7 @@ class data_from_apidaeModel():
 
 
 class Data_from_apidae():
-    """Classe permettant de gérer les sélections d'un projet
-    """
+    """Classe permettant de gérer les sélections d'un projet"""
 
     def __init__(self, id_selection=0):
         if not id_selection:
@@ -595,8 +521,8 @@ class Data_from_apidae():
             FileLogger.log(logging.ERROR, traceback.print_exc())
 
     def __Update(self, data_from_apidae=[]):
-        """Mise à jour des données dans la table data_from_apidae
-        """
+        """Mise à jour des données dans la table data_from_apidae"""
+
         try:
 
             if data_from_apidae == None:
@@ -938,8 +864,8 @@ select_apidae_with_id_apidae_and_selection = """
 select_apidae_with_categorie_list_and_profil_list = """
                     SELECT DISTINCT(id_apidae)
                     FROM data_from_apidae as dfa
-                    LEFT JOIN relation_category_data_from_apidae AS rcdfa ON dfa.id_data_from_apidae = rcdfa.id_data_from_apidae
-                    LEFT JOIN relation_profil_data_from_apidae AS rpdfa ON dfa.id_data_from_apidae = rpdfa.id_data_from_apidae
+                    LEFT JOIN category_data_from_apidae AS rcdfa ON dfa.id_data_from_apidae = rcdfa.id_data_from_apidae
+                    LEFT JOIN profil_data_from_apidae AS rpdfa ON dfa.id_data_from_apidae = rpdfa.id_data_from_apidae
                     WHERE rpdfa.id_profil IN %s AND rcdfa.id_category IN %s;
                     """
 

@@ -22,10 +22,10 @@ select_project_with_id = """
                         """
 
 select_project_with_project_ID = """
-                        SELECT project_ID
-                        FROM project 
-                        WHERE project_ID=%s; 
-                        """
+                                SELECT project_ID
+                                FROM project 
+                                WHERE project_ID=%s; 
+                                """
 
 select_project_information = """
                             SELECT id_project, project_ID as id_project, api_key,'' as lancement, '' as supprimer

@@ -1,7 +1,11 @@
-""" ----------------------------
-Creation date : 2020-04-12
-Last update   : 2020-07-12
-----------------------------"""
+""" 
+Projet CoolToGo
+----------------------------
+Creation date  : 2020-03-06
+Last update    : 2020-07-12
+----------------------------
+"""
+# _______________________________________________________________________
 
 import Table_admin
 import Table_profil
@@ -21,7 +25,8 @@ import Table_relation_eltref_ctg
 import Table_relation_profil_data_from_apidae
 import Table_relation_category_data_from_apidae
 from DB_Connexion import DB_connexion
-# _____________________________________________
+# _______________________________________________________________________
+
 
 full_actions_list = (
     Table_message.drop_message,

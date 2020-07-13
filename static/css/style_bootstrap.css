@@ -9923,6 +9923,7 @@ blockquote {
   tr,
 img {
     page-break-inside: avoid;
+    padding-right: 10PX;
   }
 
   p,

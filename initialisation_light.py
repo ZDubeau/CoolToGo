@@ -22,6 +22,6 @@ Tables_light = (
 
 if __name__ == "__main__":
     connexion = DB_connexion()
-    for value in full_actions_list:
+    for value in Tables_light:
         connexion.Insert_SQL(value)
     connexion.close()

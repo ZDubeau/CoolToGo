@@ -43,6 +43,9 @@ class DB_connexion():
             if e == 'TooManyConnections':
                 sleep(1)
                 self.__init__()
+            elif e == f'too many connections for role "{user}"':
+                sleep(1)
+                self.__init__()
             else:
                 print('Connection impossible !!!')
                 sys.exit()
@@ -130,7 +133,18 @@ class DB_connexion():
     # SQLAlchemy engine for pandas
 
     def engine(self):
-        return self.__engine
+        try:
+            return self.__engine
+        except Error as e:
+            if e == 'TooManyConnections':
+                sleep(1)
+                self.engine()
+            elif e == f'too many connections for role "{user}"':
+                sleep(1)
+                self.engine()
+            else:
+                print('Connection impossible !!!')
+                sys.exit()
 
     def instance(self):
         try:
@@ -138,7 +152,10 @@ class DB_connexion():
         except Error as e:
             if e == 'TooManyConnections':
                 sleep(1)
-                self.__instance()
+                self.instance()
+            elif e == f'too many connections for role "{user}"':
+                sleep(1)
+                self.instance()
             else:
                 print('Connection impossible !!!')
                 sys.exit()

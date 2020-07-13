@@ -1,4 +1,4 @@
-""" 
+"""
 Projet CoolToGo
 ----------------------------
 Creation date  : 2020-03-06
@@ -41,7 +41,7 @@ class DB_connexion():
             self.__engine = create_engine(db_connect_url, echo=False)
         except Error as e:
             if e == 'TooManyConnections':
-                sleep(10)
+                sleep(1)
                 self.__init__()
             else:
                 print('Connection impossible !!!')
@@ -131,3 +131,14 @@ class DB_connexion():
 
     def engine(self):
         return self.__engine
+
+    def instance(self):
+        try:
+            return self.__engine.connect()
+        except Error as e:
+            if e == 'TooManyConnections':
+                sleep(1)
+                self.__instance()
+            else:
+                print('Connection impossible !!!')
+                sys.exit()

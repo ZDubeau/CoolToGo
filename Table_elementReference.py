@@ -69,7 +69,7 @@ class elementReference():
                 FileLogger.log(logging.ERROR, "Extension must be xls !")
                 return
         self.__connexion = DB_connexion()
-        self.__instance = self.__connexion.engine().connect()
+        self.__instance = self.__connexion.instance()
 
     def __Create(self, element_reference=[]):
         """Insertion des sélections dans la table des elementreference

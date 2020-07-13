@@ -19,3 +19,9 @@ Tables_light = (
     Table_relation_category_data_from_apidae.relation_category_apidae,
     Table_relation_profil_data_from_apidae.relation_profil_apidae,
 )
+
+if __name__ == "__main__":
+    connexion = DB_connexion()
+    for value in full_actions_list:
+        connexion.Insert_SQL(value)
+    connexion.close()

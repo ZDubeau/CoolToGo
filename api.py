@@ -38,7 +38,7 @@ def query_database_for_list_of_filtered_locations(categories, profiles):
     nb_location = 0
     for location in list_of_location:
         data = connexion.Query_SQL_fetchone(
-            apidae.select_apidae_1_id_apidae, [location[0]])
+            apidae.select_apidae_1_id, [location[1]])
         locations_list.append(functions.create_dict_for_lieu_validated(data))
         nb_location += 1
     connexion.close()

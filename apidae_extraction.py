@@ -61,6 +61,7 @@ def retrieve_data_by_id(project_ID, api_KEY, select_id, selectionId, id_selectio
     # print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
 
     dict_for_id['id_selection'] = id_selection
+    print(dict_for_id)
     result_df = result_df.append(dict_for_id, ignore_index=True)
     return result_df
 # _______________________________________________________________________

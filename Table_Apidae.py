@@ -30,39 +30,6 @@ class data_from_apidaeModel():
     Raises:
         Exception: Erreur si id_apidae est vide.
         Exception: Erreur si id_selection est vide.
-        Exception: Erreur si type_apidae est vide.
-        Exception: Erreur si titre est vide.
-        Exception: Erreur si profil_c2g est vide.
-        Exception: Erreur si sous_type est vide.
-        Exception: Erreur si adresse1 est vide.
-        Exception: Erreur si adresse2 est vide.
-        Exception: Erreur si code_postal est vide.
-        Exception: Erreur si ville est vide.
-        Exception: Erreur si altitude est vide.
-        Exception: Erreur si latitude est vide.
-        Exception: Erreur si longitude est vide.
-        Exception: Erreur si telephone est vide.
-        Exception: Erreur si email est vide.
-        Exception: Erreur si site_web est vide.
-        Exception: Erreur si description_courte est vide.
-        Exception: Erreur si description_detaillee est vide.
-        Exception: Erreur si image est vide.
-        Exception: Erreur si publics est vide.
-        Exception: Erreur si tourisme_adapte est vide.
-        Exception: Erreur si payant est vide.
-        Exception: Erreur si animaux_acceptes est vide.
-        Exception: Erreur si environnement est vide.
-        Exception: Erreur si equipement est vide.
-        Exception: Erreur si services est vide.
-        Exception: Erreur si periode est vide.
-        Exception: Erreur si activites est vide.
-        Exception: Erreur si ouverture est vide.
-        Exception: Erreur si typologie est vide.
-        Exception: Erreur si bons_plans est vide.
-        Exception: Erreur si dispositions_speciales est vide.
-        Exception: Erreur si service_enfants est vide.
-        Exception: Erreur si service_cyclistes est vide.
-        Exception: Erreur si nouveaute_2020 est vide.
     Returns:
         data_from_apidaeModel: retourne un élément.
     """
@@ -836,51 +803,78 @@ select_apidae_display = """
                         """
 
 select_apidae = """
-                        SELECT *
-                        FROM data_from_apidae
-                        ORDER BY id_data_from_apidae ASC;
-                        """
+                SELECT *
+                FROM data_from_apidae
+                ORDER BY id_data_from_apidae ASC;
+                """
 
 select_apidae_selection_display = """
-                                SELECT selection.description AS selection, data_from_apidae.*, '' as Modifier
-                                FROM selection
-                                RIGHT JOIN data_from_apidae
-                                ON selection.id_selection = data_from_apidae.id_selection
-                                ORDER BY id_data_from_apidae ASC;
+                                    SELECT selection.description AS selection, data_from_apidae.*, '' as Modifier
+                                    FROM selection
+                                    RIGHT JOIN data_from_apidae
+                                    ON selection.id_selection = data_from_apidae.id_selection
+                                    ORDER BY id_data_from_apidae ASC;
                                 """
 
 select_apidae_1_id = """
-                    SELECT *
-                    FROM data_from_apidae
-                    WHERE id_data_from_apidae = %s;
+                    SELECT dfa.id_apidae AS id_apidae, dfa.type_apidae AS type_apidae, dfa.titre AS titre,
+                        array_agg(DISTINCT pa.id_profil) AS profil_c2g, array_agg(DISTINCT ca.id_category) AS sous_type,
+                        dfa.adresse1 AS adresse1, dfa.code_postal AS code_postal, dfa.ville AS ville, 
+                        dfa.longitude AS longitude, dfa.latitude AS latitude, dfa.telephone AS telephone, 
+                        dfa.email AS email, dfa.site_web AS site_web, dfa.description_detaillee AS description_detaillee,
+                        dfa.image AS image, dfa.publics AS publics, dfa.tourisme_adapte AS tourisme_adapte, 
+                        dfa.payant AS payant, dfa.environnement AS environnement, dfa.ouverture AS ouverture
+                    FROM data_from_apidae AS dfa
+                    LEFT JOIN category_apidae AS ca 
+                    ON dfa.id_data_from_apidae = ca.id_data_from_apidae
+                    LEFT JOIN profil_apidae AS pa
+                    ON dfa.id_data_from_apidae = pa.id_data_from_apidae
+                    WHERE dfa.id_data_from_apidae = %s
+                    GROUP BY dfa.id_apidae, dfa.type_apidae, dfa.titre, dfa.adresse1, dfa.code_postal, dfa.ville, 
+                        dfa.longitude, dfa.latitude, dfa.telephone, dfa.email, dfa.site_web, dfa.description_detaillee, 
+                        dfa.image, dfa.publics, dfa.tourisme_adapte, dfa.payant, dfa.environnement, dfa.ouverture
+                    LIMIT 1;
                     """
 
 select_apidae_with_id_apidae_and_selection = """
-                    SELECT id_data_from_apidae
-                    FROM data_from_apidae
-                    WHERE id_apidae = %s and id_selection =%s;
-                    """
+                                            SELECT id_data_from_apidae,
+                                            FROM data_from_apidae
+                                            WHERE id_apidae = %s and id_selection =%s;
+                                            """
 
 select_apidae_with_categorie_list_and_profil_list = """
-                    SELECT DISTINCT(id_apidae)
-                    FROM data_from_apidae as dfa
-                    LEFT JOIN category_data_from_apidae AS rcdfa ON dfa.id_data_from_apidae = rcdfa.id_data_from_apidae
-                    LEFT JOIN profil_data_from_apidae AS rpdfa ON dfa.id_data_from_apidae = rpdfa.id_data_from_apidae
-                    WHERE rpdfa.id_profil IN %s AND rcdfa.id_category IN %s;
-                    """
+                                                    SELECT DISTINCT(dfa.id_apidae) AS id_apidae, 
+                                                        MIN(dfa.id_data_from_apidae) AS id_data_from_apidae
+                                                    FROM data_from_apidae as dfa
+                                                    LEFT JOIN category_apidae AS ca 
+                                                    ON dfa.id_data_from_apidae = ca.id_data_from_apidae
+                                                    LEFT JOIN profil_apidae AS pa
+                                                    ON dfa.id_data_from_apidae = pa.id_data_from_apidae
+                                                    WHERE pa.id_profil IN %s AND ca.id_category IN %s AND (
+                                                        dfa.longitude IS NOT NULL AND dfa.latitude IS NOT NULL)
+                                                    GROUP BY dfa.id_apidae;
+                                                    """
 
 select_apidae_1_id_apidae = """
-                    SELECT *
-                    FROM data_from_apidae
-                    WHERE id_apidae = %s LIMIT 1;
-                    """
-
-
-delete_apidae_selection_id = """
-                                DELETE
-                                FROM data_from_apidae
-                                WHERE id_selection = %s;
-                                """
+                            SELECT dfa.id_apidae AS id_apidae, dfa.type_apidae AS type_apidae, dfa.titre AS titre,
+                                array_agg(DISTINCT pa.id_profil) AS profil_c2g, array_agg(DISTINCT ca.id_category) AS sous_type, 
+                                dfa.adresse1 AS adresse1, dfa.code_postal AS code_postal, dfa.ville AS ville, 
+                                dfa.longitude AS longitude, dfa.latitude AS latitude, dfa.telephone AS telephone, 
+                                dfa.email AS email, dfa.site_web AS site_web, dfa.description_detaillee AS description_detaillee,
+                                dfa.image AS image, dfa.publics AS publics, dfa.tourisme_adapte AS tourisme_adapte, 
+                                dfa.payant AS payant, dfa.environnement AS environnement, dfa.ouverture AS ouverture
+                            FROM data_from_apidae AS dfa
+                            LEFT JOIN category_apidae AS ca 
+                            ON dfa.id_data_from_apidae = ca.id_data_from_apidae
+                            LEFT JOIN profil_apidae AS pa
+                            ON dfa.id_data_from_apidae = pa.id_data_from_apidae
+                            WHERE dfa.id_apidae = %s
+                            GROUP BY dfa.id_apidae, dfa.type_apidae, dfa.titre, dfa.adresse1, dfa.code_postal, 
+                                dfa.ville, dfa.longitude, dfa.latitude, dfa.telephone, dfa.email, dfa.site_web, 
+                                dfa.description_detaillee, dfa.image, dfa.publics, dfa.tourisme_adapte, dfa.payant, 
+                                dfa.environnement, dfa.ouverture
+                            LIMIT 1;
+                            """
 
 delete_apidae_project_id = """
                             DELETE

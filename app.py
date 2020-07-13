@@ -1273,11 +1273,11 @@ def locations():
             # filter all locations by the categories and profiles defined in the req_data
             nb, l = ctg_api.query_database_for_list_of_filtered_locations(
                 tuple(categories), tuple(profiles))
-        elif ('categories' in req_data):
+        elif 'categories' in req_data:
             categories = req_data['categories']
             profiles = []
 
-        elif ('profiles' in req_data):
+        elif 'profiles' in req_data:
             categories = []
             profiles = req_data['profiles']
         else:
@@ -1288,9 +1288,10 @@ def locations():
     dict_for_extract.update({"name": "cool2go"})
     dict_for_extract_1 = {}
     dict_for_extract_1.update({"locations number": nb})
-    dict_for_extract_1.update({"categories": categories})
-    dict_for_extract_1.update({"profiles": profiles})
-
+    dict_for_extract_2 = {}
+    dict_for_extract_2.update({"categories": categories})
+    dict_for_extract_2.update({"profiles": profiles})
+    dict_for_extract.update({"query": dict_for_extract_2})
     dict_for_extract.update({"properties": dict_for_extract_1})
     dict_for_extract.update({"features": l})
     response = app.response_class(

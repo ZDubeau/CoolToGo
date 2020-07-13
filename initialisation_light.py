@@ -17,7 +17,7 @@ Tables_light = (
     Table_relation_category_data_from_apidae.drop_relation_category_apidae,
     Table_relation_profil_data_from_apidae.drop_relation_profil_apidae,
     Table_relation_category_data_from_apidae.relation_category_apidae,
-    Table_relation_profil_data_from_apidae.relation_profil_apidae,
+    Table_relation_profil_data_from_apidae.relation_profil_apidae
 )
 
 if __name__ == "__main__":

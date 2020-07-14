@@ -851,7 +851,7 @@ select_apidae_with_categorie_list_and_profil_list = """
                                                     LEFT JOIN profil_apidae AS pa
                                                     ON dfa.id_data_from_apidae = pa.id_data_from_apidae
                                                     WHERE pa.id_profil IN %s AND ca.id_category IN %s AND (
-                                                        dfa.longitude IS NOT NULL AND dfa.latitude IS NOT NULL)
+                                                        dfa.longitude<>'NaN' AND dfa.latitude<>'NaN')
                                                     GROUP BY dfa.id_apidae;
                                                     """
 

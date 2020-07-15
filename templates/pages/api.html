@@ -5,7 +5,6 @@
 </center>
 <div class="column" style="margin-left: 0 !important;transform: translate(-15px, 0px)">
     <div class="form-row" style="display: inherit;">
-        <!-- <div class="container-fluid" style="transform: translate(-20px, 8px);"> -->
         <div class="row justify-content-md-center">
             <div class="col-md-auto" style="transform: translate(-165px, 20px);">
                 <div class="-md-auto control">
@@ -13,8 +12,6 @@
                         style="color: #01289f;border-color: #01289f;">Categories</button>
                 </div>
             </div>
-            <!-- </div> -->
-            <!-- <div class="row justify-content-md-left"> -->
             <div class="col-md-auto" style="transform: translate(110px, 20px);">
                 <div class="-md-auto control">
                     <button onclick="window.location.href='/api/profiles';" class="btn btn-outline-light"
@@ -24,8 +21,7 @@
         </div>
     </div>
 </div>
-<!-- <div class="row justify-content-md-left"> -->
-<form action="/api/locations" method="post">
+<form action="/api/locations" method="post" enctype="application/json">
     <div class="container">
         <div class="row">
             <div class="column">
@@ -35,8 +31,6 @@
                         <div class="card-header"
                             style="font-size: 17px;font-weight: 600;color: #d0eeed;background-color: #01289fe3;">
                             Catégorie(s)</div>
-                        <!-- <label class="label"
-                                style="padding-top: 15px;font-size: 17px;color: #01289f;">Catégorie(s)</label> -->
                         {% for line in categories  %}
                         <label class="customcheck" style="font-size: 14x;padding-left: 7px;padding-top: 10px;"><input
                                 name="categories-{{line[0]}}" value="{{line[1]}}"
@@ -52,8 +46,6 @@
                         <div class="card-header"
                             style="font-size: 17px;font-weight: 600;color: #d0eeed;background-color: #01289fe3;">
                             Profil(s)</div>
-                        <!-- <label class="label"
-                                style="padding-top: 15px;font-size: 17px;color: #01289f;">Catégorie(s)</label> -->
                         {% for line in profiles  %}
                         <label class="customcheck" style="font-size: 14x;padding-left: 7px;padding-top: 10px;"><input
                                 name="categories-{{line[0]}}" value="{{line[1]}}"

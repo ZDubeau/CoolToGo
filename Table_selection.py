@@ -99,19 +99,19 @@ class Selection():
                 'selection',
                 metadata,
                 autoload=True,
-                autoload_with=self.__connexion.engine()
+                autoload_with=self.__instance
             )
-            with self.__instance.connect():
-                lines = self.__instance.execute(
-                    tInfo_selection.insert(None),
-                    [
-                        {
-                            'id_project': self.__id_project,
-                            'selection': aselection.selection,
-                            'description': aselection.description,
-                        } for aselection in selection
-                    ]
-                )
+
+            lines = self.__instance.execute(
+                tInfo_selection.insert(None),
+                [
+                    {
+                        'id_project': self.__id_project,
+                        'selection': aselection.selection,
+                        'description': aselection.description,
+                    } for aselection in selection
+                ]
+            )
 
             FileLogger.log(
                 logging.DEBUG, f"{lines.rowcount} selection(s) for project_ID: {self.__id_project} inserted!")
@@ -128,31 +128,30 @@ class Selection():
                 'selection',
                 metadata,
                 autoload=True,
-                autoload_with=self.__connexion.engine()
+                autoload_with=self.__instance
             )
 
             dico_selection = {}
-            with self.__instance.connect():
 
-                query = sqlalchemy.select([tInfo_selection]).where(sqlalchemy.and_(
-                    tInfo_selection.c.id_project == self.__id_project,)
-                ).distinct()
+            query = sqlalchemy.select([tInfo_selection]).where(sqlalchemy.and_(
+                tInfo_selection.c.id_project == self.__id_project,)
+            ).distinct()
 
-                result = self.__instance.execute(query)
+            result = self.__instance.execute(query)
 
-                if result.rowcount == 0:
-                    return dico_selection
-                for row in result:
-                    aselection = selectionModel(
-                        row[tInfo_selection.c.id_project],
-                        row[tInfo_selection.c.selection],
-                        row[tInfo_selection.c.description]
-                    )
-                    key = "{0}_#_{1}".format(
-                        aselection.id_project, aselection.selection)
+            if result.rowcount == 0:
+                return dico_selection
+            for row in result:
+                aselection = selectionModel(
+                    row[tInfo_selection.c.id_project],
+                    row[tInfo_selection.c.selection],
+                    row[tInfo_selection.c.description]
+                )
+                key = "{0}_#_{1}".format(
+                    aselection.id_project, aselection.selection)
 
-                    if not key in dico_selection:
-                        dico_selection[key] = aselection
+                if not key in dico_selection:
+                    dico_selection[key] = aselection
 
             return dico_selection
 
@@ -172,29 +171,27 @@ class Selection():
                 'selection',
                 metadata,
                 autoload=True,
-                autoload_with=self.__connexion.engine()
+                autoload_with=self.__instance
             )
 
-            with self.__instance.connect():
-
-                query = tInfo_selection.update(None).where(
-                    sqlalchemy.and_(
-                        tInfo_selection.c.id_project == int(self.__id_project),
-                        tInfo_selection.c.selection == sqlalchemy.bindparam(
-                            'c_selection'),
-                    )
-                ).values(
-                    description=sqlalchemy.bindparam('description'),
+            query = tInfo_selection.update(None).where(
+                sqlalchemy.and_(
+                    tInfo_selection.c.id_project == int(self.__id_project),
+                    tInfo_selection.c.selection == sqlalchemy.bindparam(
+                        'c_selection'),
                 )
+            ).values(
+                description=sqlalchemy.bindparam('description'),
+            )
 
-                lines = self.__instance.execute(query,
-                                                [
-                                                    {
-                                                        'c_selection': str(aselection.selection),
-                                                        'description': aselection.description,
-                                                    } for aselection in selection
-                                                ]
-                                                )
+            lines = self.__instance.execute(query,
+                                            [
+                                                {
+                                                    'c_selection': str(aselection.selection),
+                                                    'description': aselection.description,
+                                                } for aselection in selection
+                                            ]
+                                            )
             FileLogger.log(
                 logging.DEBUG, f"{lines.rowcount} selection(s) for project_ID: {self.__id_project} updated!")
 
@@ -211,21 +208,20 @@ class Selection():
                 'selection',
                 metadata,
                 autoload=True,
-                autoload_with=self.__connexion.engine()
+                autoload_with=self.__instance
             )
 
-            with self.__instance.connect():
-                lines = 0
-                for aselection in selection:
-                    selection = re.split(r'_#_', aselection)[1]
-                    query = tInfo_selection.delete(None).where(
-                        sqlalchemy.and_(
-                            tInfo_selection.c.id_project == self.__id_project,
-                            tInfo_selection.c.selection == selection
-                        )
+            lines = 0
+            for aselection in selection:
+                selection = re.split(r'_#_', aselection)[1]
+                query = tInfo_selection.delete(None).where(
+                    sqlalchemy.and_(
+                        tInfo_selection.c.id_project == self.__id_project,
+                        tInfo_selection.c.selection == selection
                     )
-                    line = self.__instance.execute(query)
-                    lines += int(line.rowcount)
+                )
+                line = self.__instance.execute(query)
+                lines += int(line.rowcount)
             FileLogger.log(
                 logging.DEBUG, f"{lines} selection(s) for project_ID: {self.__id_project} deleted!")
 

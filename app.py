@@ -1,10 +1,8 @@
 """----------------------------
 Creation date : 2020-06-11
-Last update : 2020-07-13
+Last update : 2020-07-16
 ----------------------------"""
 
-
-import Table_ManualEntry as me
 from wtforms.validators import InputRequired, Email, Length, Regexp, AnyOf
 from wtforms import Form, StringField, PasswordField, validators
 from flask_wtf import FlaskForm
@@ -12,6 +10,7 @@ from flask import Flask, render_template, request, redirect, url_for, make_respo
 from flask_restful import Api
 from celery import Celery
 import redis
+import requests
 import socket
 import os
 from IPython.display import HTML
@@ -31,6 +30,7 @@ import Table_selection as slc
 import Table_message as msg
 import Table_freshness as fresh
 import Table_profil as prf
+import Table_ManualEntry as me
 import Table_relation_selection_category as slc_ctg
 import Table_relation_eltref_prf as elt_prf
 import Table_relation_eltref_ctg as elt_ctg
@@ -845,13 +845,14 @@ def get_extract_locations():
         list_feature.append(functions.create_dict_for_lieu_validated(value))
     dict_for_extract = dict()
     dict_for_extract.update({"type": "FeatureCollection"})
-    dict_for_extract.update({"name": "cool2go"})
+    # dict_for_extract.update({"name": "cool2go"})
     # dict_for_extract_2 = {}
     # dict_for_extract_2.update({"name": "urn:ogc:def:crs:OGC:1.3:CRS84"})
     dict_for_extract_1 = {}
     dict_for_extract_1.update({"type": "name"})
     # dict_for_extract_1.update({"properties": dict_for_extract_2})
     # dict_for_extract.update({"crs": dict_for_extract_1})
+    # dict_for_extract.update({"type": "Feature", })
     dict_for_extract.update({"features": list_feature})
     response = app.response_class(
         response=json.dumps(dict_for_extract, indent=3, sort_keys=False),
@@ -1248,7 +1249,7 @@ def profiles():
     return response
 
 
-@app.route('/api/locations', methods=['POST'])
+@app.route('/api/locations', methods=['GET', 'POST'])
 def locations():
     """
     the post request will be sent with a JSON body 
@@ -1284,7 +1285,6 @@ def locations():
             categories = []
             profiles = []
 
-    import requests
     response = requests.post(
         'https://cooltogo-staging.herokuapp.com/api/locations')
     status = response.status_code

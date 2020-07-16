@@ -355,51 +355,50 @@ class Data_from_apidae():
                 'data_from_apidae',
                 metadata,
                 autoload=True,
-                autoload_with=self.__connexion.engine()
+                autoload_with=self.__instance
             )
-            with self.__instance.connect():
-                lines = self.__instance.execute(
-                    tInfo_data_from_apidae.insert(None),
-                    [
-                        {
-                            'id_apidae': adata_from_apidae.id_apidae,  # mandatory
-                            'id_selection': adata_from_apidae.id_selection,  # mandatory
-                            'type_apidae': adata_from_apidae.type_apidae,  # needed
-                            'titre': adata_from_apidae.titre,  # needed
-                            'profil_c2g': adata_from_apidae.profil_c2g,
-                            'sous_type': adata_from_apidae.sous_type,
-                            'adresse1': adata_from_apidae.adresse1,  # needed
-                            'adresse2': adata_from_apidae.adresse2,  # needed
-                            'code_postal': adata_from_apidae.code_postal,  # needed
-                            'ville': adata_from_apidae.ville,  # needed
-                            'altitude': adata_from_apidae.altitude,  # needed
-                            'latitude': adata_from_apidae.latitude,  # needed
-                            'longitude': adata_from_apidae.longitude,  # needed
-                            'telephone': adata_from_apidae.telephone,  # needed
-                            'email': adata_from_apidae.email,  # needed
-                            'site_web': adata_from_apidae.site_web,  # needed
-                            'description_courte': adata_from_apidae.description_courte,
-                            'description_detaillee': adata_from_apidae.description_detaillee,  # needed
-                            'image': adata_from_apidae.image,  # needed
-                            'publics': adata_from_apidae.publics,
-                            'tourisme_adapte': adata_from_apidae.tourisme_adapte,  # needed
-                            'payant': adata_from_apidae.payant,  # needed
-                            'animaux_acceptes': adata_from_apidae.animaux_acceptes,
-                            'environnement': adata_from_apidae.environnement,  # needed
-                            'equipement': adata_from_apidae.equipement,
-                            'services': adata_from_apidae.services,
-                            'periode': adata_from_apidae.periode,
-                            'activites': adata_from_apidae.activites,
-                            'ouverture': adata_from_apidae.ouverture,  # needed
-                            'typologie': adata_from_apidae.typologie,
-                            'bons_plans': adata_from_apidae.bons_plans,
-                            'dispositions_speciales': adata_from_apidae.dispositions_speciales,
-                            'service_enfants': adata_from_apidae.service_enfants,
-                            'service_cyclistes': adata_from_apidae.service_cyclistes,
-                            'nouveaute_2020': adata_from_apidae.nouveaute_2020,
-                        } for adata_from_apidae in data_from_apidae
-                    ]
-                )
+            lines = self.__instance.execute(
+                tInfo_data_from_apidae.insert(None),
+                [
+                    {
+                        'id_apidae': adata_from_apidae.id_apidae,  # mandatory
+                        'id_selection': adata_from_apidae.id_selection,  # mandatory
+                        'type_apidae': adata_from_apidae.type_apidae,  # needed
+                        'titre': adata_from_apidae.titre,  # needed
+                        'profil_c2g': adata_from_apidae.profil_c2g,
+                        'sous_type': adata_from_apidae.sous_type,
+                        'adresse1': adata_from_apidae.adresse1,  # needed
+                        'adresse2': adata_from_apidae.adresse2,  # needed
+                        'code_postal': adata_from_apidae.code_postal,  # needed
+                        'ville': adata_from_apidae.ville,  # needed
+                        'altitude': adata_from_apidae.altitude,  # needed
+                        'latitude': adata_from_apidae.latitude,  # needed
+                        'longitude': adata_from_apidae.longitude,  # needed
+                        'telephone': adata_from_apidae.telephone,  # needed
+                        'email': adata_from_apidae.email,  # needed
+                        'site_web': adata_from_apidae.site_web,  # needed
+                        'description_courte': adata_from_apidae.description_courte,
+                        'description_detaillee': adata_from_apidae.description_detaillee,  # needed
+                        'image': adata_from_apidae.image,  # needed
+                        'publics': adata_from_apidae.publics,
+                        'tourisme_adapte': adata_from_apidae.tourisme_adapte,  # needed
+                        'payant': adata_from_apidae.payant,  # needed
+                        'animaux_acceptes': adata_from_apidae.animaux_acceptes,
+                        'environnement': adata_from_apidae.environnement,  # needed
+                        'equipement': adata_from_apidae.equipement,
+                        'services': adata_from_apidae.services,
+                        'periode': adata_from_apidae.periode,
+                        'activites': adata_from_apidae.activites,
+                        'ouverture': adata_from_apidae.ouverture,  # needed
+                        'typologie': adata_from_apidae.typologie,
+                        'bons_plans': adata_from_apidae.bons_plans,
+                        'dispositions_speciales': adata_from_apidae.dispositions_speciales,
+                        'service_enfants': adata_from_apidae.service_enfants,
+                        'service_cyclistes': adata_from_apidae.service_cyclistes,
+                        'nouveaute_2020': adata_from_apidae.nouveaute_2020,
+                    } for adata_from_apidae in data_from_apidae
+                ]
+            )
             for adata_from_apidae in data_from_apidae:
                 id_data_from_apidae = self.__connexion.Query_SQL_fetchone(select_apidae_with_id_apidae_and_selection, [
                                                                           adata_from_apidae.id_apidae, adata_from_apidae.id_selection])[0]
@@ -424,63 +423,62 @@ class Data_from_apidae():
                 'data_from_apidae',
                 metadata,
                 autoload=True,
-                autoload_with=self.__connexion.engine()
+                autoload_with=self.__instance
             )
 
             dico_data_from_apidae = {}
-            with self.__instance.connect():
 
-                query = sqlalchemy.select([tInfo_data_from_apidae]).where(sqlalchemy.and_(
-                    tInfo_data_from_apidae.c.id_selection == self.__id_selection,)
-                ).distinct()
+            query = sqlalchemy.select([tInfo_data_from_apidae]).where(sqlalchemy.and_(
+                tInfo_data_from_apidae.c.id_selection == self.__id_selection,)
+            ).distinct()
 
-                result = self.__instance.execute(query)
+            result = self.__instance.execute(query)
 
-                if result.rowcount == 0:
-                    return dico_data_from_apidae
-                for row in result:
-                    adata_from_apidae = data_from_apidaeModel(
-                        row[tInfo_data_from_apidae.c.id_apidae],
-                        row[tInfo_data_from_apidae.c.id_selection],
-                        row[tInfo_data_from_apidae.c.type_apidae],
-                        row[tInfo_data_from_apidae.c.titre],
-                        row[tInfo_data_from_apidae.c.profil_c2g],
-                        row[tInfo_data_from_apidae.c.sous_type],
-                        row[tInfo_data_from_apidae.c.adresse1],
-                        row[tInfo_data_from_apidae.c.adresse2],
-                        row[tInfo_data_from_apidae.c.code_postal],
-                        row[tInfo_data_from_apidae.c.ville],
-                        row[tInfo_data_from_apidae.c.altitude],
-                        row[tInfo_data_from_apidae.c.latitude],
-                        row[tInfo_data_from_apidae.c.longitude],
-                        row[tInfo_data_from_apidae.c.telephone],
-                        row[tInfo_data_from_apidae.c.email],
-                        row[tInfo_data_from_apidae.c.site_web],
-                        row[tInfo_data_from_apidae.c.description_courte],
-                        row[tInfo_data_from_apidae.c.description_detaillee],
-                        row[tInfo_data_from_apidae.c.image],
-                        row[tInfo_data_from_apidae.c.publics],
-                        row[tInfo_data_from_apidae.c.tourisme_adapte],
-                        row[tInfo_data_from_apidae.c.payant],
-                        row[tInfo_data_from_apidae.c.animaux_acceptes],
-                        row[tInfo_data_from_apidae.c.environnement],
-                        row[tInfo_data_from_apidae.c.equipement],
-                        row[tInfo_data_from_apidae.c.services],
-                        row[tInfo_data_from_apidae.c.periode],
-                        row[tInfo_data_from_apidae.c.activites],
-                        row[tInfo_data_from_apidae.c.ouverture],
-                        row[tInfo_data_from_apidae.c.typologie],
-                        row[tInfo_data_from_apidae.c.bons_plans],
-                        row[tInfo_data_from_apidae.c.dispositions_speciales],
-                        row[tInfo_data_from_apidae.c.service_enfants],
-                        row[tInfo_data_from_apidae.c.service_cyclistes],
-                        row[tInfo_data_from_apidae.c.nouveaute_2020]
-                    )
-                    key = "{0}_#_{1}".format(
-                        adata_from_apidae.id_apidae, adata_from_apidae.id_selection)
+            if result.rowcount == 0:
+                return dico_data_from_apidae
+            for row in result:
+                adata_from_apidae = data_from_apidaeModel(
+                    row[tInfo_data_from_apidae.c.id_apidae],
+                    row[tInfo_data_from_apidae.c.id_selection],
+                    row[tInfo_data_from_apidae.c.type_apidae],
+                    row[tInfo_data_from_apidae.c.titre],
+                    row[tInfo_data_from_apidae.c.profil_c2g],
+                    row[tInfo_data_from_apidae.c.sous_type],
+                    row[tInfo_data_from_apidae.c.adresse1],
+                    row[tInfo_data_from_apidae.c.adresse2],
+                    row[tInfo_data_from_apidae.c.code_postal],
+                    row[tInfo_data_from_apidae.c.ville],
+                    row[tInfo_data_from_apidae.c.altitude],
+                    row[tInfo_data_from_apidae.c.latitude],
+                    row[tInfo_data_from_apidae.c.longitude],
+                    row[tInfo_data_from_apidae.c.telephone],
+                    row[tInfo_data_from_apidae.c.email],
+                    row[tInfo_data_from_apidae.c.site_web],
+                    row[tInfo_data_from_apidae.c.description_courte],
+                    row[tInfo_data_from_apidae.c.description_detaillee],
+                    row[tInfo_data_from_apidae.c.image],
+                    row[tInfo_data_from_apidae.c.publics],
+                    row[tInfo_data_from_apidae.c.tourisme_adapte],
+                    row[tInfo_data_from_apidae.c.payant],
+                    row[tInfo_data_from_apidae.c.animaux_acceptes],
+                    row[tInfo_data_from_apidae.c.environnement],
+                    row[tInfo_data_from_apidae.c.equipement],
+                    row[tInfo_data_from_apidae.c.services],
+                    row[tInfo_data_from_apidae.c.periode],
+                    row[tInfo_data_from_apidae.c.activites],
+                    row[tInfo_data_from_apidae.c.ouverture],
+                    row[tInfo_data_from_apidae.c.typologie],
+                    row[tInfo_data_from_apidae.c.bons_plans],
+                    row[tInfo_data_from_apidae.c.dispositions_speciales],
+                    row[tInfo_data_from_apidae.c.service_enfants],
+                    row[tInfo_data_from_apidae.c.service_cyclistes],
+                    row[tInfo_data_from_apidae.c.nouveaute_2020]
+                )
+                key = "{0}_#_{1}".format(
+                    adata_from_apidae.id_apidae, adata_from_apidae.id_selection)
 
-                    if not key in dico_data_from_apidae:
-                        dico_data_from_apidae[key] = adata_from_apidae
+                if not key in dico_data_from_apidae:
+                    dico_data_from_apidae[key] = adata_from_apidae
 
             return dico_data_from_apidae
 
@@ -500,96 +498,94 @@ class Data_from_apidae():
                 'data_from_apidae',
                 metadata,
                 autoload=True,
-                autoload_with=self.__connexion.engine()
+                autoload_with=self.__instance
             )
 
-            with self.__instance.connect():
-
-                query = tInfo_data_from_apidae.update(None).where(
-                    sqlalchemy.and_(
-                        tInfo_data_from_apidae.c.id_apidae == sqlalchemy.bindparam(
-                            'c_id_apidae'),
-                        tInfo_data_from_apidae.c.id_selection == int(
-                            self.__id_selection),
-                    )
-                ).values(
-                    type_apidae=sqlalchemy.bindparam('type_apidae'),
-                    titre=sqlalchemy.bindparam('titre'),
-                    profil_c2g=sqlalchemy.bindparam('profil_c2g'),
-                    sous_type=sqlalchemy.bindparam('sous_type'),
-                    adresse1=sqlalchemy.bindparam('adresse1'),
-                    adresse2=sqlalchemy.bindparam('adresse2'),
-                    code_postal=sqlalchemy.bindparam('code_postal'),
-                    ville=sqlalchemy.bindparam('ville'),
-                    altitude=sqlalchemy.bindparam('altitude'),
-                    latitude=sqlalchemy.bindparam('latitude'),
-                    longitude=sqlalchemy.bindparam('longitude'),
-                    telephone=sqlalchemy.bindparam('telephone'),
-                    email=sqlalchemy.bindparam('email'),
-                    site_web=sqlalchemy.bindparam('site_web'),
-                    description_courte=sqlalchemy.bindparam(
-                        'description_courte'),
-                    description_detaillee=sqlalchemy.bindparam(
-                        'description_detaillee'),
-                    image=sqlalchemy.bindparam('image'),
-                    publics=sqlalchemy.bindparam('publics'),
-                    tourisme_adapte=sqlalchemy.bindparam('tourisme_adapte'),
-                    payant=sqlalchemy.bindparam('payant'),
-                    animaux_acceptes=sqlalchemy.bindparam('animaux_acceptes'),
-                    environnement=sqlalchemy.bindparam('environnement'),
-                    equipement=sqlalchemy.bindparam('equipement'),
-                    services=sqlalchemy.bindparam('services'),
-                    activites=sqlalchemy.bindparam('activites'),
-                    ouverture=sqlalchemy.bindparam('ouverture'),
-                    typologie=sqlalchemy.bindparam('typologie'),
-                    bons_plans=sqlalchemy.bindparam('bons_plans'),
-                    dispositions_speciales=sqlalchemy.bindparam(
-                        'dispositions_speciales'),
-                    service_enfants=sqlalchemy.bindparam('service_enfants'),
-                    service_cyclistes=sqlalchemy.bindparam(
-                        'service_cyclistes'),
-                    nouveaute_2020=sqlalchemy.bindparam('nouveaute_2020'),
+            query = tInfo_data_from_apidae.update(None).where(
+                sqlalchemy.and_(
+                    tInfo_data_from_apidae.c.id_apidae == sqlalchemy.bindparam(
+                        'c_id_apidae'),
+                    tInfo_data_from_apidae.c.id_selection == int(
+                        self.__id_selection),
                 )
+            ).values(
+                type_apidae=sqlalchemy.bindparam('type_apidae'),
+                titre=sqlalchemy.bindparam('titre'),
+                profil_c2g=sqlalchemy.bindparam('profil_c2g'),
+                sous_type=sqlalchemy.bindparam('sous_type'),
+                adresse1=sqlalchemy.bindparam('adresse1'),
+                adresse2=sqlalchemy.bindparam('adresse2'),
+                code_postal=sqlalchemy.bindparam('code_postal'),
+                ville=sqlalchemy.bindparam('ville'),
+                altitude=sqlalchemy.bindparam('altitude'),
+                latitude=sqlalchemy.bindparam('latitude'),
+                longitude=sqlalchemy.bindparam('longitude'),
+                telephone=sqlalchemy.bindparam('telephone'),
+                email=sqlalchemy.bindparam('email'),
+                site_web=sqlalchemy.bindparam('site_web'),
+                description_courte=sqlalchemy.bindparam(
+                    'description_courte'),
+                description_detaillee=sqlalchemy.bindparam(
+                    'description_detaillee'),
+                image=sqlalchemy.bindparam('image'),
+                publics=sqlalchemy.bindparam('publics'),
+                tourisme_adapte=sqlalchemy.bindparam('tourisme_adapte'),
+                payant=sqlalchemy.bindparam('payant'),
+                animaux_acceptes=sqlalchemy.bindparam('animaux_acceptes'),
+                environnement=sqlalchemy.bindparam('environnement'),
+                equipement=sqlalchemy.bindparam('equipement'),
+                services=sqlalchemy.bindparam('services'),
+                activites=sqlalchemy.bindparam('activites'),
+                ouverture=sqlalchemy.bindparam('ouverture'),
+                typologie=sqlalchemy.bindparam('typologie'),
+                bons_plans=sqlalchemy.bindparam('bons_plans'),
+                dispositions_speciales=sqlalchemy.bindparam(
+                    'dispositions_speciales'),
+                service_enfants=sqlalchemy.bindparam('service_enfants'),
+                service_cyclistes=sqlalchemy.bindparam(
+                    'service_cyclistes'),
+                nouveaute_2020=sqlalchemy.bindparam('nouveaute_2020'),
+            )
 
-                lines = self.__instance.execute(query,
-                                                [
-                                                    {
-                                                        'c_id_apidae': str(adata_from_apidae.id_apidae),
-                                                        'type_apidae': adata_from_apidae.type_apidae,
-                                                        'titre': adata_from_apidae.titre,
-                                                        'profil_c2g': adata_from_apidae.profil_c2g,
-                                                        'sous_type': adata_from_apidae.sous_type,
-                                                        'adresse1': adata_from_apidae.adresse1,
-                                                        'adresse2': adata_from_apidae.adresse2,
-                                                        'code_postal': adata_from_apidae.code_postal,
-                                                        'ville': adata_from_apidae.ville,
-                                                        'altitude': adata_from_apidae.altitude,
-                                                        'latitude': adata_from_apidae.latitude,
-                                                        'longitude': adata_from_apidae.longitude,
-                                                        'telephone': adata_from_apidae.telephone,
-                                                        'email': adata_from_apidae.email,
-                                                        'site_web': adata_from_apidae.site_web,
-                                                        'description_courte': adata_from_apidae.description_courte,
-                                                        'description_detaillee': adata_from_apidae.description_detaillee,
-                                                        'image': adata_from_apidae.image,
-                                                        'publics': adata_from_apidae.publics,
-                                                        'tourisme_adapte': adata_from_apidae.tourisme_adapte,
-                                                        'payant': adata_from_apidae.payant,
-                                                        'animaux_acceptes': adata_from_apidae.animaux_acceptes,
-                                                        'environnement': adata_from_apidae.environnement,
-                                                        'equipement': adata_from_apidae.equipement,
-                                                        'services': adata_from_apidae.services,
-                                                        'activites': adata_from_apidae.activites,
-                                                        'ouverture': adata_from_apidae.ouverture,
-                                                        'typologie': adata_from_apidae.typologie,
-                                                        'bons_plans': adata_from_apidae.bons_plans,
-                                                        'dispositions_speciales': adata_from_apidae.dispositions_speciales,
-                                                        'service_enfants': adata_from_apidae.service_enfants,
-                                                        'service_cyclistes': adata_from_apidae.service_cyclistes,
-                                                        'nouveaute_2020': adata_from_apidae.nouveaute_2020,
-                                                    } for adata_from_apidae in data_from_apidae
-                                                ]
-                                                )
+            lines = self.__instance.execute(query,
+                                            [
+                                                {
+                                                    'c_id_apidae': str(adata_from_apidae.id_apidae),
+                                                    'type_apidae': adata_from_apidae.type_apidae,
+                                                    'titre': adata_from_apidae.titre,
+                                                    'profil_c2g': adata_from_apidae.profil_c2g,
+                                                    'sous_type': adata_from_apidae.sous_type,
+                                                    'adresse1': adata_from_apidae.adresse1,
+                                                    'adresse2': adata_from_apidae.adresse2,
+                                                    'code_postal': adata_from_apidae.code_postal,
+                                                    'ville': adata_from_apidae.ville,
+                                                    'altitude': adata_from_apidae.altitude,
+                                                    'latitude': adata_from_apidae.latitude,
+                                                    'longitude': adata_from_apidae.longitude,
+                                                    'telephone': adata_from_apidae.telephone,
+                                                    'email': adata_from_apidae.email,
+                                                    'site_web': adata_from_apidae.site_web,
+                                                    'description_courte': adata_from_apidae.description_courte,
+                                                    'description_detaillee': adata_from_apidae.description_detaillee,
+                                                    'image': adata_from_apidae.image,
+                                                    'publics': adata_from_apidae.publics,
+                                                    'tourisme_adapte': adata_from_apidae.tourisme_adapte,
+                                                    'payant': adata_from_apidae.payant,
+                                                    'animaux_acceptes': adata_from_apidae.animaux_acceptes,
+                                                    'environnement': adata_from_apidae.environnement,
+                                                    'equipement': adata_from_apidae.equipement,
+                                                    'services': adata_from_apidae.services,
+                                                    'activites': adata_from_apidae.activites,
+                                                    'ouverture': adata_from_apidae.ouverture,
+                                                    'typologie': adata_from_apidae.typologie,
+                                                    'bons_plans': adata_from_apidae.bons_plans,
+                                                    'dispositions_speciales': adata_from_apidae.dispositions_speciales,
+                                                    'service_enfants': adata_from_apidae.service_enfants,
+                                                    'service_cyclistes': adata_from_apidae.service_cyclistes,
+                                                    'nouveaute_2020': adata_from_apidae.nouveaute_2020,
+                                                } for adata_from_apidae in data_from_apidae
+                                            ]
+                                            )
             for adata_from_apidae in data_from_apidae:
                 id_data_from_apidae = self.__connexion.Query_SQL_fetchone(select_apidae_with_id_apidae_and_selection, [
                                                                           adata_from_apidae.id_apidae, adata_from_apidae.id_selection])[0]
@@ -619,21 +615,20 @@ class Data_from_apidae():
                 'data_from_apidae',
                 metadata,
                 autoload=True,
-                autoload_with=self.__connexion.engine()
+                autoload_with=self.__instance
             )
 
-            with self.__instance.connect():
-                lines = 0
-                for adata_from_apidae in data_from_apidae:
-                    id_apidae = re.split(r'_#_', adata_from_apidae)[0]
-                    query = tInfo_data_from_apidae.delete(None).where(
-                        sqlalchemy.and_(
-                            tInfo_data_from_apidae.c.id_apidae == id_apidae,
-                            tInfo_data_from_apidae.c.id_selection == self.__id_selection
-                        )
+            lines = 0
+            for adata_from_apidae in data_from_apidae:
+                id_apidae = re.split(r'_#_', adata_from_apidae)[0]
+                query = tInfo_data_from_apidae.delete(None).where(
+                    sqlalchemy.and_(
+                        tInfo_data_from_apidae.c.id_apidae == id_apidae,
+                        tInfo_data_from_apidae.c.id_selection == self.__id_selection
                     )
-                    line = self.__instance.execute(query)
-                    lines += int(line.rowcount)
+                )
+                line = self.__instance.execute(query)
+                lines += int(line.rowcount)
             FileLogger.log(
                 logging.DEBUG, f"{lines} data_from_apidae(s) for selection: {self.__id_selection} of project_ID: {self.__project_ID} deleted!")
 
@@ -818,21 +813,23 @@ select_apidae_selection_display = """
 
 select_apidae_1_id = """
                     SELECT dfa.id_apidae AS id_apidae, dfa.type_apidae AS type_apidae, dfa.titre AS titre,
-                        array_agg(DISTINCT pa.id_profil) AS profil_c2g, array_agg(DISTINCT ca.id_category) AS sous_type,
-                        dfa.adresse1 AS adresse1, dfa.code_postal AS code_postal, dfa.ville AS ville, 
-                        dfa.longitude AS longitude, dfa.latitude AS latitude, dfa.telephone AS telephone, 
-                        dfa.email AS email, dfa.site_web AS site_web, dfa.description_detaillee AS description_detaillee,
-                        dfa.image AS image, dfa.publics AS publics, dfa.tourisme_adapte AS tourisme_adapte, 
-                        dfa.payant AS payant, dfa.environnement AS environnement, dfa.ouverture AS ouverture
+                                array_to_json(array_agg(DISTINCT pa.id_profil)) AS profil_c2g, 
+                                array_to_json(array_agg(DISTINCT ca.id_category)) AS sous_type, 
+                                dfa.adresse1 AS adresse1, dfa.code_postal AS code_postal, dfa.ville AS ville, dfa.altitude AS altitude,
+                                dfa.longitude AS longitude, dfa.latitude AS latitude, dfa.telephone AS telephone, 
+                                dfa.email AS email, dfa.site_web AS site_web, dfa.description_detaillee AS description_detaillee,
+                                dfa.image AS image, dfa.publics AS publics, dfa.tourisme_adapte AS tourisme_adapte, 
+                                dfa.payant AS payant, dfa.environnement AS environnement, dfa.ouverture AS ouverture
                     FROM data_from_apidae AS dfa
                     LEFT JOIN category_apidae AS ca 
                     ON dfa.id_data_from_apidae = ca.id_data_from_apidae
                     LEFT JOIN profil_apidae AS pa
                     ON dfa.id_data_from_apidae = pa.id_data_from_apidae
                     WHERE dfa.id_data_from_apidae = %s
-                    GROUP BY dfa.id_apidae, dfa.type_apidae, dfa.titre, dfa.adresse1, dfa.code_postal, dfa.ville, 
-                        dfa.longitude, dfa.latitude, dfa.telephone, dfa.email, dfa.site_web, dfa.description_detaillee, 
-                        dfa.image, dfa.publics, dfa.tourisme_adapte, dfa.payant, dfa.environnement, dfa.ouverture
+                    GROUP BY dfa.id_apidae, dfa.type_apidae, dfa.titre, dfa.adresse1, dfa.code_postal, 
+                                dfa.ville,dfa.altitude, dfa.longitude, dfa.latitude, dfa.telephone, dfa.email, dfa.site_web, 
+                                dfa.description_detaillee, dfa.image, dfa.publics, dfa.tourisme_adapte, dfa.payant, 
+                                dfa.environnement, dfa.ouverture
                     LIMIT 1;
                     """
 
@@ -857,8 +854,9 @@ select_apidae_with_categorie_list_and_profil_list = """
 
 select_apidae_1_id_apidae = """
                             SELECT dfa.id_apidae AS id_apidae, dfa.type_apidae AS type_apidae, dfa.titre AS titre,
-                                array_agg(DISTINCT pa.id_profil) AS profil_c2g, array_agg(DISTINCT ca.id_category) AS sous_type, 
-                                dfa.adresse1 AS adresse1, dfa.code_postal AS code_postal, dfa.ville AS ville, 
+                                array_to_json(array_agg(DISTINCT pa.id_profil)) AS profil_c2g, 
+                                array_to_json(array_agg(DISTINCT ca.id_category)) AS sous_type, 
+                                dfa.adresse1 AS adresse1, dfa.code_postal AS code_postal, dfa.ville AS ville, dfa.altitude AS altitude,
                                 dfa.longitude AS longitude, dfa.latitude AS latitude, dfa.telephone AS telephone, 
                                 dfa.email AS email, dfa.site_web AS site_web, dfa.description_detaillee AS description_detaillee,
                                 dfa.image AS image, dfa.publics AS publics, dfa.tourisme_adapte AS tourisme_adapte, 
@@ -870,7 +868,7 @@ select_apidae_1_id_apidae = """
                             ON dfa.id_data_from_apidae = pa.id_data_from_apidae
                             WHERE dfa.id_apidae = %s
                             GROUP BY dfa.id_apidae, dfa.type_apidae, dfa.titre, dfa.adresse1, dfa.code_postal, 
-                                dfa.ville, dfa.longitude, dfa.latitude, dfa.telephone, dfa.email, dfa.site_web, 
+                                dfa.ville,dfa.altitude, dfa.longitude, dfa.latitude, dfa.telephone, dfa.email, dfa.site_web, 
                                 dfa.description_detaillee, dfa.image, dfa.publics, dfa.tourisme_adapte, dfa.payant, 
                                 dfa.environnement, dfa.ouverture
                             LIMIT 1;

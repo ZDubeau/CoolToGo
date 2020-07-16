@@ -1,6 +1,6 @@
 # FIND COORDINATE FROM ADDRESS & CODE POSTAL
 from geopy.geocoders import Nominatim
-from geopy.exc import GeocoderTimedOut
+from geopy.exc import GeocoderTimedOut, GeocoderUnavailable
 
 import logging
 from LoggerModule.FileLogger import FileLogger as FileLogger
@@ -292,9 +292,9 @@ class transformation():
                 else:
                     FileLogger.log(
                         logging.DEBUG, f"{address_to_geolocalize} not resolved !!!!")
-            except GeocoderTimedOut as e:
+            except (GeocoderTimedOut, GeocoderUnavailable) as e:
                 FileLogger.log(logging.ERROR, "Error: geocode failed on input %s with message %s" %
-                               (address_to_geolocalize, e.message))
+                               (address_to_geolocalize, str(e)))
 
     def __typology(self):
 

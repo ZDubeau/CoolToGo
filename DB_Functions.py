@@ -1,10 +1,7 @@
-""" 
-Projet CoolToGo
-----------------------------
+"""----------------------------
 Creation date  : 2020-03-06
-Last update    : 2020-07-12
-----------------------------
-"""
+Last update    : 2020-07-16
+----------------------------"""
 # _______________________________________________________________________
 
 # postgreSQL module
@@ -245,35 +242,35 @@ def connexion_admin(nom_admin: str, password: str, inscription: bool = False):
 def create_dict_for_lieu_validated(thelist: list):
 
     # id_ = thelist[0]
-    id_apidae = thelist[1]
+    id_apidae = thelist[0]
     # id_selecton = thelist[2]
-    type_apidae = thelist[3]
-    titre = thelist[4]
-    profil_c2g = thelist[5]
-    sous_type = thelist[6]
-    adresse1 = thelist[7]
+    type_apidae = thelist[1]
+    titre = thelist[2]
+    profil_c2g = thelist[3]
+    sous_type = thelist[4]
+    adresse1 = thelist[5]
     # adresse2 = thelist[8]
-    code_postal = thelist[9]
-    ville = thelist[10]
-    altitude = thelist[11]
-    latitude = thelist[12]
-    longitude = thelist[13]
-    telephone = thelist[14]
-    email = thelist[15]
-    site_web = thelist[16]
+    code_postal = thelist[6]
+    ville = thelist[7]
+    altitude = thelist[8]
+    longitude = thelist[9]
+    latitude = thelist[10]
+    telephone = thelist[11]
+    email = thelist[12]
+    site_web = thelist[13]
     # description_courte = thelist[17]
-    description_detaillee = thelist[18]
-    image = thelist[19]
-    publics = thelist[20]
-    tourisme_adapte = thelist[21]
-    payant = thelist[22]
+    description_detaillee = thelist[14]
+    image = thelist[15]
+    publics = thelist[16]
+    tourisme_adapte = thelist[17]
+    payant = thelist[18]
     # animaux_acceptes = thelist[23]
-    environnement = thelist[24]
+    environnement = thelist[19]
     # equipement = thelist[25]
     # services = thelist[26]
     # periode = thelist[27]
     # activites = thelist[28]
-    ouverture = thelist[29]
+    ouverture = thelist[20]
     # typologie = thelist[30]
     # bons_plans = thelist[31]
     # dispositions_speciales = thelist[32]
@@ -330,5 +327,8 @@ def create_dict_for_lieu_validated(thelist: list):
     dict_for_geometry = {}
     dict_for_geometry.update({"type": "Point"})
     dict_for_geometry.update({"Coordinates": [longitude, latitude]})
+    dict_for_apidae = dict()
+    dict_for_apidae.update({"type": "Feature"})
+    dict_for_apidae.update({"properties": dict_for_properties})
 
-    return dict_for_geometry, dict_for_properties
+    return dict_for_apidae, dict_for_geometry

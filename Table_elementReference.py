@@ -83,18 +83,17 @@ class elementReference():
                 'elementreference',
                 metadata,
                 autoload=True,
-                autoload_with=self.__connexion.engine()
+                autoload_with=self.__instance
             )
-            with self.__instance.connect():
-                lines = self.__instance.execute(
-                    tInfo_elementreference.insert(None),
-                    [
-                        {
-                            'id_elref_in_apidae': aelement_reference.id_elref_in_apidae,
-                            'description': aelement_reference.description,
-                        } for aelement_reference in element_reference
-                    ]
-                )
+            lines = self.__instance.execute(
+                tInfo_elementreference.insert(None),
+                [
+                    {
+                        'id_elref_in_apidae': aelement_reference.id_elref_in_apidae,
+                        'description': aelement_reference.description,
+                    } for aelement_reference in element_reference
+                ]
+            )
 
             FileLogger.log(
                 logging.DEBUG, f"{lines.rowcount} elementreference(s) inserted!")
@@ -111,28 +110,27 @@ class elementReference():
                 'elementreference',
                 metadata,
                 autoload=True,
-                autoload_with=self.__connexion.engine()
+                autoload_with=self.__instance
             )
 
             dico_elementreference = {}
-            with self.__instance.connect():
 
-                query = sqlalchemy.select([tInfo_elementreference]).distinct()
+            query = sqlalchemy.select([tInfo_elementreference]).distinct()
 
-                result = self.__instance.execute(query)
+            result = self.__instance.execute(query)
 
-                if result.rowcount == 0:
-                    return dico_elementreference
-                for row in result:
-                    aelement_reference = elementreferenceModel(
-                        row[tInfo_elementreference.c.id_elref_in_apidae],
-                        row[tInfo_elementreference.c.description],
-                    )
-                    key = "{0}".format(
-                        aelement_reference.id_elref_in_apidae)
+            if result.rowcount == 0:
+                return dico_elementreference
+            for row in result:
+                aelement_reference = elementreferenceModel(
+                    row[tInfo_elementreference.c.id_elref_in_apidae],
+                    row[tInfo_elementreference.c.description],
+                )
+                key = "{0}".format(
+                    aelement_reference.id_elref_in_apidae)
 
-                    if not key in dico_elementreference:
-                        dico_elementreference[key] = aelement_reference
+                if not key in dico_elementreference:
+                    dico_elementreference[key] = aelement_reference
 
             return dico_elementreference
 
@@ -152,26 +150,24 @@ class elementReference():
                 'elementreference',
                 metadata,
                 autoload=True,
-                autoload_with=self.__connexion.engine()
+                autoload_with=self.__instance
             )
 
-            with self.__instance.connect():
+            query = tInfo_elementreference.update(None).where(
+                tInfo_elementreference.c.id_elref_in_apidae == sqlalchemy.bindparam(
+                    'c_id_elref_in_apidae'),
+            ).values(
+                description=sqlalchemy.bindparam('description'),
+            )
 
-                query = tInfo_elementreference.update(None).where(
-                    tInfo_elementreference.c.id_elref_in_apidae == sqlalchemy.bindparam(
-                        'c_id_elref_in_apidae'),
-                ).values(
-                    description=sqlalchemy.bindparam('description'),
-                )
-
-                lines = self.__instance.execute(query,
-                                                [
-                                                    {
-                                                        'c_id_elref_in_apidae': aelement_reference.id_elref_in_apidae,
-                                                        'description': aelement_reference.description,
-                                                    } for aelement_reference in element_reference
-                                                ]
-                                                )
+            lines = self.__instance.execute(query,
+                                            [
+                                                {
+                                                    'c_id_elref_in_apidae': aelement_reference.id_elref_in_apidae,
+                                                    'description': aelement_reference.description,
+                                                } for aelement_reference in element_reference
+                                            ]
+                                            )
             FileLogger.log(
                 logging.DEBUG, f"{lines.rowcount} elementreference(s)mù updated!")
 

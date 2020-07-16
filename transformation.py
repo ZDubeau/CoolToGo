@@ -285,7 +285,7 @@ class transformation():
                 address_to_geolocalize += " " + self.__dict_id['ville']
             try:
                 geocode = RateLimiter(
-                    geolocator.geocode, min_delay_seconds=1, max_retries=2, error_wait_seconds=5.0)
+                    geolocator.geocode, min_delay_seconds=2, max_retries=4, error_wait_seconds=10.0)
                 location = geocode(address_to_geolocalize)
                 if location is not None:
                     self.__dict_id['latitude'] = location.latitude

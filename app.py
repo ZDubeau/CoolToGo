@@ -846,12 +846,12 @@ def get_extract_locations():
     dict_for_extract = dict()
     dict_for_extract.update({"type": "FeatureCollection"})
     dict_for_extract.update({"name": "cool2go"})
-    dict_for_extract_2 = {}
-    dict_for_extract_2.update({"name": "urn:ogc:def:crs:OGC:1.3:CRS84"})
+    # dict_for_extract_2 = {}
+    # dict_for_extract_2.update({"name": "urn:ogc:def:crs:OGC:1.3:CRS84"})
     dict_for_extract_1 = {}
     dict_for_extract_1.update({"type": "name"})
-    dict_for_extract_1.update({"properties": dict_for_extract_2})
-    dict_for_extract.update({"crs": dict_for_extract_1})
+    # dict_for_extract_1.update({"properties": dict_for_extract_2})
+    # dict_for_extract.update({"crs": dict_for_extract_1})
     dict_for_extract.update({"features": list_feature})
     response = app.response_class(
         response=json.dumps(dict_for_extract, indent=3, sort_keys=False),

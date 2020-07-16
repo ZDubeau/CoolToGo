@@ -1,6 +1,7 @@
 # FIND COORDINATE FROM ADDRESS & CODE POSTAL
 from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut, GeocoderUnavailable
+from geopy.extra.rate_limiter import RateLimiter
 
 import logging
 from LoggerModule.FileLogger import FileLogger as FileLogger
@@ -271,7 +272,8 @@ class transformation():
                             self.__dict_id['latitude'] = self.__request_json['localisation']['geolocalisation']['geoJson']['coordinates'][1]
 
         if self.__dict_id['longitude'] is None or self.__dict_id['latitude'] is None:
-            geolocator = Nominatim(user_agent="cooltogo_api_backend")
+            geolocator = Nominatim(
+                timeout=10, user_agent="cooltogo_api_backend")
             address_to_geolocalize = ""
             if self.__dict_id['adresse1'] is not None:
                 address_to_geolocalize += " " + self.__dict_id['adresse1']
@@ -282,8 +284,9 @@ class transformation():
             if self.__dict_id['ville'] is not None:
                 address_to_geolocalize += " " + self.__dict_id['ville']
             try:
-                location = geolocator.geocode(
-                    address_to_geolocalize, timeout=10)
+                geocode = RateLimiter(
+                    geolocator.geocode, min_delay_seconds=1, max_retries=2, error_wait_seconds=5.0)
+                location = geocode(address_to_geolocalize)
                 if location is not None:
                     self.__dict_id['latitude'] = location.latitude
                     self.__dict_id['longitude'] = location.longitude

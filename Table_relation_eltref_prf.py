@@ -29,10 +29,10 @@ select_relation_eltref_profil_with_id = """
                                         """
 
 select_relation_eltref_profil_with_profil_element_reference = """
-                                        SELECT id_eltref_prf
-                                        FROM eltref_profil
-                                        WHERE id_profil=%s AND id_eltref=%s; 
-                                        """
+                                                                SELECT id_eltref_prf
+                                                                FROM eltref_profil
+                                                                WHERE id_profil=%s AND id_eltref=%s; 
+                                                                """
 
 delete_relation_eltref_profil = """
                                 DELETE 

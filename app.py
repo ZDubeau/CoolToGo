@@ -40,9 +40,6 @@ from DB_Connexion import DB_connexion
 import urllib.parse
 import api as ctg_api
 
-url = urllib.parse.urlparse(os.environ.get('REDISCLOUD_URL'))
-r = redis.Redis(host=url.hostname, port=url.port, password=url.password)
-# https://devcenter.heroku.com/articles/heroku-redis#using-the-cli :  r = redis.from_url(os.environ.get("REDIS_URL"))
 
 if os.getenv("FLASK_ENV") == "development":
     FileLogger.InitLoggerByFile(
@@ -62,6 +59,10 @@ app.config['RESULT_FOLDER'] = RESULT_FOLDER
 app.config['DOWNLOAD_FOLDER'] = DOWNLOAD_FOLDER
 app.config['CELERY_BROKER_URL'] = os.getenv("CELERY_BROKER_URL")
 app.config['CELERY_RESULT_BACKEND'] = os.getenv("CELERY_RESULT_BACKEND")
+
+POOL = redis.ConnectionPool(host=os.getenv(
+    "REDIS_HOST"), port=os.getenv("REDIS_PORT"), db=0)
+r = redis.StrictRedis(connection_pool=POOL)
 
 #*********************** Register - new version **************************#
 

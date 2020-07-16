@@ -331,9 +331,4 @@ def create_dict_for_lieu_validated(thelist: list):
     dict_for_geometry.update({"type": "Point"})
     dict_for_geometry.update({"Coordinates": [longitude, latitude]})
 
-    dict_for_lieu_validated = {}
-    dict_for_lieu_validated.update({"properties": dict_for_properties})
-    dict_for_lieu_validated.update({"geometry": dict_for_geometry})
-    dict_for_lieu_validated.update({"type": "FeatureCollection"})
-
-    return dict_for_lieu_validated
+    return dict_for_properties, dict_for_geometry

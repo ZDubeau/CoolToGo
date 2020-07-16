@@ -1283,17 +1283,26 @@ def locations():
         else:
             categories = []
             profiles = []
+
+    import requests
+    response = requests.post(
+        'https://cooltogo-staging.herokuapp.com/api/locations')
+    status = response.status_code
+
     dict_for_extract = dict()
-    dict_for_extract.update({"type": "FeatureCollection"})
-    dict_for_extract.update({"name": "cool2go"})
-    dict_for_extract_1 = {}
-    dict_for_extract_1.update({"locations number": nb})
+    dict_for_extract.update({"status": status})
+    dict_for_extract.update({"locations_returned": nb})
     dict_for_extract_2 = {}
     dict_for_extract_2.update({"categories": categories})
     dict_for_extract_2.update({"profiles": profiles})
     dict_for_extract.update({"query": dict_for_extract_2})
-    dict_for_extract.update({"properties": dict_for_extract_1})
-    dict_for_extract.update({"features": l})
+    # dict_for_extract.update({"categories": categories, "profiles": profiles})
+    dict_for_extract_1 = dict()
+    dict_for_extract_1.update({"type": "FeatureCollection"})
+    dict_for_extract_1.update({"name": "cool2go"})
+    dict_for_extract_1.update({"features": l})
+
+    dict_for_extract.update({"data": dict_for_extract_1})
     response = app.response_class(
         response=json.dumps(dict_for_extract, indent=3, sort_keys=False),
         status=200,

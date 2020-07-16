@@ -16,12 +16,12 @@ insert_relation_eltref_category = """
                                     """
 
 select_relation_eltref_category = """
-                                SELECT ec.id_eltref_ctg, ec.id_category, er.id_elref_in_apidae, er.description,'' as Supprimer
-                                FROM eltref_category as ec
-                                LEFT JOIN elementreference as er
-                                ON ec.id_eltref = er.id_eltref
-                                WHERE id_category = %(id_category)s;
-                                """
+                                    SELECT ec.id_eltref_ctg, ec.id_category, er.id_elref_in_apidae, er.description,'' as Supprimer
+                                    FROM eltref_category as ec
+                                    LEFT JOIN elementreference as er
+                                    ON ec.id_eltref = er.id_eltref
+                                    WHERE id_category = %(id_category)s;
+                                    """
 
 select_relation_eltref_category_with_id = """
                                         SELECT *
@@ -30,10 +30,10 @@ select_relation_eltref_category_with_id = """
                                         """
 
 select_relation_eltref_category_with_category_element_reference = """
-                                        SELECT id_eltref_ctg
-                                        FROM eltref_category
-                                        WHERE id_category=%s AND id_eltref=%s;
-                                        """
+                                                                    SELECT id_eltref_ctg
+                                                                    FROM eltref_category
+                                                                    WHERE id_category=%s AND id_eltref=%s;
+                                                                    """
 
 delete_relation_eltref_category = """
                                     DELETE

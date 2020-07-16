@@ -81,7 +81,7 @@ class Selection():
             return
         self.__id_project = id_project
         self.__connexion = DB_connexion()
-        self.__instance = self.__connexion.engine().connect()
+        self.__instance = self.__connexion.instance()
         data = self.__connexion.Query_SQL_fetchone(
             prj.select_project_with_id, [self.__id_project])
         self.__project_ID = data[0]

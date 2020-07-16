@@ -204,12 +204,10 @@ def insert_administrator(username: str, password: str, mail: str = None):
     password_hash = generate_password_hash(password, hash)
 
     if type(id_admin) != type(int()):
-
         dico: dict[str, bool] = {
             'admin_name': username,
             'admin_pwd_hash': password_hash,
-            'admin_email': mail
-        }
+            'admin_email': mail}
         try:
             connexion = DB_connexion()
             id_admin = connexion.Insert_SQL_fetchone(
@@ -246,40 +244,40 @@ def connexion_admin(nom_admin: str, password: str, inscription: bool = False):
 
 def create_dict_for_lieu_validated(thelist: list):
 
-    id_ = thelist[0]
-    id_apidae = thelist[1]
-    id_selecton = thelist[2]
-    type_apidae = thelist[3]
-    titre = thelist[4]
-    profil_c2g = thelist[5]
-    sous_type = thelist[6]
-    adresse1 = thelist[7]
-    adresse2 = thelist[8]
-    code_postal = thelist[9]
-    ville = thelist[10]
-    altitude = thelist[11]
-    latitude = thelist[12]
-    longitude = thelist[13]
-    telephone = thelist[14]
-    email = thelist[15]
-    site_web = thelist[16]
-    description_courte = thelist[17]
-    description_detaillee = thelist[18]
-    image = thelist[19]
-    publics = thelist[20]
-    tourisme_adapte = thelist[21]
-    payant = thelist[22]
-    animaux_acceptes = thelist[23]
-    environnement = thelist[24]
-    equipement = thelist[25]
-    services = thelist[26]
-    periode = thelist[27]
-    activites = thelist[28]
-    ouverture = thelist[29]
-    typologie = thelist[30]
-    bons_plans = thelist[31]
-    dispositions_speciales = thelist[32]
-    service_enfants = thelist[33]
+    # id_ = thelist[0]
+    id_apidae = thelist[0]
+    # id_selecton = thelist[2]
+    type_apidae = thelist[1]
+    titre = thelist[2]
+    profil_c2g = thelist[3]
+    sous_type = thelist[4]
+    adresse1 = thelist[5]
+    # adresse2 = thelist[8]
+    code_postal = thelist[6]
+    ville = thelist[7]
+    # altitude = thelist[11]
+    latitude = thelist[8]
+    longitude = thelist[9]
+    telephone = thelist[10]
+    email = thelist[11]
+    site_web = thelist[12]
+    # description_courte = thelist[17]
+    description_detaillee = thelist[13]
+    image = thelist[14]
+    publics = thelist[15]
+    tourisme_adapte = thelist[16]
+    payant = thelist[17]
+    # animaux_acceptes = thelist[23]
+    environnement = thelist[18]
+    # equipement = thelist[25]
+    # services = thelist[26]
+    # periode = thelist[27]
+    # activites = thelist[28]
+    ouverture = thelist[19]
+    # typologie = thelist[30]
+    # bons_plans = thelist[31]
+    # dispositions_speciales = thelist[32]
+    # service_enfants = thelist[33]
 
     data = None
     # sql_select_niveau_de_fraicheur = "SELECT nf.niveau_de_fraicheur AS fraicheur FROM niveau_de_fraicheur AS nf INNER JOIN lien_niveau_de_fraicheur_cooltogo_validated AS lnfcv ON nf.id=lnfcv.id_niveau_de_fraicheur WHERE id_cooltogo_validated=" + \
@@ -298,11 +296,11 @@ def create_dict_for_lieu_validated(thelist: list):
     dict_for_properties.update({"id_apidae": id_apidae})
     dict_for_properties.update({"Type_Apidae": type_apidae})
     dict_for_properties.update({"Title": titre})
-    dict_for_properties.update({"profil_C2G": profil_c2g})
-    dict_for_properties.update({"category_C2G": sous_type})
+    dict_for_properties.update({"Profil_C2G": profil_c2g})
+    dict_for_properties.update({"Category_C2G": sous_type})
     dict_for_properties.update({"Address": adresse1})
     #dict_for_properties.update({"adresse_2": adresse2})
-    dict_for_properties.update({"codePostal": code_postal})
+    dict_for_properties.update({"CodePostal": code_postal})
     dict_for_properties.update({"City": ville})
     #dict_for_properties.update({"atitude": latitude})
     dict_for_properties.update({"Longitude": longitude})
@@ -322,7 +320,7 @@ def create_dict_for_lieu_validated(thelist: list):
     #dict_for_properties.update({"services": services})
     #dict_for_properties.update({"periode": periode})
     #dict_for_properties.update({"activites": activites})
-    dict_for_properties.update({"ouverture": ouverture})
+    dict_for_properties.update({"Ouverture": ouverture})
     #dict_for_properties.update({"typologie": typologie})
     #dict_for_properties.update({"bons_plans": bons_plans})
     #dict_for_properties.update({"dispositions_speciales": dispositions_speciales})
@@ -333,8 +331,4 @@ def create_dict_for_lieu_validated(thelist: list):
     dict_for_geometry.update({"type": "Point"})
     dict_for_geometry.update({"Coordinates": [longitude, latitude]})
 
-    dict_for_lieu_validated = {}
-    dict_for_lieu_validated.update({"properties": dict_for_properties})
-    dict_for_lieu_validated.update({"geometry": dict_for_geometry})
-    dict_for_lieu_validated.update({"type": "Feature"})
-    return dict_for_lieu_validated
+    return dict_for_properties, dict_for_geometry

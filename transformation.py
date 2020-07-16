@@ -474,5 +474,4 @@ class transformation():
         return self.__list_elements_de_references
 
     def special_elements_descriptions(self):
-
         return self.__special_elements_descriptions

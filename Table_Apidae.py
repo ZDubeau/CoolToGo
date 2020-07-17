@@ -883,7 +883,7 @@ delete_apidae_project_id = """
                                 WHERE id_project=%s);
                             """
 select_apidae_edit = """
-                    SELECT id_apidae, profil_c2g, sous_type
+                    SELECT *
                     FROM data_from_apidae
                     WHERE id_apidae=%s;
                     """

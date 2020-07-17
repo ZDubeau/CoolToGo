@@ -102,8 +102,8 @@ def after_request(response):
 celery = Celery(app.name,
                 broker=app.config['CELERY_BROKER_URL'],
                 backend=app.config['CELERY_RESULT_BACKEND'],
-                redis_max_connections=10,
-                BROKER_TRANSPORT_OPTIONS={'max_connections': 10},
+                redis_max_connections=5,
+                BROKER_TRANSPORT_OPTIONS={'max_connections': 2},
                 broker_pool_limit=None)
 # celery.conf.update(app.config)
 
@@ -734,15 +734,7 @@ def get_launch_extract(id):
 #             publics = None
 #         else:
 #             publics = data[0][16].split(",")
-#         connexion.close()
-#         return render_template('pages/EditLieuValid.html', id_apidae=data[0][1], lieu_event=data[0][2], latitude=data[0][3], longitude=data[0][4], name=data[0][5], niveau_fraicheur=data_niveau_fraicheur, liste_niveau_fraicheur=data_liste_fraicheur, adresse1=data[0][6], adresse2=data[0][7], code_postal=data[0][8], city=data[0][9], telephone=data[0][10], email=data[0][11], ite_web=data[0][12], description_teaser=data[0][13], description=data[0][14], images=data[0][15], publics=publics, styleUrl=data[0][17], styleHash=data[0][18], type=data[0][19], categories=data[0][20], accessibilite=data[0][21], payant=data[0][22], plus_d_infos=data[0][23], date_debut=data[0][24], date_fin=data[0][25])
-
-#------------------ Edit DATA valid -------------------#
-
-
-# @app.route('/edit_data_valid', methods=['GET', 'POST'])
-# def get_edit_data_valid():
-#     id_apidae = request.form["id_apidae"]
+#         connexion.close() redis.exceptions.ConnectionError: max number of clients reached
 #     lieu_event = request.form["lieu_event"]
 #     latitude = request.form["latitude"]
 #     longitude = request.form["longitude"]

@@ -343,36 +343,26 @@ class transformation():
                                     if firstBP:
                                         self.__dict_id['bons_plans'] = libeleFr
                                         firstBP = False
-                                    # else:
-                                    #     dict_id['bons_plans'] += libeleFr
 
                                 elif value['theme']['libelleFr'] == 'Dispositions spéciales COVID 19':
                                     if firstDS:
                                         self.__dict_id['dispositions_speciales'] = libeleFr
                                         firstDS = False
-                                    # else:
-                                    #     dict_id['dispositions_speciales'] += libeleFr
 
                                 elif value['theme']['libelleFr'] == 'Services pour les enfants':
                                     if firstSE:
                                         self.__dict_id['service_enfants'] = libeleFr
                                         firstSE = False
-                                    # else:
-                                    #     dict_id['service_enfants'] += libeleFr
 
                                 elif value['theme']['libelleFr'] == 'Services pour les cyclistes':
                                     if firstSC:
                                         self.__dict_id['service_cyclistes'] = libeleFr
                                         firstSC = False
-                                    # else:
-                                    #     dict_id['service_cyclistes'] += libeleFr
 
                                 elif value['theme']['libelleFr'] == 'Nouveauté 2020':
                                     if firstN2:
                                         self.__dict_id['nouveaute_2020'] = libeleFr
                                         firstN2 = False
-                                    # else:
-                                    #     dict_id['nouveaute_2020'] += libeleFr
 
     def __find_element_reference_in_json(self, jsonfile):
 

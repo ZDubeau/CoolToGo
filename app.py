@@ -302,13 +302,16 @@ def get_edit(id):
         return redirect(url_for("get_homepage"))
     else:
         username = session["username"]
+        if 'id_apidae' in request.args:
+            id = request.args.get('id_apidae')
         connexion = DB_connexion()
-        # connexion.Execute_SQL(apidae.select_apidae_1_id, [id])
-        # data = connexion.Query_SQL_fetchone(ctg.select_category_with_id, [id])
-        # category = data[1]
-        # df = pd.read_sql(ctg.select_category, connexion.engine())
+        data = connexion.Query_SQL_fetchone(
+            apidae.select_apidae_edit, [id])
         connexion.close()
-    return render_template('pages/apidae_edit.html', tables=[df.to_html(classes='table table-bordered table-hover', index=False)], id=id)
+        id_apidae = data[1]
+        profil = data[5]
+        category = data[6]
+    return render_template('pages/apidae_edit.html', id=id, id_apidae=id_apidae, profil=profil, category=category, username=username)
 
 
 @app.route("/edit_save", methods=["POST"])

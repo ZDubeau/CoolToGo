@@ -317,7 +317,7 @@ def create_dict_for_lieu_validated(thelist: list):
     #dict_for_properties.update({"services": services})
     #dict_for_properties.update({"periode": periode})
     #dict_for_properties.update({"activites": activites})
-    dict_for_properties.update({"Ouverture": ouverture})
+    dict_for_properties.update({"Opening": ouverture})
     #dict_for_properties.update({"typologie": typologie})
     #dict_for_properties.update({"bons_plans": bons_plans})
     #dict_for_properties.update({"dispositions_speciales": dispositions_speciales})

@@ -343,6 +343,13 @@ class Data_from_apidae():
         #     if line[2] is not None:
         #         self.__profil_for_selection_list.append(line[0])
 
+    def __del__(self):
+        self.__connexion.close()
+        self.__instance.close()
+        FileLogger.log(
+            logging.DEBUG, "Destruction of data_from_apidae class instance")
+        pass
+
     def __Create(self, data_from_apidae=[]):
         """Insertion des sélections dans la table des data_from_apidaes
         """
@@ -722,10 +729,6 @@ class Data_from_apidae():
 
         except Exception:
             FileLogger.log(logging.ERROR, traceback.print_exc())
-
-    def Close(self):
-        self.__connexion.close()
-        self.__instance.close()
 
 
 drop_apidae = """

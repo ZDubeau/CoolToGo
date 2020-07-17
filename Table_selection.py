@@ -87,6 +87,13 @@ class Selection():
         self.__project_ID = data[0]
         self.__api_KEY = data[1]
 
+    def __del__(self):
+        self.__connexion.close()
+        self.__instance.close()
+        FileLogger.log(
+            logging.DEBUG, "Destruction of Selection class instance")
+        pass
+
     def __Create(self, selection=[]):
         """Insertion des sélections dans la table des selections 
         """
@@ -279,10 +286,6 @@ class Selection():
 
         except Exception:
             FileLogger.log(logging.ERROR, traceback.print_exc())
-
-    def Close(self):
-        self.__connexion.close()
-        self.__instance.close()
 
 
 drop_selection = """

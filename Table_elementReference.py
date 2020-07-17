@@ -71,6 +71,13 @@ class elementReference():
         self.__connexion = DB_connexion()
         self.__instance = self.__connexion.instance()
 
+    def __del__(self):
+        self.__connexion.close()
+        self.__instance.close()
+        FileLogger.log(
+            logging.DEBUG, "Destruction of elementReference class instance")
+        pass
+
     def __Create(self, element_reference=[]):
         """Insertion des sélections dans la table des elementreference
         """
@@ -249,10 +256,6 @@ class elementReference():
 
         except Exception:
             FileLogger.log(logging.ERROR, traceback.print_exc())
-
-    def Close(self):
-        self.__connexion.close()
-        self.__instance.close()
 
     @property
     def df(self):

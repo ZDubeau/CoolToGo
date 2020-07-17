@@ -51,14 +51,10 @@ def retrieve_data_by_id(project_ID, api_KEY, select_id, selectionId, id_selectio
     req = re.json()
 
     transfo = transformation(
-        req, [5154, 6143], categories_list=categories_list, element_reference_by_profil_dict=element_reference_by_profil_dict, element_reference_by_category_dict=element_reference_by_category_dict)
+        req, categories_list=categories_list, element_reference_by_profil_dict=element_reference_by_profil_dict, element_reference_by_category_dict=element_reference_by_category_dict)
     transfo.Execute()
     dict_for_id = transfo.dict_id()
-    # if 596 in transfo.list_elements_de_references():
-    #     print(dict_for_id['id_apidae'], transfo.list_elements_de_references(
-    #     ), "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-    # # print(transfo.special_elements_descriptions())
-    # print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+    del transfo
 
     dict_for_id['id_selection'] = id_selection
     result_df = result_df.append(dict_for_id, ignore_index=True)

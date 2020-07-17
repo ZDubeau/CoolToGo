@@ -23,6 +23,11 @@ class transformation():
         self.__element_reference_by_category_dict = element_reference_by_category_dict
         self.__dict_id['sous_type'] = categories_list
 
+    def __del__(self):
+        # FileLogger.log(
+        #     logging.DEBUG, "Destruction of transformation class instance")
+        pass
+
     def __general_information(self):
 
         self.__dict_id['id_apidae'] = None

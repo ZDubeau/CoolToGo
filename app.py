@@ -121,14 +121,14 @@ def allowed_file(filename):
 def asynchronous_extract_for_selection(id):
     data_from_apidae = apidae.Data_from_apidae(id)
     data_from_apidae.Execute()
-    data_from_apidae.Close()
+    del data_from_apidae
 
 
 @celery.task
 def asynchronous_selection_extract(id):
     selection = slc.Selection(id)
     selection.Execute()
-    selection.Close()
+    del selection
     connexion = DB_connexion()
     data = connexion.Query_SQL_fetchall(
         slc.select_selection_with_id_project, [id])
@@ -144,7 +144,7 @@ def file_elementReference_treatment(dfjson):
                       convert_dates=False, convert_axes=False)
     elt_Ref = eltRef.elementReference(dataframe=df)
     elt_Ref.Execute()
-    elt_Ref.Close()
+    del elt_Ref
 
 
 # @app.route('/cooltogo.ico')

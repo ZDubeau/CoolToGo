@@ -1,5 +1,5 @@
 # FIND COORDINATE FROM ADDRESS & CODE POSTAL
-from geopy.geocoders import Nominatim
+from geopy.geocoders import Nominatim, BANFrance
 from geopy.exc import GeocoderTimedOut, GeocoderUnavailable, GeocoderQuotaExceeded
 from geopy.extra.rate_limiter import RateLimiter
 
@@ -272,8 +272,10 @@ class transformation():
                             self.__dict_id['latitude'] = self.__request_json['localisation']['geolocalisation']['geoJson']['coordinates'][1]
 
         if self.__dict_id['longitude'] is None or self.__dict_id['latitude'] is None:
-            geolocator = Nominatim(
-                timeout=10, user_agent="cooltogo_api_backend")
+            # geolocator = Nominatim(
+            #     timeout=10, user_agent="cooltogo_api_backend")
+            geolocator = BANFrance(
+                domain='api-adresse.data.gouv.fr', timeout=10)
             address_to_geolocalize = ""
             if self.__dict_id['adresse1'] is not None:
                 address_to_geolocalize += " " + self.__dict_id['adresse1']

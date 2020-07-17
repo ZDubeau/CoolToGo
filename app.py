@@ -102,7 +102,7 @@ def after_request(response):
 celery = Celery(app.name,
                 broker=app.config['CELERY_BROKER_URL'],
                 backend=app.config['CELERY_RESULT_BACKEND'],
-                redis_max_connections=5,
+                redis_max_connections=1,
                 BROKER_TRANSPORT_OPTIONS={'max_connections': 2},
                 broker_pool_limit=None)
 # celery.conf.update(app.config)

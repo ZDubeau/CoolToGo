@@ -98,8 +98,14 @@ def after_request(response):
     return response
 
 
-celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
-celery.conf.update(app.config)
+#celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+celery = Celery(app.name,
+                broker=app.config['CELERY_BROKER_URL'],
+                backend=app.config['CELERY_RESULT_BACKEND'],
+                redis_max_connections=10,
+                BROKER_TRANSPORT_OPTIONS={'max_connections': 10},
+                broker_pool_limit=None)
+# celery.conf.update(app.config)
 
 
 def allowed_file(filename):

@@ -81,15 +81,14 @@ class Selection():
             return
         self.__id_project = id_project
         self.__connexion = DB_connexion()
-        self.__instance = self.__connexion.instance()
         data = self.__connexion.Query_SQL_fetchone(
             prj.select_project_with_id, [self.__id_project])
         self.__project_ID = data[0]
         self.__api_KEY = data[1]
 
     def __del__(self):
-        self.__connexion.close()
-        self.__instance.close()
+        del self.__connexion
+
         FileLogger.log(
             logging.DEBUG, "Destruction of Selection class instance")
         pass
@@ -106,10 +105,10 @@ class Selection():
                 'selection',
                 metadata,
                 autoload=True,
-                autoload_with=self.__instance
+                autoload_with=self.__connexion.engine()
             )
 
-            lines = self.__instance.execute(
+            lines = self.__connexion.engine().connect().execute(
                 tInfo_selection.insert(None),
                 [
                     {
@@ -119,7 +118,9 @@ class Selection():
                     } for aselection in selection
                 ]
             )
-
+            nb_connexion = self.__connexion.number_connections()
+            FileLogger.log(
+                logging.DEBUG, f"New instance created, number of connexion : {nb_connexion}")
             FileLogger.log(
                 logging.DEBUG, f"{lines.rowcount} selection(s) for project_ID: {self.__id_project} inserted!")
         except Exception:
@@ -135,7 +136,7 @@ class Selection():
                 'selection',
                 metadata,
                 autoload=True,
-                autoload_with=self.__instance
+                autoload_with=self.__connexion.engine()
             )
 
             dico_selection = {}
@@ -144,8 +145,10 @@ class Selection():
                 tInfo_selection.c.id_project == self.__id_project,)
             ).distinct()
 
-            result = self.__instance.execute(query)
-
+            result = self.__connexion.engine().connect().execute(query)
+            nb_connexion = self.__connexion.number_connections()
+            FileLogger.log(
+                logging.DEBUG, f"New instance created, number of connexion : {nb_connexion}")
             if result.rowcount == 0:
                 return dico_selection
             for row in result:
@@ -178,7 +181,7 @@ class Selection():
                 'selection',
                 metadata,
                 autoload=True,
-                autoload_with=self.__instance
+                autoload_with=self.__connexion.engine()
             )
 
             query = tInfo_selection.update(None).where(
@@ -191,14 +194,17 @@ class Selection():
                 description=sqlalchemy.bindparam('description'),
             )
 
-            lines = self.__instance.execute(query,
-                                            [
-                                                {
-                                                    'c_selection': str(aselection.selection),
-                                                    'description': aselection.description,
-                                                } for aselection in selection
-                                            ]
-                                            )
+            lines = self.__connexion.engine().connect().execute(query,
+                                                                [
+                                                                    {
+                                                                        'c_selection': str(aselection.selection),
+                                                                        'description': aselection.description,
+                                                                    } for aselection in selection
+                                                                ]
+                                                                )
+            nb_connexion = self.__connexion.number_connections()
+            FileLogger.log(
+                logging.DEBUG, f"New instance created, number of connexion : {nb_connexion}")
             FileLogger.log(
                 logging.DEBUG, f"{lines.rowcount} selection(s) for project_ID: {self.__id_project} updated!")
 
@@ -215,7 +221,7 @@ class Selection():
                 'selection',
                 metadata,
                 autoload=True,
-                autoload_with=self.__instance
+                autoload_with=self.__connexion.engine()
             )
 
             lines = 0
@@ -227,7 +233,10 @@ class Selection():
                         tInfo_selection.c.selection == selection
                     )
                 )
-                line = self.__instance.execute(query)
+                line = self.__connexion.engine().connect().execute(query)
+                nb_connexion = self.__connexion.number_connections()
+                FileLogger.log(
+                    logging.DEBUG, f"New instance created, number of connexion : {nb_connexion}")
                 lines += int(line.rowcount)
             FileLogger.log(
                 logging.DEBUG, f"{lines} selection(s) for project_ID: {self.__id_project} deleted!")

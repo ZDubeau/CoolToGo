@@ -98,7 +98,7 @@ def after_request(response):
     return response
 
 
-#celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+# celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
 celery = Celery(app.name,
                 broker=app.config['CELERY_BROKER_URL'],
                 backend=app.config['CELERY_RESULT_BACKEND'],
@@ -132,7 +132,7 @@ def asynchronous_selection_extract(id):
     connexion = DB_connexion()
     data = connexion.Query_SQL_fetchall(
         slc.select_selection_with_id_project, [id])
-    connexion.close()
+    del connexion
     for line in data:
         asynchronous_extract_for_selection.apply_async(
             args=[line[0]], countdown=2)
@@ -162,7 +162,7 @@ def get_homepage():
     modal_login = False
     connexion = DB_connexion()
     nb_admin = connexion.Query_SQL_fetchone(admin.nombre_admin)[0]
-    connexion.close()
+    del connexion
     inscription = False
     if nb_admin == 0:
         inscription = True
@@ -188,7 +188,7 @@ def register():
     modal_inscription = False
     connexion = DB_connexion()
     nb_admin = connexion.Query_SQL_fetchone(admin.nombre_admin)[0]
-    connexion.close()
+    del connexion
     inscription = False
     if nb_admin == 0:
         inscription = True
@@ -247,8 +247,8 @@ def get_elementReference():
         username = session["username"]
         connexion = DB_connexion()
         df = pd.read_sql(
-            eltRef.select_elementRef, connexion.engine())
-        connexion.close()
+            eltRef.select_elementRef, connexion.connexion())
+        del connexion
         return render_template('pages/elementRef.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataelementreference', index=False)], username=username)
 
 
@@ -266,7 +266,7 @@ def get_add_eltRef():
         df = elt_Ref.df
         file_elementReference_treatment.apply_async(
             args=[df.to_json(orient='table')], countdown=2)
-        elt_Ref.Close()
+        del elt_Ref
         errorMessage = "Fichier ajouté au projet"
     else:
         errorMessage = "Fichier non valide"
@@ -282,7 +282,7 @@ def get_delete_elt_ref_not_used():
         username = session["username"]
         connexion = DB_connexion()
         connexion.Delete_SQL(eltRef.delete_elementRef_not_used)
-        connexion.close()
+        del connexion
         errorMessage = "Ménage effectué!"
         return redirect(url_for("get_elementReference", errorMessage=errorMessage))
 
@@ -297,8 +297,8 @@ def get_tableApidae():
         username = session["username"]
         connexion = DB_connexion()
         df = pd.read_sql(
-            apidae.select_apidae_display, connexion.engine())
-        connexion.close()
+            apidae.select_apidae_display, connexion.connexion())
+        del connexion
         return render_template('pages/tableApidae.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableApidae', index=False)], username=username)
 
 
@@ -308,12 +308,12 @@ def get_edit(id):
         return redirect(url_for("get_homepage"))
     else:
         username = session["username"]
-        if 'id_apidae' in request.args:
-            id = request.args.get('id_apidae')
+        if 'id_data_from_apidae' in request.args:
+            id = request.args.get('id_data_from_apidae')
         connexion = DB_connexion()
         data = connexion.Query_SQL_fetchone(
             apidae.select_apidae_edit, [id])
-        connexion.close()
+        del connexion
         id_apidae = data[1]
         profil = data[5]
         category = data[6]
@@ -328,7 +328,7 @@ def post_edit():
     connexion = DB_connexion()
     connexion.Update_SQL(ctg.update_elem, [
         ctg, id])
-    connexion.close()
+    del connexion
     return redirect(url_for("get_tableApidae"))
 
 #------------------ Valid tables interface --------------------#
@@ -346,8 +346,8 @@ def get_tableValide():
             ErrorMessage = ""
         connexion = DB_connexion()
         df = pd.read_sql(
-            DB_Table_Definitions.select_cooltogo_validated_for_display, connexion.engine())
-        connexion.close()
+            DB_Table_Definitions.select_cooltogo_validated_for_display, connexion.connexion())
+        del connexion
         return render_template('pages/tableValide.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableValid', index=False)], username=username, ErrorMessage=ErrorMessage)
 
 #---------------------- New data valid ------------------------#
@@ -466,7 +466,7 @@ def post_manualEntry():
                                                      description,
                                                      environment
                                                      ])
-        connexion.close()
+        del connexion
         return redirect(url_for("get_manualEntry", ErrorMessage="Nouvelle entrée a été ajouté dans la table manualEntry !"))
 
 #-------------------- Validated lieu ------------------------#
@@ -501,7 +501,7 @@ def post_manualEntry():
 #                                         data[21],
 #                                         data[22],
 #                                         data[23])
-#     connexion.close()
+#     del connexion
 #     return redirect(url_for("get_tableApidae"))
 
 #________________________Add new administator interface_______________________#
@@ -519,8 +519,8 @@ def get_add_admin():
             ErrorMessage = ""
         connexion = DB_connexion()
         df = pd.read_sql(
-            admin.select_admin_for_display, connexion.engine())
-        connexion.close()
+            admin.select_admin_for_display, connexion.connexion())
+        del connexion
         return render_template('pages/Administators.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableAdmin', index=False)], username=username, ErrorMessage=ErrorMessage)
 
 # Add admin interface after adding
@@ -549,7 +549,7 @@ def post_Administator():
 def get_delete_admin(id):
     connexion = DB_connexion()
     connexion.Delete_SQL(admin.delete_admin, [id])
-    connexion.close()
+    del connexion
     ErrorMessage = "Admin deleted successfully !"
     return redirect(url_for("get_add_admin", ErrorMessage=ErrorMessage))
 # ________________________________________________________________________
@@ -561,7 +561,7 @@ def get_delete_admin(id):
 #     DB_Protocole.cur.execute(
 #         DB_Table_Definitions.delete_lien_niveau_de_fraicheur_cooltogo_validated, [id])
 #     DB_Protocole.conn.commit()
-#     connexion.close()
+#     del connexion
 #     return redirect(url_for("get_tableValide"))
 
 #----------------- Project Informations --------------------#
@@ -579,8 +579,8 @@ def get_projectInformation():
             ErrorMessage = ""
         connexion = DB_connexion()
         df = pd.read_sql(
-            prj.select_project_information, connexion.engine())
-        connexion.close()
+            prj.select_project_information, connexion.connexion())
+        del connexion
         return render_template('pages/projectInformation.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableProjet', index=False)], username=username, ErrorMessage=ErrorMessage)
 
 #------------------- New Project --------------------#
@@ -593,7 +593,7 @@ def get_new_project_info():
     connexion = DB_connexion()
     nb_project = connexion.Query_SQL_rowcount(
         prj.select_project_with_project_ID, [project_ID])
-    connexion.close()
+    del connexion
     errormessage = 'Projet déjà dans la base de donnée !!!'
     if nb_project == 0:
         id_project = functions.insert_project(project_ID, api_key)
@@ -620,7 +620,7 @@ def get_delete_projet(id):
     connexion.Delete_SQL(apidae.delete_apidae_project_id, [id])
     connexion.Delete_SQL(slc.delete_selection_with_project_id, [id])
     connexion.Delete_SQL(prj.delete_project_with_id, [id])
-    connexion.close()
+    del connexion
     return redirect(url_for("get_projectInformation"))
 
 #----------------- Apidae Selection --------------------#
@@ -634,8 +634,8 @@ def get_apidaeSelection():
         username = session["username"]
         connexion = DB_connexion()
         df = pd.read_sql(
-            slc.select_selection_information, connexion.engine())
-        connexion.close()
+            slc.select_selection_information, connexion.connexion())
+        del connexion
         return render_template('pages/apidaeSelection.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableSelection', index=False)], username=username)
 
 #------------------- Edit Selection --------------------#
@@ -653,7 +653,7 @@ def get_edit_selection(id):
             ctg.select_category_for_selection_id, [id])
         # data_prf = connexion.Query_SQL_fetchall(
         #     prf.select_profil_for_selection_id, [id])
-        connexion.close()
+        del connexion
         return render_template('pages/editSelection.html', id_selection=id, selection=data[0], description=data[1], categories=data_ctg, username=username)
 
 #------------------- New category _ Selection --------------------#
@@ -687,7 +687,7 @@ def get_edit_selection_post():
     #         if line[2] is not None:
     #             connexion.Delete_SQL(slc_prf.delete_relation_selection_profil, [
     #                                  selection, line[0]])
-    connexion.close()
+    del connexion
     return redirect(url_for("get_apidaeSelection"))
 
 #--------------- Lancement(launch) d'extraction --------------#
@@ -707,7 +707,7 @@ def get_launch_extract(id):
 
 #     DB_Protocole.cur.execute(slc.delete_selection, [id])
 #     DB_Protocole.conn.commit()
-#     connexion.close()
+#     del connexion
 #     return redirect(url_for("get_apidaeSelection"))
 
 
@@ -734,7 +734,7 @@ def get_launch_extract(id):
 #             publics = None
 #         else:
 #             publics = data[0][16].split(",")
-#         connexion.close() redis.exceptions.ConnectionError: max number of clients reached
+#         del connexion redis.exceptions.ConnectionError: max number of clients reached
 #     lieu_event = request.form["lieu_event"]
 #     latitude = request.form["latitude"]
 #     longitude = request.form["longitude"]
@@ -832,7 +832,7 @@ def get_launch_extract(id):
 #         Date_debut,
 #         Date_fin)
 
-#     connexion.close()
+#     del connexion
 #     return redirect(url_for("get_tableValide", ErrorMessage=ErrorMessage))
 
 #_________________________extract locations__________________________#
@@ -841,10 +841,14 @@ def get_launch_extract(id):
 def get_extract_locations():
     connexion = DB_connexion()
     data = connexion.Query_SQL_fetchall(apidae.select_apidae)
-    connexion.close()
     list_feature = []
     for value in data:
-        list_feature.append(functions.create_dict_for_lieu_validated(value))
+        data_one_id = connexion.Query_SQL_fetchone(
+            apidae.select_apidae_1_id, [value[0]])
+        dict_for_apidae, dict_for_geometry = functions.create_dict_for_lieu_validated(
+            data_one_id)
+        list_feature.append(dict_for_apidae)
+    del connexion
     dict_for_extract = dict()
     dict_for_extract.update({"type": "FeatureCollection"})
     # dict_for_extract.update({"name": "cool2go"})
@@ -874,8 +878,8 @@ def get_coolness_values():
         username = session["username"]
         connexion = DB_connexion()
         df = pd.read_sql(
-            fresh.select_freshness_level_for_diplay, connexion.engine())
-        connexion.close()
+            fresh.select_freshness_level_for_diplay, connexion.connexion())
+        del connexion
         return render_template('pages/coolness_values.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableCoolnessValues', index=False)], username=username)
 
 
@@ -886,7 +890,7 @@ def post_new_coolness_value():
     score_freshness = request.form['score_freshness']
     connexion.Insert_SQL(fresh.insert_freshness_level, [
                          coolness_value, score_freshness])
-    connexion.close()
+    del connexion
     return redirect(url_for("get_coolness_values"))
 
 
@@ -894,7 +898,7 @@ def post_new_coolness_value():
 def post_change_coolness_status(id):
     connexion = DB_connexion()
     connexion.Update_SQL(fresh.change_freshness_level_status, [id])
-    connexion.close()
+    del connexion
     return redirect(url_for("get_coolness_values"))
 
 #_______________________Message button_________________________#
@@ -911,8 +915,8 @@ def get_message():
         else:
             ErrorMessage = ""
         connexion = DB_connexion()
-        df = pd.read_sql(msg.select_message_list, connexion.engine())
-        connexion.close()
+        df = pd.read_sql(msg.select_message_list, connexion.connexion())
+        del connexion
         return render_template('pages/message.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableMessage', index=False)], ErrorMessage=ErrorMessage, susername=username)
 
 
@@ -930,7 +934,7 @@ def post_new_message():
     connexion = DB_connexion()
     connexion.Insert_SQL(msg.insert_message, [
         message, start_date, end_date])
-    connexion.close()
+    del connexion
     return redirect(url_for("get_message", ErrorMessage="Nouveau message créé !!"))
 
 
@@ -943,7 +947,7 @@ def get_edit_message(id):
         connexion = DB_connexion()
         data = connexion.Query_SQL_fetchone(
             DB_Table_Definitions.select_message, [id])
-        connexion.close()
+        del connexion
         message = data[1]
         start_date = data[2]
         end_date = data[3]
@@ -965,7 +969,7 @@ def post_edit_message_save():
     connexion = DB_connexion()
     connexion.Update_SQL(msg.update_message, [
                          message, start_date, end_date, id])
-    connexion.close()
+    del connexion
     return redirect(url_for("get_message"))
 
 
@@ -973,7 +977,7 @@ def post_edit_message_save():
 def get_publish_message(id):
     connexion = DB_connexion()
     data = connexion.Query_SQL_fetchone(msg.select_message, [id])
-    connexion.close()
+    del connexion
     message = data[1]
     start_date = data[2]
     end_date = data[3]
@@ -997,7 +1001,7 @@ def get_publish_message(id):
 def get_delete_message(id):
     connexion = DB_connexion()
     connexion.Delete_SQL(msg.delete_message, [id])
-    connexion.close()
+    del connexion
     ErrorMessage = "Message deleted successfully !"
 
     return redirect(url_for("get_message", ErrorMessage=ErrorMessage))
@@ -1016,8 +1020,8 @@ def get_category():
         else:
             ErrorMessage = ""
         connexion = DB_connexion()
-        df = pd.read_sql(ctg.select_category, connexion.engine())
-        connexion.close()
+        df = pd.read_sql(ctg.select_category, connexion.connexion())
+        del connexion
         return render_template('pages/category.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableCategory', index=False)], ErrorMessage=ErrorMessage, username=username)
 
 
@@ -1032,7 +1036,7 @@ def post_category():
     else:
         connexion.Insert_SQL(ctg.insert_category, {"category_name": category})
         ErrorMessage = ""
-    connexion.close()
+    del connexion
     return redirect(url_for("get_category", ErrorMessage=ErrorMessage))
 
 
@@ -1045,10 +1049,10 @@ def get_edit_category(id):
         connexion = DB_connexion()
         data = connexion.Query_SQL_fetchone(ctg.select_category_with_id, [id])
         category = data[1]
-        df = pd.read_sql(ctg.select_category, connexion.engine())
+        df = pd.read_sql(ctg.select_category, connexion.connexion())
         df_eltref_ctg = pd.read_sql(
-            elt_ctg.select_relation_eltref_category, connexion.engine(), params={"id_category": id})
-        connexion.close()
+            elt_ctg.select_relation_eltref_category, connexion.connexion(), params={"id_category": id})
+        del connexion
     return render_template('pages/category_edit.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableCategory', index=False)], tables_elt_ctg=[df_eltref_ctg.to_html(classes='table table-bordered table-hover', table_id='dataEltCtg', index=False)], id=id, category=category)
 
 
@@ -1059,7 +1063,7 @@ def post_edit_category():
     connexion = DB_connexion()
     connexion.Update_SQL(ctg.update_category, [
         category, id])
-    connexion.close()
+    del connexion
     return redirect(url_for("get_category"))
 
 
@@ -1077,7 +1081,7 @@ def post_element_for_category():
         if data2 is None:
             connexion.Insert_SQL(elt_ctg.insert_relation_eltref_category, [
                 id, id_element_de_reference])
-    connexion.close()
+    del connexion
     return redirect(url_for("get_edit_category", id=id))
 
 
@@ -1086,7 +1090,7 @@ def get_delete_eltref_for_category(id, id_category):
     try:
         connexion = DB_connexion()
         connexion.Delete_SQL(elt_ctg.delete_relation_eltref_category, [id])
-        connexion.close()
+        del connexion
         ErrorMessage = ""
     except Exception as e:
         ErrorMessage = e
@@ -1098,7 +1102,7 @@ def get_delete_category(id):
     try:
         connexion = DB_connexion()
         connexion.Delete_SQL(ctg.delete_category, [id])
-        connexion.close()
+        del connexion
         ErrorMessage = ""
     except Exception as e:
         ErrorMessage = e
@@ -1118,8 +1122,8 @@ def get_profil():
         else:
             ErrorMessage = ""
         connexion = DB_connexion()
-        df = pd.read_sql(prf.select_user_profil, connexion.engine())
-        connexion.close()
+        df = pd.read_sql(prf.select_user_profil, connexion.connexion())
+        del connexion
         return render_template('pages/profil.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableProfil', index=False)], ErrorMessage=ErrorMessage, username=username)
 
 
@@ -1134,7 +1138,7 @@ def post_profil():
     else:
         connexion.Insert_SQL(prf.insert_user_profil, {"profil": profil})
         ErrorMessage = ""
-    connexion.close()
+    del connexion
     return redirect(url_for("get_profil", ErrorMessage=ErrorMessage))
 
 
@@ -1149,10 +1153,10 @@ def get_edit_profil(id):
         connexion = DB_connexion()
         data = connexion.Query_SQL_fetchone(
             prf.select_user_profil_with_id, [id])
-        df = pd.read_sql(prf.select_user_profil, connexion.engine())
+        df = pd.read_sql(prf.select_user_profil, connexion.connexion())
         df_eltref_prf = pd.read_sql(
-            elt_prf.select_relation_eltref_profil, connexion.engine(), params={"id_profil": id})
-        connexion.close()
+            elt_prf.select_relation_eltref_profil, connexion.connexion(), params={"id_profil": id})
+        del connexion
         profil = data[1]
     return render_template('pages/profil_edit.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableProfil', index=False)], tables_elt_prf=[df_eltref_prf.to_html(classes='table table-bordered table-hover', table_id='dataEltPrf', index=False)], id=id, profil=profil)
 
@@ -1164,7 +1168,7 @@ def post_edit_profil():
     connexion = DB_connexion()
     connexion.Insert_SQL(prf.update_user_profil, [
         profil, id])
-    connexion.close()
+    del connexion
     return redirect(url_for("get_edit_profil"))
 
 
@@ -1182,7 +1186,7 @@ def post_element_for_profil():
         if data2 is None:
             connexion.Insert_SQL(elt_prf.insert_relation_eltref_profil, [
                 id, id_element_de_reference])
-    connexion.close()
+    del connexion
     return redirect(url_for("get_edit_profil", id=id))
 
 
@@ -1191,7 +1195,7 @@ def get_delete_eltref_for_profil(id, id_profil):
     try:
         connexion = DB_connexion()
         connexion.Delete_SQL(elt_prf.delete_relation_eltref_profil, [id])
-        connexion.close()
+        del connexion
         ErrorMessage = ""
     except Exception as e:
         ErrorMessage = e
@@ -1203,7 +1207,7 @@ def get_delete_profil(id):
     try:
         connexion = DB_connexion()
         connexion.Delete_SQL(prf.delete_user_profil, [id])
-        connexion.close()
+        del connexion
         ErrorMessage = ""
     except Exception as e:
         ErrorMessage = e
@@ -1225,7 +1229,7 @@ def get_api():
             ctg.select_category)
         data_prf = connexion.Query_SQL_fetchall(
             prf.select_user_profil)
-        connexion.close()
+        del connexion
         return render_template('pages/api.html', username=username, categories=data_ctg, profiles=data_prf)
 
 
@@ -1254,8 +1258,8 @@ def profiles():
 @app.route('/api/locations', methods=['GET', 'POST'])
 def locations():
     """
-    the post request will be sent with a JSON body 
-    which defined the categories and profiles 
+    the post request will be sent with a JSON body
+    which defined the categories and profiles
     we want to filter the locations by
     formatted like:
     {
@@ -1263,48 +1267,52 @@ def locations():
         profiles: ['profile1', 'profile2', ...]
     }
     """
-    req_data = request.get_json()
-    nb = 0
-    l = dict()
-    if req_data is None:
-        categories = []
-        profiles = []
-    else:
-        if ('categories' in req_data) and ('profiles' in req_data):
-            categories = req_data['categories']
-            profiles = req_data['profiles']
-            # filter all locations by the categories and profiles defined in the req_data
-            nb, l = ctg_api.query_database_for_list_of_filtered_locations(
-                tuple(categories), tuple(profiles))
-        elif 'categories' in req_data:
-            categories = req_data['categories']
-            profiles = []
-
-        elif 'profiles' in req_data:
+    try:
+        req_data = request.get_json()
+        nb = 0
+        l = dict()
+        if req_data is None:
             categories = []
-            profiles = req_data['profiles']
+            profiles = []
         else:
-            categories = []
-            profiles = []
+            if ('categories' in req_data) and ('profiles' in req_data):
+                categories = req_data['categories']
+                profiles = req_data['profiles']
+                # filter all locations by the categories and profiles defined in the req_data
+                nb, l = ctg_api.query_database_for_list_of_filtered_locations(
+                    tuple(categories), tuple(profiles))
+            elif 'categories' in req_data:
+                categories = req_data['categories']
+                profiles = []
 
-    response = requests.post(
-        'https://cooltogo-staging.herokuapp.com/api/locations')
-    status = response.status_code
+            elif 'profiles' in req_data:
+                categories = []
+                profiles = req_data['profiles']
+            else:
+                categories = []
+                profiles = []
 
-    dict_for_extract = dict()
-    dict_for_extract.update({"status": status})
-    dict_for_extract.update({"locations_returned": nb})
-    dict_for_extract_2 = {}
-    dict_for_extract_2.update({"categories": categories})
-    dict_for_extract_2.update({"profiles": profiles})
-    dict_for_extract.update({"query": dict_for_extract_2})
-    # dict_for_extract.update({"categories": categories, "profiles": profiles})
-    dict_for_extract_1 = dict()
-    dict_for_extract_1.update({"type": "FeatureCollection"})
-    dict_for_extract_1.update({"name": "cool2go"})
-    dict_for_extract_1.update({"features": l})
+        dict_for_extract = dict()
+        dict_for_extract.update({"status": 200})
+        dict_for_extract.update({"locations_returned": nb})
+        dict_for_extract_2 = {}
+        dict_for_extract_2.update({"categories": categories})
+        dict_for_extract_2.update({"profiles": profiles})
+        dict_for_extract.update({"query": dict_for_extract_2})
+        # dict_for_extract.update({"categories": categories, "profiles": profiles})
+        dict_for_extract_1 = dict()
+        dict_for_extract_1.update({"type": "FeatureCollection"})
+        dict_for_extract_1.update({"name": "cool2go"})
+        dict_for_extract_1.update({"features": l})
+    except:
+        dict_for_extract = dict()
+        dict_for_extract.update({"status": 503})
+        dict_for_extract_1 = dict()
+        dict_for_extract_1.update({"type": "FeatureCollection"})
+        dict_for_extract_1.update({"name": "cool2go"})
+        dict_for_extract_1.update({"error": "error error"})
+        dict_for_extract.update({"data": dict_for_extract_1})
 
-    dict_for_extract.update({"data": dict_for_extract_1})
     response = app.response_class(
         response=json.dumps(dict_for_extract, indent=3, sort_keys=False),
         status=200,

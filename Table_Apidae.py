@@ -302,7 +302,6 @@ class Data_from_apidae():
             return
         self.__id_selection = id_selection
         self.__connexion = DB_connexion()
-        self.__instance = self.__connexion.instance()
         data = self.__connexion.Query_SQL_fetchone(
             prj.select_selection_project, [self.__id_selection])
         self.__project_ID = data[0]
@@ -344,8 +343,7 @@ class Data_from_apidae():
         #         self.__profil_for_selection_list.append(line[0])
 
     def __del__(self):
-        self.__connexion.close()
-        self.__instance.close()
+        del self.__connexion
         FileLogger.log(
             logging.DEBUG, "Destruction of data_from_apidae class instance")
         pass
@@ -362,9 +360,9 @@ class Data_from_apidae():
                 'data_from_apidae',
                 metadata,
                 autoload=True,
-                autoload_with=self.__instance
+                autoload_with=self.__connexion.engine()
             )
-            lines = self.__instance.execute(
+            lines = self.__connexion.engine().connect().execute(
                 tInfo_data_from_apidae.insert(None),
                 [
                     {
@@ -406,6 +404,9 @@ class Data_from_apidae():
                     } for adata_from_apidae in data_from_apidae
                 ]
             )
+            nb_connexion = self.__connexion.number_connections()
+            FileLogger.log(
+                logging.DEBUG, f"New instance created, number of connexion : {nb_connexion}")
             for adata_from_apidae in data_from_apidae:
                 id_data_from_apidae = self.__connexion.Query_SQL_fetchone(select_apidae_with_id_apidae_and_selection, [
                                                                           adata_from_apidae.id_apidae, adata_from_apidae.id_selection])[0]
@@ -430,7 +431,7 @@ class Data_from_apidae():
                 'data_from_apidae',
                 metadata,
                 autoload=True,
-                autoload_with=self.__instance
+                autoload_with=self.__connexion.engine()
             )
 
             dico_data_from_apidae = {}
@@ -439,7 +440,10 @@ class Data_from_apidae():
                 tInfo_data_from_apidae.c.id_selection == self.__id_selection,)
             ).distinct()
 
-            result = self.__instance.execute(query)
+            result = self.__connexion.engine().connect().execute(query)
+            nb_connexion = self.__connexion.number_connections()
+            FileLogger.log(
+                logging.DEBUG, f"New instance created, number of connexion : {nb_connexion}")
 
             if result.rowcount == 0:
                 return dico_data_from_apidae
@@ -505,7 +509,7 @@ class Data_from_apidae():
                 'data_from_apidae',
                 metadata,
                 autoload=True,
-                autoload_with=self.__instance
+                autoload_with=self.__connexion.engine()
             )
 
             query = tInfo_data_from_apidae.update(None).where(
@@ -554,45 +558,48 @@ class Data_from_apidae():
                 nouveaute_2020=sqlalchemy.bindparam('nouveaute_2020'),
             )
 
-            lines = self.__instance.execute(query,
-                                            [
-                                                {
-                                                    'c_id_apidae': str(adata_from_apidae.id_apidae),
-                                                    'type_apidae': adata_from_apidae.type_apidae,
-                                                    'titre': adata_from_apidae.titre,
-                                                    'profil_c2g': adata_from_apidae.profil_c2g,
-                                                    'sous_type': adata_from_apidae.sous_type,
-                                                    'adresse1': adata_from_apidae.adresse1,
-                                                    'adresse2': adata_from_apidae.adresse2,
-                                                    'code_postal': adata_from_apidae.code_postal,
-                                                    'ville': adata_from_apidae.ville,
-                                                    'altitude': adata_from_apidae.altitude,
-                                                    'latitude': adata_from_apidae.latitude,
-                                                    'longitude': adata_from_apidae.longitude,
-                                                    'telephone': adata_from_apidae.telephone,
-                                                    'email': adata_from_apidae.email,
-                                                    'site_web': adata_from_apidae.site_web,
-                                                    'description_courte': adata_from_apidae.description_courte,
-                                                    'description_detaillee': adata_from_apidae.description_detaillee,
-                                                    'image': adata_from_apidae.image,
-                                                    'publics': adata_from_apidae.publics,
-                                                    'tourisme_adapte': adata_from_apidae.tourisme_adapte,
-                                                    'payant': adata_from_apidae.payant,
-                                                    'animaux_acceptes': adata_from_apidae.animaux_acceptes,
-                                                    'environnement': adata_from_apidae.environnement,
-                                                    'equipement': adata_from_apidae.equipement,
-                                                    'services': adata_from_apidae.services,
-                                                    'activites': adata_from_apidae.activites,
-                                                    'ouverture': adata_from_apidae.ouverture,
-                                                    'typologie': adata_from_apidae.typologie,
-                                                    'bons_plans': adata_from_apidae.bons_plans,
-                                                    'dispositions_speciales': adata_from_apidae.dispositions_speciales,
-                                                    'service_enfants': adata_from_apidae.service_enfants,
-                                                    'service_cyclistes': adata_from_apidae.service_cyclistes,
-                                                    'nouveaute_2020': adata_from_apidae.nouveaute_2020,
-                                                } for adata_from_apidae in data_from_apidae
-                                            ]
-                                            )
+            lines = self.__connexion.engine().connect().execute(query,
+                                                                [
+                                                                    {
+                                                                        'c_id_apidae': str(adata_from_apidae.id_apidae),
+                                                                        'type_apidae': adata_from_apidae.type_apidae,
+                                                                        'titre': adata_from_apidae.titre,
+                                                                        'profil_c2g': adata_from_apidae.profil_c2g,
+                                                                        'sous_type': adata_from_apidae.sous_type,
+                                                                        'adresse1': adata_from_apidae.adresse1,
+                                                                        'adresse2': adata_from_apidae.adresse2,
+                                                                        'code_postal': adata_from_apidae.code_postal,
+                                                                        'ville': adata_from_apidae.ville,
+                                                                        'altitude': adata_from_apidae.altitude,
+                                                                        'latitude': adata_from_apidae.latitude,
+                                                                        'longitude': adata_from_apidae.longitude,
+                                                                        'telephone': adata_from_apidae.telephone,
+                                                                        'email': adata_from_apidae.email,
+                                                                        'site_web': adata_from_apidae.site_web,
+                                                                        'description_courte': adata_from_apidae.description_courte,
+                                                                        'description_detaillee': adata_from_apidae.description_detaillee,
+                                                                        'image': adata_from_apidae.image,
+                                                                        'publics': adata_from_apidae.publics,
+                                                                        'tourisme_adapte': adata_from_apidae.tourisme_adapte,
+                                                                        'payant': adata_from_apidae.payant,
+                                                                        'animaux_acceptes': adata_from_apidae.animaux_acceptes,
+                                                                        'environnement': adata_from_apidae.environnement,
+                                                                        'equipement': adata_from_apidae.equipement,
+                                                                        'services': adata_from_apidae.services,
+                                                                        'activites': adata_from_apidae.activites,
+                                                                        'ouverture': adata_from_apidae.ouverture,
+                                                                        'typologie': adata_from_apidae.typologie,
+                                                                        'bons_plans': adata_from_apidae.bons_plans,
+                                                                        'dispositions_speciales': adata_from_apidae.dispositions_speciales,
+                                                                        'service_enfants': adata_from_apidae.service_enfants,
+                                                                        'service_cyclistes': adata_from_apidae.service_cyclistes,
+                                                                        'nouveaute_2020': adata_from_apidae.nouveaute_2020,
+                                                                    } for adata_from_apidae in data_from_apidae
+                                                                ]
+                                                                )
+            nb_connexion = self.__connexion.number_connections()
+            FileLogger.log(
+                logging.DEBUG, f"New instance created, number of connexion : {nb_connexion}")
             for adata_from_apidae in data_from_apidae:
                 id_data_from_apidae = self.__connexion.Query_SQL_fetchone(select_apidae_with_id_apidae_and_selection, [
                                                                           adata_from_apidae.id_apidae, adata_from_apidae.id_selection])[0]
@@ -622,7 +629,7 @@ class Data_from_apidae():
                 'data_from_apidae',
                 metadata,
                 autoload=True,
-                autoload_with=self.__instance
+                autoload_with=self.__connexion.engine()
             )
 
             lines = 0
@@ -634,7 +641,10 @@ class Data_from_apidae():
                         tInfo_data_from_apidae.c.id_selection == self.__id_selection
                     )
                 )
-                line = self.__instance.execute(query)
+                line = self.__connexion.engine().connect().execute(query)
+                nb_connexion = self.__connexion.number_connections()
+                FileLogger.log(
+                    logging.DEBUG, f"New instance created, number of connexion : {nb_connexion}")
                 lines += int(line.rowcount)
             FileLogger.log(
                 logging.DEBUG, f"{lines} data_from_apidae(s) for selection: {self.__id_selection} of project_ID: {self.__project_ID} deleted!")
@@ -877,6 +887,12 @@ select_apidae_1_id_apidae = """
                             LIMIT 1;
                             """
 
+select_apidae_edit = """
+                    SELECT *
+                    FROM data_from_apidae
+                    WHERE id_data_from_apidae=%s;
+                    """
+
 delete_apidae_project_id = """
                             DELETE
                             FROM data_from_apidae
@@ -885,8 +901,3 @@ delete_apidae_project_id = """
                                 FROM selection
                                 WHERE id_project=%s);
                             """
-select_apidae_edit = """
-                    SELECT *
-                    FROM data_from_apidae
-                    WHERE id_apidae=%s;
-                    """

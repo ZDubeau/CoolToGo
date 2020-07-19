@@ -1304,6 +1304,7 @@ def locations():
         dict_for_extract_1.update({"type": "FeatureCollection"})
         dict_for_extract_1.update({"name": "cool2go"})
         dict_for_extract_1.update({"features": l})
+        dict_for_extract.update({"data": dict_for_extract_1})
     except:
         dict_for_extract = dict()
         dict_for_extract.update({"status": 503})

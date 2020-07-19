@@ -29,7 +29,7 @@ def recuperation_id(sql_select: str, valeur_inserer: tuple):
         id_table = connexion.Query_SQL_fetchone(sql_select, valeur_inserer)[0]
     except:
         id_table = None
-    connexion.close()
+    del connexion
     return id_table
 
 
@@ -44,7 +44,7 @@ def insert_selection(project_ID: str, api_key: str, selection_name: str, descrip
     try:
         connexion = DB_connexion()
         connexion.Insert_SQL(selection.insert_selection, dico)
-        connexion.close()
+        del connexion
         return "That's ok !"
     except (psycopg2.Error, AttributeError) as Error:
         return Error
@@ -70,7 +70,7 @@ def insert_project(project_ID: str, api_key: str):
         connexion = DB_connexion()
         id_project = connexion.Insert_SQL_fetchone(
             project.insert_project, dico)[0]
-        connexion.close()
+        del connexion
         return id_project
     except (psycopg2.Error, AttributeError) as Error:
         print(Error)
@@ -209,7 +209,7 @@ def insert_administrator(username: str, password: str, mail: str = None):
             connexion = DB_connexion()
             id_admin = connexion.Insert_SQL_fetchone(
                 admin.insert_admin, dico)[0]
-            connexion.close()
+            del connexion
         except Error:
             print('Failed user insert !' + Error)
     else:
@@ -232,10 +232,10 @@ def connexion_admin(nom_admin: str, password: str, inscription: bool = False):
             existe: bool = check_password_hash(mdp_base, password)
         except:
             existe: bool = False
-        connexion.close()
+        del connexion
         return existe, list_admin
     else:
-        connexion.close()
+        del connexion
         return list_admin
 
 
@@ -282,7 +282,7 @@ def create_dict_for_lieu_validated(thelist: list):
 
     # connexion = DB_connexion()
     # data = connexion.Query_SQL_fetchone(sql_select_niveau_de_fraicheur)
-    # connexion.close()
+    # del connexion
 
     if data == None:
         niveau_de_fraicheur = None

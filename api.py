@@ -11,7 +11,7 @@ import Table_Apidae as apidae
 def query_database_for_list_of_categories():
     connexion = DB_connexion()
     data = connexion.Query_SQL_fetchall(ctg.select_category)
-    connexion.close()
+    del connexion
     ctg_list = []
     for line in data:
         ctg_list.append({'name': line[1], 'id': line[0]})
@@ -21,7 +21,7 @@ def query_database_for_list_of_categories():
 def query_database_for_list_of_profiles():
     connexion = DB_connexion()
     data = connexion.Query_SQL_fetchall(pfl.select_user_profil)
-    connexion.close()
+    del connexion
     pfl_list = []
     for line in data:
         pfl_list.append({'name': line[1], 'id': line[0]})
@@ -45,5 +45,5 @@ def query_database_for_list_of_filtered_locations(categories, profiles):
         locations_list.append([dict_for_apidae, dict_for_geometry])
         # locations_list.append(dict_for_properties)  # properties only
         nb_location += 1
-    connexion.close()
+    del connexion
     return nb_location, locations_list

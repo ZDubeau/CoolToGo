@@ -69,8 +69,7 @@ alter_table = """ALTER TABLE profil ADD COLUMN basic BOOLEAN DEFAULT TRUE;"""
 update_table = """update profil set basic=FALSE where id_profil=5 OR id_profil=6"""
 
 ligth_actions_list = (
-    Table_Apidae.drop_apidae,
-    Table_Apidae.apidae
+    update_table
 )
 
 

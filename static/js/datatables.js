@@ -85,9 +85,8 @@ $(document).ready(function () {
       collectionLayout: 'fixed four-column'
     }],
     "columnDefs": [
-      { "targets": 0, "visible": false },   //id primary key
-      { "targets": 1, "width": "10px" },    //ID APIDAE
-      { "targets": 2, "width": "6px" },     //TYPE APIDAE
+      { "targets": 0, "width": "5px" },                                                               //id primary key
+      { "targets": [1, 2], "width": "10px" },                                                         //ID APIDAE, TYPE APIDAE
       { "targets": 3, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },   //TITLE
       { "targets": 4, "render": $.fn.dataTable.render.ellipsis(12, false), className: "truncate" },   //PROFIL_CTG
       { "targets": 5, "render": $.fn.dataTable.render.ellipsis(17, false), className: "truncate" },   //CATEGORY_CTG
@@ -95,25 +94,20 @@ $(document).ready(function () {
       { "targets": 7, "width": "20px" },                                                              //CODE POSTAL
       { "targets": 8, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },   //CITY
       { "targets": 9, "width": "15px" },                                                              //ALTITUDE
-      { "targets": 10, "width": "25px" },                                                             //LONGITUDE
-      { "targets": 11, "width": "25px" },                                                             //LATITUDE
-      { "targets": 12, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },    //TEL
-      { "targets": 13, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },    //MAIL
-      { "targets": 14, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },    //URL
-      { "targets": 15, "render": $.fn.dataTable.render.ellipsis(20, false), className: "truncate" },    //DESCRIPTION
-      { "targets": 16, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },    //IMAGE
-      { "targets": 17, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },    //PUBLIC
-      { "targets": 18, "render": $.fn.dataTable.render.ellipsis(18, false), className: "truncate" },    //ACCESSIBILITY
-      { "targets": 19, "width": "10" },                                                                 //PAYING
-      { "targets": 20, "render": $.fn.dataTable.render.ellipsis(15, false), className: "truncate" },    //ENVIRONMENT
-      { "targets": 21, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },    //OPENING
-      { "targets": 22, "width": "15" },                                                                 //DATE_START
-      { "targets": 23, "width": "15" },                                                                  //DATE_END
-      { "targets": 24, "width": "10" }//***EDIT***
+      { "targets": [10, 11], "width": "25px" },                                                        //LONGITUDE, LATITUDE
+      { "targets": [12, 13, 14], "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },  //TEL, MAIL, URL
+      { "targets": 15, "render": $.fn.dataTable.render.ellipsis(20, false), className: "truncate" },   //DESCRIPTION
+      { "targets": [16, 17], "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },   //IMAGE, PUBLIC
+      { "targets": 18, "render": $.fn.dataTable.render.ellipsis(18, false), className: "truncate" },   //ACCESSIBILITY
+      { "targets": 19, "width": "10" },                                                                //PAYING
+      { "targets": 20, "render": $.fn.dataTable.render.ellipsis(15, false), className: "truncate" },   //ENVIRONMENT
+      { "targets": 21, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },   //OPENING
+      { "targets": [22, 23], "width": "15" },                                                          //DATE_START, DATE_END
+      { "targets": 24, "width": "10", "className": "text-center" }  //***EDIT***
     ],
     "fnRowCallback": function (nRow, aData) {
-      $('td:eq(23)', nRow).html(edit);
-      $('td:eq(23)', nRow).click(function () {
+      $('td:eq(24)', nRow).html(edit);
+      $('td:eq(24)', nRow).click(function () {
         var id = aData[0];
         window.location.href = '/edit_ctg_profil/' + id;
       });
@@ -176,7 +170,7 @@ $(document).ready(function () {
       { "width": "10px", "targets": 0 },
       { "width": "50px", "targets": 1 },
       { "width": "80px", "targets": 2 },
-      { "width": "10px", "targets": 3 }
+      { "width": "10px", "targets": 3, "className": "text-center" }
     ],
     "fnRowCallback": function (nRow, aData) {
       $('td:eq(3)', nRow).html(cancel);
@@ -201,11 +195,11 @@ $(document).ready(function () {
       { "width": "40px", "targets": 1 },
       { "width": "50px", "targets": 2 },
       { "width": "130px", "targets": 3 },
-      { "width": "100px", "targets": 4 },
+      { "width": "140px", "targets": 4 },
       { "width": "35px", "targets": 5 },
       { "targets": 6, "render": $.fn.dataTable.render.ellipsis(40, false), className: "truncate" }, // CATEGORIES
-      { "width": "36px", "targets": 7 },
-      { "width": "49px", "targets": 8 }
+      { "width": "36px", "targets": 7, "className": "text-center" },
+      { "width": "49px", "targets": 8, "className": "text-center" }
     ],
     "fnRowCallback": function (nRow, aData) {
 
@@ -226,10 +220,9 @@ $(document).ready(function () {
   $('#dataTableProjet').DataTable({
     "columnDefs": [
       { "visible": false, "targets": 0 },
-      { "width": "50px", "targets": 1 },
-      { "width": "60px", "targets": 2 },
-      { "width": "25px", "targets": 3 },
-      { "width": "25px", "targets": 4 },
+      { "width": "60px", "targets": [1, 2], "className": "text-center" },
+      // { "width": "60px", "targets": 2 },
+      { "width": "20px", "targets": [3, 4], "className": "text-center" },
     ],
     "fnRowCallback": function (nRow, aData) {
       $('td:eq(2)', nRow).html(validate);
@@ -280,8 +273,7 @@ $(document).ready(function () {
       { "visible": false, "targets": 0 },
       { "width": "100px", "targets": 1 },
       { "width": "60px", "targets": 2 },
-      { "width": "15px", "targets": 3 },
-      { "width": "15px", "targets": 4 }
+      { "width": "15px", "targets": [3, 4], "className": "text-center" },
     ],
     "order": [[0, "asc"]],
     "fnRowCallback": function (nRow, aData) {
@@ -295,10 +287,9 @@ $(document).ready(function () {
 
   $('#dataTableCategory').DataTable({
     "columnDefs": [
-      { "width": "10px", "targets": 0 },
-      { "width": "180px", "targets": 1 },
-      { "width": "20px", "targets": 2 },
-      { "width": "20px", "targets": 3 }
+      { "width": "10px", "targets": 0, "className": "text-center" },
+      { "width": "180px", "targets": 1, "className": "text-center" },
+      { "width": "20px", "targets": [2, 3], "className": "text-center" },
     ],
     "order": [[0, "asc"]],
     "fnRowCallback": function (nRow, aData) {
@@ -320,8 +311,7 @@ $(document).ready(function () {
       { "width": "10px", "targets": 0 },
       { "width": "180px", "targets": 1 },
       { "width": "30px", "targets": 2 },
-      { "width": "30px", "targets": 3 },
-      { "width": "30px", "targets": 4 }
+      { "width": "30px", "targets": [3, 4], "className": "text-center" }
     ],
     "order": [[0, "asc"]],
     "fnRowCallback": function (nRow, aData) {

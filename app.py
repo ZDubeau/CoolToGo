@@ -1178,7 +1178,7 @@ def post_edit_profil():
     connexion.Insert_SQL(prf.update_user_profil, [
         profil, id])
     del connexion
-    return redirect(url_for("get_edit_profil"))
+    return redirect(url_for("get_profil"))
 
 
 @app.route("/new_element_for_profil", methods=["POST"])

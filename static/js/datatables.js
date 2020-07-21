@@ -91,23 +91,25 @@ $(document).ready(function () {
       { "targets": 3, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },   //TITLE
       { "targets": 4, "render": $.fn.dataTable.render.ellipsis(12, false), className: "truncate" },   //PROFIL_CTG
       { "targets": 5, "render": $.fn.dataTable.render.ellipsis(17, false), className: "truncate" },   //CATEGORY_CTG
-      { "targets": 6, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },   //ADDRESS
-      { "targets": 7, "width": "20px" },        //CODE POSTAL
+      { "targets": 6, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },   //ADDRESS 1
+      { "targets": 7, "width": "20px" },                                                              //CODE POSTAL
       { "targets": 8, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },   //CITY
-      { "targets": 9, "width": "20px" },       //ALTITUDE
-      { "targets": 10, "width": "20px" },      //LATITUDE
-      { "targets": 11, "width": "50px" },      //LONGITUDE
-      { "targets": 12, "width": "60px" },      //TEL
+      { "targets": 9, "width": "15px" },                                                              //ALTITUDE
+      { "targets": 10, "width": "25px" },                                                             //LONGITUDE
+      { "targets": 11, "width": "25px" },                                                             //LATITUDE
+      { "targets": 12, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },    //TEL
       { "targets": 13, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },    //MAIL
       { "targets": 14, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },    //URL
       { "targets": 15, "render": $.fn.dataTable.render.ellipsis(20, false), className: "truncate" },    //DESCRIPTION
       { "targets": 16, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },    //IMAGE
       { "targets": 17, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },    //PUBLIC
       { "targets": 18, "render": $.fn.dataTable.render.ellipsis(18, false), className: "truncate" },    //ACCESSIBILITY
-      { "targets": 19, "width": "10" },       //PAYING
+      { "targets": 19, "width": "10" },                                                                 //PAYING
       { "targets": 20, "render": $.fn.dataTable.render.ellipsis(15, false), className: "truncate" },    //ENVIRONMENT
       { "targets": 21, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },    //OPENING
-      { "targets": 22, "width": "15" }
+      { "targets": 22, "width": "15" },                                                                 //DATE_START
+      { "targets": 23, "width": "15" },                                                                  //DATE_END
+      { "targets": 24, "width": "10" }//***EDIT***
     ],
     "fnRowCallback": function (nRow, aData) {
       $('td:eq(23)', nRow).html(edit);

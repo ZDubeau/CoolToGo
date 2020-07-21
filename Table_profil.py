@@ -6,9 +6,7 @@ user_profil = """
                 CREATE TABLE IF NOT EXISTS profil (
                     id_profil SERIAL PRIMARY KEY,
                     profil VARCHAR(80),
-                    basic BOOLEAN DEFAULT TRUE,
-                    icon_ctg VARCHAR(100),
-                    icon_type VARCHAR(100)
+                    basic BOOLEAN DEFAULT TRUE
                 )"""
 
 insert_user_profil = """

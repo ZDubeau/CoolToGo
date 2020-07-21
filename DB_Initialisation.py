@@ -76,6 +76,6 @@ ligth_actions_list = (
 
 if __name__ == "__main__":
     connexion = DB_connexion()
-    for value in full_actions_list:
+    for value in light_actions_list:
         connexion.Insert_SQL(value)
     del connexion

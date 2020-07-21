@@ -319,9 +319,10 @@ def get_edit(id):
             apidae.select_apidae_edit, [id])
         del connexion
         id_apidae = data[1]
+        titre = data[4]
         profil = data[5]
         category = data[6]
-    return render_template('pages/apidae_edit.html', id=id, id_apidae=id_apidae, profil=profil, category=category, username=username)
+    return render_template('pages/apidae_edit.html', id=id, id_apidae=id_apidae, titre=titre, profil=profil, category=category, username=username)
 
 
 @app.route("/edit_save", methods=["POST"])
@@ -426,6 +427,8 @@ def post_manualEntry():
         paying = request.form["payant"]
         image = request.form["image"]
         opening = request.form["ouverture"]
+        date_start = request.form["date_debut"]
+        date_end = request.form["date_fin"]
         description = request.form["description"]
         environment = request.form["environment"]
         address_to_geolocalize = ""
@@ -467,6 +470,8 @@ def post_manualEntry():
                                                      paying,
                                                      image,
                                                      opening,
+                                                     date_start,
+                                                     date_end,
                                                      description,
                                                      environment
                                                      ])

@@ -171,11 +171,19 @@ class transformation():
     def __opening(self):
 
         self.__dict_id['ouverture'] = None
+        self.__dict_id['date_debut'] = None
+        self.__dict_id['date_fin'] = None
 
         if 'ouverture' in self.__request_json:
             if 'periodeEnClair' in self.__request_json['ouverture']:
                 if 'libelleFr' in self.__request_json['ouverture']['periodeEnClair']:
                     self.__dict_id['ouverture'] = self.__request_json['ouverture']['periodeEnClair']['libelleFr']
+
+            if 'periodesOuvertures' in self.__request_json['ouverture']:
+                if 'dateDebut' in self.__request_json['ouverture']['periodesOuvertures'][0]:
+                    if 'dateFin' in self.__request_json['ouverture']['periodesOuvertures'][0]:
+                        self.__dict_id['date_debut'] = self.__request_json['ouverture']['periodesOuvertures'][0]['dateDebut']
+                        self.__dict_id['date_fin'] = self.__request_json['ouverture']['periodesOuvertures'][0]['dateFin']
 
     def __period(self):
 

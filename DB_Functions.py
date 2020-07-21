@@ -271,6 +271,8 @@ def create_dict_for_lieu_validated(thelist: list):
     # periode = thelist[27]
     # activites = thelist[28]
     ouverture = thelist[21]
+    date_debut = thelist[22]
+    date_fin = thelist[23]
     # typologie = thelist[30]
     # bons_plans = thelist[31]
     # dispositions_speciales = thelist[32]
@@ -318,6 +320,8 @@ def create_dict_for_lieu_validated(thelist: list):
     #dict_for_properties.update({"periode": periode})
     #dict_for_properties.update({"activites": activites})
     dict_for_properties.update({"opening": ouverture})
+    dict_for_properties.update({"date_start": date_debut})
+    dict_for_properties.update({"date_end": date_fin})
     #dict_for_properties.update({"typologie": typologie})
     #dict_for_properties.update({"bons_plans": bons_plans})
     #dict_for_properties.update({"dispositions_speciales": dispositions_speciales})

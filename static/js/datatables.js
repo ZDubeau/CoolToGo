@@ -56,15 +56,16 @@ $(document).ready(function () {
       { "targets": 34, "render": $.fn.dataTable.render.ellipsis(16, false), className: "truncate" },  //service_cyclistes
       { "targets": 35, "render": $.fn.dataTable.render.ellipsis(12, false), className: "truncate" },  //nouveaute_2020
       { "width": "20px", "targets": 36 },
-      { "targets": 37, "render": $.fn.dataTable.render.ellipsis(15, false), className: "truncate" }
+      { "width": "20px", "targets": 37 },
+      { "targets": 38, "render": $.fn.dataTable.render.ellipsis(15, false), className: "truncate" }
     ],
     // createdRow: function (row) {
     //   var td = $(row).find(".truncate");
     //   td.attr("title", td.html());
     // },
     "fnRowCallback": function (nRow, aData) {
-      $('td:eq(30)', nRow).html(edit);
-      $('td:eq(30)', nRow).click(function () {
+      $('td:eq(32)', nRow).html(edit);
+      $('td:eq(32)', nRow).click(function () {
         var id = aData[0];
         window.location.href = '/edit_ctg_profil/' + id;
       });
@@ -109,8 +110,8 @@ $(document).ready(function () {
       { "targets": 22, "width": "15" }
     ],
     "fnRowCallback": function (nRow, aData) {
-      $('td:eq(21)', nRow).html(edit);
-      $('td:eq(21)', nRow).click(function () {
+      $('td:eq(23)', nRow).html(edit);
+      $('td:eq(23)', nRow).click(function () {
         var id = aData[0];
         window.location.href = '/edit_ctg_profil/' + id;
       });

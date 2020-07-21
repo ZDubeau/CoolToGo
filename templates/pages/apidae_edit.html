@@ -1,44 +1,32 @@
 {% extends "layout.html" %}
 {% block bootstrap_2 %}
-<!-- <div class="row">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-header"
-                style="background-color: #01289fe3; color: #d0eeed; border-radius: 4px 4px 0px 0px; font-size: large; font-weight: bold;">
-                Extraction Apidae
-            </div>
-            <div class="card-body" style="border-radius: 0px 0px 4px 4px;background-color: #1778b825;">
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                        {% for table in tables %}
-                        {{ table|safe }}
-                        {% endfor %}
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div> -->
 <center>
     <h2 style="color: khaki; text-align: center;">{{ErrorMessage}}</h2>
 </center>
 <div class="column" style="margin-left: 0 !important;transform: translate(0px, 10px);">
-    <p class="title" style="font-size: 1.25rem;color: #01289f;transform: translate(-8px, 0px);">Editer la catégorie</p>
+    <p class="title" style="font-size: 1.25rem;color: #01289f;transform: translate(-8px, 0px);">
+        Editer la catégorie CTG ou/et le profil CTG
+    </p>
     <!-- FORM -->
     <form action="/edit" method="post" style="padding-bottom: 30px;">
         <div class="form-row">
             <div class="col-md-1 mb-3" style="transform: translate(-10px, 0px);">
-                <label class="label" style="font-size: 12px;display: inherit !important;"></label>
-                <input name="" id_apidae" value="{{id_apidae}}" class="input" type="text" maxlength="20" readonly>
+                <label class="label" style="font-size: 12px;display: inherit !important;">id Apidae</label>
+                <input name="id_apidae" value="{{id_apidae}}" class="input" type="text" readonly>
             </div>
             <!-- ------- -->
             <div class="col-md-3 mb-3" style="transform: translate(-10px, 0px);">
-                <label class="label" style="font-size: 12px;display: inherit !important;"></label>
+                <label class="label" style="font-size: 12px;display: inherit !important;">Titre</label>
+                <input name="titre" value="{{titre}}" class="input" type="text" readonly>
+            </div>
+            <!-- ------- -->
+            <div class="col-md-3 mb-3" style="transform: translate(-10px, 0px);">
+                <label class="label" style="font-size: 12px;display: inherit !important;">Profil CoolToGo</label>
                 <input name="profil_c2g" value="{{profil_c2g}}" class="input" type="text" maxlength="100" required>
             </div>
             <!-- ------- -->
             <div class="col-md-3 mb-3" style="transform: translate(-10px, 0px);">
-                <label class="label" style="font-size: 12px;display: inherit !important;"></label>
+                <label class="label" style="font-size: 12px;display: inherit !important;">Catégorie CoolToGo</label>
                 <input name="ctg" value="{{ctg}}" class="input" type="text" maxlength="100" required>
             </div>
             <!-- ------- -->
@@ -46,26 +34,10 @@
                 <div class="control">
                     <input name="id" value="{{id}}" hidden>
                     <button class="button is-link"
-                        style="background-color: #01289f; border-radius: 4px; border-width: 0;color: #d0eeed; padding: 5px 20px;font-size: 15px;transform: translate(0px, 3px);">Valider</button>
+                        style="background-color: #01289f; border-radius: 4px; border-width: 0;color: #d0eeed; padding: 5px 20px;font-size: 15px;transform: translate(0px, 21px);">Valider</button>
                 </div>
             </div>
         </div>
     </form>
-    <!-- </div> -->
-    <!-- -------------------------------------------------------------------- -->
-    <!-- <script>
-        // Get the modal
-        var modal1 = document.getElementById('edit');
-    </script>
-    {% if modal_login %}
-    <script>
-        modal1.style.display = "block";
-    </script>
-    {% endif %}
-    <script>
-        var ctg = document.getElementById("ctg");
-        password.onchange = validatePassword;
-
-        var btn = document.getElementById("myBtn");
-    </script> -->
-    {% endblock bootstrap_2 %}
+</div>
+{% endblock bootstrap_2 %}

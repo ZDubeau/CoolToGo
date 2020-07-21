@@ -1,6 +1,6 @@
 """ ----------------------------
 Creation date : 2020-07-08
-Last update   : 2020-07-08
+Last update   : 2020-07-21
 ----------------------------"""
 
 drop_manualEntry = """DROP TABLE IF EXISTS manual_entry;"""
@@ -25,6 +25,8 @@ manualEntry = """
                     paying VARCHAR(4),
                     image TEXT,
                     opening TEXT,
+                    date_start DATE,
+                    date_end DATE,
                     description TEXT,
                     environment TEXT
                 )"""
@@ -33,14 +35,14 @@ insert_manualEntry = """
                     INSERT INTO manual_entry (
                         category_c2g,type_c2g,title, address, code_postal, 
                         city, altitude, lat, lng, tel, mail, url, profil_c2g,
-                        accessibility, paying, image, opening, description, 
-                        environment)
+                        accessibility, paying, image, opening, date_start, date_end, 
+                        description, environment)
                     VALUES (
                         %(category_c2g)s, %(type_c2g)s, %(title)s, %(address)s, 
                         %(code_postall)s, %(city)s, %(altitude)s, %(lat)s, %(lng)s,
                         %(tel)s, %(mail)s, %(url)s, %(profil_c2g)s, %(accessibility)s,
-                        %(paying)s, %(image)s, %(opening)s, %(Description)s,
-                        %(environment)s) 
+                        %(paying)s, %(image)s, %(opening)s, %(date_start)s,, %(date_end)s,
+                        %(Description)s, %(environment)s) 
                     returning id;"""
 
 update_manualEntry = """

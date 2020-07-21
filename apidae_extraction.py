@@ -36,12 +36,12 @@ from transformation import transformation
 
 def retrieve_data_by_id(project_ID, api_KEY, select_id, selectionId, id_selection, categories_list, element_reference_by_profil_dict, element_reference_by_category_dict):
     result_df = pd.DataFrame(columns=['id_apidae', 'id_selection', 'type_apidae', 'titre', 'profil_c2g', 'categorie_c2g',
-                                      'adresse1', 'adresse2', 'code_postal', 'ville', 'altitude', 'latitude',
-                                      'longitude', 'telephone', 'email', 'site_web', 'description_courte',
-                                      'description_detaillee', 'image', 'publics', 'tourisme_adapte', 'payant',
-                                      'animaux_acceptes', 'environnement', 'equipement', 'services', 'periode',
-                                      'activites', 'ouverture', 'typologie', 'bons_plans', 'dispositions_speciales',
-                                      'service_enfants', 'service_cyclistes', 'nouveaute_2020'])
+                                      'adresse1', 'adresse2', 'code_postal', 'ville', 'altitude', 'latitude', 'longitude',
+                                      'telephone', 'email', 'site_web', 'description_courte', 'description_detaillee',
+                                      'image', 'publics', 'tourisme_adapte', 'payant', 'animaux_acceptes', 'environnement',
+                                      'equipement', 'services', 'periode', 'activites', 'ouverture', 'date_debut',
+                                      'date_fin', 'typologie', 'bons_plans', 'dispositions_speciales', 'service_enfants',
+                                      'service_cyclistes', 'nouveaute_2020'])
 
     url = 'http://api.apidae-tourisme.com/api/v002/objet-touristique/get-by-id/' + select_id + '?'
     url += "responseFields=id,nom,informations,presentation.descriptifCourt,@all"
@@ -93,12 +93,12 @@ first = "0"                 # start from 0
 def retrive_data_by_selectionId(project_ID, api_KEY, selectionId, id_selection, categories_list, element_reference_by_profil_dict, element_reference_by_category_dict):
     import pandas as pd
     result_df = pd.DataFrame(columns=['id_apidae', 'id_selection', 'type_apidae', 'titre', 'profil_c2g', 'categorie_c2g',
-                                      'adresse1', 'adresse2', 'code_postal', 'ville', 'altitude', 'latitude',
-                                      'longitude', 'telephone', 'email', 'site_web', 'description_courte',
-                                      'description_detaillee', 'image', 'publics', 'tourisme_adapte', 'payant',
-                                      'animaux_acceptes', 'environnement', 'equipement', 'services', 'periode',
-                                      'activites', 'ouverture', 'typologie', 'bons_plans', 'dispositions_speciales',
-                                      'service_enfants', 'service_cyclistes', 'nouveaute_2020'])
+                                      'adresse1', 'adresse2', 'code_postal', 'ville', 'altitude', 'latitude', 'longitude',
+                                      'telephone', 'email', 'site_web', 'description_courte', 'description_detaillee',
+                                      'image', 'publics', 'tourisme_adapte', 'payant', 'animaux_acceptes', 'environnement',
+                                      'equipement', 'services', 'periode', 'activites', 'ouverture', 'date_debut',
+                                      'date_fin', 'typologie', 'bons_plans', 'dispositions_speciales', 'service_enfants',
+                                      'service_cyclistes', 'nouveaute_2020'])
 
     url = 'http://api.apidae-tourisme.com/api/v002/recherche/list-objets-touristiques?query={'
     url += '"projetId":"'+project_ID+'",'
@@ -125,12 +125,12 @@ def retrive_data_by_selectionId(project_ID, api_KEY, selectionId, id_selection, 
 def retrive_data_by_selectionId_by_cent(project_ID, api_KEY, selectionId, id_selection, categories_list, element_reference_by_profil_dict, element_reference_by_category_dict, first, count):
     import pandas as pd
     result_df = pd.DataFrame(columns=['id_apidae', 'id_selection', 'type_apidae', 'titre', 'profil_c2g', 'categorie_c2g',
-                                      'adresse1', 'adresse2', 'code_postal', 'ville', 'altitude', 'latitude',
-                                      'longitude', 'telephone', 'email', 'site_web', 'description_courte',
-                                      'description_detaillee', 'image', 'publics', 'tourisme_adapte', 'payant',
-                                      'animaux_acceptes', 'environnement', 'equipement', 'services', 'periode',
-                                      'activites', 'ouverture', 'typologie', 'bons_plans', 'dispositions_speciales',
-                                      'service_enfants', 'service_cyclistes', 'nouveaute_2020'])
+                                      'adresse1', 'adresse2', 'code_postal', 'ville', 'altitude', 'latitude', 'longitude',
+                                      'telephone', 'email', 'site_web', 'description_courte', 'description_detaillee',
+                                      'image', 'publics', 'tourisme_adapte', 'payant', 'animaux_acceptes', 'environnement',
+                                      'equipement', 'services', 'periode', 'activites', 'ouverture', 'date_debut',
+                                      'date_fin', 'typologie', 'bons_plans', 'dispositions_speciales', 'service_enfants',
+                                      'service_cyclistes', 'nouveaute_2020'])
 
     url = 'http://api.apidae-tourisme.com/api/v002/recherche/list-objets-touristiques?query={'
     url += '"projetId":"'+project_ID+'",'
@@ -164,12 +164,12 @@ def retrive_data_by_selectionId_by_cent(project_ID, api_KEY, selectionId, id_sel
 def retrive_data_by_multiple_selectionId(project_ID, api_KEY, dict_selectionId):
     import pandas as pd
     result_df = pd.DataFrame(columns=['id_apidae', 'id_selection', 'type_apidae', 'titre', 'profil_c2g', 'categorie_c2g',
-                                      'adresse1', 'adresse2', 'code_postal', 'ville', 'altitude', 'latitude',
-                                      'longitude', 'telephone', 'email', 'site_web', 'description_courte',
-                                      'description_detaillee', 'image', 'publics', 'tourisme_adapte', 'payant',
-                                      'animaux_acceptes', 'environnement', 'equipement', 'services', 'periode',
-                                      'activites', 'ouverture', 'typologie', 'bons_plans', 'dispositions_speciales',
-                                      'service_enfants', 'service_cyclistes', 'nouveaute_2020'])
+                                      'adresse1', 'adresse2', 'code_postal', 'ville', 'altitude', 'latitude', 'longitude',
+                                      'telephone', 'email', 'site_web', 'description_courte', 'description_detaillee',
+                                      'image', 'publics', 'tourisme_adapte', 'payant', 'animaux_acceptes', 'environnement',
+                                      'equipement', 'services', 'periode', 'activites', 'ouverture', 'date_debut',
+                                      'date_fin', 'typologie', 'bons_plans', 'dispositions_speciales', 'service_enfants',
+                                      'service_cyclistes', 'nouveaute_2020'])
     for key in dict_selectionId:
         result_df = result_df.append(
             retrive_data_by_selectionId(project_ID, api_KEY, dict_selectionId[key], key))

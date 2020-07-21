@@ -37,8 +37,8 @@ class data_from_apidaeModel():
     def __init__(self, id_apidae, id_selection, type_apidae, titre, profil_c2g, categorie_c2g, adresse1, adresse2,
                  code_postal, ville, altitude, latitude, longitude, telephone, email, site_web, description_courte,
                  description_detaillee, image, publics, tourisme_adapte, payant, animaux_acceptes, environnement, equipement,
-                 services, periode, activites, ouverture, typologie, bons_plans, dispositions_speciales, service_enfants,
-                 service_cyclistes, nouveaute_2020):
+                 services, periode, activites, ouverture, date_debut, date_fin, typologie, bons_plans, dispositions_speciales,
+                 service_enfants, service_cyclistes, nouveaute_2020):
         """Initialisation d'un element de selection
         """
         if not id_apidae:
@@ -75,6 +75,8 @@ class data_from_apidaeModel():
         self.__periode = periode
         self.__activites = activites
         self.__ouverture = ouverture
+        self.__date_debut = date_debut
+        self.__date_fin = date_fin
         self.__typologie = typologie
         self.__bons_plans = bons_plans
         self.__dispositions_speciales = dispositions_speciales
@@ -257,6 +259,18 @@ class data_from_apidaeModel():
         return self.__ouverture
 
     @property
+    def date_debut(self):
+        """Retourne la variable __date_debut.
+        """
+        return self.__date_debut
+
+    @property
+    def date_fin(self):
+        """Retourne la variable __date_fin.
+        """
+        return self.__date_fin
+
+    @property
     def typologie(self):
         """Retourne la variable __typologie.
         """
@@ -395,6 +409,8 @@ class Data_from_apidae():
                         'periode': adata_from_apidae.periode,
                         'activites': adata_from_apidae.activites,
                         'ouverture': adata_from_apidae.ouverture,  # needed
+                        'date_debut': adata_from_apidae.date_debut,  # needed
+                        'date_fin': adata_from_apidae.date_fin,  # needed
                         'typologie': adata_from_apidae.typologie,
                         'bons_plans': adata_from_apidae.bons_plans,
                         'dispositions_speciales': adata_from_apidae.dispositions_speciales,
@@ -485,6 +501,8 @@ class Data_from_apidae():
                     row[tInfo_data_from_apidae.c.periode],
                     row[tInfo_data_from_apidae.c.activites],
                     row[tInfo_data_from_apidae.c.ouverture],
+                    row[tInfo_data_from_apidae.c.date_debut],
+                    row[tInfo_data_from_apidae.c.date_fin],
                     row[tInfo_data_from_apidae.c.typologie],
                     row[tInfo_data_from_apidae.c.bons_plans],
                     row[tInfo_data_from_apidae.c.dispositions_speciales],
@@ -555,6 +573,8 @@ class Data_from_apidae():
                 services=sqlalchemy.bindparam('services'),
                 activites=sqlalchemy.bindparam('activites'),
                 ouverture=sqlalchemy.bindparam('ouverture'),
+                date_debut=sqlalchemy.bindparam('date_debut'),
+                date_fin=sqlalchemy.bindparam('date_fin'),
                 typologie=sqlalchemy.bindparam('typologie'),
                 bons_plans=sqlalchemy.bindparam('bons_plans'),
                 dispositions_speciales=sqlalchemy.bindparam(
@@ -595,6 +615,8 @@ class Data_from_apidae():
                                                                         'services': adata_from_apidae.services,
                                                                         'activites': adata_from_apidae.activites,
                                                                         'ouverture': adata_from_apidae.ouverture,
+                                                                        'date_debut': adata_from_apidae.date_debut,
+                                                                        'date_fin': adata_from_apidae.date_fin,
                                                                         'typologie': adata_from_apidae.typologie,
                                                                         'bons_plans': adata_from_apidae.bons_plans,
                                                                         'dispositions_speciales': adata_from_apidae.dispositions_speciales,
@@ -709,6 +731,8 @@ class Data_from_apidae():
                     row['periode'],
                     row['activites'],
                     row['ouverture'],
+                    row['date_debut'],
+                    row['date_fin'],
                     row['typologie'],
                     row['bons_plans'],
                     row['dispositions_speciales'],
@@ -791,6 +815,8 @@ apidae = """
             periode VARCHAR(1003),
             activites VARCHAR(1008),
             ouverture TEXT,
+            date_debut DATE,
+            date_fin DATE,
             typologie VARCHAR(1005),
             bons_plans TEXT,
             dispositions_speciales TEXT,
@@ -805,16 +831,16 @@ insert_apidae = """
                     adresse2, code_postal, ville, altitude, latitude, longitude, telephone, email,
                     site_web, description_courte, description_detaillee, image, publics, tourisme_adapte,
                     payant, animaux_acceptes, environnement, equipement, services, periode, activites,
-                    ouverture, typologie, bons_plans, dispositions_speciales, service_enfants,
-                    service_cyclistes, nouveaute_2020)
+                    ouverture, date_debut, date_fin, typologie, bons_plans, dispositions_speciales, 
+                    service_enfants, service_cyclistes, nouveaute_2020)
                 VALUES (
                     %(id_apidae)s,%(id_selection)s, %(type_apidae)s, %(titre)s, %(profil_c2g)s,
                     %(categorie_c2g)s,%(adresse1)s, %(adresse2)s, %(code_postal)s, %(ville)s, %(altitude)s,
                     %(latitude)s, %(longitude)s, %(telephone)s, %(email)s, %(site_web)s, %(description_courte)s,
                     %(description_detaillee)s,%(image)s, %(Publics)s, %(tourisme_adapte)s,%(payant)s,
                     %(animaux_acceptes)s, %(environnement)s, %(equipement)s, %(services)s, %(periode)s,
-                    %(activites)s, %(ouverture)s, %(typologie)s, %(bons_plans)s, %(dispositions_speciales)s,
-                    %(service_enfants)s, %(service_cyclistes)s, %(nouveaute_2020)s)
+                    %(activites)s, %(ouverture)s, %(date_debut)s, %(date_fin)s, %(typologie)s, %(bons_plans)s, 
+                    %(dispositions_speciales)s, %(service_enfants)s, %(service_cyclistes)s, %(nouveaute_2020)s)
                 returning id_data_from_apidae;
                 """
 
@@ -858,7 +884,8 @@ select_apidae_1_id = """
                                 dfa.longitude AS longitude, dfa.latitude AS latitude, dfa.telephone AS telephone, 
                                 dfa.email AS email, dfa.site_web AS site_web, dfa.description_detaillee AS description_detaillee,
                                 dfa.image AS image, dfa.publics AS publics, dfa.tourisme_adapte AS tourisme_adapte, 
-                                dfa.payant AS payant, dfa.environnement AS environnement, dfa.ouverture AS ouverture
+                                dfa.payant AS payant, dfa.environnement AS environnement, dfa.ouverture AS ouverture,
+                                dfa.date_debut AS date_debut, dfa.date_fin AS date_fin
                     FROM data_from_apidae AS dfa
                     LEFT JOIN category_apidae AS ca 
                     ON dfa.id_data_from_apidae = ca.id_data_from_apidae
@@ -868,7 +895,7 @@ select_apidae_1_id = """
                     GROUP BY dfa.id_apidae, dfa.type_apidae, dfa.titre, dfa.adresse1, dfa.code_postal, 
                                 dfa.ville,dfa.altitude, dfa.longitude, dfa.latitude, dfa.telephone, dfa.email, dfa.site_web, 
                                 dfa.description_detaillee, dfa.image, dfa.publics, dfa.tourisme_adapte, dfa.payant, 
-                                dfa.environnement, dfa.ouverture
+                                dfa.environnement, dfa.ouverture, dfa.date_debut, dfa.date_fin
                     LIMIT 1;
                     """
 
@@ -899,7 +926,8 @@ select_apidae_1_id_apidae = """
                                 dfa.longitude AS longitude, dfa.latitude AS latitude, dfa.telephone AS telephone, 
                                 dfa.email AS email, dfa.site_web AS site_web, dfa.description_detaillee AS description_detaillee,
                                 dfa.image AS image, dfa.publics AS publics, dfa.tourisme_adapte AS tourisme_adapte, 
-                                dfa.payant AS payant, dfa.environnement AS environnement, dfa.ouverture AS ouverture
+                                dfa.payant AS payant, dfa.environnement AS environnement, dfa.ouverture AS ouverture,
+                                dfa.date_debut AS date_debut, dfa.date_fin AS date_fin
                             FROM data_from_apidae AS dfa
                             LEFT JOIN category_apidae AS ca 
                             ON dfa.id_data_from_apidae = ca.id_data_from_apidae
@@ -909,7 +937,7 @@ select_apidae_1_id_apidae = """
                             GROUP BY dfa.id_apidae, dfa.type_apidae, dfa.titre, dfa.adresse1, dfa.code_postal, 
                                 dfa.ville,dfa.altitude, dfa.longitude, dfa.latitude, dfa.telephone, dfa.email, dfa.site_web, 
                                 dfa.description_detaillee, dfa.image, dfa.publics, dfa.tourisme_adapte, dfa.payant, 
-                                dfa.environnement, dfa.ouverture
+                                dfa.environnement, dfa.ouverture, dfa.date_debut, dfa.date_fin
                             LIMIT 1;
                             """
 
@@ -921,7 +949,8 @@ select_apidae_all_data = """
                                 dfa.longitude AS longitude, dfa.latitude AS latitude, dfa.telephone AS telephone, 
                                 dfa.email AS email, dfa.site_web AS site_web, dfa.description_detaillee AS description_detaillee,
                                 dfa.image AS image, dfa.publics AS publics, dfa.tourisme_adapte AS tourisme_adapte, 
-                                dfa.payant AS payant, dfa.environnement AS environnement, dfa.ouverture AS ouverture, '' AS modifier
+                                dfa.payant AS payant, dfa.environnement AS environnement, dfa.ouverture AS ouverture,
+                                dfa.date_debut AS date_debut, dfa.date_fin AS date_fin, '' AS modifier
                             FROM data_from_apidae AS dfa
                             LEFT JOIN category_apidae AS ca ON dfa.id_data_from_apidae = ca.id_data_from_apidae
                             LEFT JOIN category AS c ON ca.id_category = c.id_category
@@ -930,7 +959,7 @@ select_apidae_all_data = """
                             GROUP BY dfa.id_data_from_apidae, dfa.id_apidae, dfa.type_apidae, dfa.titre, dfa.adresse1, dfa.code_postal, 
                                 dfa.ville,dfa.altitude, dfa.longitude, dfa.latitude, dfa.telephone, dfa.email, dfa.site_web, 
                                 dfa.description_detaillee, dfa.image, dfa.publics, dfa.tourisme_adapte, dfa.payant, 
-                                dfa.environnement, dfa.ouverture;
+                                dfa.environnement, dfa.ouverture, dfa.date_debut, dfa.date_fin;
                             """
 
 select_apidae_edit = """

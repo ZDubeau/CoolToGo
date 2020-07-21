@@ -23,7 +23,7 @@ insert_category = """
                     """
 
 select_category = """
-                    SELECT id_category AS id, '' AS modifier, '' AS supprimer
+                    SELECT id_category AS id, category_name AS catégories, '' AS modifier, '' AS supprimer
                     FROM category; 
                     """
 

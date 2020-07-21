@@ -65,16 +65,24 @@ full_actions_list = (
     Table_freshness.freshness_level
 )
 
-alter_table = """ALTER TABLE profil ADD COLUMN basic BOOLEAN DEFAULT TRUE;"""
-update_table = """update profil set basic=FALSE where id_profil=5 OR id_profil=6"""
+alter_table = """
+                ALTER TABLE profil 
+                ADD COLUMN basic BOOLEAN DEFAULT TRUE;
+            """
 
-ligth_actions_list = (
+update_table = """
+                UPDATE profil 
+                SET basic=FALSE 
+                WHERE id_profil=5 OR id_profil=6;
+            """
+
+update = (
     update_table
 )
 
 
 if __name__ == "__main__":
     connexion = DB_connexion()
-    for value in light_actions_list:
+    for value in update:
         connexion.Insert_SQL(value)
     del connexion

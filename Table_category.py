@@ -24,7 +24,8 @@ insert_category = """
 
 select_category = """
                     SELECT id_category AS id, category_name AS catégories, '' AS modifier, '' AS supprimer
-                    FROM category; 
+                    FROM category
+                    ORDER BY id_category ASC; 
                     """
 
 select_category_for_selection_id = """

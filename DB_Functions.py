@@ -249,30 +249,30 @@ def create_dict_for_lieu_validated(thelist: list):
     profil_c2g = thelist[3]
     categorie_c2g = thelist[4]
     adresse1 = thelist[5]
-    adresse2 = thelist[6]
-    code_postal = thelist[7]
-    ville = thelist[8]
-    altitude = thelist[9]
-    longitude = thelist[10]
-    latitude = thelist[11]
-    telephone = thelist[12]
-    email = thelist[13]
-    site_web = thelist[14]
+    #adresse2 = thelist[6]
+    code_postal = thelist[6]
+    ville = thelist[7]
+    altitude = thelist[8]
+    longitude = thelist[9]
+    latitude = thelist[10]
+    telephone = thelist[11]
+    email = thelist[12]
+    site_web = thelist[13]
     # description_courte = thelist[17]
-    description_detaillee = thelist[15]
-    image = thelist[16]
-    publics = thelist[17]
-    tourisme_adapte = thelist[18]
-    payant = thelist[19]
+    description_detaillee = thelist[14]
+    image = thelist[15]
+    publics = thelist[16]
+    tourisme_adapte = thelist[17]
+    payant = thelist[18]
     # animaux_acceptes = thelist[23]
-    environnement = thelist[20]
+    environnement = thelist[19]
     # equipement = thelist[25]
     # services = thelist[26]
     # periode = thelist[27]
     # activites = thelist[28]
-    ouverture = thelist[21]
-    date_debut = thelist[22]
-    date_fin = thelist[23]
+    ouverture = thelist[20]
+    date_debut = thelist[21]
+    date_fin = thelist[22]
     # typologie = thelist[30]
     # bons_plans = thelist[31]
     # dispositions_speciales = thelist[32]
@@ -298,10 +298,10 @@ def create_dict_for_lieu_validated(thelist: list):
     dict_for_properties.update({"profil_c2g": profil_c2g})
     dict_for_properties.update({"categorie_c2g": categorie_c2g})
     dict_for_properties.update({"address1": adresse1})
-    dict_for_properties.update({"adresse2": adresse2})
+    #dict_for_properties.update({"adresse2": adresse2})
     dict_for_properties.update({"code_postal": code_postal})
     dict_for_properties.update({"city": ville})
-    dict_for_properties.update({"atitude": atitude})
+    dict_for_properties.update({"altitude": altitude})
     dict_for_properties.update({"longitude": longitude})
     dict_for_properties.update({"latitude": latitude})
     dict_for_properties.update({"telephone": telephone})

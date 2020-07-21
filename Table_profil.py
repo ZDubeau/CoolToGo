@@ -17,7 +17,8 @@ insert_user_profil = """
 
 select_user_profil = """
                     SELECT id_profil as id, profil as profil_usagers, basic, '' as modifier, '' as supprimer
-                    FROM profil;
+                    FROM profil
+                    ORDER BY id_profil ASC;
                     """
 select_basic_user_profil = """
                     SELECT id_profil as id

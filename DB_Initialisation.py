@@ -65,8 +65,17 @@ full_actions_list = (
     Table_freshness.freshness_level
 )
 
+alter_table = """ALTER TABLE profil ADD COLUMN basic BOOLEAN DEFAULT TRUE;"""
+update_table = """update profil set basic=FALSE where id_profil=5 OR id_profil=6"""
+
+ligth_actions_list = (
+    Table_Apidae.drop_apidae,
+    Table_Apidae.apidae
+)
+
+
 if __name__ == "__main__":
     connexion = DB_connexion()
     for value in full_actions_list:
         connexion.Insert_SQL(value)
-    connexion.close()
+    del connexion

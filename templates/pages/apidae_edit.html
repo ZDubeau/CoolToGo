@@ -1,48 +1,59 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="static/css/homepage.css">
-    <link rel="shortcut icon" href="{{ url_for('static', filename='cooltogo.ico') }}">
-</head>
-
-<body>
-    <!-- --La page d'accueil avec deux boutons de l'iscription et la connexion-- -->
-    <div class="content">
-        <center>
-            <button onclick="document.getElementById('edit').style.display='block'" style="width:auto;"
-                id="Edit">modifier</button>
-        </center>
+{% extends "layout.html" %}
+{% block bootstrap_2 %}
+<!-- <div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header"
+                style="background-color: #01289fe3; color: #d0eeed; border-radius: 4px 4px 0px 0px; font-size: large; font-weight: bold;">
+                Extraction Apidae
+            </div>
+            <div class="card-body" style="border-radius: 0px 0px 4px 4px;background-color: #1778b825;">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        {% for table in tables %}
+                        {{ table|safe }}
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
-    <!-- ---------------La fenetre de la connection d'utilisateur------------------ -->
-    <div id="id_1" class="modal">
-        <form class="modal-content animate" action="/edit" method="post">
-            <div class="logcontainer">
-                <h2>Modification</h2>
-                <img alt="" class="log">
+</div> -->
+<center>
+    <h2 style="color: khaki; text-align: center;">{{ErrorMessage}}</h2>
+</center>
+<div class="column" style="margin-left: 0 !important;transform: translate(0px, 10px);">
+    <p class="title" style="font-size: 1.25rem;color: #01289f;transform: translate(-8px, 0px);">Editer la catégorie</p>
+    <!-- FORM -->
+    <form action="/edit" method="post" style="padding-bottom: 30px;">
+        <div class="form-row">
+            <div class="col-md-1 mb-3" style="transform: translate(-10px, 0px);">
+                <label class="label" style="font-size: 12px;display: inherit !important;"></label>
+                <input name="" id_apidae" value="{{id_apidae}}" class="input" type="text" maxlength="20" readonly>
             </div>
-            <div class="container">
-                <label class="label">id_apidae</label>
-                <input name="id_apidae" value="{{id_apidae}}" class="input" type="text" maxlength="40"
-                    style="color: #3f3d3d;" readonly>
-
-                <label id="forme" for="profil"><b>profil_C2G</b></label>
-                <input type="text" name="profil_c2g" value="{{profil_c2g}}">
-
-                <label id="forme" for="ctg"><b>Sous_type</b></label>
-                <input type="text" name="ctg" value="{{ctg}}">
-
-                <button type="submit">Confirm</button>
+            <!-- ------- -->
+            <div class="col-md-3 mb-3" style="transform: translate(-10px, 0px);">
+                <label class="label" style="font-size: 12px;display: inherit !important;"></label>
+                <input name="profil_c2g" value="{{profil_c2g}}" class="input" type="text" maxlength="100" required>
             </div>
-            <div class="container" style="background-color:#e7f3f8">
-                <button type="button" class="cancelbtn"
-                    onclick="document.getElementById('edit').style.display='none'">Annuler</button>
+            <!-- ------- -->
+            <div class="col-md-3 mb-3" style="transform: translate(-10px, 0px);">
+                <label class="label" style="font-size: 12px;display: inherit !important;"></label>
+                <input name="ctg" value="{{ctg}}" class="input" type="text" maxlength="100" required>
             </div>
-        </form>
-    </div>
+            <!-- ------- -->
+            <div class="field is-grouped is-grouped-left" style="transform: translate(10px, 4px);">
+                <div class="control">
+                    <input name="id" value="{{id}}" hidden>
+                    <button class="button is-link"
+                        style="background-color: #01289f; border-radius: 4px; border-width: 0;color: #d0eeed; padding: 5px 20px;font-size: 15px;transform: translate(0px, 3px);">Valider</button>
+                </div>
+            </div>
+        </div>
+    </form>
+    <!-- </div> -->
     <!-- -------------------------------------------------------------------- -->
-    <script>
+    <!-- <script>
         // Get the modal
         var modal1 = document.getElementById('edit');
     </script>
@@ -56,7 +67,5 @@
         password.onchange = validatePassword;
 
         var btn = document.getElementById("myBtn");
-    </script>
-</body>
-
-</html>
+    </script> -->
+    {% endblock bootstrap_2 %}

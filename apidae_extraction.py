@@ -35,7 +35,7 @@ from transformation import transformation
 
 
 def retrieve_data_by_id(project_ID, api_KEY, select_id, selectionId, id_selection, categories_list, element_reference_by_profil_dict, element_reference_by_category_dict):
-    result_df = pd.DataFrame(columns=['id_apidae', 'id_selection', 'type_apidae', 'titre', 'profil_c2g', 'sous_type',
+    result_df = pd.DataFrame(columns=['id_apidae', 'id_selection', 'type_apidae', 'titre', 'profil_c2g', 'categorie_c2g',
                                       'adresse1', 'adresse2', 'code_postal', 'ville', 'altitude', 'latitude',
                                       'longitude', 'telephone', 'email', 'site_web', 'description_courte',
                                       'description_detaillee', 'image', 'publics', 'tourisme_adapte', 'payant',
@@ -92,7 +92,7 @@ first = "0"                 # start from 0
 
 def retrive_data_by_selectionId(project_ID, api_KEY, selectionId, id_selection, categories_list, element_reference_by_profil_dict, element_reference_by_category_dict):
     import pandas as pd
-    result_df = pd.DataFrame(columns=['id_apidae', 'id_selection', 'type_apidae', 'titre', 'profil_c2g', 'sous_type',
+    result_df = pd.DataFrame(columns=['id_apidae', 'id_selection', 'type_apidae', 'titre', 'profil_c2g', 'categorie_c2g',
                                       'adresse1', 'adresse2', 'code_postal', 'ville', 'altitude', 'latitude',
                                       'longitude', 'telephone', 'email', 'site_web', 'description_courte',
                                       'description_detaillee', 'image', 'publics', 'tourisme_adapte', 'payant',
@@ -124,7 +124,7 @@ def retrive_data_by_selectionId(project_ID, api_KEY, selectionId, id_selection, 
 
 def retrive_data_by_selectionId_by_cent(project_ID, api_KEY, selectionId, id_selection, categories_list, element_reference_by_profil_dict, element_reference_by_category_dict, first, count):
     import pandas as pd
-    result_df = pd.DataFrame(columns=['id_apidae', 'id_selection', 'type_apidae', 'titre', 'profil_c2g', 'sous_type',
+    result_df = pd.DataFrame(columns=['id_apidae', 'id_selection', 'type_apidae', 'titre', 'profil_c2g', 'categorie_c2g',
                                       'adresse1', 'adresse2', 'code_postal', 'ville', 'altitude', 'latitude',
                                       'longitude', 'telephone', 'email', 'site_web', 'description_courte',
                                       'description_detaillee', 'image', 'publics', 'tourisme_adapte', 'payant',
@@ -163,7 +163,7 @@ def retrive_data_by_selectionId_by_cent(project_ID, api_KEY, selectionId, id_sel
 
 def retrive_data_by_multiple_selectionId(project_ID, api_KEY, dict_selectionId):
     import pandas as pd
-    result_df = pd.DataFrame(columns=['id_apidae', 'id_selection', 'type_apidae', 'titre', 'profil_c2g', 'sous_type',
+    result_df = pd.DataFrame(columns=['id_apidae', 'id_selection', 'type_apidae', 'titre', 'profil_c2g', 'categorie_c2g',
                                       'adresse1', 'adresse2', 'code_postal', 'ville', 'altitude', 'latitude',
                                       'longitude', 'telephone', 'email', 'site_web', 'description_courte',
                                       'description_detaillee', 'image', 'publics', 'tourisme_adapte', 'payant',

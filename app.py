@@ -296,10 +296,14 @@ def get_tableApidae():
     else:
         username = session["username"]
         connexion = DB_connexion()
+        # df = pd.read_sql(
+        #     apidae.select_apidae_category_display, connexion.connexion())
+        # del connexion
+        # return render_template('pages/tableApidae.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableApidae', index=False)], username=username)
         df = pd.read_sql(
-            apidae.select_apidae_display, connexion.connexion())
+            apidae.select_apidae_all_data, connexion.connexion())
         del connexion
-        return render_template('pages/tableApidae.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableApidae', index=False)], username=username)
+        return render_template('pages/tableApidae.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableApidaejsonmode', index=False)], username=username)
 
 
 @app.route('/edit_ctg_profil/<id>')
@@ -1213,9 +1217,9 @@ def get_delete_profil(id):
         ErrorMessage = e
     return redirect(url_for("get_profil", ErrorMessage=ErrorMessage))
 
-#---------------------------------------------------#
-#                      api for front-end            #
-#---------------------------------------------------#
+#----------------------------------------------------------#
+#                      api for front-end                   #
+#----------------------------------------------------------#
 
 
 @app.route('/api', methods=['GET', 'POST'])
@@ -1235,6 +1239,7 @@ def get_api():
 
 @app.route('/api/categories', methods=['GET'])
 def categories():
+
     c = ctg_api.query_database_for_list_of_categories()
     response = app.response_class(
         response=json.dumps(c, indent=3, sort_keys=False),
@@ -1255,7 +1260,7 @@ def profiles():
     return response
 
 
-@app.route('/api/locations', methods=['GET', 'POST'])
+@app.route('/api/locations', methods=['POST'])
 def locations():
     """
     the post request will be sent with a JSON body

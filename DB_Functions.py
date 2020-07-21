@@ -247,30 +247,30 @@ def create_dict_for_lieu_validated(thelist: list):
     type_apidae = thelist[1]
     titre = thelist[2]
     profil_c2g = thelist[3]
-    sous_type = thelist[4]
+    categorie_c2g = thelist[4]
     adresse1 = thelist[5]
-    # adresse2 = thelist[8]
-    code_postal = thelist[6]
-    ville = thelist[7]
-    altitude = thelist[8]
-    longitude = thelist[9]
-    latitude = thelist[10]
-    telephone = thelist[11]
-    email = thelist[12]
-    site_web = thelist[13]
+    adresse2 = thelist[6]
+    code_postal = thelist[7]
+    ville = thelist[8]
+    altitude = thelist[9]
+    longitude = thelist[10]
+    latitude = thelist[11]
+    telephone = thelist[12]
+    email = thelist[13]
+    site_web = thelist[14]
     # description_courte = thelist[17]
-    description_detaillee = thelist[14]
-    image = thelist[15]
-    publics = thelist[16]
-    tourisme_adapte = thelist[17]
-    payant = thelist[18]
+    description_detaillee = thelist[15]
+    image = thelist[16]
+    publics = thelist[17]
+    tourisme_adapte = thelist[18]
+    payant = thelist[19]
     # animaux_acceptes = thelist[23]
-    environnement = thelist[19]
+    environnement = thelist[20]
     # equipement = thelist[25]
     # services = thelist[26]
     # periode = thelist[27]
     # activites = thelist[28]
-    ouverture = thelist[20]
+    ouverture = thelist[21]
     # typologie = thelist[30]
     # bons_plans = thelist[31]
     # dispositions_speciales = thelist[32]
@@ -290,34 +290,34 @@ def create_dict_for_lieu_validated(thelist: list):
         niveau_de_fraicheur = data[0]
 
     dict_for_properties = {}
-    dict_for_properties.update({"id_apidae": id_apidae})
-    dict_for_properties.update({"Type_Apidae": type_apidae})
-    dict_for_properties.update({"Title": titre})
-    dict_for_properties.update({"Profil_C2G": profil_c2g})
-    dict_for_properties.update({"Category_C2G": sous_type})
-    dict_for_properties.update({"Address": adresse1})
-    #dict_for_properties.update({"adresse_2": adresse2})
-    dict_for_properties.update({"CodePostal": code_postal})
-    dict_for_properties.update({"City": ville})
-    #dict_for_properties.update({"atitude": latitude})
-    dict_for_properties.update({"Longitude": longitude})
-    dict_for_properties.update({"Latitude": latitude})
-    dict_for_properties.update({"Tel": telephone})
-    dict_for_properties.update({"Mail": email})
-    dict_for_properties.update({"URL": site_web})
+    dict_for_properties.update({"id": id_apidae})
+    dict_for_properties.update({"type_Apidae": type_apidae})
+    dict_for_properties.update({"title": titre})
+    dict_for_properties.update({"profil_c2g": profil_c2g})
+    dict_for_properties.update({"categorie_c2g": categorie_c2g})
+    dict_for_properties.update({"address1": adresse1})
+    dict_for_properties.update({"adresse2": adresse2})
+    dict_for_properties.update({"code_postal": code_postal})
+    dict_for_properties.update({"city": ville})
+    dict_for_properties.update({"atitude": atitude})
+    dict_for_properties.update({"longitude": longitude})
+    dict_for_properties.update({"latitude": latitude})
+    dict_for_properties.update({"telephone": telephone})
+    dict_for_properties.update({"email": email})
+    dict_for_properties.update({"url": site_web})
     #dict_for_properties.update({"description_courte": description_courte})
-    dict_for_properties.update({"Description": description_detaillee})
-    dict_for_properties.update({"Image": [image]})
-    dict_for_properties.update({"Public": publics})
-    dict_for_properties.update({"Accessibility": tourisme_adapte})
-    dict_for_properties.update({"Paying": payant})
+    dict_for_properties.update({"description": description_detaillee})
+    dict_for_properties.update({"image": [image]})
+    dict_for_properties.update({"public": publics})
+    dict_for_properties.update({"accessibility": tourisme_adapte})
+    dict_for_properties.update({"paying": payant})
     #dict_for_properties.update({"animaux_acceptes": animaux_acceptes})
-    dict_for_properties.update({"Environment": environnement})
+    dict_for_properties.update({"environment": environnement})
     #dict_for_properties.update({"equipement": equipement})
     #dict_for_properties.update({"services": services})
     #dict_for_properties.update({"periode": periode})
     #dict_for_properties.update({"activites": activites})
-    dict_for_properties.update({"Opening": ouverture})
+    dict_for_properties.update({"opening": ouverture})
     #dict_for_properties.update({"typologie": typologie})
     #dict_for_properties.update({"bons_plans": bons_plans})
     #dict_for_properties.update({"dispositions_speciales": dispositions_speciales})
@@ -326,7 +326,8 @@ def create_dict_for_lieu_validated(thelist: list):
 
     dict_for_geometry = {}
     dict_for_geometry.update({"type": "Point"})
-    dict_for_geometry.update({"Coordinates": [longitude, latitude]})
+    dict_for_geometry.update({"coordinates": [longitude, latitude]})
+
     dict_for_apidae = dict()
     dict_for_apidae.update({"type": "Feature"})
     dict_for_apidae.update({"properties": dict_for_properties})

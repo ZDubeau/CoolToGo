@@ -340,7 +340,7 @@ select_selection_information = """
                                     s.selection AS ID_s, s.description AS selection, 
                                     to_char(se.selection_extraction_date,'DD/MM/YY HH24:MI:SS') AS dernier_extract, 
                                     se.selection_extraction_nb_records AS Nb, 
-                                    array_to_string(array_agg(c.category_name), ', ', '*') AS Catégorie,
+                                    array_to_string(array_agg(c.category_name), ', ', '*') AS catégorie,
                                     '' AS lancer, '' AS modifier
                                 FROM selection AS s 
                                 LEFT JOIN project AS p 

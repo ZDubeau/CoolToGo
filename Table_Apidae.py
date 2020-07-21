@@ -1,6 +1,6 @@
 """----------------------------
 Creation date : 2020-06-11
-Last update : 2020-07-02
+Last update : 2020-07-20
 ----------------------------"""
 
 import re
@@ -34,7 +34,7 @@ class data_from_apidaeModel():
         data_from_apidaeModel: retourne un élément.
     """
 
-    def __init__(self, id_apidae, id_selection, type_apidae, titre, profil_c2g, sous_type, adresse1, adresse2,
+    def __init__(self, id_apidae, id_selection, type_apidae, titre, profil_c2g, categorie_c2g, adresse1, adresse2,
                  code_postal, ville, altitude, latitude, longitude, telephone, email, site_web, description_courte,
                  description_detaillee, image, publics, tourisme_adapte, payant, animaux_acceptes, environnement, equipement,
                  services, periode, activites, ouverture, typologie, bons_plans, dispositions_speciales, service_enfants,
@@ -51,7 +51,7 @@ class data_from_apidaeModel():
         self.__type_apidae = type_apidae
         self.__titre = titre
         self.__profil_c2g = profil_c2g
-        self.__sous_type = sous_type
+        self.__categorie_c2g = categorie_c2g
         self.__adresse1 = adresse1
         self.__adresse2 = adresse2
         self.__code_postal = code_postal
@@ -113,10 +113,10 @@ class data_from_apidaeModel():
         return self.__profil_c2g
 
     @property
-    def sous_type(self):
-        """Retourne la variable __sous_type.
+    def categorie_c2g(self):
+        """Retourne la variable __categorie_c2g.
         """
-        return self.__sous_type
+        return self.__categorie_c2g
 
     @property
     def adresse1(self):
@@ -371,7 +371,7 @@ class Data_from_apidae():
                         'type_apidae': adata_from_apidae.type_apidae,  # needed
                         'titre': adata_from_apidae.titre,  # needed
                         'profil_c2g': adata_from_apidae.profil_c2g,
-                        'sous_type': adata_from_apidae.sous_type,
+                        'categorie_c2g': adata_from_apidae.categorie_c2g,
                         'adresse1': adata_from_apidae.adresse1,  # needed
                         'adresse2': adata_from_apidae.adresse2,  # needed
                         'code_postal': adata_from_apidae.code_postal,  # needed
@@ -410,10 +410,17 @@ class Data_from_apidae():
             for adata_from_apidae in data_from_apidae:
                 id_data_from_apidae = self.__connexion.Query_SQL_fetchone(select_apidae_with_id_apidae_and_selection, [
                                                                           adata_from_apidae.id_apidae, adata_from_apidae.id_selection])[0]
-                for profil in adata_from_apidae.profil_c2g:
-                    self.__connexion.Insert_SQL(
-                        rel_prf_apidae.insert_relation_profil_apidae, [profil, id_data_from_apidae])
-                for category in adata_from_apidae.sous_type:
+                if not adata_from_apidae.profil_c2g:
+                    list_profil = self.__connexion.Query_SQL_fetchall(
+                        prf.select_basic_user_profil)
+                    for profil in list_profil:
+                        self.__connexion.Insert_SQL(
+                            rel_prf_apidae.insert_relation_profil_apidae, [profil[0], id_data_from_apidae])
+                else:
+                    for profil in adata_from_apidae.profil_c2g:
+                        self.__connexion.Insert_SQL(
+                            rel_prf_apidae.insert_relation_profil_apidae, [profil, id_data_from_apidae])
+                for category in adata_from_apidae.categorie_c2g:
                     self.__connexion.Insert_SQL(
                         rel_ctg_apidae.insert_relation_category_apidae, [category, id_data_from_apidae])
             FileLogger.log(
@@ -454,7 +461,7 @@ class Data_from_apidae():
                     row[tInfo_data_from_apidae.c.type_apidae],
                     row[tInfo_data_from_apidae.c.titre],
                     row[tInfo_data_from_apidae.c.profil_c2g],
-                    row[tInfo_data_from_apidae.c.sous_type],
+                    row[tInfo_data_from_apidae.c.categorie_c2g],
                     row[tInfo_data_from_apidae.c.adresse1],
                     row[tInfo_data_from_apidae.c.adresse2],
                     row[tInfo_data_from_apidae.c.code_postal],
@@ -523,7 +530,7 @@ class Data_from_apidae():
                 type_apidae=sqlalchemy.bindparam('type_apidae'),
                 titre=sqlalchemy.bindparam('titre'),
                 profil_c2g=sqlalchemy.bindparam('profil_c2g'),
-                sous_type=sqlalchemy.bindparam('sous_type'),
+                categorie_c2g=sqlalchemy.bindparam('categorie_c2g'),
                 adresse1=sqlalchemy.bindparam('adresse1'),
                 adresse2=sqlalchemy.bindparam('adresse2'),
                 code_postal=sqlalchemy.bindparam('code_postal'),
@@ -565,7 +572,7 @@ class Data_from_apidae():
                                                                         'type_apidae': adata_from_apidae.type_apidae,
                                                                         'titre': adata_from_apidae.titre,
                                                                         'profil_c2g': adata_from_apidae.profil_c2g,
-                                                                        'sous_type': adata_from_apidae.sous_type,
+                                                                        'categorie_c2g': adata_from_apidae.categorie_c2g,
                                                                         'adresse1': adata_from_apidae.adresse1,
                                                                         'adresse2': adata_from_apidae.adresse2,
                                                                         'code_postal': adata_from_apidae.code_postal,
@@ -607,10 +614,17 @@ class Data_from_apidae():
                     rel_prf_apidae.delete_relation_profil_apidae_with_id_data_from_apidae, [id_data_from_apidae])
                 self.__connexion.Delete_SQL(
                     rel_ctg_apidae.delete_relation_category_apidae_with_id_data_from_apidae, [id_data_from_apidae])
-                for profil in adata_from_apidae.profil_c2g:
-                    self.__connexion.Insert_SQL(
-                        rel_prf_apidae.insert_relation_profil_apidae, [profil, id_data_from_apidae])
-                for category in adata_from_apidae.sous_type:
+                if not adata_from_apidae.profil_c2g:
+                    list_profil = self.__connexion.Query_SQL_fetchall(
+                        prf.select_basic_user_profil)
+                    for profil in list_profil:
+                        self.__connexion.Insert_SQL(
+                            rel_prf_apidae.insert_relation_profil_apidae, [profil[0], id_data_from_apidae])
+                else:
+                    for profil in adata_from_apidae.profil_c2g:
+                        self.__connexion.Insert_SQL(
+                            rel_prf_apidae.insert_relation_profil_apidae, [profil, id_data_from_apidae])
+                for category in adata_from_apidae.categorie_c2g:
                     self.__connexion.Insert_SQL(
                         rel_ctg_apidae.insert_relation_category_apidae, [category, id_data_from_apidae])
             FileLogger.log(
@@ -671,7 +685,7 @@ class Data_from_apidae():
                     row['type_apidae'],
                     row['titre'],
                     row['profil_c2g'],
-                    row['sous_type'],
+                    row['categorie_c2g'],
                     row['adresse1'],
                     row['adresse2'],
                     row['code_postal'],
@@ -753,7 +767,7 @@ apidae = """
             type_apidae VARCHAR(500),
             titre VARCHAR(600),
             profil_c2g VARCHAR(203),
-            sous_type VARCHAR(601),
+            categorie_c2g VARCHAR(601),
             adresse1 TEXT,
             adresse2 TEXT,
             code_postal VARCHAR(20),
@@ -787,7 +801,7 @@ apidae = """
 
 insert_apidae = """
                 INSERT INTO data_from_apidae (
-                    id_apidae, id_selection, type_apidae, titre, profil_c2g, sous_type, adresse1,
+                    id_apidae, id_selection, type_apidae, titre, profil_c2g, categorie_c2g, adresse1,
                     adresse2, code_postal, ville, altitude, latitude, longitude, telephone, email,
                     site_web, description_courte, description_detaillee, image, publics, tourisme_adapte,
                     payant, animaux_acceptes, environnement, equipement, services, periode, activites,
@@ -795,7 +809,7 @@ insert_apidae = """
                     service_cyclistes, nouveaute_2020)
                 VALUES (
                     %(id_apidae)s,%(id_selection)s, %(type_apidae)s, %(titre)s, %(profil_c2g)s,
-                    %(sous_type)s,%(adresse1)s, %(adresse2)s, %(code_postal)s, %(ville)s, %(altitude)s,
+                    %(categorie_c2g)s,%(adresse1)s, %(adresse2)s, %(code_postal)s, %(ville)s, %(altitude)s,
                     %(latitude)s, %(longitude)s, %(telephone)s, %(email)s, %(site_web)s, %(description_courte)s,
                     %(description_detaillee)s,%(image)s, %(Publics)s, %(tourisme_adapte)s,%(payant)s,
                     %(animaux_acceptes)s, %(environnement)s, %(equipement)s, %(services)s, %(periode)s,
@@ -809,6 +823,18 @@ select_apidae_display = """
                         FROM data_from_apidae
                         ORDER BY id_data_from_apidae ASC;
                         """
+
+select_apidae_category_display = """
+                                SELECT a.*, sc.id_category AS id_catégorie, 
+                                    array_to_string(array_agg(c.category_name), ', ', '*') AS catégorie_ctg, '' AS modifir
+                                FROM data_from_apidae AS a
+                                LEFT JOIN selection_category AS sc
+                                ON a.id_selection = sc.id_selection
+                                LEFT JOIN category AS c
+                                ON sc.id_category=c.id_category
+                                GROUP BY a.id_data_from_apidae, a.*, sc.id_category
+                                ORDER BY id_data_from_apidae ASC;
+                                """
 
 select_apidae = """
                 SELECT *
@@ -827,7 +853,7 @@ select_apidae_selection_display = """
 select_apidae_1_id = """
                     SELECT dfa.id_apidae AS id_apidae, dfa.type_apidae AS type_apidae, dfa.titre AS titre,
                                 array_to_json(array_agg(DISTINCT pa.id_profil)) AS profil_c2g, 
-                                array_to_json(array_agg(DISTINCT ca.id_category)) AS sous_type, 
+                                array_to_json(array_agg(DISTINCT ca.id_category)) AS categorie_c2g, 
                                 dfa.adresse1 AS adresse1, dfa.code_postal AS code_postal, dfa.ville AS ville, dfa.altitude AS altitude,
                                 dfa.longitude AS longitude, dfa.latitude AS latitude, dfa.telephone AS telephone, 
                                 dfa.email AS email, dfa.site_web AS site_web, dfa.description_detaillee AS description_detaillee,
@@ -868,7 +894,7 @@ select_apidae_with_categorie_list_and_profil_list = """
 select_apidae_1_id_apidae = """
                             SELECT dfa.id_apidae AS id_apidae, dfa.type_apidae AS type_apidae, dfa.titre AS titre,
                                 array_to_json(array_agg(DISTINCT pa.id_profil)) AS profil_c2g, 
-                                array_to_json(array_agg(DISTINCT ca.id_category)) AS sous_type, 
+                                array_to_json(array_agg(DISTINCT ca.id_category)) AS categorie_c2g, 
                                 dfa.adresse1 AS adresse1, dfa.code_postal AS code_postal, dfa.ville AS ville, dfa.altitude AS altitude,
                                 dfa.longitude AS longitude, dfa.latitude AS latitude, dfa.telephone AS telephone, 
                                 dfa.email AS email, dfa.site_web AS site_web, dfa.description_detaillee AS description_detaillee,
@@ -885,6 +911,26 @@ select_apidae_1_id_apidae = """
                                 dfa.description_detaillee, dfa.image, dfa.publics, dfa.tourisme_adapte, dfa.payant, 
                                 dfa.environnement, dfa.ouverture
                             LIMIT 1;
+                            """
+
+select_apidae_all_data = """
+                            SELECT dfa.id_data_from_apidae AS id, dfa.id_apidae AS id_apidae, dfa.type_apidae AS type_apidae, dfa.titre AS titre,
+                                array_to_string(array_agg(DISTINCT p.profil), ', ', '*') AS profil_c2g, 
+                                array_to_string(array_agg(DISTINCT c.category_name), ', ', '*') AS categorie_c2g, 
+                                dfa.adresse1 AS adresse1, dfa.code_postal AS code_postal, dfa.ville AS ville, dfa.altitude AS altitude,
+                                dfa.longitude AS longitude, dfa.latitude AS latitude, dfa.telephone AS telephone, 
+                                dfa.email AS email, dfa.site_web AS site_web, dfa.description_detaillee AS description_detaillee,
+                                dfa.image AS image, dfa.publics AS publics, dfa.tourisme_adapte AS tourisme_adapte, 
+                                dfa.payant AS payant, dfa.environnement AS environnement, dfa.ouverture AS ouverture, '' AS modifier
+                            FROM data_from_apidae AS dfa
+                            LEFT JOIN category_apidae AS ca ON dfa.id_data_from_apidae = ca.id_data_from_apidae
+                            LEFT JOIN category AS c ON ca.id_category = c.id_category
+                            LEFT JOIN profil_apidae AS pa ON dfa.id_data_from_apidae = pa.id_data_from_apidae
+                            LEFT JOIN profil AS p ON pa.id_profil = p.id_profil
+                            GROUP BY dfa.id_data_from_apidae, dfa.id_apidae, dfa.type_apidae, dfa.titre, dfa.adresse1, dfa.code_postal, 
+                                dfa.ville,dfa.altitude, dfa.longitude, dfa.latitude, dfa.telephone, dfa.email, dfa.site_web, 
+                                dfa.description_detaillee, dfa.image, dfa.publics, dfa.tourisme_adapte, dfa.payant, 
+                                dfa.environnement, dfa.ouverture;
                             """
 
 select_apidae_edit = """

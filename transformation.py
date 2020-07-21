@@ -21,7 +21,7 @@ class transformation():
             self.__special_elements_descriptions[element] = ""
         self.__element_reference_by_profil_dict = element_reference_by_profil_dict
         self.__element_reference_by_category_dict = element_reference_by_category_dict
-        self.__dict_id['sous_type'] = categories_list
+        self.__dict_id['categorie_c2g'] = categories_list
 
     def __del__(self):
         # FileLogger.log(
@@ -421,7 +421,6 @@ class transformation():
                     intermediatejson, self.__request_json)
 
     def __identify_profil_for_apidae_id(self):
-
         list_of_profil = []
         for key in self.__element_reference_by_profil_dict:
             if bool(set(self.__element_reference_by_profil_dict[key]) & set(self.__list_elements_de_references)):
@@ -434,8 +433,8 @@ class transformation():
         for key in self.__element_reference_by_category_dict:
             if bool(set(self.__element_reference_by_category_dict[key]) & set(self.__list_elements_de_references)):
                 list_of_category.append(key)
-        self.__dict_id['sous_type'] = self.__dict_id['sous_type'] + \
-            list(set(list_of_category) - set(self.__dict_id['sous_type']))
+        self.__dict_id['categorie_c2g'] = self.__dict_id['categorie_c2g'] + \
+            list(set(list_of_category) - set(self.__dict_id['categorie_c2g']))
 
     def Execute(self):
 

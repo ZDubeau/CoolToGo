@@ -14,7 +14,7 @@ def query_database_for_list_of_categories():
     del connexion
     ctg_list = []
     for line in data:
-        ctg_list.append({'name': line[1], 'id': line[0]})
+        ctg_list.append({'label': line[1], 'value': line[0]})
     return ctg_list
 
 
@@ -24,7 +24,7 @@ def query_database_for_list_of_profiles():
     del connexion
     pfl_list = []
     for line in data:
-        pfl_list.append({'name': line[1], 'id': line[0]})
+        pfl_list.append({'label': line[1], 'value': line[0]})
     return pfl_list
 
 

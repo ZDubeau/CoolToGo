@@ -396,7 +396,7 @@ class Data_from_apidae():
                         'telephone': adata_from_apidae.telephone,  # needed
                         'email': adata_from_apidae.email,  # needed
                         'site_web': adata_from_apidae.site_web,  # needed
-                        'description_courte': adata_from_apidae.description_courte,
+                        'description_courte': adata_from_apidae.description_courte,  # needed
                         'description_detaillee': adata_from_apidae.description_detaillee,  # needed
                         'image': adata_from_apidae.image,  # needed
                         'publics': adata_from_apidae.publics,

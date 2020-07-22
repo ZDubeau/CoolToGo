@@ -293,7 +293,7 @@ def create_dict_for_lieu_validated(thelist: list):
 
     dict_for_properties = {}
     dict_for_properties.update({"id": id_apidae})
-    dict_for_properties.update({"type_Apidae": type_apidae})
+    dict_for_properties.update({"type": type_apidae})
     dict_for_properties.update({"title": titre})
     dict_for_properties.update({"address": adresse1})
     #dict_for_properties.update({"adresse2": adresse2})
@@ -320,8 +320,8 @@ def create_dict_for_lieu_validated(thelist: list):
     dict_for_properties.update({"opening": ouverture})
     dict_for_properties.update({"date_start": date_debut})
     dict_for_properties.update({"date_end": date_fin})
-    dict_for_properties.update({"profil_c2g": profil_c2g})
-    dict_for_properties.update({"categorie_c2g": categorie_c2g})
+    dict_for_properties.update({"profiles": profil_c2g})
+    dict_for_properties.update({"categories": categorie_c2g})
     #dict_for_properties.update({"typologie": typologie})
     #dict_for_properties.update({"bons_plans": bons_plans})
     #dict_for_properties.update({"dispositions_speciales": dispositions_speciales})

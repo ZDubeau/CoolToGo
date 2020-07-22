@@ -335,5 +335,6 @@ def create_dict_for_lieu_validated(thelist: list):
     dict_for_apidae = dict()
     dict_for_apidae.update({"type": "Feature"})
     dict_for_apidae.update({"properties": dict_for_properties})
+    dict_for_apidae.update({"geometry": dict_for_geometry})
 
     return dict_for_apidae, dict_for_geometry

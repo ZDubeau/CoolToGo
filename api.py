@@ -42,7 +42,7 @@ def query_database_for_list_of_filtered_locations(categories, profiles):
         dict_for_apidae, dict_for_geometry = functions.create_dict_for_lieu_validated(
             data)
         # liste properties, geometry
-        locations_list.append([dict_for_apidae, dict_for_geometry])
+        locations_list.append(dict_for_apidae)
         # locations_list.append(dict_for_properties)  # properties only
         nb_location += 1
     del connexion

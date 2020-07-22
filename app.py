@@ -874,6 +874,7 @@ def get_extract_locations():
         status=200,
         mimetype='application/json'
     )
+
     return response
 
 #_____________________________Freshness______________________________#

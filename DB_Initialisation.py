@@ -65,19 +65,46 @@ full_actions_list = (
     Table_freshness.freshness_level
 )
 
+# alter_table = """
+#                 ALTER TABLE profil
+#                 ADD COLUMN basic BOOLEAN DEFAULT TRUE;
+#             """
+
+# update_solidaire = """
+#                     UPDATE profil
+#                     SET basic=FALSE
+#                     WHERE id_profil=5;
+#                     """
+
+# update_weelchair = """
+#                     UPDATE profil
+#                     SET basic=FALSE
+#                     WHERE id_profil=6;
+#                     """
+
+# update_table = """update profil set basic=FALSE where id_profil=5 OR id_profil=6"""
+
 alter_table = """
                 ALTER TABLE profil 
                 ADD COLUMN basic BOOLEAN DEFAULT TRUE;
             """
 
-update_table = """
+update_table_1 = """
                 UPDATE profil 
                 SET basic=FALSE 
-                WHERE id_profil=5 OR id_profil=6;
-            """
+                WHERE id_profil=5;
+                """
+
+update_table_2 = """
+                UPDATE profil 
+                SET basic=FALSE 
+                WHERE id_profil=6;
+                """
+
 
 update = (
-    update_table
+    update_table_1,
+    update_table_2
 )
 
 

@@ -880,10 +880,12 @@ select_apidae_1_id = """
                     SELECT dfa.id_apidae AS id_apidae, dfa.type_apidae AS type_apidae, dfa.titre AS titre,
                                 array_to_json(array_agg(DISTINCT pa.id_profil)) AS profil_c2g, 
                                 array_to_json(array_agg(DISTINCT ca.id_category)) AS categorie_c2g, 
-                                dfa.adresse1 AS adresse1, dfa.code_postal AS code_postal, dfa.ville AS ville, dfa.altitude AS altitude,
-                                dfa.longitude AS longitude, dfa.latitude AS latitude, dfa.telephone AS telephone, 
-                                dfa.email AS email, dfa.site_web AS site_web, dfa.description_detaillee AS description_detaillee,
-                                dfa.image AS image, dfa.publics AS publics, dfa.tourisme_adapte AS tourisme_adapte, 
+                                dfa.adresse1 AS adresse1, dfa.adresse2 AS adresse2, dfa.code_postal AS code_postal, 
+                                dfa.ville AS ville, dfa.altitude AS altitude, dfa.longitude AS longitude, 
+                                dfa.latitude AS latitude, dfa.telephone AS telephone, dfa.email AS email, 
+                                dfa.site_web AS site_web, dfa.description_courte AS description_courte,
+                                dfa.description_detaillee AS description_detaillee, dfa.image AS image, 
+                                dfa.publics AS publics, dfa.tourisme_adapte AS tourisme_adapte, 
                                 dfa.payant AS payant, dfa.environnement AS environnement, dfa.ouverture AS ouverture,
                                 dfa.date_debut AS date_debut, dfa.date_fin AS date_fin
                     FROM data_from_apidae AS dfa
@@ -892,10 +894,11 @@ select_apidae_1_id = """
                     LEFT JOIN profil_apidae AS pa
                     ON dfa.id_data_from_apidae = pa.id_data_from_apidae
                     WHERE dfa.id_data_from_apidae = %s
-                    GROUP BY dfa.id_apidae, dfa.type_apidae, dfa.titre, dfa.adresse1, dfa.code_postal, 
-                                dfa.ville,dfa.altitude, dfa.longitude, dfa.latitude, dfa.telephone, dfa.email, dfa.site_web, 
-                                dfa.description_detaillee, dfa.image, dfa.publics, dfa.tourisme_adapte, dfa.payant, 
-                                dfa.environnement, dfa.ouverture, dfa.date_debut, dfa.date_fin
+                    GROUP BY dfa.id_apidae, dfa.type_apidae, dfa.titre, dfa.adresse1, dfa.adresse2, dfa.code_postal, 
+                                dfa.ville,dfa.altitude, dfa.longitude, dfa.latitude, dfa.telephone, dfa.email, 
+                                dfa.site_web, dfa.description_courte, dfa.description_detaillee,
+                                dfa.image, dfa.publics, dfa.tourisme_adapte, dfa.payant, dfa.environnement, 
+                                dfa.ouverture, dfa.date_debut, dfa.date_fin
                     LIMIT 1;
                     """
 
@@ -922,9 +925,11 @@ select_apidae_1_id_apidae = """
                             SELECT dfa.id_apidae AS id_apidae, dfa.type_apidae AS type_apidae, dfa.titre AS titre,
                                 array_to_json(array_agg(DISTINCT pa.id_profil)) AS profil_c2g, 
                                 array_to_json(array_agg(DISTINCT ca.id_category)) AS categorie_c2g, 
-                                dfa.adresse1 AS adresse1, dfa.code_postal AS code_postal, dfa.ville AS ville, dfa.altitude AS altitude,
+                                dfa.adresse1 AS adresse1, dfa.adresse2 AS adresse2, dfa.code_postal AS code_postal, 
+                                dfa.ville AS ville, dfa.altitude AS altitude,
                                 dfa.longitude AS longitude, dfa.latitude AS latitude, dfa.telephone AS telephone, 
-                                dfa.email AS email, dfa.site_web AS site_web, dfa.description_detaillee AS description_detaillee,
+                                dfa.email AS email, dfa.site_web AS site_web, dfa.description_courte AS description_courte, 
+                                dfa.description_detaillee AS description_detaillee,
                                 dfa.image AS image, dfa.publics AS publics, dfa.tourisme_adapte AS tourisme_adapte, 
                                 dfa.payant AS payant, dfa.environnement AS environnement, dfa.ouverture AS ouverture,
                                 dfa.date_debut AS date_debut, dfa.date_fin AS date_fin
@@ -934,10 +939,10 @@ select_apidae_1_id_apidae = """
                             LEFT JOIN profil_apidae AS pa
                             ON dfa.id_data_from_apidae = pa.id_data_from_apidae
                             WHERE dfa.id_apidae = %s
-                            GROUP BY dfa.id_apidae, dfa.type_apidae, dfa.titre, dfa.adresse1, dfa.code_postal, 
+                            GROUP BY dfa.id_apidae, dfa.type_apidae, dfa.titre, dfa.adresse1, dfa.adresse2, dfa.code_postal, 
                                 dfa.ville,dfa.altitude, dfa.longitude, dfa.latitude, dfa.telephone, dfa.email, dfa.site_web, 
-                                dfa.description_detaillee, dfa.image, dfa.publics, dfa.tourisme_adapte, dfa.payant, 
-                                dfa.environnement, dfa.ouverture, dfa.date_debut, dfa.date_fin
+                                dfa.description_courte, dfa.description_detaillee, dfa.image, dfa.publics, dfa.tourisme_adapte,
+                                dfa.payant, dfa.environnement, dfa.ouverture, dfa.date_debut, dfa.date_fin
                             LIMIT 1;
                             """
 
@@ -945,9 +950,11 @@ select_apidae_all_data = """
                             SELECT dfa.id_data_from_apidae AS id, dfa.id_apidae AS id_apidae, dfa.type_apidae AS type_apidae, dfa.titre AS titre,
                                 array_to_string(array_agg(DISTINCT p.profil), ', ', '*') AS profil_c2g, 
                                 array_to_string(array_agg(DISTINCT c.category_name), ', ', '*') AS categorie_c2g, 
-                                dfa.adresse1 AS adresse1, dfa.code_postal AS code_postal, dfa.ville AS ville, dfa.altitude AS altitude,
-                                dfa.longitude AS longitude, dfa.latitude AS latitude, dfa.telephone AS telephone, 
-                                dfa.email AS email, dfa.site_web AS site_web, dfa.description_detaillee AS description_detaillee,
+                                dfa.adresse1 AS adresse1, dfa.adresse2 AS adresse2, dfa.code_postal AS code_postal, 
+                                dfa.ville AS ville, dfa.altitude AS altitude, dfa.longitude AS longitude,
+                                dfa.latitude AS latitude, dfa.telephone AS telephone, dfa.email AS email, 
+                                dfa.site_web AS site_web, dfa.description_courte AS description_courte, 
+                                dfa.description_detaillee AS description_detaillee,
                                 dfa.image AS image, dfa.publics AS publics, dfa.tourisme_adapte AS tourisme_adapte, 
                                 dfa.payant AS payant, dfa.environnement AS environnement, dfa.ouverture AS ouverture,
                                 dfa.date_debut AS date_debut, dfa.date_fin AS date_fin, '' AS modifier
@@ -956,8 +963,9 @@ select_apidae_all_data = """
                             LEFT JOIN category AS c ON ca.id_category = c.id_category
                             LEFT JOIN profil_apidae AS pa ON dfa.id_data_from_apidae = pa.id_data_from_apidae
                             LEFT JOIN profil AS p ON pa.id_profil = p.id_profil
-                            GROUP BY dfa.id_data_from_apidae, dfa.id_apidae, dfa.type_apidae, dfa.titre, dfa.adresse1, dfa.code_postal, 
-                                dfa.ville,dfa.altitude, dfa.longitude, dfa.latitude, dfa.telephone, dfa.email, dfa.site_web, 
+                            GROUP BY dfa.id_data_from_apidae, dfa.id_apidae, dfa.type_apidae, dfa.titre, dfa.adresse1, 
+                                dfa.adresse2, dfa.code_postal, dfa.ville,dfa.altitude, dfa.longitude, 
+                                dfa.latitude, dfa.telephone, dfa.email, dfa.site_web, dfa.description_courte,
                                 dfa.description_detaillee, dfa.image, dfa.publics, dfa.tourisme_adapte, dfa.payant, 
                                 dfa.environnement, dfa.ouverture, dfa.date_debut, dfa.date_fin;
                             """

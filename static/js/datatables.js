@@ -90,24 +90,24 @@ $(document).ready(function () {
       { "targets": 3, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },   //TITLE
       { "targets": 4, "render": $.fn.dataTable.render.ellipsis(12, false), className: "truncate" },   //PROFIL_CTG
       { "targets": 5, "render": $.fn.dataTable.render.ellipsis(17, false), className: "truncate" },   //CATEGORY_CTG
-      { "targets": 6, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },   //ADDRESS 1
-      { "targets": 7, "width": "20px" },                                                              //CODE POSTAL
-      { "targets": 8, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },   //CITY
-      { "targets": 9, "width": "15px" },                                                              //ALTITUDE
-      { "targets": [10, 11], "width": "25px" },                                                        //LONGITUDE, LATITUDE
-      { "targets": [12, 13, 14], "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },  //TEL, MAIL, URL
-      { "targets": 15, "render": $.fn.dataTable.render.ellipsis(20, false), className: "truncate" },   //DESCRIPTION
-      { "targets": [16, 17], "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },   //IMAGE, PUBLIC
-      { "targets": 18, "render": $.fn.dataTable.render.ellipsis(18, false), className: "truncate" },   //ACCESSIBILITY
-      { "targets": 19, "width": "10" },                                                                //PAYING
-      { "targets": 20, "render": $.fn.dataTable.render.ellipsis(15, false), className: "truncate" },   //ENVIRONMENT
-      { "targets": 21, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },   //OPENING
-      { "targets": [22, 23], "width": "15" },                                                          //DATE_START, DATE_END
-      { "targets": 24, "width": "10", "className": "text-center" }  //***EDIT***
+      { "targets": [6, 7], "render": $.fn.dataTable.render.ellipsis(13, false), className: "truncate" },   //ADDRESS 1 & 2
+      { "targets": 8, "width": "20px" },                                                              //CODE POSTAL
+      { "targets": 9, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },   //CITY
+      { "targets": 10, "width": "15px" },                                                              //ALTITUDE
+      { "targets": [11, 12], "width": "25px" },                                                        //LONGITUDE, LATITUDE
+      { "targets": [13, 14, 15], "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },  //TEL, MAIL, URL
+      { "targets": [16, 17], "render": $.fn.dataTable.render.ellipsis(20, false), className: "truncate" },//DESCRIPTION SHORT & LONG
+      { "targets": [18, 19], "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },   //IMAGE, PUBLIC
+      { "targets": 20, "render": $.fn.dataTable.render.ellipsis(18, false), className: "truncate" },   //ACCESSIBILITY
+      { "targets": 21, "width": "10" },                                                                //PAYING
+      { "targets": 22, "render": $.fn.dataTable.render.ellipsis(15, false), className: "truncate" },   //ENVIRONMENT
+      { "targets": 23, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },   //OPENING
+      { "targets": [24, 25], "width": "15" },                                                          //DATE_START, DATE_END
+      { "targets": 26, "width": "10", "className": "text-center" }  //***EDIT***
     ],
     "fnRowCallback": function (nRow, aData) {
-      $('td:eq(24)', nRow).html(edit);
-      $('td:eq(24)', nRow).click(function () {
+      $('td:eq(26)', nRow).html(edit);
+      $('td:eq(26)', nRow).click(function () {
         var id = aData[0];
         window.location.href = '/edit_ctg_profil/' + id;
       });

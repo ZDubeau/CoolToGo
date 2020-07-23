@@ -301,7 +301,7 @@ def get_tableApidae():
         # del connexion
         # return render_template('pages/tableApidae.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableApidae', index=False)], username=username)
         df = pd.read_sql(
-            apidae.select_apidae_all_data, connexion.connexion())
+            apidae.select_apidae_all_data_with_data_edited, connexion.connexion())
         del connexion
         return render_template('pages/tableApidae.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableApidaejsonmode', index=False)], username=username)
 
@@ -315,14 +315,17 @@ def get_edit(id):
         if 'id_data_from_apidae' in request.args:
             id = request.args.get('id_data_from_apidae')
         connexion = DB_connexion()
-        data = connexion.Query_SQL_fetchone(
-            apidae.select_apidae_edit, [id])
-        del connexion
+        data = connexion.Query_SQL_fetchone(apidae.select_apidae_edit, [id])
+        data_ctg = connexion.Query_SQL_fetchall(
+            ctg.select_category_for_selection_id, [id])
+        data_prf = connexion.Query_SQL_fetchall(
+            prf.select_profil_for_selection_id, [id])
         id_apidae = data[1]
-        titre = data[4]
-        profil = data[5]
-        category = data[6]
-    return render_template('pages/apidae_edit.html', id=id, id_apidae=id_apidae, titre=titre, profil=profil, category=category, username=username)
+        titre = data[2]
+        profil_c2g = data[3]
+        category_c2g = data[4]
+        del connexion
+    return render_template('pages/apidae_edit.html', id=id, id_apidae=id_apidae, titre=titre, profil_c2g=profil_c2g, category_c2g=category_c2g, categories=data_ctg, profiles=data_prf, username=username)
 
 
 @app.route("/edit_save", methods=["POST"])

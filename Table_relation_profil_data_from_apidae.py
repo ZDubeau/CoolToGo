@@ -1,10 +1,7 @@
-""" 
-Projet CoolToGo
-----------------------------
+"""----------------------------
 Creation date : 2020-06-11
 Last update : 2020-07-15
-----------------------------
-"""
+----------------------------"""
 
 drop_relation_profil_apidae = """
                                 DROP TABLE IF EXISTS profil_apidae CASCADE;

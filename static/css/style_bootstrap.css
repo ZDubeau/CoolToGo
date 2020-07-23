@@ -2059,7 +2059,7 @@ pre code {
   opacity: 1;
 }
 .form-control:disabled, .form-control[readonly] {
-  background-color: #e9ecef;
+  background-color: #edf0f3;    /*Manual change for project Cool To Go */
   opacity: 1;
 }
 

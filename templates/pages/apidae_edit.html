@@ -4,40 +4,123 @@
     <h2 style="color: khaki; text-align: center;">{{ErrorMessage}}</h2>
 </center>
 <div class="column" style="margin-left: 0 !important;transform: translate(0px, 10px);">
-    <p class="title" style="font-size: 1.25rem;color: #01289f;transform: translate(-8px, 0px);">
+    <p class="title" style="font-size: 1.25rem;color: #01289f;transform: translate(-8px, 0px);padding-bottom: 10px;">
         Editer la catégorie CTG ou/et le profil CTG
     </p>
     <!-- FORM -->
     <form action="/edit" method="post" style="padding-bottom: 30px;">
+
         <div class="form-row">
-            <div class="col-md-1 mb-3" style="transform: translate(-10px, 0px);">
+            <div class="col-md-1">
+                <label class="label" style="font-size: 15px;color: #01289f;">id Apidae</label>
+                <input type="text" name="id_apidae" class="form-control" value="{{id_apidae}}" style="font-size: 15px;"
+                    readonly>
+            </div>
+            <div class="col-md-auto">
+                <label class="label" style="font-size: 15px;color: #01289f;">Titre</label>
+                <input type="text" name="titre" class="form-control" value="{{titre}}" style="font-size: 15px;"
+                    readonly>
+            </div>
+            <div class="col-md-4">
+                <label class="label" style="font-size: 15px;color: #01289f;">Profil CTG</label>
+                <input type="text" name="profil_c2g" class="form-control" value="{{profil_c2g}}"
+                    style="font-size: 15px;" readonly>
+            </div>
+            <div class="col-md-4">
+                <label class="label" style="font-size: 15px;color: #01289f;">Catégorie CTG</label>
+                <input type="text" name="category_c2g" class="form-control" value="{{category_c2g}}"
+                    style="font-size: 15px;" readonly>
+            </div>
+        </div>
+
+        <!-- <div class="form-row"> -->
+        <!-- <div class="col-md-1 mb-3" style="transform: translate(-10px, 0px);">
                 <label class="label" style="font-size: 12px;display: inherit !important;">id Apidae</label>
                 <input name="id_apidae" value="{{id_apidae}}" class="input" type="text" readonly>
-            </div>
-            <!-- ------- -->
-            <div class="col-md-3 mb-3" style="transform: translate(-10px, 0px);">
+            </div> -->
+        <!-- ------- -->
+        <!-- <div class="col-md-3 mb-3" style="transform: translate(-10px, 0px);">
                 <label class="label" style="font-size: 12px;display: inherit !important;">Titre</label>
                 <input name="titre" value="{{titre}}" class="input" type="text" readonly>
-            </div>
-            <!-- ------- -->
-            <div class="col-md-3 mb-3" style="transform: translate(-10px, 0px);">
-                <label class="label" style="font-size: 12px;display: inherit !important;">Profil CoolToGo</label>
-                <input name="profil_c2g" value="{{profil_c2g}}" class="input" type="text" maxlength="100" required>
-            </div>
-            <!-- ------- -->
-            <div class="col-md-3 mb-3" style="transform: translate(-10px, 0px);">
-                <label class="label" style="font-size: 12px;display: inherit !important;">Catégorie CoolToGo</label>
-                <input name="ctg" value="{{ctg}}" class="input" type="text" maxlength="100" required>
-            </div>
-            <!-- ------- -->
-            <div class="field is-grouped is-grouped-left" style="transform: translate(10px, 4px);">
-                <div class="control">
-                    <input name="id" value="{{id}}" hidden>
-                    <button class="button is-link"
-                        style="background-color: #01289f; border-radius: 4px; border-width: 0;color: #d0eeed; padding: 5px 20px;font-size: 15px;transform: translate(0px, 21px);">Valider</button>
+            </div> -->
+        <!-- ------- -->
+        <!-- <div class="col-md-3 mb-3" style="transform: translate(-10px, 0px);">
+                <label class="label" style="font-size: 12px;display: inherit !important;">Profil CTG</label>
+                <input name="profil_c2g" value="{{profil_c2g}}" class="input" type="text" readonly>
+            </div> -->
+        <!-- ------- -->
+        <!-- <div class="col-md-3 mb-3" style="transform: translate(-10px, 0px);">
+                <label class="label" style="font-size: 12px;display: inherit !important;">Catégorie CTG</label>
+                <input name="category_c2g" value="{{category_c2g}}" class="input" type="text" readonly>
+            </div> -->
+        <!-- --------------------------------------------------- -->
+        <div class="container">
+            <div class="row">
+                <div class="column">
+                    <div class="col-md-9 offset-md-3">
+                        <div class="card"
+                            style="margin:45px 0;max-width: 200%;transform: translate(-33px, -25px);background-color: #1778b80c;">
+                            <div class="card-header"
+                                style="font-size: 17px;font-weight: 600;color: #d0eeed;background-color: #01289fe3;">
+                                Catégorie(s)</div>
+                            {% for line in categories  %}
+                            {% if line[2] == None %}
+                            <label class="customcheck"
+                                style="font-size: 14x;padding-left: 7px;padding-top: 10px;"><input
+                                    name="categories-{{line[0]}}" value="{{line[1]}}"
+                                    type="checkbox">&nbsp;&nbsp;{{line[1]}}&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                            {% else %}
+                            <label class="customcheck"
+                                style="font-size: 14px;padding-left: 7px;padding-top: 10px;"><input
+                                    name="categories-{{line[0]}}" value="{{line[1]}}" type="checkbox"
+                                    checked>&nbsp;&nbsp;{{line[1]}}&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="col-md-9 offset-md-3" style="margin-left: 0 !important;">
+                        <div class="card"
+                            style="margin:45px 0;max-width: 200%;transform: translate(-33px, -25px);background-color: #1778b80c;">
+                            <div class="card-header"
+                                style="font-size: 17px;font-weight: 600;color: #d0eeed;background-color: #01289fe3;">
+                                Profil(s)</div>
+                            {% for line in profiles  %}
+                            {% if line[2] == None %}
+                            <label class="customcheck"
+                                style="font-size: 14x;padding-left: 7px;padding-top: 10px;"><input
+                                    name="profiles-{{line[0]}}" value="{{line[1]}}"
+                                    type="checkbox">&nbsp;&nbsp;{{line[1]}}&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                            {% else %}
+                            <label class="customcheck"
+                                style="font-size: 14px;padding-left: 7px;padding-top: 10px;"><input
+                                    name="profiles-{{line[0]}}" value="{{line[1]}}" type="checkbox"
+                                    checked>&nbsp;&nbsp;{{line[1]}}&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </form>
+        <!-- ------------------------ -->
+        <!-- <div class="field is-grouped is-grouped-center">
+                <div class="control" style="transform: translate(455px, -55px);padding-left: 2px;">
+                    <input name="id" value="{{id}}" hidden>
+                    <button class="button is-link"
+                        style="padding: 5px 25px;background: #01289f;color: #d0eeed;">Valider</button>
+                </div>
+            </div> -->
+        <!-- --------------------------------------------------- -->
+</div>
+<div class="field is-grouped is-grouped-center">
+    <div class="control">
+        <input name="id" value="{{id}}" hidden>
+        <button class="button is-link"
+            style="background-color: #01289f; border-radius: 4px; border-width: 0;color: #d0eeed; padding: 5px 20px;font-size: 15px;transform: translate(0px, 21px);">Valider</button>
+    </div>
+</div>
+</form>
 </div>
 {% endblock bootstrap_2 %}

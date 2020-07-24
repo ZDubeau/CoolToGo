@@ -38,6 +38,16 @@ select_category_for_selection_id = """
                                     ON c.id_category=sc.id_category; 
                                     """
 
+select_category_for_apidae_id = """
+                                SELECT c.id_category AS id, c.category_name AS catégories, ac.id AS relation
+                                FROM category AS c 
+                                LEFT JOIN (
+                                    SELECT * 
+                                    FROM category_apidae_edited
+                                    WHERE id_data_from_apidae=%s) AS ac 
+                                ON c.id_category=ac.id_category; 
+                                """
+
 select_category_with_id = """
                             SELECT id_category, category_name
                             FROM category 

@@ -27,6 +27,10 @@ from threading import Thread
 import time
 import queue
 
+# For log management
+import logging
+from LoggerModule.FileLogger import FileLogger as FileLogger
+
 # My functions
 import Table_selection as slc
 from transformation import transformation
@@ -116,6 +120,13 @@ def retrive_data_by_selectionId(project_ID, api_KEY, selectionId, id_selection, 
             result_df = result_df.append(retrive_data_by_selectionId_by_cent(
                 project_ID, api_KEY, selectionId, id_selection, categories_list, element_reference_by_profil_dict, element_reference_by_category_dict, count*i, count))
             i += 1
+        nb_data_retrieved = len(result_df.index)
+        if nb_object == nb_data_retrieved:
+            FileLogger.log(
+                logging.DEBUG, f"{nb_object} data expected and {nb_data_retrieved} obtained for url {url} !!!")
+        else:
+            FileLogger.log(
+                logging.ERROR, f"{nb_object} data expected and {nb_data_retrieved} obtained for url {url} !!!")
     except ValueError:
         print("problème d'extraction")
     return result_df

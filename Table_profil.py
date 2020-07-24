@@ -20,6 +20,7 @@ select_user_profil = """
                     FROM profil
                     ORDER BY id_profil ASC;
                     """
+
 select_basic_user_profil = """
                     SELECT id_profil as id
                     FROM profil WHERE basic;
@@ -33,6 +34,16 @@ select_profil_for_selection_id = """
                                     FROM selection_profil 
                                     WHERE id_selection=%s) AS sp 
                                 ON p.id_profil=sp.id_profil; 
+                                """
+
+select_profil_for_apidae_id = """
+                                SELECT p.id_profil AS id, p.profil AS profil_usagers, ap.id AS relation
+                                FROM profil AS p 
+                                LEFT JOIN (
+                                    SELECT * 
+                                    FROM profil_apidae_edited
+                                    WHERE id_data_from_apidae=%s) AS ap 
+                                ON p.id_profil=ap.id_profil; 
                                 """
 
 select_user_profil_with_id = """

@@ -31,19 +31,50 @@ def query_database_for_list_of_profiles():
 def query_database_for_list_of_filtered_locations(categories, profiles):
     connexion = DB_connexion()
     FileLogger.log(
-        logging.DEBUG, f"{categories} categories and {profiles} profiles")
+        logging.DEBUG, f"{categories} categories and {profiles} profiles extraction start")
+    set_of_all_location = set()
+    list_of_location = connexion.Query_SQL_fetchall(apidae.select_apidae)
+    for location in list_of_location:
+        set_of_all_location.add(location[1])
+    #print(len(set_of_all_location), len(list_of_location))
+    set_of_location_id = set()
+    list_of_location = connexion.Query_SQL_fetchall(
+        apidae.select_apidae_with_categorie_list_edited_and_profil_list_edited, [profiles, categories])
+    for location in list_of_location:
+        set_of_location_id.add(location[1])
+        set_of_all_location.remove(location[0])
+    #print(len(set_of_location_id), len(list_of_location), len(set_of_all_location))
+    list_of_location = connexion.Query_SQL_fetchall(
+        apidae.select_apidae_with_categorie_list_edited_and_profil_list, [profiles, categories])
+    for location in list_of_location:
+        set_of_location_id.add(location[1])
+        set_of_all_location.remove(location[0])
+    #print(len(set_of_location_id), len(list_of_location), len(set_of_all_location))
+    list_of_location = connexion.Query_SQL_fetchall(
+        apidae.select_apidae_with_categorie_list_and_profil_list_edited, [profiles, categories])
+    for location in list_of_location:
+        set_of_location_id.add(location[1])
+        set_of_all_location.remove(location[0])
+    #print(len(set_of_location_id), len(list_of_location), len(set_of_all_location))
     list_of_location = connexion.Query_SQL_fetchall(
         apidae.select_apidae_with_categorie_list_and_profil_list, [profiles, categories])
+    for location in list_of_location:
+        set_of_location_id.add(location[1])
+        set_of_all_location.remove(location[0])
+    #print(len(set_of_location_id), len(list_of_location), len(set_of_all_location))
     locations_list = []
     nb_location = 0
-    for location in list_of_location:
+    for id_location in set_of_location_id:
         data = connexion.Query_SQL_fetchone(
-            apidae.select_apidae_1_id, [location[1]])
+            apidae.select_apidae_1_id_with_data_edited, [id_location])
         dict_for_apidae, dict_for_geometry = functions.create_dict_for_lieu_validated(
             data)
         # liste properties, geometry
         locations_list.append(dict_for_apidae)
         # locations_list.append(dict_for_properties)  # properties only
         nb_location += 1
+    nb_id_in_set = len(set_of_location_id)
+    FileLogger.log(
+        logging.DEBUG, f"{nb_id_in_set} in set of location and {nb_location} locations extracted !!!")
     del connexion
     return nb_location, locations_list

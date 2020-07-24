@@ -35,6 +35,8 @@ import Table_relation_selection_category as slc_ctg
 import Table_relation_eltref_prf as elt_prf
 import Table_relation_eltref_ctg as elt_ctg
 import Table_elementReference as eltRef
+import Table_relation_category_apidae_edited as ctg_apidae
+import Table_relation_profil_apidae_edited as prf_apidae
 # import Table_relation_selection_profil as slc_prf
 from DB_Connexion import DB_connexion
 import urllib.parse
@@ -296,46 +298,60 @@ def get_tableApidae():
     else:
         username = session["username"]
         connexion = DB_connexion()
-        # df = pd.read_sql(
-        #     apidae.select_apidae_category_display, connexion.connexion())
-        # del connexion
-        # return render_template('pages/tableApidae.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableApidae', index=False)], username=username)
         df = pd.read_sql(
-            apidae.select_apidae_all_data_with_data_edited, connexion.connexion())
+            apidae.select_apidae_display, connexion.connexion())
         del connexion
-        return render_template('pages/tableApidae.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableApidaejsonmode', index=False)], username=username)
+        return render_template('pages/tableApidae.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableApidae', index=False)], username=username)
+        # df = pd.read_sql(
+        #     apidae.select_apidae_all_data_with_data_edited, connexion.connexion())
+        # del connexion
+        # return render_template('pages/tableApidae.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableApidaejsonmode', index=False)], username=username)
 
 
-@app.route('/edit_ctg_profil/<id>')
-def get_edit(id):
+@app.route('/edit_category_profil/<id>', methods=['GET'])
+def get_edit_category_profil(id):
     if "username" not in session:
         return redirect(url_for("get_homepage"))
     else:
         username = session["username"]
-        if 'id_data_from_apidae' in request.args:
-            id = request.args.get('id_data_from_apidae')
         connexion = DB_connexion()
         data = connexion.Query_SQL_fetchone(apidae.select_apidae_edit, [id])
         data_ctg = connexion.Query_SQL_fetchall(
-            ctg.select_category_for_selection_id, [id])
+            ctg.select_category_for_apidae_id, [id])
         data_prf = connexion.Query_SQL_fetchall(
-            prf.select_profil_for_selection_id, [id])
-        id_apidae = data[1]
-        titre = data[2]
-        profil_c2g = data[3]
-        category_c2g = data[4]
+            prf.select_profil_for_apidae_id, [id])
         del connexion
-    return render_template('pages/apidae_edit.html', id=id, id_apidae=id_apidae, titre=titre, profil_c2g=profil_c2g, category_c2g=category_c2g, categories=data_ctg, profiles=data_prf, username=username)
+    return render_template('pages/apidae_edit.html', id_data_from_apidae=id, id_apidae=data[1], titre=data[2], profil_c2g=data[3], category_c2g=data[4], categories=data_ctg, profiles=data_prf, username=username)
 
 
-@app.route("/edit_save", methods=["POST"])
-def post_edit():
-    id_apidae = request.form["id_apidae"]
-    profil_c2g = request.form["profil_c2g"]
-    ctg = request.form["ctg"]
+@app.route("/edit_category_profil_save", methods=["POST"])
+def post_edit_category_profil():
+    save_edit = request.form["id"]
     connexion = DB_connexion()
-    connexion.Update_SQL(ctg.update_elem, [
-        ctg, id])
+    data_ctg = connexion.Query_SQL_fetchall(
+        ctg.select_category_for_apidae_id, [save_edit])
+    data_prf = connexion.Query_SQL_fetchall(
+        prf.select_profil_for_apidae_id, [save_edit])
+    for line in data_ctg:
+        try:
+            category = request.form["categories-"+str(line[0])]
+            if line[2] is None:
+                connexion.Insert_SQL(ctg_apidae.insert_relation_category_apidae_edited, [
+                                     line[0], save_edit])
+        except KeyError:
+            if line[2] is not None:
+                connexion.Delete_SQL(ctg_apidae.delete_relation_category_apidae_edited, [
+                                     line[0], save_edit])
+    for line in data_prf:
+        try:
+            profil = request.form["profiles-"+str(line[0])]
+            if line[2] is None:
+                connexion.Insert_SQL(prf_apidae.insert_relation_profil_apidae_edited, [
+                                     line[0], save_edit])
+        except KeyError:
+            if line[2] is not None:
+                connexion.Delete_SQL(prf_apidae.delete_relation_profil_apidae_edited, [
+                                     line[0], save_edit])
     del connexion
     return redirect(url_for("get_tableApidae"))
 
@@ -671,7 +687,7 @@ def get_edit_selection(id):
 #------------------- New category _ Selection --------------------#
 
 
-@app.route('/edit_selection_post', methods=['GET', 'POST'])
+@app.route('/edit_selection_post', methods=['POST'])
 def get_edit_selection_post():
     selection = request.form["id"]
     connexion = DB_connexion()
@@ -1281,52 +1297,52 @@ def locations():
         profiles: ['profile1', 'profile2', ...]
     }
     """
-    try:
-        req_data = request.get_json()
-        nb = 0
-        l = dict()
-        if req_data is None:
+    # try:
+    req_data = request.get_json()
+    nb = 0
+    l = dict()
+    if req_data is None:
+        categories = []
+        profiles = []
+    else:
+        if ('categories' in req_data) and ('profiles' in req_data):
+            categories = req_data['categories']
+            profiles = req_data['profiles']
+            # filter all locations by the categories and profiles defined in the req_data
+            nb, l = ctg_api.query_database_for_list_of_filtered_locations(
+                tuple(categories), tuple(profiles))
+        elif 'categories' in req_data:
+            categories = req_data['categories']
+            profiles = []
+
+        elif 'profiles' in req_data:
+            categories = []
+            profiles = req_data['profiles']
+        else:
             categories = []
             profiles = []
-        else:
-            if ('categories' in req_data) and ('profiles' in req_data):
-                categories = req_data['categories']
-                profiles = req_data['profiles']
-                # filter all locations by the categories and profiles defined in the req_data
-                nb, l = ctg_api.query_database_for_list_of_filtered_locations(
-                    tuple(categories), tuple(profiles))
-            elif 'categories' in req_data:
-                categories = req_data['categories']
-                profiles = []
 
-            elif 'profiles' in req_data:
-                categories = []
-                profiles = req_data['profiles']
-            else:
-                categories = []
-                profiles = []
-
-        dict_for_extract = dict()
-        dict_for_extract.update({"status": 200})
-        dict_for_extract.update({"locations_returned": nb})
-        dict_for_extract_2 = {}
-        dict_for_extract_2.update({"categories": categories})
-        dict_for_extract_2.update({"profiles": profiles})
-        dict_for_extract.update({"query": dict_for_extract_2})
-        # dict_for_extract.update({"categories": categories, "profiles": profiles})
-        dict_for_extract_1 = dict()
-        dict_for_extract_1.update({"type": "FeatureCollection"})
-        dict_for_extract_1.update({"name": "cool2go"})
-        dict_for_extract_1.update({"features": l})
-        dict_for_extract.update({"data": dict_for_extract_1})
-    except:
-        dict_for_extract = dict()
-        dict_for_extract.update({"status": 503})
-        dict_for_extract_1 = dict()
-        dict_for_extract_1.update({"type": "FeatureCollection"})
-        dict_for_extract_1.update({"name": "cool2go"})
-        dict_for_extract_1.update({"error": "error error"})
-        dict_for_extract.update({"data": dict_for_extract_1})
+    dict_for_extract = dict()
+    dict_for_extract.update({"status": 200})
+    dict_for_extract.update({"locations_returned": nb})
+    dict_for_extract_2 = {}
+    dict_for_extract_2.update({"categories": categories})
+    dict_for_extract_2.update({"profiles": profiles})
+    dict_for_extract.update({"query": dict_for_extract_2})
+    # dict_for_extract.update({"categories": categories, "profiles": profiles})
+    dict_for_extract_1 = dict()
+    dict_for_extract_1.update({"type": "FeatureCollection"})
+    dict_for_extract_1.update({"name": "cool2go"})
+    dict_for_extract_1.update({"features": l})
+    dict_for_extract.update({"data": dict_for_extract_1})
+    # except:
+    #     dict_for_extract = dict()
+    #     dict_for_extract.update({"status": 503})
+    #     dict_for_extract_1 = dict()
+    #     dict_for_extract_1.update({"type": "FeatureCollection"})
+    #     dict_for_extract_1.update({"name": "cool2go"})
+    #     dict_for_extract_1.update({"error": "error error"})
+    #     dict_for_extract.update({"data": dict_for_extract_1})
 
     response = app.response_class(
         response=json.dumps(dict_for_extract, indent=3, sort_keys=False),

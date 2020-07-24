@@ -9,22 +9,22 @@ drop_relation_category_apidae_edited = """
 
 relation_category_apidae_edited = """
                                     CREATE TABLE IF NOT EXISTS category_apidae_edited (
-                                        id_category_apidae_edited SERIAL PRIMARY KEY,
-                                        id_category BIGINT REFERENCES category ON DELETE CASCADE,
-                                        id_data_from_apidae BIGINT REFERENCES data_from_apidae ON DELETE CASCADE
+                                        id SERIAL PRIMARY KEY,
+                                        id_category INTEGER REFERENCES category ON DELETE CASCADE,
+                                        id_data_from_apidae INTEGER REFERENCES data_from_apidae ON DELETE CASCADE
                                     )"""
 
 insert_relation_category_apidae_edited = """
                                             INSERT INTO category_apidae_edited (
                                                 id_category, id_data_from_apidae)
                                             VALUES (%s, %s) 
-                                            returning id_category_apidae_mdified;
+                                            returning id;
                                             """
 
 
 delete_relation_category_apidae_edited = """
                                             DELETE FROM category_apidae_edited 
-                                            WHERE id_category_apidae_edited=%s; 
+                                            WHERE id_categoy=%s AND id_data_from_apidae=%s; 
                                             """
 
 delete_relation_category_apidae_with_id_data_from_apidae_edited = """

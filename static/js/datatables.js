@@ -21,45 +21,30 @@ $(document).ready(function () {
     "columnDefs": [
       { "visible": false, "targets": 0 },       //id primary key
       { "width": "10px", "targets": 1 },        //id_Apidae
-      { "width": "6px", "targets": 2 },        //id_selection
-      { "width": "40px", "targets": 3 },
-      { "targets": 4, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" }, //titre
-      { "targets": 5, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" }, //profil
-      { "width": "40px", "targets": 6 },          //categorie_c2g
-      { "targets": 7, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" }, //adresse1
-      { "targets": 8, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" }, //adresse2
-      { "visible": "50px", "targets": 9 },       // code_postal
-      { "visible": false, "targets": 10 },      //ville
-      { "width": "50px", "targets": 11 },       //altitude
-      { "visible": "60px", "targets": 12 },      //latitude
-      { "visible": "60px", "targets": 13 },      //longitude
-      { "visible": false, "targets": 14 },      //telephone     
-      { "visible": false, "targets": 15 },      //email 
-      { "visible": false, "targets": 16 },      //site web
-      { "visible": false, "targets": 17 },      //description courte
-      { "visible": false, "targets": 18 },      //description détaillée
-      { "visible": false, "targets": 19 },      //image
-      { "targets": 20, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },  //publics
-      { "targets": 21, "render": $.fn.dataTable.render.ellipsis(15, false), className: "truncate" },  //tourisme_adaptes
-      { "width": "20", "targets": 22 },         //payant    
-      { "targets": 23, "render": $.fn.dataTable.render.ellipsis(19, false), className: "truncate" },  //animaux acceptés
-      { "targets": 24, "render": $.fn.dataTable.render.ellipsis(15, false), className: "truncate" },  //environnement
-      { "targets": 25, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },  //equipement
-      { "targets": 26, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },  //services
-      { "targets": 27, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },  //periode
-      { "targets": 28, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },  //activites
-      { "targets": 29, "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },  //ouverture
-      { "targets": 30, "render": $.fn.dataTable.render.ellipsis(9, false), className: "truncate" },  //typology
-      { "targets": 31, "render": $.fn.dataTable.render.ellipsis(11, false), className: "truncate" },  //bons_plan
-      { "targets": 32, "render": $.fn.dataTable.render.ellipsis(20, false), className: "truncate" },  //dispositions_speciales
-      { "targets": 33, "render": $.fn.dataTable.render.ellipsis(15, false), className: "truncate" },  //service_enfants
-      { "targets": 34, "render": $.fn.dataTable.render.ellipsis(16, false), className: "truncate" },  //service_cyclistes
-      { "targets": 35, "render": $.fn.dataTable.render.ellipsis(12, false), className: "truncate" },  //nouveaute_2020
-      { "width": "20px", "targets": 36 },
-      { "width": "20px", "targets": 37 },
-      { "targets": 38, "render": $.fn.dataTable.render.ellipsis(15, false), className: "truncate" }
+      { "width": "5px", "targets": 2 },        //id_selection
+      { "width": "40px", "targets": 3 },       //type apidae
+      // titre, profil_c2g, category_c2g, adresse1 & 2
+      //{ "targets": [4, 5, 6, 7, 8], "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },
+      //{ "targets": [9, 10, 11], "width": "50px" },      // code_postal, ville, altitude
+      { "width": "60px", "targets": [12, 13] },     //latitude, longitude
+      //telephone, email, site web, description courte, description détaillée, image
+      { "targets": [14, 15, 16, 17, 19], "visible": false },
+      { "targets": 21, "render": $.fn.dataTable.render.ellipsis(15, false), className: "truncate" },
+      { "width": "20", "targets": 22 }, //payant 
+      { "targets": 23, "render": $.fn.dataTable.render.ellipsis(19, false), className: "truncate" },
+      { "targets": 24, "render": $.fn.dataTable.render.ellipsis(15, false), className: "truncate" },
+      // publics
+      // equipement, services, periode, activites, ouverture, typology, bons_plan
+      // dispositions_speciales, service_enfants, service_cyclistes, nouveaute_2020
+      {
+        "targets": [
+          4, 5, 6, 7, 8, 9, 10, 11, 18, 20, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37
+        ],
+        "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate"
+      },
+      { "width": "20px", "targets": 38 } // modify
     ],
-    // createdRow: function (row) {
+    // createdRow: function (row) 
     //   var td = $(row).find(".truncate");
     //   td.attr("title", td.html());
     // },
@@ -67,7 +52,7 @@ $(document).ready(function () {
       $('td:eq(32)', nRow).html(edit);
       $('td:eq(32)', nRow).click(function () {
         var id = aData[0];
-        window.location.href = '/edit_ctg_profil/' + id;
+        window.location.href = '/edit_category_profil/' + id;
       });
     }
   });
@@ -109,7 +94,7 @@ $(document).ready(function () {
       $('td:eq(26)', nRow).html(edit);
       $('td:eq(26)', nRow).click(function () {
         var id = aData[0];
-        window.location.href = '/edit_ctg_profil/' + id;
+        window.location.href = '/edit_category_profil/' + id;
       });
     }
   });
@@ -188,7 +173,7 @@ $(document).ready(function () {
       { "width": "80px", "targets": 2 },
     ]
   });
-
+  //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   $('#dataTableSelection').DataTable({
     "columnDefs": [
       { "width": "15px", "targets": 0 },
@@ -216,7 +201,7 @@ $(document).ready(function () {
       });
     }
   });
-
+  //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   $('#dataTableProjet').DataTable({
     "columnDefs": [
       { "visible": false, "targets": 0 },

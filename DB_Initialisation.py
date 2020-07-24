@@ -24,6 +24,8 @@ import Table_relation_eltref_prf
 import Table_relation_eltref_ctg
 import Table_relation_profil_data_from_apidae
 import Table_relation_category_data_from_apidae
+import Table_relation_category_apidae_edited
+import Table_relation_profil_apidae_edited
 from DB_Connexion import DB_connexion
 # _______________________________________________________________________
 
@@ -88,28 +90,30 @@ alter_table = """
                 ALTER TABLE profil 
                 ADD COLUMN basic BOOLEAN DEFAULT TRUE;
             """
-
 update_table_1 = """
                 UPDATE profil 
                 SET basic=FALSE 
                 WHERE id_profil=5;
                 """
-
 update_table_2 = """
                 UPDATE profil 
                 SET basic=FALSE 
                 WHERE id_profil=6;
                 """
-
-
 update = (
     update_table_1,
     update_table_2
+)
+ctg_prf = (
+    Table_relation_category_apidae_edited.drop_relation_category_apidae_edited,
+    Table_relation_category_apidae_edited.relation_category_apidae_edited,
+    Table_relation_profil_apidae_edited.drop_relation_profil_apidae_edited,
+    Table_relation_profil_apidae_edited.relation_profil_apidae_edited
 )
 
 
 if __name__ == "__main__":
     connexion = DB_connexion()
-    for value in update:
+    for value in ctg_prf:
         connexion.Insert_SQL(value)
     del connexion

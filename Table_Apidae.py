@@ -1085,12 +1085,12 @@ select_apidae_1_id_with_data_edited = """
                             SELECT MIN(dfa.id_data_from_apidae) AS id, dfa.id_apidae AS id_apidae, 
                                 dfa.type_apidae AS type_apidae, dfa.titre AS titre,
                             CASE 
-                                WHEN pae.id_data_from_apidae IS NULL THEN array_to_string(array_agg(DISTINCT p.profil), ', ', '*')
-                                ELSE array_to_string(array_agg(DISTINCT pe.profil), ', ', '*')
+                                WHEN pae.id_data_from_apidae IS NULL THEN array_agg(DISTINCT p.id_profil)
+                                ELSE array_agg(DISTINCT pe.id_profil)
                                 END AS profil_c2g,
                             CASE
-                                WHEN cae.id_data_from_apidae IS NULL THEN array_to_string(array_agg(DISTINCT c.category_name), ', ', '*')
-                                ELSE array_to_string(array_agg(DISTINCT ce.category_name), ', ', '*')
+                                WHEN cae.id_data_from_apidae IS NULL THEN array_agg(DISTINCT c.id_category)
+                                ELSE array_agg(DISTINCT ce.id_category)
                                 END AS categorie_c2g, 
                                 dfa.adresse1 AS adresse1, dfa.adresse2 AS adresse2, dfa.code_postal AS code_postal, 
                                 dfa.ville AS ville, dfa.altitude AS altitude, dfa.longitude AS longitude,

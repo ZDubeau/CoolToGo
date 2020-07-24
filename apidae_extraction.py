@@ -1,6 +1,6 @@
 """ ----------------------------
 Creation date : 2020-04-02
-Last update   : 2020-07-06
+Last update   : 2020-07-24
 ----------------------------"""
 # _______________________________________________________________________
 
@@ -65,30 +65,6 @@ def retrieve_data_by_id(project_ID, api_KEY, select_id, selectionId, id_selectio
     return result_df
 # _______________________________________________________________________
 
-
-# def retrieve_data_by_id_light(project_ID, api_KEY, select_id):
-
-#     result_df = pd.DataFrame(
-#         columns=['id_apidae', 'Type_Apidae', 'Titre'])
-
-#     url = 'http://api.apidae-tourisme.com/api/v002/objet-touristique/get-by-id/' + select_id + '?'
-#     url += "responseFields=id,nom,informations,presentation.descriptifCourt,@all"
-#     url += '&apiKey='+api_KEY
-#     url += '&projetId='+project_ID
-
-#     re = requests.get(url)
-#     req = re.json()
-
-#     dict_for_id = {}
-#     dict_for_id['id_apidae'] = req['gestion']['membreProprietaire']['type']['id']
-#     dict_for_id['Titre'] = req['gestion']['membreProprietaire']['nom']
-#     dict_for_id['types'] = req['type']
-
-#     result_df = result_df.append(dict_for_id, ignore_index=True)
-#     return result_df
-
-
-# _______________________________________________________________________
 
 count_ = "100"              # "count":20
 first = "0"                 # start from 0
@@ -166,8 +142,9 @@ def retrive_data_by_selectionId_by_cent(project_ID, api_KEY, selectionId, id_sel
         while not que.empty():
             df = que.get()
             result_df = result_df.append(df)
-    except:
+    except Exception as error:
         print("problème d'extraction by cent")
+        print("selectionId_by_cent: ", error)
     return result_df
 # _______________________________________________________________________
 

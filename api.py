@@ -53,7 +53,7 @@ def query_database_for_list_of_filtered_locations(categories, profiles):
     nb_locations_for_json = len(set_of_location_id)
     nb_locations = len(set_of_all_location)
     FileLogger.log(
-        logging.DEBUG, f"1st step : {nb_locations} locations for json out of {nb_locations} different locations remaining in set for {nb_locations_extracted} location extracted !!!")
+        logging.DEBUG, f"1st step : {nb_locations_for_json} locations for json out of {nb_locations} different locations remaining in set for {nb_locations_extracted} location extracted !!!")
     list_of_location = connexion.Query_SQL_fetchall(
         apidae.select_apidae_with_categorie_list_edited_and_profil_list, [profiles, categories])
     for location in list_of_location:
@@ -66,7 +66,7 @@ def query_database_for_list_of_filtered_locations(categories, profiles):
     nb_locations_for_json = len(set_of_location_id)
     nb_locations = len(set_of_all_location)
     FileLogger.log(
-        logging.DEBUG, f"2nd step : {nb_locations} locations for json out of {nb_locations} different locations remaining in set for {nb_locations_extracted} location extracted !!!")
+        logging.DEBUG, f"2nd step : {nb_locations_for_json} locations for json out of {nb_locations} different locations remaining in set for {nb_locations_extracted} location extracted !!!")
     list_of_location = connexion.Query_SQL_fetchall(
         apidae.select_apidae_with_categorie_list_and_profil_list_edited, [profiles, categories])
     for location in list_of_location:
@@ -79,7 +79,7 @@ def query_database_for_list_of_filtered_locations(categories, profiles):
     nb_locations_for_json = len(set_of_location_id)
     nb_locations = len(set_of_all_location)
     FileLogger.log(
-        logging.DEBUG, f"1st step : {nb_locations} locations for json out of {nb_locations} different locations remaining in set for {nb_locations_extracted} location extracted !!!")
+        logging.DEBUG, f"3rd step : {nb_locations_for_json} locations for json out of {nb_locations} different locations remaining in set for {nb_locations_extracted} location extracted !!!")
     list_of_location = connexion.Query_SQL_fetchall(
         apidae.select_apidae_with_categorie_list_and_profil_list, [profiles, categories])
     for location in list_of_location:
@@ -92,7 +92,7 @@ def query_database_for_list_of_filtered_locations(categories, profiles):
     nb_locations_for_json = len(set_of_location_id)
     nb_locations = len(set_of_all_location)
     FileLogger.log(
-        logging.DEBUG, f"1st step : {nb_locations} locations for json out of {nb_locations} different locations remaining in set for {nb_locations_extracted} location extracted !!!")
+        logging.DEBUG, f"4th step : {nb_locations_for_json} locations for json out of {nb_locations} different locations remaining in set for {nb_locations_extracted} location extracted !!!")
     locations_list = []
     nb_location = 0
     for id_location in set_of_location_id:
@@ -104,8 +104,7 @@ def query_database_for_list_of_filtered_locations(categories, profiles):
         locations_list.append(dict_for_apidae)
         # locations_list.append(dict_for_properties)  # properties only
         nb_location += 1
-    nb_id_in_set = len(set_of_location_id)
     FileLogger.log(
-        logging.DEBUG, f"{nb_id_in_set} in set of location and {nb_location} locations extracted !!!")
+        logging.DEBUG, f"{nb_locations} in set of location and {nb_location} locations extracted !!!")
     del connexion
     return nb_location, locations_list

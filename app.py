@@ -328,30 +328,34 @@ def get_edit_category_profil(id):
 def post_edit_category_profil():
     save_edit = request.form["id"]
     connexion = DB_connexion()
-    data_ctg = connexion.Query_SQL_fetchall(
-        ctg.select_category_for_apidae_id, [save_edit])
-    data_prf = connexion.Query_SQL_fetchall(
-        prf.select_profil_for_apidae_id, [save_edit])
-    for line in data_ctg:
-        try:
-            category = request.form["categories-"+str(line[0])]
-            if line[2] is None:
-                connexion.Insert_SQL(ctg_apidae.insert_relation_category_apidae_edited, [
-                                     line[0], save_edit])
-        except KeyError:
-            if line[2] is not None:
-                connexion.Delete_SQL(ctg_apidae.delete_relation_category_apidae_edited, [
-                                     line[0], save_edit])
-    for line in data_prf:
-        try:
-            profil = request.form["profiles-"+str(line[0])]
-            if line[2] is None:
-                connexion.Insert_SQL(prf_apidae.insert_relation_profil_apidae_edited, [
-                                     line[0], save_edit])
-        except KeyError:
-            if line[2] is not None:
-                connexion.Delete_SQL(prf_apidae.delete_relation_profil_apidae_edited, [
-                                     line[0], save_edit])
+    list_of_id = connexion.Query_SQL_fetchall(
+        apidae.select_apidae_all_id_for_same_id_apidae, [save_edit])
+    for id_data_from_apidae in list_of_id:
+        id_for_update = id_data_from_apidae[0]
+        data_ctg = connexion.Query_SQL_fetchall(
+            ctg.select_category_for_apidae_id, [id_for_update])
+        data_prf = connexion.Query_SQL_fetchall(
+            prf.select_profil_for_apidae_id, [id_for_update])
+        for line in data_ctg:
+            try:
+                category = request.form["categories-"+str(line[0])]
+                if line[2] is None:
+                    connexion.Insert_SQL(ctg_apidae.insert_relation_category_apidae_edited, [
+                        line[0], id_for_update])
+            except KeyError:
+                if line[2] is not None:
+                    connexion.Delete_SQL(ctg_apidae.delete_relation_category_apidae_edited, [
+                        line[0], id_for_update])
+        for line in data_prf:
+            try:
+                profil = request.form["profiles-"+str(line[0])]
+                if line[2] is None:
+                    connexion.Insert_SQL(prf_apidae.insert_relation_profil_apidae_edited, [
+                        line[0], id_for_update])
+            except KeyError:
+                if line[2] is not None:
+                    connexion.Delete_SQL(prf_apidae.delete_relation_profil_apidae_edited, [
+                        line[0], id_for_update])
     del connexion
     return redirect(url_for("get_tableApidae"))
 

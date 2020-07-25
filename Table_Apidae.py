@@ -1151,6 +1151,14 @@ select_apidae_edit = """
                     GROUP BY apidae.id_apidae, apidae.titre,pae.id_data_from_apidae,cae.id_data_from_apidae;
                     """
 
+select_apidae_all_id_for_same_id_apidae = """
+                SELECT id_data_from_apidae
+                FROM data_from_apidae
+                WHERE id_apidae IN (SELECT id_apidae FROM data_from_apidae WHERE id_data_from_apidae=%s)
+                ORDER BY id_data_from_apidae ASC;
+                """
+
+
 delete_apidae_project_id = """
                             DELETE
                             FROM data_from_apidae

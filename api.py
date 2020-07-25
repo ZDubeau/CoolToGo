@@ -105,6 +105,6 @@ def query_database_for_list_of_filtered_locations(categories, profiles):
         # locations_list.append(dict_for_properties)  # properties only
         nb_location += 1
     FileLogger.log(
-        logging.DEBUG, f"{nb_locations} in set of location and {nb_location} locations extracted !!!")
+        logging.DEBUG, f"{nb_locations_for_json} in set of location and {nb_location} locations extracted !!!")
     del connexion
     return nb_location, locations_list

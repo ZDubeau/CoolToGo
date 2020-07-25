@@ -36,32 +36,63 @@ def query_database_for_list_of_filtered_locations(categories, profiles):
     list_of_location = connexion.Query_SQL_fetchall(apidae.select_apidae)
     for location in list_of_location:
         set_of_all_location.add(location[1])
-    #print(len(set_of_all_location), len(list_of_location))
+    nb_locations = len(set_of_all_location)
+    nb_locations_extracted = len(list_of_location)
+    FileLogger.log(
+        logging.DEBUG, f"{nb_locations} different locations in set for {nb_locations_extracted} location extracted !!!")
     set_of_location_id = set()
     list_of_location = connexion.Query_SQL_fetchall(
         apidae.select_apidae_with_categorie_list_edited_and_profil_list_edited, [profiles, categories])
     for location in list_of_location:
         set_of_location_id.add(location[1])
-        set_of_all_location.remove(location[0])
-    #print(len(set_of_location_id), len(list_of_location), len(set_of_all_location))
+        try:
+            set_of_all_location.remove(location[0])
+        except:
+            FileLogger.log(
+                logging.ERROR, f"{location[0]} no more in set of all locations !!!")
+    nb_locations_for_json = len(set_of_location_id)
+    nb_locations = len(set_of_all_location)
+    FileLogger.log(
+        logging.DEBUG, f"1st step : {nb_locations} locations for json out of {nb_locations} different locations remaining in set for {nb_locations_extracted} location extracted !!!")
     list_of_location = connexion.Query_SQL_fetchall(
         apidae.select_apidae_with_categorie_list_edited_and_profil_list, [profiles, categories])
     for location in list_of_location:
         set_of_location_id.add(location[1])
-        set_of_all_location.remove(location[0])
-    #print(len(set_of_location_id), len(list_of_location), len(set_of_all_location))
+        try:
+            set_of_all_location.remove(location[0])
+        except:
+            FileLogger.log(
+                logging.ERROR, f"{location[0]} no more in set of all locations !!!")
+    nb_locations_for_json = len(set_of_location_id)
+    nb_locations = len(set_of_all_location)
+    FileLogger.log(
+        logging.DEBUG, f"2nd step : {nb_locations} locations for json out of {nb_locations} different locations remaining in set for {nb_locations_extracted} location extracted !!!")
     list_of_location = connexion.Query_SQL_fetchall(
         apidae.select_apidae_with_categorie_list_and_profil_list_edited, [profiles, categories])
     for location in list_of_location:
         set_of_location_id.add(location[1])
-        set_of_all_location.remove(location[0])
-    #print(len(set_of_location_id), len(list_of_location), len(set_of_all_location))
+        try:
+            set_of_all_location.remove(location[0])
+        except:
+            FileLogger.log(
+                logging.ERROR, f"{location[0]} no more in set of all locations !!!")
+    nb_locations_for_json = len(set_of_location_id)
+    nb_locations = len(set_of_all_location)
+    FileLogger.log(
+        logging.DEBUG, f"1st step : {nb_locations} locations for json out of {nb_locations} different locations remaining in set for {nb_locations_extracted} location extracted !!!")
     list_of_location = connexion.Query_SQL_fetchall(
         apidae.select_apidae_with_categorie_list_and_profil_list, [profiles, categories])
     for location in list_of_location:
         set_of_location_id.add(location[1])
-        set_of_all_location.remove(location[0])
-    #print(len(set_of_location_id), len(list_of_location), len(set_of_all_location))
+        try:
+            set_of_all_location.remove(location[0])
+        except:
+            FileLogger.log(
+                logging.ERROR, f"{location[0]} no more in set of all locations !!!")
+    nb_locations_for_json = len(set_of_location_id)
+    nb_locations = len(set_of_all_location)
+    FileLogger.log(
+        logging.DEBUG, f"1st step : {nb_locations} locations for json out of {nb_locations} different locations remaining in set for {nb_locations_extracted} location extracted !!!")
     locations_list = []
     nb_location = 0
     for id_location in set_of_location_id:

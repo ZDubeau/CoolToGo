@@ -21,9 +21,9 @@ $(document).ready(function () {
     "columnDefs": [
       { "visible": false, "targets": 0 },       //id primary key
       { "width": "10px", "targets": 1 },        //id_Apidae
-      { "width": "5px", "targets": 2 },        //id_selection
-      //{ "width": "40px", "targets": 3 },       //type apidae
-      { "width": "10px", "targets": 4 },
+      { "width": "5px", "targets": 2 },         //type_apidae
+      //{ "width": "40px", "targets": 3 },      //titre
+      //{ "width": "25px", "targets": 4 },      // id_selection
       // titre, profil_c2g, category_c2g, adresse1 & 2
       //{ "targets": [4, 5, 6, 7, 8], "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },
       //{ "targets": [9, 10, 11], "width": "50px" },      // code_postal, ville, altitude
@@ -39,7 +39,7 @@ $(document).ready(function () {
       // dispositions_speciales, service_enfants, service_cyclistes, nouveaute_2020
       {
         "targets": [
-          3, 5, 6, 7, 8, 9, 10, 11, 18, 20, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37
+          3, 4, 5, 6, 7, 8, 9, 10, 11, 18, 20, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37
         ],
         "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate"
       },

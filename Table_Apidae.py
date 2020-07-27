@@ -845,7 +845,16 @@ insert_apidae = """
                 """
 
 select_apidae_display = """
-                        SELECT MIN(dfa.id_data_from_apidae) AS id, dfa.id_apidae AS id_apidae,
+                        SELECT MIN(sad.id) AS id, sad.id_apidae, sad.type_apidae, sad.titre,
+                                array_to_string(array_agg(DISTINCT sad.id_selection), ', ', '*') AS id_s,
+                                sad.profil_c2g, sad.categorie_c2g,
+                                sad.adresse1, sad.adresse2, sad.code_postal, sad.ville,sad.altitude, sad.longitude, 
+                                sad.latitude, sad.telephone, sad.email, sad.site_web, sad.description_courte,
+                                sad.description_detaillee, sad.image, sad.publics, sad.tourisme_adapte, sad.payant, 
+                                sad.animaux_acceptes, sad.environnement, sad.equipement, sad.services, sad.periode, 
+                                sad.activites, sad.ouverture, sad.date_debut, sad.date_fin, sad.typologie, 
+                                sad.bons_plans, sad.dispositions_speciales, sad.service_enfants, sad.service_cyclistes, sad.nouveaute_2020, '' AS modifier
+                        FROM (SELECT MIN(dfa.id_data_from_apidae) AS id, dfa.id_apidae AS id_apidae,
                                 array_to_string(array_agg(DISTINCT dfa.id_selection), ', ', '*') AS id_selection, 
                                 dfa.type_apidae AS type_apidae, dfa.titre AS titre,
                                 CASE 
@@ -865,8 +874,8 @@ select_apidae_display = """
                                 dfa.payant AS payant, dfa.animaux_acceptes AS animaux_acceptes, dfa.environnement AS environnement, 
                                 dfa.equipement AS equipement, dfa.services AS services, dfa.periode AS periode, dfa.activites AS activites, 
                                 dfa.ouverture AS ouverture, dfa.date_debut AS date_debut, dfa.date_fin AS date_fin, dfa.typologie AS typologie, 
-                                dfa.bons_plans AS bons_plans, dfa.dispositions_speciales AS disposition_speciales, dfa.service_enfants AS services_enfants, 
-                                dfa.service_cyclistes AS service_cyclistes, dfa.nouveaute_2020 AS nouveaute_2020, '' AS modifier
+                                dfa.bons_plans AS bons_plans, dfa.dispositions_speciales AS dispositions_speciales, dfa.service_enfants AS service_enfants, 
+                                dfa.service_cyclistes AS service_cyclistes, dfa.nouveaute_2020 AS nouveaute_2020
                             FROM data_from_apidae AS dfa
                             LEFT JOIN category_apidae AS ca ON dfa.id_data_from_apidae = ca.id_data_from_apidae
                             LEFT JOIN category AS c ON ca.id_category = c.id_category
@@ -882,7 +891,14 @@ select_apidae_display = """
                                 dfa.description_detaillee, dfa.image, dfa.publics, dfa.tourisme_adapte, dfa.payant, 
                                 dfa.animaux_acceptes, dfa.environnement, dfa.equipement, dfa.services, dfa.periode, 
                                 dfa.activites, dfa.ouverture, dfa.date_debut, dfa.date_fin, dfa.typologie, 
-                                dfa.bons_plans, dfa.dispositions_speciales, dfa.service_enfants, dfa.service_cyclistes, dfa.nouveaute_2020;
+                                dfa.bons_plans, dfa.dispositions_speciales, dfa.service_enfants, dfa.service_cyclistes, dfa.nouveaute_2020) AS sad
+                            GROUP BY sad.id_apidae, sad.type_apidae, sad.titre,sad.profil_c2g, sad.categorie_c2g,
+                                sad.adresse1, sad.adresse2, sad.code_postal, sad.ville,sad.altitude, sad.longitude, 
+                                sad.latitude, sad.telephone, sad.email, sad.site_web, sad.description_courte,
+                                sad.description_detaillee, sad.image, sad.publics, sad.tourisme_adapte, sad.payant, 
+                                sad.animaux_acceptes, sad.environnement, sad.equipement, sad.services, sad.periode, 
+                                sad.activites, sad.ouverture, sad.date_debut, sad.date_fin, sad.typologie, 
+                                sad.bons_plans, sad.dispositions_speciales, sad.service_enfants, sad.service_cyclistes, sad.nouveaute_2020;
                         """
 
 select_apidae_category_display = """

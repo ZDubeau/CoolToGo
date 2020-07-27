@@ -1,3 +1,5 @@
+<!-- LAST UPDATE: 27 JULY 2020 -->
+
 {% extends "layout.html" %}
 {% block bootstrap_2 %}
 <div class="card-header"
@@ -15,11 +17,11 @@
 <center>
     <h2 style="color: khaki; text-align: center;">{{errorMessage}}</h2>
 </center>
-
 <!-- Edit Modal HTML -->
 <div id="editEmployeeModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
+            <!-- FORM -->
             <form action="/edit" method="post">
                 <div class="modal-header">
                     <h4 class="modal-title">Edit Employee</h4>
@@ -51,7 +53,6 @@
         </div>
     </div>
 </div>
-
 <div class="container-fluid" style="transform: translate(-20px, 8px);">
     <div class="row justify-content-md-left">
         <div class="col-md-auto">

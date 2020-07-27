@@ -1,3 +1,5 @@
+<!-- LAST UPDATE: 27 JULY 2020 -->
+
 {% extends "layout.html" %}
 {% block bootstrap_2 %}
 <div class="card-header"
@@ -9,9 +11,7 @@
         {% for table in tables %}
         {{ table|safe }}
         {% endfor %}
-        </table>
     </div>
 </div>
-
 <h4 style="color: red;">{{ErrorMessage}}</h4>
 {% endblock bootstrap_2 %}

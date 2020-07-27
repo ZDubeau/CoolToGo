@@ -2,18 +2,21 @@
 {% block bootstrap_2 %}
 <div>
     {% for table in tables %}
-        {{ table|safe }}
+    {{ table|safe }}
     {% endfor %}
-    <center><h2 style="color: #00E64D; text-align: center;">{{errorMessage}}</h2></center>
+    <center>
+        <h2 style="color: #00E64D; text-align: center;">{{errorMessage}}</h2>
+    </center>
     <div class="container-fluid">
         <div class="row justify-content-md-left">
             <div class="col-md-auto">
                 <div class="-md-auto control">
-                    <button onclick="window.location.href='/extract_locations';" class="btn btn-outline-primary">Locations</button>
+                    <button onclick="window.location.href='/extract_locations';"
+                        class="btn btn-outline-primary">Locations</button>
                     <a href='/extract_locations' download class="btn btn-outline-primary">Download</a>
                 </div>
             </div>
-        </div>  
-    </div>        
+        </div>
+    </div>
 </div>
 {% endblock bootstrap_2 %}

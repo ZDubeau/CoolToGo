@@ -1,6 +1,6 @@
 """----------------------------
 Creation date : 2020-06-11
-Last update : 2020-07-16
+Last update : 2020-07-27
 ----------------------------"""
 
 from wtforms.validators import InputRequired, Email, Length, Regexp, AnyOf
@@ -148,12 +148,7 @@ def file_elementReference_treatment(dfjson):
     elt_Ref.Execute()
     del elt_Ref
 
-
-# @app.route('/cooltogo.ico')
-# def favicon():
-#     return send_from_directory(os.path.join(app.root_path, 'static'),
-#                                'cooltogo.ico')
-#-------------------------- Homepage ---------------------------#
+#____________________________________ Homepage ____________________________________#
 
 
 @app.route('/', methods=['GET'])
@@ -169,6 +164,8 @@ def get_homepage():
     if nb_admin == 0:
         inscription = True
     return render_template('homepage.html', inscription=inscription, form=form, modal_inscription=modal_inscription, modal_login=modal_login)
+
+#__________________________________ registration __________________________________#
 
 
 @app.route('/inscription', methods=['GET', 'POST'])
@@ -197,7 +194,7 @@ def register():
         modal_inscription = True
     return render_template('homepage.html', inscription=inscription, form=form, modal_inscription=modal_inscription)
 
-
+# ???????????????????????????????????????????????????????????????????????????????????????????????????????
 @app.route('/login_1', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -207,7 +204,7 @@ def login():
         return 'Formulaire soumis avec succès !'
     return render_template('get_homepage', form=form)
 
-#---------------------- Login page ----------------------#
+#____________________________________ Login page __________________________________#
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -227,7 +224,7 @@ def post_login():
 
     return redirect(url_for("get_homepage", ErrorMessage=ErrorMessage))
 
-#------------------------ Admin page ---------------------------#
+#_____________________________________ Admin page ___________________________________#
 
 
 @app.route('/home', methods=['GET'])
@@ -238,7 +235,7 @@ def get_home():
         username = session["username"]
         return render_template('pages/home.html', username=username)
 
-# _______________________Element Reference _____________________
+# ________________________________Element Reference _________________________________#
 
 
 @app.route('/element_reference', methods=['GET'])
@@ -288,7 +285,7 @@ def get_delete_elt_ref_not_used():
         errorMessage = "Ménage effectué!"
         return redirect(url_for("get_elementReference", errorMessage=errorMessage))
 
-#----------------- Apidae tables interface --------------------#
+#______________________________ Apidae tables interface _____________________________#
 
 
 @app.route('/tableApidae', methods=['GET', 'POST'])
@@ -359,7 +356,7 @@ def post_edit_category_profil():
     del connexion
     return redirect(url_for("get_tableApidae"))
 
-#------------------ Valid tables interface --------------------#
+#_____________________________ Valid tables interface _______________________________#
 
 
 @app.route('/tableValide', methods=['GET', 'POST'])
@@ -378,7 +375,7 @@ def get_tableValide():
         del connexion
         return render_template('pages/tableValide.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableValid', index=False)], username=username, ErrorMessage=ErrorMessage)
 
-#---------------------- New data valid ------------------------#
+#________________________________ New data valid ____________________________________#
 
 
 @app.route('/ManualEntry', methods=['GET'])
@@ -401,7 +398,7 @@ def post_manualEntry():
         else:
             ErrorMessage = ""
         connexion = DB_connexion()
-        category_c2g = request.form["selection"]
+        #category_c2g = request.form["selection"]
         type_c2g = request.form["type_apidae"]
         title = request.form["titre"]
         address = request.form["adresse"]
@@ -411,6 +408,49 @@ def post_manualEntry():
         tel = request.form["telephone"]
         mail = request.form["email"]
         url = request.form["site_web"]
+
+        category_c2g = ""
+        first = True
+        if "Au bord de l'eau" in request.form:
+            category_c2g += "Au bord de l'eau"
+            first = False
+        if "Faire du sport à la fraich" in request.form:
+            if first:
+                category_c2g += "Faire du sport à la fraich"
+                first = False
+            else:
+                category_c2g += ",Faire du sport à la fraich"
+        if "Se cultiver à la fraich" in request.form:
+            if first:
+                category_c2g += "Se cultiver à la fraich"
+                first = False
+            else:
+                category_c2g += ",Se cultiver à la fraiche"
+        if "Se divertir à la fraich" in request.form:
+            if first:
+                category_c2g += "Se divertir à la fraich"
+                first = False
+            else:
+                category_c2g += ",Se divertir à la fraich"
+        if "Se mettre au vert" in request.form:
+            if first:
+                category_c2g += "Se mettre au vert"
+                first = False
+            else:
+                category_c2g += ",Se mettre au vert"
+        if "Se promener à la fraich" in request.form:
+            if first:
+                category_c2g += "Se promener à la fraich"
+                first = False
+            else:
+                category_c2g += ",Se promener à la fraich"
+        if "Se rafraichir en urgence" in request.form:
+            if first:
+                category_c2g += "Se rafraichir en urgence"
+                first = False
+            else:
+                category_c2g += ",Se rafraichir en urgence"
+
         profil_c2g = ""
         first = True
         if "senior" in request.form:
@@ -445,7 +485,8 @@ def post_manualEntry():
                 profil_c2g += "mobilite_reduite"
                 first = False
             else:
-                profil_c2g += ",solidaire"
+                profil_c2g += ",mobilite_reduite"
+
         accessibility = request.form["accessibilite"]
         paying = request.form["payant"]
         image = request.form["image"]
@@ -457,8 +498,8 @@ def post_manualEntry():
         address_to_geolocalize = ""
         if address != "None":
             address_to_geolocalize += address
-        # if adresse2 != "None":
-        #     adresse_to_geolocalize += " " + adresse2
+        if adresse2 != "None":
+            adresse_to_geolocalize += " " + adresse2
         geolocator = Nominatim(user_agent="cooltogo_api_backend")
         location = geolocator.geocode(
             address_to_geolocalize+" "+codePostal+" "+city)
@@ -500,41 +541,6 @@ def post_manualEntry():
                                                      ])
         del connexion
         return redirect(url_for("get_manualEntry", ErrorMessage="Nouvelle entrée a été ajouté dans la table manualEntry !"))
-
-#-------------------- Validated lieu ------------------------#
-
-# @app.route('/validate_lieu/<id>')
-# def get_validate_lieu(id):
-#     connexion = DB_connexion()
-#     DB_Protocole.cur.execute(
-#         apidae.select_apidae_1_id, [id])
-#     data = DB_Protocole.cur.fetchone()
-#     functions.insert_cooltogo_validated(data[1],
-#                                         data[3],
-#                                         data[6],
-#                                         data[7],
-#                                         data[4],
-#                                         "",
-#                                         data[8],
-#                                         data[9],
-#                                         data[10],
-#                                         data[11],
-#                                         data[12],
-#                                         data[13],
-#                                         data[14],
-#                                         data[15],
-#                                         data[15],
-#                                         data[16],
-#                                         data[17],
-#                                         data[5],
-#                                         data[18],
-#                                         data[19],
-#                                         data[20],
-#                                         data[21],
-#                                         data[22],
-#                                         data[23])
-#     del connexion
-#     return redirect(url_for("get_tableApidae"))
 
 #________________________Add new administator interface_______________________#
 

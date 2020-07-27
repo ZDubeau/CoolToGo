@@ -4,6 +4,7 @@ var edit = '<img src="/static/image/edit-svgrepo-com.svg" style="height:18px;"/>
 var json = '<img src="/static/image/json.png" style="height:18px;"/>';
 var on_off = '<img src="/static/image/toggle.jpeg" style="height:18px;"/>';
 
+//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::Table Apidae
 // Call the dataTables jQuery plugin
 $(document).ready(function () {
   $('#dataTableApidae').DataTable({
@@ -22,19 +23,16 @@ $(document).ready(function () {
       { "visible": false, "targets": 0 },       //id primary key
       { "width": "10px", "targets": 1 },        //id_Apidae
       { "width": "5px", "targets": 2 },         //type_apidae
-      //{ "width": "40px", "targets": 3 },      //titre
-      //{ "width": "25px", "targets": 4 },      // id_selection
-      // titre, profil_c2g, category_c2g, adresse1 & 2
-      //{ "targets": [4, 5, 6, 7, 8], "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },
-      //{ "targets": [9, 10, 11], "width": "50px" },      // code_postal, ville, altitude
-      { "width": "60px", "targets": [12, 13] },     //latitude, longitude
+      { "width": "60px", "targets": [12, 13] }, //latitude, longitude
+
       //telephone, email, site web, description courte, description détaillée, image
       { "targets": [14, 15, 16, 17, 19], "visible": false },
       { "targets": 21, "render": $.fn.dataTable.render.ellipsis(15, false), className: "truncate" },
       { "width": "20", "targets": 22 }, //payant 
       { "targets": 23, "render": $.fn.dataTable.render.ellipsis(19, false), className: "truncate" },
       { "targets": 24, "render": $.fn.dataTable.render.ellipsis(15, false), className: "truncate" },
-      // publics
+
+      // id_selection, titre, publics
       // equipement, services, periode, activites, ouverture, typology, bons_plan
       // dispositions_speciales, service_enfants, service_cyclistes, nouveaute_2020
       {
@@ -45,10 +43,6 @@ $(document).ready(function () {
       },
       { "width": "20px", "targets": 38 } // modify
     ],
-    // createdRow: function (row) 
-    //   var td = $(row).find(".truncate");
-    //   td.attr("title", td.html());
-    // },
     "fnRowCallback": function (nRow, aData) {
       $('td:eq(32)', nRow).html(edit);
       $('td:eq(32)', nRow).click(function () {
@@ -57,7 +51,7 @@ $(document).ready(function () {
       });
     }
   });
-
+  //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::Table Apidae (json mode)
   $('#dataTableApidaejsonmode').DataTable({
     "sScrollX": "100%",
     "bScrollCollapse": true,
@@ -99,7 +93,7 @@ $(document).ready(function () {
       });
     }
   });
-
+  //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::Table Valid
   $('#dataTableValid').DataTable({
     "sScrollX": "100%",
     "bScrollCollapse": true,
@@ -150,7 +144,7 @@ $(document).ready(function () {
       });
     }
   });
-
+  //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::Table Admin
   $('#dataTableAdmin').DataTable({
     "columnDefs": [
       { "width": "10px", "targets": 0 },
@@ -174,7 +168,7 @@ $(document).ready(function () {
       { "width": "80px", "targets": 2 },
     ]
   });
-  //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::Table Selection
   $('#dataTableSelection').DataTable({
     "columnDefs": [
       { "width": "15px", "targets": 0 },
@@ -202,7 +196,7 @@ $(document).ready(function () {
       });
     }
   });
-  //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::Table Projet
   $('#dataTableProjet').DataTable({
     "columnDefs": [
       { "visible": false, "targets": 0 },
@@ -223,7 +217,7 @@ $(document).ready(function () {
       });
     }
   });
-
+  //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::Table Message
   $('#dataTableMessage').DataTable({
     "columnDefs": [
       { "visible": false, "targets": 0 },
@@ -253,7 +247,7 @@ $(document).ready(function () {
       });
     }
   });
-
+  //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::Table Coolness Values
   $('#dataTableCoolnessValues').DataTable({
     "columnDefs": [
       { "visible": false, "targets": 0 },
@@ -270,7 +264,7 @@ $(document).ready(function () {
       });
     }
   });
-
+  //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::Table Category
   $('#dataTableCategory').DataTable({
     "columnDefs": [
       { "width": "10px", "targets": 0, "className": "text-center" },
@@ -291,7 +285,7 @@ $(document).ready(function () {
       });
     }
   });
-
+  //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::Table Profil
   $('#dataTableProfil').DataTable({
     "columnDefs": [
       { "width": "10px", "targets": 0 },
@@ -313,6 +307,7 @@ $(document).ready(function () {
       });
     }
   });
+  //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::Table Element Reference + Profil
   $('#dataEltPrf').DataTable({
     "columnDefs": [
       { "visible": false, "targets": 0 },
@@ -331,7 +326,7 @@ $(document).ready(function () {
       });
     }
   });
-
+  //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::Table Element Reference + Category
   $('#dataEltCtg').DataTable({
     "columnDefs": [
       { "visible": false, "targets": 0 },
@@ -350,5 +345,4 @@ $(document).ready(function () {
       });
     }
   });
-
 });

@@ -320,7 +320,7 @@ def get_tableManualEntry():
         df = pd.read_sql(
             apidae.select_apidae_display_manual_entry, connexion.connexion())
         del connexion
-        return render_template('pages/tableApidae.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableApidae', index=False)], username=username)
+        return render_template('pages/tableApidae.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableManualEntry', index=False)], username=username)
         # df = pd.read_sql(
         #     apidae.select_apidae_all_data_with_data_edited, connexion.connexion())
         # del connexion
@@ -358,6 +358,35 @@ def get_edit_category_profil(id):
             prf.select_profil_for_apidae_id, [id])
         del connexion
     return render_template('pages/apidae_edit.html', id_data_from_apidae=id, id_apidae=data[1], titre=data[2], profil_c2g=data[3], category_c2g=data[4], categories=data_ctg, profiles=data_prf, username=username)
+
+# ???????????????????????????????????????????????????????????????????????
+@app.route('/edit_category_profil_manual_entry/<id>', methods=['GET'])
+def get_edit_category_profil_manual(id):
+    if "username" not in session:
+        return redirect(url_for("get_homepage"))
+    else:
+        username = session["username"]
+        connexion = DB_connexion()
+        data = connexion.Query_SQL_fetchone(apidae.select_apidae_edit, [id])
+        data_ctg = connexion.Query_SQL_fetchall(
+            ctg.select_category_for_apidae_id, [id])
+        data_prf = connexion.Query_SQL_fetchall(
+            prf.select_profil_for_apidae_id, [id])
+        del connexion
+    return redirect(url_for('get_tableManualEntry', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableManualEntry', index=False)], id_data_from_apidae=id, id_apidae=data[1], titre=data[2], profil_c2g=data[3], category_c2g=data[4], categories=data_ctg, profiles=data_prf, username=username))
+
+
+@app.route('/remove_manual_entry/<id>', methods=['GET'])
+def get_delete_manual_entry(id):
+    if "username" not in session:
+        return redirect(url_for("get_homepage"))
+    else:
+        username = session["username"]
+        connexion = DB_connexion()
+        connexion.Delete_SQL(apidae.delete_manual_entry, [id])
+        del connexion
+        ErrorMessage = "Entré manuelle est supprimé !"
+        return redirect(url_for("get_tableManualEntry", ErrorMessage=ErrorMessage))
 
 
 @app.route("/edit_category_profil_save", methods=["POST"])
@@ -398,23 +427,23 @@ def post_edit_category_profil():
 #_____________________________ Valid tables interface _______________________________#
 
 
-@app.route('/tableValide', methods=['GET', 'POST'])
-def get_tableValide():
-    if "username" not in session:
-        return redirect(url_for("get_homepage"))
-    else:
-        username = session["username"]
-        if 'ErrorMessage' in request.args:
-            ErrorMessage = request.args.get('ErrorMessage')
-        else:
-            ErrorMessage = ""
-        connexion = DB_connexion()
-        df = pd.read_sql(
-            DB_Table_Definitions.select_cooltogo_validated_for_display, connexion.connexion())
-        del connexion
-        return render_template('pages/tableValide.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableValid', index=False)], username=username, ErrorMessage=ErrorMessage)
+# @app.route('/tableValide', methods=['GET', 'POST'])
+# def get_tableValide():
+#     if "username" not in session:
+#         return redirect(url_for("get_homepage"))
+#     else:
+#         username = session["username"]
+#         if 'ErrorMessage' in request.args:
+#             ErrorMessage = request.args.get('ErrorMessage')
+#         else:
+#             ErrorMessage = ""
+#         connexion = DB_connexion()
+#         df = pd.read_sql(
+#             DB_Table_Definitions.select_cooltogo_validated_for_display, connexion.connexion())
+#         del connexion
+#         return render_template('pages/tableValide.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableValid', index=False)], username=username, ErrorMessage=ErrorMessage)
 
-#________________________________ New data valid ____________________________________#
+#________________________________ Manual Entry ____________________________________#
 
 
 @app.route('/ManualEntry', methods=['GET'])

@@ -93,57 +93,46 @@ $(document).ready(function () {
       });
     }
   });
-  //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::Table Valid
-  $('#dataTableValid').DataTable({
+  //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::Table manual entry
+  $('#dataTableManualEntry').DataTable({
     "sScrollX": "100%",
     "bScrollCollapse": true,
     "fixedHeader": {
       "header": false,
       "footer": false
     },
+    dom: 'Bfrtip',
+    buttons: [{
+      extend: 'colvis',
+      collectionLayout: 'fixed four-column'
+    }],
     "columnDefs": [
-      { "visible": false, "targets": 0 },
-      { "width": "120px", "targets": 1 },
-      { "width": "70px", "targets": 2 },
-      { "width": "80px", "targets": 3 },
-      { "width": "80px", "targets": 4 },
-      { "width": "400px", "targets": 5 },
-      { "width": "200px", "targets": 6 },
-      { "width": "200px", "targets": 7 },
-      { "width": "70px", "targets": 8 },
-      { "width": "170px", "targets": 9 },
-      { "width": "100px", "targets": 10 },
-      { "width": "300px", "targets": 11 },
-      { "width": "800px", "targets": 12 },
-      { "width": "1400px", "targets": 13 },
-      { "width": "1400px", "targets": 14 },
-      { "width": "600px", "targets": 15 },
-      { "width": "180px", "targets": 16 },
-      { "width": "90px", "targets": 17 },
-      { "width": "90px", "targets": 18 },
-      { "width": "150px", "targets": 19 },
-      { "width": "180px", "targets": 20 },
-      { "width": "300px", "targets": 21 },
-      { "width": "70px", "targets": 22 },
-      { "width": "280px", "targets": 23 },
-      { "width": "80px", "targets": 24 },
-      { "width": "80px", "targets": 25 },
-      { "width": "20px", "targets": 26 },
-      { "width": "20px", "targets": 27 }
+      { "targets": 0, "visible": false },      //id primary key
+      { "targets": 1, "width": "1px" },        //id_Apidae
+      { "targets": 2, "width": "5px" },        //type_apidae
+      { "targets": [3, 4, 5, 6, 7], "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },
+      { "targets": [9, 10], "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },
+      { "targets": [11, 12, 13, 14, 15, 16], "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },
+      { "targets": [18, 21, 24], "render": $.fn.dataTable.render.ellipsis(15, false), className: "truncate" },
+      { "targets": [8, 17, 19, 20, 23, 25, 26, 27, 28, 32, 33, 34, 35, 36, 37], "visible": false },
+      { "targets": 22, "width": "20" }, //payant
+      { "targets": [29, 30, 31], "render": $.fn.dataTable.render.ellipsis(10, false), className: "truncate" },
+      { "targets": [38, 39], "width": "20px" }, // Modify, Remove
     ],
     "fnRowCallback": function (nRow, aData) {
-      $('td:eq(25)', nRow).html(edit);
-      $('td:eq(25)', nRow).click(function () {
+      $('td:eq(22)', nRow).html(edit);
+      $('td:eq(22)', nRow).click(function () {
         var id = aData[0];
-        window.location.href = '/edit_lieu_valide/' + id;
+        window.location.href = '/edit_category_profil_manual_entry/' + id;
       });
-      $('td:eq(26)', nRow).html(cancel);
-      $('td:eq(26)', nRow).click(function () {
+      $('td:eq(23)', nRow).html(cancel);
+      $('td:eq(23)', nRow).click(function () {
         var id = aData[0];
-        window.location.href = '/remove_lieu/' + id;
+        window.location.href = '/remove_manual_entry/' + id;
       });
     }
   });
+
   //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::Table Admin
   $('#dataTableAdmin').DataTable({
     "columnDefs": [
@@ -160,7 +149,7 @@ $(document).ready(function () {
       });
     }
   });
-
+  //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::Element Reference
   $('#dataelementreference').DataTable({
     "columnDefs": [
       { "visible": false, "targets": 0 },

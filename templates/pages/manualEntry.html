@@ -11,64 +11,22 @@
             <div class="col-md-auto" style="margin-top: 15px;">
                 <label class="label" style="font-size: 14px;padding-bottom: 12px;color: #17a2b8;">Catégorie
                     CoolToGo</label>
-                <label>
-                    <input name="Au bord de l'eau" type="checkbox" value="Au bord de l'eau">
-                    Au bord de l'eau&nbsp;&nbsp;&nbsp;&nbsp;
-                </label>
-                <label>
-                    <input name="Faire du sport à la fraich" type="checkbox" value="Faire du sport à la fraich">
-                    Faire du sport à lafraich&nbsp;&nbsp;&nbsp;&nbsp;
-                </label>
-                <label>
-                    <input name="Se cultiver à la fraich" type="checkbox" value="Se cultiver à la fraich">
-                    Se cultiver à la fraich&nbsp;&nbsp;&nbsp;&nbsp;
-                </label>
-                <label>
-                    <input name="Se divertir à la fraich" type="checkbox" value="Se divertir à la fraich">
-                    Se divertir à la fraich&nbsp;&nbsp;&nbsp;&nbsp;
-                </label>
-                <label>
-                    <input name="Se mettre au vert" type="checkbox" value="Se mettre au vert">
-                    Se mettre au vert&nbsp;&nbsp;&nbsp;&nbsp;
-                </label>
-                <label>
-                    <input name="Se promener à la fraich" type="checkbox" value="Se promener à la fraich">
-                    Se promener à la fraich&nbsp;&nbsp;&nbsp;&nbsp;
-                </label>
-                <label>
-                    <input name="Se rafraichir en urgence" type="checkbox" value="Se rafraichir en urgence">
-                    Se rafraichir en urgence
-                </label>
+                {% for line in categories  %}
+                <label><input name="categories-{{line[0]}}" value="{{line[1]}}"
+                        type="checkbox">&nbsp;&nbsp;{{line[1]}}&nbsp;&nbsp;&nbsp;&nbsp;</label>
+
+                {% endfor %}
             </div>
             <!-- USER PROFIL -->
             <div class="col-md-10" style="margin-top: 15px;">
                 <label class="label" style="font-size: 14px;padding-bottom: 12px;color: #17a2b8;">
                     Profil CoolToGo
                 </label>
+                {% for line in profiles  %}
                 <label>
-                    <input name="senior" type="checkbox" value="Senior">
-                    Senior&nbsp;&nbsp;&nbsp;&nbsp;
-                </label>
-                <label>
-                    <input name="enfant" type="checkbox" value="Enfant">
-                    Enfant&nbsp;&nbsp;&nbsp;&nbsp;
-                </label>
-                <label>
-                    <input name="jeune" type="checkbox" value="Jeune">
-                    Jeune&nbsp;&nbsp;&nbsp;&nbsp;
-                </label>
-                <label>
-                    <input name="adult" type="checkbox" value="Adulte">
-                    Adulte&nbsp;&nbsp;&nbsp;&nbsp;
-                </label>
-                <label>
-                    <input name="solidaire" type="checkbox" value="Solidaire">
-                    Solidaire&nbsp;&nbsp;&nbsp;&nbsp;
-                </label>
-                <label>
-                    <input name="mobilite_reduite" type="checkbox" value="Mobilite_reduite">
-                    Mobilité réduite
-                </label>
+                    <input name="profiles-{{line[0]}}" value="{{line[1]}}"
+                        type="checkbox">&nbsp;&nbsp;{{line[1]}}&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                {% endfor %}
             </div>
             <!-- TYPE (TYPE_APIDAE) -->
             <div class="col-md-3 mb-3" style="margin-top: 15px;">
@@ -139,7 +97,7 @@
                 </select>
             </div>
             <!-- IMAGE -->
-            <div class="col-md-5 mb-3" style="margin-top: 15px;">
+            <div class="col-md-8 mb-3" style="margin-top: 15px;">
                 <label class="label" style="font-size: 14px;color: #17a2b8;">Image</label>
                 <input name="image" class="input" type="text"
                     placeholder="Ex. http://static.apidae-tourisme.com/filestore/... .jpg" style="color: #5f5b5b;"
@@ -150,6 +108,16 @@
                 <label class="label" style="font-size: 14px;color: #17a2b8;">Ouverture</label>
                 <input name="ouverture" class="input" type="text" placeholder="Ex. De juillet …"
                     style="color: #5f5b5b;">
+            </div>
+            <!-- Start Date -->
+            <div class="col-md-3 mb-3" style="margin-top: 15px;">
+                <label class="label" style="font-size: 14px;color: #17a2b8;">Date de début</label>
+                <input name="date_debut" class="input" type="date" style="color: #5f5b5b;">
+            </div>
+            <!-- End Date -->
+            <div class="col-md-3 mb-3" style="margin-top: 15px;">
+                <label class="label" style="font-size: 14px;color: #17a2b8;">Date de fin</label>
+                <input name="date_fin" class="input" type="date" style="color: #5f5b5b;">
             </div>
             <!-- DESCRIPTION -->
             <div class="col-md-6 mb-3" style="margin-top: 15px;">

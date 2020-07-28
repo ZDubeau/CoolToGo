@@ -309,6 +309,8 @@ selection = """
                 description TEXT NOT NULL
             )"""
 
+default_selection_for_manual_entry = """insert into selection (id_selection, id_project, selection, description) values (0,0,0,'Manual Entry');"""
+
 insert_selection = """
                     INSERT INTO selection (
                         id_project,selection, description)
@@ -355,6 +357,7 @@ select_selection_information = """
                                     SELECT MAX(selection_extraction_date) 
                                     FROM selection_extraction 
                                     WHERE id_selection=se.id_selection)
+                                WHERE s.id_selection<>0
                                 GROUP BY s.id_selection, p.project_ID, s.selection, s.description, 
                                     se.selection_extraction_date, se.selection_extraction_nb_records;
                                 """

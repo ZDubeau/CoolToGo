@@ -16,10 +16,13 @@ import os
 from IPython.display import HTML
 import pandas as pd
 from pandas import DataFrame
-from geopy.geocoders import Nominatim
+from geopy.geocoders import BANFrance
+from geopy.exc import GeocoderTimedOut, GeocoderUnavailable, GeocoderQuotaExceeded
+from geopy.extra.rate_limiter import RateLimiter
 from pathlib import Path
 import psycopg2
 import psycopg2.extras
+import logging
 from LoggerModule.FileLogger import FileLogger as FileLogger
 import DB_Functions as functions   # insert database related code here
 import Table_admin as admin
@@ -35,8 +38,10 @@ import Table_relation_selection_category as slc_ctg
 import Table_relation_eltref_prf as elt_prf
 import Table_relation_eltref_ctg as elt_ctg
 import Table_elementReference as eltRef
-import Table_relation_category_apidae_edited as ctg_apidae
-import Table_relation_profil_apidae_edited as prf_apidae
+import Table_relation_category_apidae_edited as ctg_apidae_edited
+import Table_relation_profil_apidae_edited as prf_apidae_edited
+import Table_relation_category_data_from_apidae as ctg_apidae
+import Table_relation_profil_data_from_apidae as prf_apidae
 # import Table_relation_selection_profil as slc_prf
 from DB_Connexion import DB_connexion
 import urllib.parse
@@ -296,6 +301,40 @@ def get_tableApidae():
         username = session["username"]
         connexion = DB_connexion()
         df = pd.read_sql(
+            apidae.select_apidae_display_apidae_extract, connexion.connexion())
+        del connexion
+        return render_template('pages/tableApidae.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableApidae', index=False)], username=username)
+        # df = pd.read_sql(
+        #     apidae.select_apidae_all_data_with_data_edited, connexion.connexion())
+        # del connexion
+        # return render_template('pages/tableApidae.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableApidaejsonmode', index=False)], username=username)
+
+
+@app.route('/tableManualEntry', methods=['GET', 'POST'])
+def get_tableManualEntry():
+    if "username" not in session:
+        return redirect(url_for("get_homepage"))
+    else:
+        username = session["username"]
+        connexion = DB_connexion()
+        df = pd.read_sql(
+            apidae.select_apidae_display_manual_entry, connexion.connexion())
+        del connexion
+        return render_template('pages/tableApidae.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableApidae', index=False)], username=username)
+        # df = pd.read_sql(
+        #     apidae.select_apidae_all_data_with_data_edited, connexion.connexion())
+        # del connexion
+        # return render_template('pages/tableApidae.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableApidaejsonmode', index=False)], username=username)
+
+
+@app.route('/tableAllLocationsData', methods=['GET', 'POST'])
+def get_tableAllLocationsData():
+    if "username" not in session:
+        return redirect(url_for("get_homepage"))
+    else:
+        username = session["username"]
+        connexion = DB_connexion()
+        df = pd.read_sql(
             apidae.select_apidae_display, connexion.connexion())
         del connexion
         return render_template('pages/tableApidae.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableApidae', index=False)], username=username)
@@ -337,21 +376,21 @@ def post_edit_category_profil():
             try:
                 category = request.form["categories-"+str(line[0])]
                 if line[2] is None:
-                    connexion.Insert_SQL(ctg_apidae.insert_relation_category_apidae_edited, [
+                    connexion.Insert_SQL(ctg_apidae_edited.insert_relation_category_apidae_edited, [
                         line[0], id_for_update])
             except KeyError:
                 if line[2] is not None:
-                    connexion.Delete_SQL(ctg_apidae.delete_relation_category_apidae_edited, [
+                    connexion.Delete_SQL(ctg_apidae_edited.delete_relation_category_apidae_edited, [
                         line[0], id_for_update])
         for line in data_prf:
             try:
                 profil = request.form["profiles-"+str(line[0])]
                 if line[2] is None:
-                    connexion.Insert_SQL(prf_apidae.insert_relation_profil_apidae_edited, [
+                    connexion.Insert_SQL(prf_apidae_edited.insert_relation_profil_apidae_edited, [
                         line[0], id_for_update])
             except KeyError:
                 if line[2] is not None:
-                    connexion.Delete_SQL(prf_apidae.delete_relation_profil_apidae_edited, [
+                    connexion.Delete_SQL(prf_apidae_edited.delete_relation_profil_apidae_edited, [
                         line[0], id_for_update])
     del connexion
     return redirect(url_for("get_tableApidae"))
@@ -384,7 +423,13 @@ def get_manualEntry():
         return redirect(url_for("get_homepage"))
     else:
         username = session["username"]
-        return render_template('pages/manualEntry.html', username=username)
+        connexion = DB_connexion()
+        data_ctg = connexion.Query_SQL_fetchall(
+            ctg.select_category)
+        data_prf = connexion.Query_SQL_fetchall(
+            prf.select_user_profil)
+        del connexion
+        return render_template('pages/manualEntry.html', categories=data_ctg, profiles=data_prf, username=username)
 
 
 @app.route('/ManualEntryValide', methods=['GET', 'POST'])
@@ -398,8 +443,7 @@ def post_manualEntry():
         else:
             ErrorMessage = ""
         connexion = DB_connexion()
-        #category_c2g = request.form["selection"]
-        type_c2g = request.form["type_apidae"]
+        type_apidae = request.form["type_apidae"]
         title = request.form["titre"]
         address = request.form["adresse"]
         codePostal = request.form["code_postal"]
@@ -408,85 +452,6 @@ def post_manualEntry():
         tel = request.form["telephone"]
         mail = request.form["email"]
         url = request.form["site_web"]
-
-        category_c2g = ""
-        first = True
-        if "Au bord de l'eau" in request.form:
-            category_c2g += "Au bord de l'eau"
-            first = False
-        if "Faire du sport à la fraich" in request.form:
-            if first:
-                category_c2g += "Faire du sport à la fraich"
-                first = False
-            else:
-                category_c2g += ",Faire du sport à la fraich"
-        if "Se cultiver à la fraich" in request.form:
-            if first:
-                category_c2g += "Se cultiver à la fraich"
-                first = False
-            else:
-                category_c2g += ",Se cultiver à la fraiche"
-        if "Se divertir à la fraich" in request.form:
-            if first:
-                category_c2g += "Se divertir à la fraich"
-                first = False
-            else:
-                category_c2g += ",Se divertir à la fraich"
-        if "Se mettre au vert" in request.form:
-            if first:
-                category_c2g += "Se mettre au vert"
-                first = False
-            else:
-                category_c2g += ",Se mettre au vert"
-        if "Se promener à la fraich" in request.form:
-            if first:
-                category_c2g += "Se promener à la fraich"
-                first = False
-            else:
-                category_c2g += ",Se promener à la fraich"
-        if "Se rafraichir en urgence" in request.form:
-            if first:
-                category_c2g += "Se rafraichir en urgence"
-                first = False
-            else:
-                category_c2g += ",Se rafraichir en urgence"
-
-        profil_c2g = ""
-        first = True
-        if "senior" in request.form:
-            profil_c2g += "senior"
-            first = False
-        if "enfant" in request.form:
-            if first:
-                profil_c2g += "enfant"
-                first = False
-            else:
-                profil_c2g += ",enfant"
-        if "jeune" in request.form:
-            if first:
-                profil_c2g += "jeune"
-                first = False
-            else:
-                profil_c2g += ",jeune"
-        if "adulte" in request.form:
-            if first:
-                profil_c2g += "adulte"
-                first = False
-            else:
-                profil_c2g += ",adulte"
-        if "solidaire" in request.form:
-            if first:
-                profil_c2g += "solidaire"
-                first = False
-            else:
-                profil_c2g += ",solidaire"
-        if "mobilite_reduite" in request.form:
-            if first:
-                profil_c2g += "mobilite_reduite"
-                first = False
-            else:
-                profil_c2g += ",mobilite_reduite"
-
         accessibility = request.form["accessibilite"]
         paying = request.form["payant"]
         image = request.form["image"]
@@ -495,50 +460,84 @@ def post_manualEntry():
         date_end = request.form["date_fin"]
         description = request.form["description"]
         environment = request.form["environment"]
-        address_to_geolocalize = ""
-        if address != "None":
-            address_to_geolocalize += address
-        if adresse2 != "None":
-            adresse_to_geolocalize += " " + adresse2
-        geolocator = Nominatim(user_agent="cooltogo_api_backend")
-        location = geolocator.geocode(
-            address_to_geolocalize+" "+codePostal+" "+city)
-        if location == None:
-            latitude = None
-            longitude = None
-        else:
-            lat = location.latitude
-            lng = location.longitude
-        # connexion.Insert_SQL(
-        #     me.select_max_id_from_cooltogo_validated)
-        # id_max = DB_Protocole.cur.fetchone()[0]
-        # if id_max == None:
-        #     id_max = "1"
-        # else:
-        #     id_max = str(id_max+1)
-        # id_apidae = "ManualEntry_"+id_max
-        connexion.Insert_SQL(me.insert_manualEntry, [category_c2g,
-                                                     type_c2g,
-                                                     title,
-                                                     address,
-                                                     codePostal,
-                                                     city,
-                                                     altitude,
-                                                     lat,
-                                                     lng,
-                                                     tel,
-                                                     mail,
-                                                     url,
-                                                     profil_c2g,
-                                                     accessibility,
-                                                     paying,
-                                                     image,
-                                                     opening,
-                                                     date_start,
-                                                     date_end,
-                                                     description,
-                                                     environment
-                                                     ])
+        geolocator = BANFrance(
+            domain='api-adresse.data.gouv.fr', timeout=10)
+        try:
+            geocode = RateLimiter(
+                geolocator.geocode, min_delay_seconds=2, max_retries=4, error_wait_seconds=10.0, swallow_exceptions=True, return_value_on_exception=None)
+            location = geocode(address)
+            if location == None:
+                lat = None
+                lng = None
+                FileLogger.log(
+                    logging.DEBUG, f"{address} resolved with latitute {location.latitude} and longitute {location.longitude}")
+            else:
+                lat = location.latitude
+                lng = location.longitude
+                FileLogger.log(
+                    logging.DEBUG, f"{address} not resolved !!!!")
+        except (GeocoderTimedOut, GeocoderUnavailable, GeocoderQuotaExceeded) as e:
+            FileLogger.log(logging.ERROR, "Error: geocode failed on input %s with message %s" %
+                           (address, str(e)))
+        id_apidae = 1000000000 + \
+            connexion.Query_SQL_fetchone(
+                apidae.select_count_manual_entry)[0] + 1
+        id_data_from_apidae = connexion.Insert_SQL_fetchone(apidae.insert_apidae, {
+            'id_apidae': id_apidae,  # mandatory
+            'id_selection': 0,  # mandatory
+            'type_apidae': type_apidae,  # needed
+            'titre': title,  # needed
+            'profil_c2g': '',
+            'categorie_c2g': '',
+            'adresse1': address,  # needed
+            'adresse2': '',  # needed
+            'code_postal': codePostal,  # needed
+            'ville': city,  # needed
+            'altitude':  altitude,  # needed
+            'latitude': lat,  # needed
+            'longitude': lng,  # needed
+            'telephone': tel,  # needed
+            'email': mail,  # needed
+            'site_web':  url,  # needed
+            'description_courte': '',  # needed
+            'description_detaillee':  description,  # needed
+            'image': image,  # needed
+            'publics': '',
+            'tourisme_adapte': accessibility,  # needed
+            'payant': paying,  # needed
+            'animaux_acceptes': '',
+            'environnement': environment,  # needed
+            'equipement': '',
+            'services': '',
+            'periode': '',
+            'activites': '',
+            'ouverture': opening,  # needed
+            'date_debut': date_start,  # needed
+            'date_fin': date_end,  # needed
+            'typologie': '',
+            'bons_plans': '',
+            'dispositions_speciales': '',
+            'service_enfants': '',
+            'service_cyclistes': '',
+            'nouveaute_2020': ''})[0]
+        data_ctg = connexion.Query_SQL_fetchall(
+            ctg.select_category)
+        data_prf = connexion.Query_SQL_fetchall(
+            prf.select_user_profil)
+        for line in data_ctg:
+            try:
+                category = request.form["categories-"+str(line[0])]
+                connexion.Insert_SQL(ctg_apidae.insert_relation_category_apidae, [
+                    line[0], id_data_from_apidae])
+            except KeyError:
+                continue
+        for line in data_prf:
+            try:
+                profil = request.form["profiles-"+str(line[0])]
+                connexion.Insert_SQL(prf_apidae.insert_relation_profil_apidae, [
+                    line[0], id_data_from_apidae])
+            except KeyError:
+                continue
         del connexion
         return redirect(url_for("get_manualEntry", ErrorMessage="Nouvelle entrée a été ajouté dans la table manualEntry !"))
 

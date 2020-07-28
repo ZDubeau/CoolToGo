@@ -61,13 +61,24 @@
                             </div>
                             Gestion Selection Apidae
                         </a>
-                        <!-- ----------------------------------------------------------------- -->
-                        <a class="nav-link" href="{{ url_for('get_tableApidae')}}">
-                            <div class="sb-nav-link-icon">
-                                <i class="fas fa-filter"></i>
+                        <!-- ------------------------ Locations data ----------------------- -->
+                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#locationDataLayouts"
+                            aria-expanded="false" aria-controls="locationDataLayouts">
+                            <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
+                            Données de lieux
+                            <div class="sb-sidenav-collapse-arrow">
+                                <i class="fas fa-angle-down"></i>
                             </div>
-                            Apidae Extraction
                         </a>
+                        <div class="collapse" id="locationDataLayouts" aria-labelledby="headingOne"
+                            data-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link" href="{{ url_for('get_tableApidae')}}">Apidae Extraction</a>
+                                <a class="nav-link" href="{{ url_for('get_tableManualEntry')}}">Entrée manuelles</a>
+                                <a class="nav-link" href="{{ url_for('get_tableAllLocationsData')}}">Toutes les
+                                    données</a>
+                            </nav>
+                        </div>
                         <!-- ----------------------------------------------------------------- -->
                         <a class="nav-link" href="{{ url_for('get_manualEntry')}}">
                             <div class="sb-nav-link-icon">

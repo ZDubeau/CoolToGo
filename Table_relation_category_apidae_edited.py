@@ -24,7 +24,7 @@ insert_relation_category_apidae_edited = """
 
 delete_relation_category_apidae_edited = """
                                             DELETE FROM category_apidae_edited 
-                                            WHERE id_categoy=%s AND id_data_from_apidae=%s; 
+                                            WHERE id_category=%s AND id_data_from_apidae=%s; 
                                             """
 
 delete_relation_category_apidae_with_id_data_from_apidae_edited = """

@@ -1,5 +1,5 @@
 # FIND COORDINATE FROM ADDRESS & CODE POSTAL
-from geopy.geocoders import Nominatim, BANFrance
+from geopy.geocoders import BANFrance
 from geopy.exc import GeocoderTimedOut, GeocoderUnavailable, GeocoderQuotaExceeded
 from geopy.extra.rate_limiter import RateLimiter
 

@@ -51,7 +51,9 @@ full_actions_list = (
     Table_message.message,
     Table_elementReference.elementRef,
     Table_project.project,
+    Table_project.default_project_for_manual_entry,
     Table_selection.selection,
+    Table_selection.default_selection_for_manual_entry,
     Table_extraction.selection_extraction,
     Table_Apidae.apidae,
     Table_category.category,
@@ -67,53 +69,9 @@ full_actions_list = (
     Table_freshness.freshness_level
 )
 
-# alter_table = """
-#                 ALTER TABLE profil
-#                 ADD COLUMN basic BOOLEAN DEFAULT TRUE;
-#             """
-
-# update_solidaire = """
-#                     UPDATE profil
-#                     SET basic=FALSE
-#                     WHERE id_profil=5;
-#                     """
-
-# update_weelchair = """
-#                     UPDATE profil
-#                     SET basic=FALSE
-#                     WHERE id_profil=6;
-#                     """
-
-# update_table = """update profil set basic=FALSE where id_profil=5 OR id_profil=6"""
-
-alter_table = """
-                ALTER TABLE profil 
-                ADD COLUMN basic BOOLEAN DEFAULT TRUE;
-            """
-update_table_1 = """
-                UPDATE profil 
-                SET basic=FALSE 
-                WHERE id_profil=5;
-                """
-update_table_2 = """
-                UPDATE profil 
-                SET basic=FALSE 
-                WHERE id_profil=6;
-                """
-update = (
-    update_table_1,
-    update_table_2
-)
-ctg_prf = (
-    Table_relation_category_apidae_edited.drop_relation_category_apidae_edited,
-    Table_relation_category_apidae_edited.relation_category_apidae_edited,
-    Table_relation_profil_apidae_edited.drop_relation_profil_apidae_edited,
-    Table_relation_profil_apidae_edited.relation_profil_apidae_edited
-)
-
 
 if __name__ == "__main__":
     connexion = DB_connexion()
-    for value in ctg_prf:
+    for value in full_actions_list:
         connexion.Insert_SQL(value)
     del connexion

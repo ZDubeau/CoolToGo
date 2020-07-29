@@ -14,7 +14,6 @@ insert_relation_selection_category = """
                                     VALUES (%s,%s);
                                     """
 
-
 delete_relation_selection_category = """
                                     DELETE 
                                     FROM selection_category

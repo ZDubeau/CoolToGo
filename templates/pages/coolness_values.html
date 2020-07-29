@@ -1,8 +1,9 @@
+<!-- LAST UPDATE: 27 JULY 2020 -->
+
 {% extends "layout.html" %}
 {% block bootstrap_2 %}
-
 <div class="card-header"
-    style="background-color: #1778b8b6; color: black; border-radius: 4px 4px 0px 0px; font-size: large; font-weight: bold;">
+    style="background-color: #01289fe3; color: #d0eeed; border-radius: 4px 4px 0px 0px; font-size: medium; font-weight: bold;">
     Niveau de fraîcheur
 </div>
 <div class="card-body" style="border-radius: 0px 0px 4px 4px;background-color: #1778b825;">
@@ -12,41 +13,30 @@
         {% endfor %}
     </div>
 </div>
-
-<section id="app" class="hero is-fullheight">
-    <div class="hero-body" style="padding: 2rem 0.5rem;flex-grow: 0;">
-        <div class="container">
-            <div class="columns" style="padding: 0 !important;">
-                <div class="column is-half is-offset-one-quarter"
-                    style="width: 55%;margin-left: 0 !important;transform: translate(-27px, 0px)">
-                    <p class="title" style="font-size: 1.25rem;margin-bottom: 0.5rem;padding-top: 24px;">Ajouter une
-                        nouvelle valeur de
-                        fraîcheur</p>
-                    <div>
-                        <form action="/new_coolness_value" method="post">
-                            <div class="field" style="padding-top: 50px;">
-                                <label class="label" style="font-size: 14px;">Niveau de fraîcheur</label>
-                                <input name="coolness_value" class="input" maxlength="50" placeholder="Ex. frais"
-                                    style="color: #363434; width: 65%;" required>
-                            </div>
-                            <div class="field">
-                                <label class="label" style="font-size: 14px;">La note de niveau fraĉheur</label>
-                                <input name="score_freshness" class="input" maxlength="50" placeholder="Ex. 2"
-                                    style="color: #363434; width: 80%;" required>
-                            </div>
-                            <!-- ------- -->
-                            <div class="field is-grouped is-grouped-left">
-                                <div class="control">
-                                    <button class="button is-link"
-                                        style="background-color: #17a2b8; border-radius: 4px; border-color: #17a2b8; margin: 28px 0; padding: 5px 25px;">Envoyer</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
+<center>
+    <h2 style="color: khaki; text-align: center;transform: translate(0px, 18px);">{{ErrorMessage}}</h2>
+</center>
+<div class="column" style="margin-left: 0 !important;transform: translate(-6px, 20px);">
+    <p class="title" style="font-size: 1.25rem;color: #01289f;">
+        Ajouter une nouvelle valeur de fraîcheur
+    </p>
+    <!-- FORM -->
+    <form action="/new_coolness_value" class="form-inline" method="post">
+        <!-- INPUT NIVEAU DE FRAICHEUR -->
+        <div class="col-md-3 mb-3" style="transform: translate(-20px, 0px);">
+            <label class="label" style="font-size: 13px;display: inherit !important;">Niveau de fraîcheur</label>
+            <input name="coolness_value" class="input" type="text" placeholder="Ex. frais" required>
         </div>
-    </div>
-</section>
-<h3>{{errorMessage}}</h3>
+        <!-- INPUT La note de niveau fraĉheu -->
+        <div class="col-md-3 mb-3" style="transform: translate(-20px, 0px);">
+            <label class="label" style="font-size: 13px;display: inherit !important;">La note de niveau fraĉheu</label>
+            <input name="score_freshness" class="input" type="text" placeholder="Ex. 2" required>
+        </div>
+        <!-- BUTTON ADD -->
+        <div class="field is-grouped is-grouped-left" style="transform: translate(-20px, 4px);">
+            <button class="button is-link" type="submit"
+                style="background-color: #01289f; border-radius: 4px; border-width: 0;color: #d0eeed;transform: translate(18px, 0px); padding: 5px 20px;font-size: 15px;">Ajouter</button>
+        </div>
+    </form>
+</div>
 {% endblock bootstrap_2 %}

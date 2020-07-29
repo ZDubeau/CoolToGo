@@ -1,62 +1,105 @@
-<!DOCTYPE html>
-<html>
+<!-- LAST UPDATE: 24 JULY 2020 -->
 
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="static/css/homepage.css">
-    <link rel="shortcut icon" href="{{ url_for('static', filename='cooltogo.ico') }}">
-</head>
+{% extends "layout.html" %}
+{% block bootstrap_2 %}
+<center>
+    <h2 style="color: khaki; text-align: center;">{{ErrorMessage}}</h2>
+</center>
+<div class="column" style="margin-left: 0 !important;transform: translate(-17px, -10px);">
+    <!-- FORM -->
+    <form action="/edit_category_profil_save" method="post" style="padding-bottom: 30px;">
 
-<body>
-    <!-- --La page d'accueil avec deux boutons de l'iscription et la connexion-- -->
-    <div class="content">
-        <center>
-            <button onclick="document.getElementById('edit').style.display='block'" style="width:auto;"
-                id="Edit">modifier</button>
-        </center>
-    </div>
-    <!-- ---------------La fenetre de la connection d'utilisateur------------------ -->
-    <div id="id_1" class="modal">
-        <form class="modal-content animate" action="/edit" method="post">
-            <div class="logcontainer">
-                <h2>Modification</h2>
-                <img alt="" class="log">
+        <div class="form-row">
+            <!-- ID APIDAE -->
+            <div class="col-md-1">
+                <label class="label" style="font-size: 14px;color: #17a2b8;">id Apidae</label>
+                <input type="text" name="id_apidae" class="form-control" value="{{id_apidae}}" style="font-size: 15px;"
+                    readonly>
             </div>
-            <div class="container">
-                <label class="label">id_apidae</label>
-                <input name="id_apidae" value="{{id_apidae}}" class="input" type="text" maxlength="40"
-                    style="color: #3f3d3d;" readonly>
-
-                <label id="forme" for="profil"><b>profil_C2G</b></label>
-                <input type="text" name="profil_c2g" value="{{profil_c2g}}">
-
-                <label id="forme" for="ctg"><b>Sous_type</b></label>
-                <input type="text" name="ctg" value="{{ctg}}">
-
-                <button type="submit">Confirm</button>
+            <!-- TITRE -->
+            <div class="col-md-auto">
+                <label class="label" style="font-size: 14px;color: #17a2b8;">Titre</label>
+                <input type="text" name="titre" class="form-control" value="{{titre}}" style="font-size: 15px;"
+                    readonly>
             </div>
-            <div class="container" style="background-color:#e7f3f8">
-                <button type="button" class="cancelbtn"
-                    onclick="document.getElementById('edit').style.display='none'">Annuler</button>
+            <!-- PROFIL BY DEFAULT -->
+            <div class="col-md-4">
+                <label class="label" style="font-size: 14px;color: #17a2b8;">Profil CTG (valeurs par défaut)</label>
+                <input type="text" name="profil_c2g" class="form-control" value="{{profil_c2g}}"
+                    style="font-size: 15px;" readonly>
             </div>
-        </form>
-    </div>
-    <!-- -------------------------------------------------------------------- -->
-    <script>
-        // Get the modal
-        var modal1 = document.getElementById('edit');
-    </script>
-    {% if modal_login %}
-    <script>
-        modal1.style.display = "block";
-    </script>
-    {% endif %}
-    <script>
-        var ctg = document.getElementById("ctg");
-        password.onchange = validatePassword;
-
-        var btn = document.getElementById("myBtn");
-    </script>
-</body>
-
-</html>
+            <!-- CATEGORY BY DEFAULT-->
+            <div class="col-md-4">
+                <label class="label" style="font-size: 14px;color: #17a2b8;">Catégorie CTG (valeurs par défaut)</label>
+                <input type="text" name="category_c2g" class="form-control" value="{{category_c2g}}"
+                    style="font-size: 15px;" readonly>
+            </div>
+        </div>
+        <!-- --------------------------------------------------- -->
+        <p class="title"
+            style="font-size: 1.05rem;color: #01289f;transform: translate(3px, 46px);padding-bottom: 20px;">
+            Si vous souhaitez modifier les valeurs par défaut, veuillez sélectionner les nouvelles valeurs ci-dessous
+        </p>
+        <div class="container">
+            <div class="row">
+                <!-- NEW PROFIL -->
+                <div class="column">
+                    <div class="col-md-8 offset-md-3" style="margin-left: 0 !important;">
+                        <div class="card"
+                            style="margin:45px 0;max-width: 200%;transform: translate(-30px, -25px);background-color: #1778b80c;">
+                            <div class="card-header"
+                                style="font-size: 17px;font-weight: 600;color: #d0eeed;background-color: #01289fe3;">
+                                Profil(s)</div>
+                            {% for line in profiles  %}
+                            {% if line[2] == None %}
+                            <label class="customcheck"
+                                style="font-size: 14x;padding-left: 7px;padding-top: 10px;"><input
+                                    name="profiles-{{line[0]}}" value="{{line[1]}}"
+                                    type="checkbox">&nbsp;&nbsp;{{line[1]}}&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                            {% else %}
+                            <label class="customcheck"
+                                style="font-size: 14px;padding-left: 7px;padding-top: 10px;"><input
+                                    name="profiles-{{line[0]}}" value="{{line[1]}}" type="checkbox"
+                                    checked>&nbsp;&nbsp;{{line[1]}}&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <!-- NEW CATEGORY -->
+                <div class="column">
+                    <div class="col-md-9 offset-md-3">
+                        <div class="card"
+                            style="margin:45px 0;max-width: 200%;transform: translate(-350px, -25px);background-color: #1778b80c;">
+                            <div class="card-header"
+                                style="font-size: 17px;font-weight: 600;color: #d0eeed;background-color: #01289fe3;">
+                                Catégorie(s)</div>
+                            {% for line in categories  %}
+                            {% if line[2] == None %}
+                            <label class="customcheck"
+                                style="font-size: 14x;padding-left: 7px;padding-top: 10px;"><input
+                                    name="categories-{{line[0]}}" value="{{line[1]}}"
+                                    type="checkbox">&nbsp;&nbsp;{{line[1]}}&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                            {% else %}
+                            <label class="customcheck"
+                                style="font-size: 14px;padding-left: 7px;padding-top: 10px;"><input
+                                    name="categories-{{line[0]}}" value="{{line[1]}}" type="checkbox"
+                                    checked>&nbsp;&nbsp;{{line[1]}}&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- CONFIRM BUTTON -->
+        <div class="field is-grouped is-grouped-center">
+            <div class="control">
+                <input name="id" value="{{id_data_from_apidae}}" hidden>
+                <button class="button is-link"
+                    style="background-color: #01289f; border-radius: 4px; border-width: 0;color: #d0eeed; padding: 5px 20px;font-size: 15px;transform: translate(6px, -70px);">Valider</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock bootstrap_2 %}

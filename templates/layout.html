@@ -40,13 +40,6 @@
             <ul class="nav navbar-nav navbar-right" style="transform: translate(0px, 6px);">
                 <a href="{{ url_for('get_homepage')}}" style="color: #d0eeed;">LogOut</a>
             </ul>
-            <!-- <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                    <a class="dropdown-item" href="{{ url_for('get_homepage')}}">Logout</a>
-                </div>
-            </li> -->
         </ul>
     </nav>
     <div id="layoutSidenav">
@@ -68,20 +61,24 @@
                             </div>
                             Gestion Selection Apidae
                         </a>
-                        <!-- ----------------------------------------------------------------- -->
-                        <a class="nav-link" href="{{ url_for('get_tableApidae')}}">
-                            <div class="sb-nav-link-icon">
-                                <i class="fas fa-filter"></i>
+                        <!-- ------------------------ Locations data ----------------------- -->
+                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#locationDataLayouts"
+                            aria-expanded="false" aria-controls="locationDataLayouts">
+                            <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
+                            Données de lieux
+                            <div class="sb-sidenav-collapse-arrow">
+                                <i class="fas fa-angle-down"></i>
                             </div>
-                            Apidae Extraction
                         </a>
-                        <!-- ----------------------------------------------------------------- -->
-                        <a class="nav-link" href="{{ url_for('get_elementReference')}}">
-                            <div class="sb-nav-link-icon">
-                                <i class="fas fa-upload"></i>
-                            </div>
-                            Element Reference
-                        </a>
+                        <div class="collapse" id="locationDataLayouts" aria-labelledby="headingOne"
+                            data-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link" href="{{ url_for('get_tableApidae')}}">Apidae Extraction</a>
+                                <a class="nav-link" href="{{ url_for('get_tableManualEntry')}}">Entrée manuelles</a>
+                                <a class="nav-link" href="{{ url_for('get_tableAllLocationsData')}}">Toutes les
+                                    données</a>
+                            </nav>
+                        </div>
                         <!-- ----------------------------------------------------------------- -->
                         <a class="nav-link" href="{{ url_for('get_manualEntry')}}">
                             <div class="sb-nav-link-icon">
@@ -107,15 +104,6 @@
                             </nav>
                         </div>
                         <!-- ----------------------------------------------------------------- -->
-
-                        <a class="nav-link" href="{{ url_for('get_message')}}">
-                            <div class="sb-nav-link-icon">
-                                <i class="fas fa-envelope"></i>
-                            </div>
-                            Messages
-                        </a>
-                        <!-- ----------------------------------------------------------------- -->
-
                         <a class="nav-link" href="{{ url_for('get_api')}}">
                             <div class="sb-nav-link-icon">
                                 <i class="fas fa-paper-plane"></i>
@@ -123,26 +111,20 @@
                             API
                         </a>
                         <!-- ----------------------------------------------------------------- -->
-                        <!-- <a class="nav-link" href="">
+                        <a class="nav-link" href="{{ url_for('get_elementReference')}}">
                             <div class="sb-nav-link-icon">
-                                <i class="fas fa-list-alt"></i>
+                                <i class="fas fa-upload"></i>
                             </div>
-                            Descriptifs thématisés
-                        </a> -->
+                            Element Reference
+                        </a>
                         <!-- ----------------------------------------------------------------- -->
-                        <!-- <a class="nav-link" href="{{ url_for('get_category')}}">
+
+                        <a class="nav-link" href="{{ url_for('get_message')}}">
                             <div class="sb-nav-link-icon">
-                                <i class="fas fa-list-alt"></i>
+                                <i class="fas fa-envelope"></i>
                             </div>
-                            Catégories
-                        </a> -->
-                        <!-- ----------------------------------------------------------------- -->
-                        <!-- <a class="nav-link" href="{{ url_for('get_coolness_values')}}">
-                            <div class="sb-nav-link-icon">
-                                <i class="fas fa-temperature-low"></i>
-                            </div>
-                            Gestion Fraîcheur
-                        </a> -->
+                            Messages
+                        </a>
                         <!-- ----------------------------------------------------------------- -->
                         <a class="nav-link" href="{{ url_for('get_add_admin')}}">
                             <div class="sb-nav-link-icon">
@@ -167,13 +149,6 @@
                     {% endblock bootstrap_2 %}
                 </div>
             </main>
-            <!-- <footer class="py-4 bg-light mt-auto">
-                <div class="container-fluid">
-                    <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; Cool To Go.Admin Page 2020</div>
-                    </div>
-                </div>
-            </footer> -->
         </div>
     </div>
     <!-- ---------------------------------------------------------------------------------- -->

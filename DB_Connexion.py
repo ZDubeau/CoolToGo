@@ -45,7 +45,7 @@ class DB_connexion():
             nb_connexion = self.Query_SQL_fetchone(
                 f"SELECT sum(numbackends) FROM pg_stat_database WHERE datname='{self.__dbname}'")[0]
             FileLogger.log(
-                logging.DEBUG, f"New connection created, number of connexion : {nb_connexion}")
+                logging.DEBUG, f"New connection, cursor and engine created, number of connexion : {nb_connexion}")
         except Error as e:
             if e == 'TooManyConnections':
                 sleep(1)
@@ -58,12 +58,12 @@ class DB_connexion():
                     logging.DEBUG, f'Connection impossible !!! error {e}')
                 sys.exit()
 
-    def close(self):
+    def __del__(self):
         self.__cur.close()
         self.__conn.close()
         self.__engine.dispose()
         FileLogger.log(
-            logging.DEBUG, f"Connexion engine closed !!!!")
+            logging.DEBUG, f"Connexion closed !!!!")
 
     def __commit(self):
         self.__conn.commit()
@@ -142,34 +142,15 @@ class DB_connexion():
 
     # SQLAlchemy engine for pandas
 
-    def engine(self):
-        try:
-            return self.__engine
-        except Error as e:
-            if e == 'TooManyConnections':
-                sleep(1)
-                self.engine()
-            elif e == f'too many connections for role "{user}"':
-                sleep(1)
-                self.engine()
-            else:
-                print('Connection impossible !!!')
-                sys.exit()
+    def cursor(self):
+        return self.__cur
 
-    def instance(self):
-        try:
-            return self.__engine.connect()
-            nb_connexion = self.Query_SQL_fetchone(
-                f"SELECT sum(numbackends) FROM pg_stat_database WHERE datname='{self.__dbname}'")[0]
-            FileLogger.log(
-                logging.DEBUG, f"New instance created, number of connexion : {nb_connexion}")
-        except Error as e:
-            if e == 'TooManyConnections':
-                sleep(1)
-                self.instance()
-            elif e == f'too many connections for role "{self.__user}"':
-                sleep(1)
-                self.instance()
-            else:
-                print('Connection impossible !!!')
-                sys.exit()
+    def connexion(self):
+        return self.__conn
+
+    def engine(self):
+        return self.__engine
+
+    def number_connections(self):
+        return self.Query_SQL_fetchone(
+            f"SELECT sum(numbackends) FROM pg_stat_database WHERE datname='{self.__dbname}'")[0]

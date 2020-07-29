@@ -1,8 +1,10 @@
-﻿{% extends "layout.html" %}
+﻿<!-- LAST UPDATE: 27 JULY 2020 -->
+
+{% extends "layout.html" %}
 {% block bootstrap_2 %}
 
 <div class="card-header"
-    style="background-color: #01289fe3; color: #d0eeed; border-radius: 4px 4px 0px 0px; font-size: large; font-weight: bold;">
+    style="background-color: #01289fe3; color: #d0eeed; border-radius: 4px 4px 0px 0px; font-size: medium; font-weight: bold;">
     Information de projet
 </div>
 <div class="card-body" style="border-radius: 0px 0px 4px 4px;background-color: #1778b825;">
@@ -16,7 +18,10 @@
     <h2 style="color: khaki; text-align: center;transform: translate(0px, 18px);">{{ErrorMessage}}</h2>
 </center>
 <div class="column" style="margin-left: 0 !important;transform: translate(5px, 20px);">
-    <p class="title" style="font-size: 1.25rem;color: #01289f;">Ajouter nouveau projet</p>
+    <p class="title" style="font-size: 1.25rem;color: #01289f;">
+        Ajouter nouveau projet
+    </p>
+    <!-- FORM -->
     <form id="app" action="/new_project_info " class="form-inline" method="post">
         <!-- INPUT PROJECT ID -->
         <div class="col-md-3 mb-3" style="transform: translate(-20px, 0px);">
@@ -35,5 +40,4 @@
         </div>
     </form>
 </div>
-
 {% endblock bootstrap_2 %}

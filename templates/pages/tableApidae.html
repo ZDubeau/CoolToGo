@@ -1,34 +1,65 @@
+<!-- LAST UPDATE: 27 JULY 2020 -->
+
 {% extends "layout.html" %}
 {% block bootstrap_2 %}
-<div class="row">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-header"
-                style="background-color: #01289fe3; color: #d0eeed; border-radius: 4px 4px 0px 0px; font-size: large; font-weight: bold;">
-                Extraction Apidae
-            </div>
-            <div class="card-body" style="border-radius: 0px 0px 4px 4px;background-color: #1778b825;">
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                        {% for table in tables %}
-                        {{ table|safe }}
-                        {% endfor %}
-                    </table>
-                </div>
-            </div>
-        </div>
+<div class="card-header"
+    style="background-color: #01289fe3; color: #d0eeed; border-radius: 4px 4px 0px 0px; font-size: medium; font-weight: bold;">
+    Information de projet
+</div>
+<div class="card-body" style="border-radius: 0px 0px 4px 4px;background-color: #1778b825;">
+    <div class="table-responsive">
+        {% for table in tables %}
+        {{ table|safe }}
+        {% endfor %}
+        </table>
     </div>
 </div>
 <center>
     <h2 style="color: khaki; text-align: center;">{{errorMessage}}</h2>
 </center>
+<!-- Edit Modal HTML -->
+<div id="editEmployeeModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- FORM -->
+            <form action="/edit" method="post">
+                <div class="modal-header">
+                    <h4 class="modal-title">Edit Employee</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>id Apidae</label>
+                        <input name="id_apidae" value="{{id_apidae}}" type="text" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Titre</label>
+                        <input name="titre" value="{{titre}}" type="email" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Profil_CTG</label>
+                        <input name="profil_c2g" value="{{profil_c2g}}" type="email" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Catégorie_CTG</label>
+                        <input name="ctg" value="{{ctg}}" type="text" class="form-control" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                    <input name="id" value="{{id}}" type="submit" class="btn btn-info" value="Save">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 <div class="container-fluid" style="transform: translate(-20px, 8px);">
     <div class="row justify-content-md-left">
         <div class="col-md-auto">
             <div class="-md-auto control">
-                <button onclick="window.location.href='/extract_locations';" class="btn btn-outline-primary"
+                <button onclick="window.location.href='/extract_locations';" class="btn btn-outline-light"
                     style="color: #01289f;border-color: #01289f;">Locations</button>
-                <a href='/extract_locations' download class="btn btn-outline-primary"
+                <a href='/extract_locations' download class="btn btn-outline-light"
                     style="color: #01289f;border-color: #01289f;">Download</a>
             </div>
         </div>

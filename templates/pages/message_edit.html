@@ -1,3 +1,5 @@
+<!-- LAST UPDATE: 27 JULY 2020 -->
+
 {% extends "layout.html" %}
 {% block bootstrap_2 %}
 <div class="card-header"
@@ -43,11 +45,13 @@
                                     <input name="id" value="{{id}}" hidden>
                                     <button class="button is-link" style="padding: 5px 25px;">Send</button>
                                 </div>
+                            </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-
-        <h3>{{errorMessage}}</h3>
-        {% endblock bootstrap_2 %}
+    </div>
+</section>
+<h3>{{errorMessage}}</h3>
+{% endblock bootstrap_2 %}

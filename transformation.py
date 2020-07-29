@@ -1,6 +1,7 @@
 # FIND COORDINATE FROM ADDRESS & CODE POSTAL
-from geopy.geocoders import Nominatim
-from geopy.exc import GeocoderTimedOut
+from geopy.geocoders import BANFrance
+from geopy.exc import GeocoderTimedOut, GeocoderUnavailable, GeocoderQuotaExceeded
+from geopy.extra.rate_limiter import RateLimiter
 
 import logging
 from LoggerModule.FileLogger import FileLogger as FileLogger
@@ -20,7 +21,12 @@ class transformation():
             self.__special_elements_descriptions[element] = ""
         self.__element_reference_by_profil_dict = element_reference_by_profil_dict
         self.__element_reference_by_category_dict = element_reference_by_category_dict
-        self.__dict_id['sous_type'] = categories_list
+        self.__dict_id['categorie_c2g'] = categories_list
+
+    def __del__(self):
+        # FileLogger.log(
+        #     logging.DEBUG, "Destruction of transformation class instance")
+        pass
 
     def __general_information(self):
 
@@ -165,11 +171,19 @@ class transformation():
     def __opening(self):
 
         self.__dict_id['ouverture'] = None
+        self.__dict_id['date_debut'] = None
+        self.__dict_id['date_fin'] = None
 
         if 'ouverture' in self.__request_json:
             if 'periodeEnClair' in self.__request_json['ouverture']:
                 if 'libelleFr' in self.__request_json['ouverture']['periodeEnClair']:
                     self.__dict_id['ouverture'] = self.__request_json['ouverture']['periodeEnClair']['libelleFr']
+
+            if 'periodesOuvertures' in self.__request_json['ouverture']:
+                if 'dateDebut' in self.__request_json['ouverture']['periodesOuvertures'][0]:
+                    if 'dateFin' in self.__request_json['ouverture']['periodesOuvertures'][0]:
+                        self.__dict_id['date_debut'] = self.__request_json['ouverture']['periodesOuvertures'][0]['dateDebut']
+                        self.__dict_id['date_fin'] = self.__request_json['ouverture']['periodesOuvertures'][0]['dateFin']
 
     def __period(self):
 
@@ -271,7 +285,10 @@ class transformation():
                             self.__dict_id['latitude'] = self.__request_json['localisation']['geolocalisation']['geoJson']['coordinates'][1]
 
         if self.__dict_id['longitude'] is None or self.__dict_id['latitude'] is None:
-            geolocator = Nominatim(user_agent="cooltogo_api_backend")
+            # geolocator = Nominatim(
+            #     timeout=10, user_agent="cooltogo_api_backend")
+            geolocator = BANFrance(
+                domain='api-adresse.data.gouv.fr', timeout=10)
             address_to_geolocalize = ""
             if self.__dict_id['adresse1'] is not None:
                 address_to_geolocalize += " " + self.__dict_id['adresse1']
@@ -282,8 +299,9 @@ class transformation():
             if self.__dict_id['ville'] is not None:
                 address_to_geolocalize += " " + self.__dict_id['ville']
             try:
-                location = geolocator.geocode(
-                    address_to_geolocalize, timeout=10)
+                geocode = RateLimiter(
+                    geolocator.geocode, min_delay_seconds=2, max_retries=4, error_wait_seconds=10.0, swallow_exceptions=True, return_value_on_exception=None)
+                location = geocode(address_to_geolocalize)
                 if location is not None:
                     self.__dict_id['latitude'] = location.latitude
                     self.__dict_id['longitude'] = location.longitude
@@ -292,9 +310,9 @@ class transformation():
                 else:
                     FileLogger.log(
                         logging.DEBUG, f"{address_to_geolocalize} not resolved !!!!")
-            except GeocoderTimedOut as e:
+            except (GeocoderTimedOut, GeocoderUnavailable, GeocoderQuotaExceeded) as e:
                 FileLogger.log(logging.ERROR, "Error: geocode failed on input %s with message %s" %
-                               (address_to_geolocalize, e.message))
+                               (address_to_geolocalize, str(e)))
 
     def __typology(self):
 
@@ -340,36 +358,26 @@ class transformation():
                                     if firstBP:
                                         self.__dict_id['bons_plans'] = libeleFr
                                         firstBP = False
-                                    # else:
-                                    #     dict_id['bons_plans'] += libeleFr
 
                                 elif value['theme']['libelleFr'] == 'Dispositions spéciales COVID 19':
                                     if firstDS:
                                         self.__dict_id['dispositions_speciales'] = libeleFr
                                         firstDS = False
-                                    # else:
-                                    #     dict_id['dispositions_speciales'] += libeleFr
 
                                 elif value['theme']['libelleFr'] == 'Services pour les enfants':
                                     if firstSE:
                                         self.__dict_id['service_enfants'] = libeleFr
                                         firstSE = False
-                                    # else:
-                                    #     dict_id['service_enfants'] += libeleFr
 
                                 elif value['theme']['libelleFr'] == 'Services pour les cyclistes':
                                     if firstSC:
                                         self.__dict_id['service_cyclistes'] = libeleFr
                                         firstSC = False
-                                    # else:
-                                    #     dict_id['service_cyclistes'] += libeleFr
 
                                 elif value['theme']['libelleFr'] == 'Nouveauté 2020':
                                     if firstN2:
                                         self.__dict_id['nouveaute_2020'] = libeleFr
                                         firstN2 = False
-                                    # else:
-                                    #     dict_id['nouveaute_2020'] += libeleFr
 
     def __find_element_reference_in_json(self, jsonfile):
 
@@ -421,7 +429,6 @@ class transformation():
                     intermediatejson, self.__request_json)
 
     def __identify_profil_for_apidae_id(self):
-
         list_of_profil = []
         for key in self.__element_reference_by_profil_dict:
             if bool(set(self.__element_reference_by_profil_dict[key]) & set(self.__list_elements_de_references)):
@@ -434,8 +441,8 @@ class transformation():
         for key in self.__element_reference_by_category_dict:
             if bool(set(self.__element_reference_by_category_dict[key]) & set(self.__list_elements_de_references)):
                 list_of_category.append(key)
-        self.__dict_id['sous_type'] = self.__dict_id['sous_type'] + \
-            list(set(list_of_category) - set(self.__dict_id['sous_type']))
+        self.__dict_id['categorie_c2g'] = self.__dict_id['categorie_c2g'] + \
+            list(set(list_of_category) - set(self.__dict_id['categorie_c2g']))
 
     def Execute(self):
 

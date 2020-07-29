@@ -1,10 +1,12 @@
+<!-- LAST UPDATE: 27 JULY 2020 -->
+
 {% extends "layout.html" %}
 {% block bootstrap_2 %}
 <div class="card-header"
     style="background-color: #01289fe3; color: #d0eeed; border-radius: 4px 4px 0px 0px; font-size: medium; font-weight: bold;">
     Profil usagers
 </div>
-<div class="card-body" style="border-radius: 0px 0px 4px 4px;background-color: #17a3b825;">
+<div class="card-body" style="border-radius: 0px 0px 4px 4px;background-color: #1778b825;">
     <div class="table-responsive">
         {% for table in tables %}
         {{ table|safe }}
@@ -19,9 +21,8 @@
     <p class="title" style="font-size: 1.25rem;color: #01289f;transform: translate(-8px, 0px);">Ajouter un profil
         d'utilisateur
     </p>
-    <!-- -------------------------------------------------------- -->
+    <!-- FORM -->
     <form action="/new_profil" method="post">
-        <!-- -------------------------------------------------------- -->
         <div class="form-row">
             <div class="col-md-3 mb-3" style="transform: translate(-10px, 0px);">
                 <label class="label" style="font-size: 12px;display: inherit !important;">Profil
@@ -34,6 +35,7 @@
                         style="background-color: #01289f; border-radius: 4px; border-width: 0;color: #d0eeed; padding: 5px 20px;font-size: 15px;transform: translate(0px, 21px);">Valider</button>
                 </div>
             </div>
+        </div>
     </form>
 </div>
 {% endblock bootstrap_2 %}

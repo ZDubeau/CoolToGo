@@ -27,10 +27,12 @@ select_id_admin = """
                     FROM administrators 
                     WHERE admin_name = %s;
                     """
+
 select_admin = """
                 SELECT admin_name 
                 FROM administrators;
                 """
+
 select_password = """
                     SELECT admin_pwd_hash 
                     FROM administrators 

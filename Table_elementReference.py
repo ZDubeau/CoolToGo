@@ -69,7 +69,12 @@ class elementReference():
                 FileLogger.log(logging.ERROR, "Extension must be xls !")
                 return
         self.__connexion = DB_connexion()
-        self.__instance = self.__connexion.instance()
+
+    def __del__(self):
+        del self.__connexion
+        FileLogger.log(
+            logging.DEBUG, "Destruction of elementReference class instance")
+        pass
 
     def __Create(self, element_reference=[]):
         """Insertion des sélections dans la table des elementreference
@@ -85,17 +90,18 @@ class elementReference():
                 autoload=True,
                 autoload_with=self.__connexion.engine()
             )
-            with self.__instance.connect():
-                lines = self.__instance.execute(
-                    tInfo_elementreference.insert(None),
-                    [
-                        {
-                            'id_elref_in_apidae': aelement_reference.id_elref_in_apidae,
-                            'description': aelement_reference.description,
-                        } for aelement_reference in element_reference
-                    ]
-                )
-
+            lines = self.__connexion.engine().connect().execute(
+                tInfo_elementreference.insert(None),
+                [
+                    {
+                        'id_elref_in_apidae': aelement_reference.id_elref_in_apidae,
+                        'description': aelement_reference.description,
+                    } for aelement_reference in element_reference
+                ]
+            )
+            nb_connexion = self.__connexion.number_connections()
+            FileLogger.log(
+                logging.DEBUG, f"New instance created, number of connexion : {nb_connexion}")
             FileLogger.log(
                 logging.DEBUG, f"{lines.rowcount} elementreference(s) inserted!")
         except Exception:
@@ -115,24 +121,27 @@ class elementReference():
             )
 
             dico_elementreference = {}
-            with self.__instance.connect():
 
-                query = sqlalchemy.select([tInfo_elementreference]).distinct()
+            query = sqlalchemy.select([tInfo_elementreference]).distinct()
 
-                result = self.__instance.execute(query)
+            result = self.__connexion.engine().connect().execute(query)
 
-                if result.rowcount == 0:
-                    return dico_elementreference
-                for row in result:
-                    aelement_reference = elementreferenceModel(
-                        row[tInfo_elementreference.c.id_elref_in_apidae],
-                        row[tInfo_elementreference.c.description],
-                    )
-                    key = "{0}".format(
-                        aelement_reference.id_elref_in_apidae)
+            nb_connexion = self.__connexion.number_connections()
+            FileLogger.log(
+                logging.DEBUG, f"New instance created, number of connexion : {nb_connexion}")
 
-                    if not key in dico_elementreference:
-                        dico_elementreference[key] = aelement_reference
+            if result.rowcount == 0:
+                return dico_elementreference
+            for row in result:
+                aelement_reference = elementreferenceModel(
+                    row[tInfo_elementreference.c.id_elref_in_apidae],
+                    row[tInfo_elementreference.c.description],
+                )
+                key = "{0}".format(
+                    aelement_reference.id_elref_in_apidae)
+
+                if not key in dico_elementreference:
+                    dico_elementreference[key] = aelement_reference
 
             return dico_elementreference
 
@@ -155,23 +164,24 @@ class elementReference():
                 autoload_with=self.__connexion.engine()
             )
 
-            with self.__instance.connect():
+            query = tInfo_elementreference.update(None).where(
+                tInfo_elementreference.c.id_elref_in_apidae == sqlalchemy.bindparam(
+                    'c_id_elref_in_apidae'),
+            ).values(
+                description=sqlalchemy.bindparam('description'),
+            )
 
-                query = tInfo_elementreference.update(None).where(
-                    tInfo_elementreference.c.id_elref_in_apidae == sqlalchemy.bindparam(
-                        'c_id_elref_in_apidae'),
-                ).values(
-                    description=sqlalchemy.bindparam('description'),
-                )
-
-                lines = self.__instance.execute(query,
-                                                [
-                                                    {
-                                                        'c_id_elref_in_apidae': aelement_reference.id_elref_in_apidae,
-                                                        'description': aelement_reference.description,
-                                                    } for aelement_reference in element_reference
-                                                ]
-                                                )
+            lines = self.__connexion.engine().connect().execute(query,
+                                                                [
+                                                                    {
+                                                                        'c_id_elref_in_apidae': aelement_reference.id_elref_in_apidae,
+                                                                        'description': aelement_reference.description,
+                                                                    } for aelement_reference in element_reference
+                                                                ]
+                                                                )
+            nb_connexion = self.__connexion.number_connections()
+            FileLogger.log(
+                logging.DEBUG, f"New instance created, number of connexion : {nb_connexion}")
             FileLogger.log(
                 logging.DEBUG, f"{lines.rowcount} elementreference(s)mù updated!")
 
@@ -191,14 +201,17 @@ class elementReference():
                 autoload_with=self.__connexion.engine()
             )
 
-            with self.__instance.connect():
+            with self.__connexion.engine().connect().execute():
                 lines = 0
                 for aelement_reference in element_reference:
                     query = tInfo_elementreference.delete(None).where(
                         tInfo_elementreference.c.id_elref_in_apidae == aelement_reference,
                     )
-                    line = self.__instance.execute(query)
+                    line = self.__connexion.engine().connect().execute(query)
                     lines += int(line.rowcount)
+            nb_connexion = self.__connexion.number_connections()
+            FileLogger.log(
+                logging.DEBUG, f"New instance created, number of connexion : {nb_connexion}")
             FileLogger.log(
                 logging.DEBUG, f"{lines} elementreference(s) deleted!")
 
@@ -253,10 +266,6 @@ class elementReference():
 
         except Exception:
             FileLogger.log(logging.ERROR, traceback.print_exc())
-
-    def Close(self):
-        self.__connexion.close()
-        self.__instance.close()
 
     @property
     def df(self):

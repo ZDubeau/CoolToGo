@@ -1,6 +1,6 @@
 """----------------------------
 Creation date : 2020-06-11
-Last update : 2020-07-02
+Last update : 2020-07-29
 ----------------------------"""
 
 import re
@@ -34,11 +34,11 @@ class data_from_apidaeModel():
         data_from_apidaeModel: retourne un élément.
     """
 
-    def __init__(self, id_apidae, id_selection, type_apidae, titre, profil_c2g, sous_type, adresse1, adresse2,
+    def __init__(self, id_apidae, id_selection, type_apidae, titre, profil_c2g, categorie_c2g, adresse1, adresse2,
                  code_postal, ville, altitude, latitude, longitude, telephone, email, site_web, description_courte,
                  description_detaillee, image, publics, tourisme_adapte, payant, animaux_acceptes, environnement, equipement,
-                 services, periode, activites, ouverture, typologie, bons_plans, dispositions_speciales, service_enfants,
-                 service_cyclistes, nouveaute_2020):
+                 services, periode, activites, ouverture, date_debut, date_fin, typologie, bons_plans, dispositions_speciales,
+                 service_enfants, service_cyclistes, nouveaute_2020):
         """Initialisation d'un element de selection
         """
         if not id_apidae:
@@ -51,7 +51,7 @@ class data_from_apidaeModel():
         self.__type_apidae = type_apidae
         self.__titre = titre
         self.__profil_c2g = profil_c2g
-        self.__sous_type = sous_type
+        self.__categorie_c2g = categorie_c2g
         self.__adresse1 = adresse1
         self.__adresse2 = adresse2
         self.__code_postal = code_postal
@@ -75,6 +75,8 @@ class data_from_apidaeModel():
         self.__periode = periode
         self.__activites = activites
         self.__ouverture = ouverture
+        self.__date_debut = date_debut
+        self.__date_fin = date_fin
         self.__typologie = typologie
         self.__bons_plans = bons_plans
         self.__dispositions_speciales = dispositions_speciales
@@ -113,10 +115,10 @@ class data_from_apidaeModel():
         return self.__profil_c2g
 
     @property
-    def sous_type(self):
-        """Retourne la variable __sous_type.
+    def categorie_c2g(self):
+        """Retourne la variable __categorie_c2g.
         """
-        return self.__sous_type
+        return self.__categorie_c2g
 
     @property
     def adresse1(self):
@@ -257,6 +259,18 @@ class data_from_apidaeModel():
         return self.__ouverture
 
     @property
+    def date_debut(self):
+        """Retourne la variable __date_debut.
+        """
+        return self.__date_debut
+
+    @property
+    def date_fin(self):
+        """Retourne la variable __date_fin.
+        """
+        return self.__date_fin
+
+    @property
     def typologie(self):
         """Retourne la variable __typologie.
         """
@@ -302,7 +316,6 @@ class Data_from_apidae():
             return
         self.__id_selection = id_selection
         self.__connexion = DB_connexion()
-        self.__instance = self.__connexion.instance()
         data = self.__connexion.Query_SQL_fetchone(
             prj.select_selection_project, [self.__id_selection])
         self.__project_ID = data[0]
@@ -343,6 +356,12 @@ class Data_from_apidae():
         #     if line[2] is not None:
         #         self.__profil_for_selection_list.append(line[0])
 
+    def __del__(self):
+        del self.__connexion
+        FileLogger.log(
+            logging.DEBUG, "Destruction of data_from_apidae class instance")
+        pass
+
     def __Create(self, data_from_apidae=[]):
         """Insertion des sélections dans la table des data_from_apidaes
         """
@@ -357,56 +376,67 @@ class Data_from_apidae():
                 autoload=True,
                 autoload_with=self.__connexion.engine()
             )
-            with self.__instance.connect():
-                lines = self.__instance.execute(
-                    tInfo_data_from_apidae.insert(None),
-                    [
-                        {
-                            'id_apidae': adata_from_apidae.id_apidae,  # mandatory
-                            'id_selection': adata_from_apidae.id_selection,  # mandatory
-                            'type_apidae': adata_from_apidae.type_apidae,  # needed
-                            'titre': adata_from_apidae.titre,  # needed
-                            'profil_c2g': adata_from_apidae.profil_c2g,
-                            'sous_type': adata_from_apidae.sous_type,
-                            'adresse1': adata_from_apidae.adresse1,  # needed
-                            'adresse2': adata_from_apidae.adresse2,  # needed
-                            'code_postal': adata_from_apidae.code_postal,  # needed
-                            'ville': adata_from_apidae.ville,  # needed
-                            'altitude': adata_from_apidae.altitude,  # needed
-                            'latitude': adata_from_apidae.latitude,  # needed
-                            'longitude': adata_from_apidae.longitude,  # needed
-                            'telephone': adata_from_apidae.telephone,  # needed
-                            'email': adata_from_apidae.email,  # needed
-                            'site_web': adata_from_apidae.site_web,  # needed
-                            'description_courte': adata_from_apidae.description_courte,
-                            'description_detaillee': adata_from_apidae.description_detaillee,  # needed
-                            'image': adata_from_apidae.image,  # needed
-                            'publics': adata_from_apidae.publics,
-                            'tourisme_adapte': adata_from_apidae.tourisme_adapte,  # needed
-                            'payant': adata_from_apidae.payant,  # needed
-                            'animaux_acceptes': adata_from_apidae.animaux_acceptes,
-                            'environnement': adata_from_apidae.environnement,  # needed
-                            'equipement': adata_from_apidae.equipement,
-                            'services': adata_from_apidae.services,
-                            'periode': adata_from_apidae.periode,
-                            'activites': adata_from_apidae.activites,
-                            'ouverture': adata_from_apidae.ouverture,  # needed
-                            'typologie': adata_from_apidae.typologie,
-                            'bons_plans': adata_from_apidae.bons_plans,
-                            'dispositions_speciales': adata_from_apidae.dispositions_speciales,
-                            'service_enfants': adata_from_apidae.service_enfants,
-                            'service_cyclistes': adata_from_apidae.service_cyclistes,
-                            'nouveaute_2020': adata_from_apidae.nouveaute_2020,
-                        } for adata_from_apidae in data_from_apidae
-                    ]
-                )
+            lines = self.__connexion.engine().connect().execute(
+                tInfo_data_from_apidae.insert(None),
+                [
+                    {
+                        'id_apidae': adata_from_apidae.id_apidae,  # mandatory
+                        'id_selection': adata_from_apidae.id_selection,  # mandatory
+                        'type_apidae': adata_from_apidae.type_apidae,  # needed
+                        'titre': adata_from_apidae.titre,  # needed
+                        'profil_c2g': adata_from_apidae.profil_c2g,
+                        'categorie_c2g': adata_from_apidae.categorie_c2g,
+                        'adresse1': adata_from_apidae.adresse1,  # needed
+                        'adresse2': adata_from_apidae.adresse2,  # needed
+                        'code_postal': adata_from_apidae.code_postal,  # needed
+                        'ville': adata_from_apidae.ville,  # needed
+                        'altitude': adata_from_apidae.altitude,  # needed
+                        'latitude': adata_from_apidae.latitude,  # needed
+                        'longitude': adata_from_apidae.longitude,  # needed
+                        'telephone': adata_from_apidae.telephone,  # needed
+                        'email': adata_from_apidae.email,  # needed
+                        'site_web': adata_from_apidae.site_web,  # needed
+                        'description_courte': adata_from_apidae.description_courte,  # needed
+                        'description_detaillee': adata_from_apidae.description_detaillee,  # needed
+                        'image': adata_from_apidae.image,  # needed
+                        'publics': adata_from_apidae.publics,
+                        'tourisme_adapte': adata_from_apidae.tourisme_adapte,  # needed
+                        'payant': adata_from_apidae.payant,  # needed
+                        'animaux_acceptes': adata_from_apidae.animaux_acceptes,
+                        'environnement': adata_from_apidae.environnement,  # needed
+                        'equipement': adata_from_apidae.equipement,
+                        'services': adata_from_apidae.services,
+                        'periode': adata_from_apidae.periode,
+                        'activites': adata_from_apidae.activites,
+                        'ouverture': adata_from_apidae.ouverture,  # needed
+                        'date_debut': adata_from_apidae.date_debut,  # needed
+                        'date_fin': adata_from_apidae.date_fin,  # needed
+                        'typologie': adata_from_apidae.typologie,
+                        'bons_plans': adata_from_apidae.bons_plans,
+                        'dispositions_speciales': adata_from_apidae.dispositions_speciales,
+                        'service_enfants': adata_from_apidae.service_enfants,
+                        'service_cyclistes': adata_from_apidae.service_cyclistes,
+                        'nouveaute_2020': adata_from_apidae.nouveaute_2020,
+                    } for adata_from_apidae in data_from_apidae
+                ]
+            )
+            nb_connexion = self.__connexion.number_connections()
+            FileLogger.log(
+                logging.DEBUG, f"New instance created, number of connexion : {nb_connexion}")
             for adata_from_apidae in data_from_apidae:
                 id_data_from_apidae = self.__connexion.Query_SQL_fetchone(select_apidae_with_id_apidae_and_selection, [
                                                                           adata_from_apidae.id_apidae, adata_from_apidae.id_selection])[0]
-                for profil in adata_from_apidae.profil_c2g:
-                    self.__connexion.Insert_SQL(
-                        rel_prf_apidae.insert_relation_profil_apidae, [profil, id_data_from_apidae])
-                for category in adata_from_apidae.sous_type:
+                if not adata_from_apidae.profil_c2g:
+                    list_profil = self.__connexion.Query_SQL_fetchall(
+                        prf.select_basic_user_profil)
+                    for profil in list_profil:
+                        self.__connexion.Insert_SQL(
+                            rel_prf_apidae.insert_relation_profil_apidae, [profil[0], id_data_from_apidae])
+                else:
+                    for profil in adata_from_apidae.profil_c2g:
+                        self.__connexion.Insert_SQL(
+                            rel_prf_apidae.insert_relation_profil_apidae, [profil, id_data_from_apidae])
+                for category in adata_from_apidae.categorie_c2g:
                     self.__connexion.Insert_SQL(
                         rel_ctg_apidae.insert_relation_category_apidae, [category, id_data_from_apidae])
             FileLogger.log(
@@ -428,59 +458,63 @@ class Data_from_apidae():
             )
 
             dico_data_from_apidae = {}
-            with self.__instance.connect():
 
-                query = sqlalchemy.select([tInfo_data_from_apidae]).where(sqlalchemy.and_(
-                    tInfo_data_from_apidae.c.id_selection == self.__id_selection,)
-                ).distinct()
+            query = sqlalchemy.select([tInfo_data_from_apidae]).where(sqlalchemy.and_(
+                tInfo_data_from_apidae.c.id_selection == self.__id_selection,)
+            ).distinct()
 
-                result = self.__instance.execute(query)
+            result = self.__connexion.engine().connect().execute(query)
+            nb_connexion = self.__connexion.number_connections()
+            FileLogger.log(
+                logging.DEBUG, f"New instance created, number of connexion : {nb_connexion}")
 
-                if result.rowcount == 0:
-                    return dico_data_from_apidae
-                for row in result:
-                    adata_from_apidae = data_from_apidaeModel(
-                        row[tInfo_data_from_apidae.c.id_apidae],
-                        row[tInfo_data_from_apidae.c.id_selection],
-                        row[tInfo_data_from_apidae.c.type_apidae],
-                        row[tInfo_data_from_apidae.c.titre],
-                        row[tInfo_data_from_apidae.c.profil_c2g],
-                        row[tInfo_data_from_apidae.c.sous_type],
-                        row[tInfo_data_from_apidae.c.adresse1],
-                        row[tInfo_data_from_apidae.c.adresse2],
-                        row[tInfo_data_from_apidae.c.code_postal],
-                        row[tInfo_data_from_apidae.c.ville],
-                        row[tInfo_data_from_apidae.c.altitude],
-                        row[tInfo_data_from_apidae.c.latitude],
-                        row[tInfo_data_from_apidae.c.longitude],
-                        row[tInfo_data_from_apidae.c.telephone],
-                        row[tInfo_data_from_apidae.c.email],
-                        row[tInfo_data_from_apidae.c.site_web],
-                        row[tInfo_data_from_apidae.c.description_courte],
-                        row[tInfo_data_from_apidae.c.description_detaillee],
-                        row[tInfo_data_from_apidae.c.image],
-                        row[tInfo_data_from_apidae.c.publics],
-                        row[tInfo_data_from_apidae.c.tourisme_adapte],
-                        row[tInfo_data_from_apidae.c.payant],
-                        row[tInfo_data_from_apidae.c.animaux_acceptes],
-                        row[tInfo_data_from_apidae.c.environnement],
-                        row[tInfo_data_from_apidae.c.equipement],
-                        row[tInfo_data_from_apidae.c.services],
-                        row[tInfo_data_from_apidae.c.periode],
-                        row[tInfo_data_from_apidae.c.activites],
-                        row[tInfo_data_from_apidae.c.ouverture],
-                        row[tInfo_data_from_apidae.c.typologie],
-                        row[tInfo_data_from_apidae.c.bons_plans],
-                        row[tInfo_data_from_apidae.c.dispositions_speciales],
-                        row[tInfo_data_from_apidae.c.service_enfants],
-                        row[tInfo_data_from_apidae.c.service_cyclistes],
-                        row[tInfo_data_from_apidae.c.nouveaute_2020]
-                    )
-                    key = "{0}_#_{1}".format(
-                        adata_from_apidae.id_apidae, adata_from_apidae.id_selection)
+            if result.rowcount == 0:
+                return dico_data_from_apidae
+            for row in result:
+                adata_from_apidae = data_from_apidaeModel(
+                    row[tInfo_data_from_apidae.c.id_apidae],
+                    row[tInfo_data_from_apidae.c.id_selection],
+                    row[tInfo_data_from_apidae.c.type_apidae],
+                    row[tInfo_data_from_apidae.c.titre],
+                    row[tInfo_data_from_apidae.c.profil_c2g],
+                    row[tInfo_data_from_apidae.c.categorie_c2g],
+                    row[tInfo_data_from_apidae.c.adresse1],
+                    row[tInfo_data_from_apidae.c.adresse2],
+                    row[tInfo_data_from_apidae.c.code_postal],
+                    row[tInfo_data_from_apidae.c.ville],
+                    row[tInfo_data_from_apidae.c.altitude],
+                    row[tInfo_data_from_apidae.c.latitude],
+                    row[tInfo_data_from_apidae.c.longitude],
+                    row[tInfo_data_from_apidae.c.telephone],
+                    row[tInfo_data_from_apidae.c.email],
+                    row[tInfo_data_from_apidae.c.site_web],
+                    row[tInfo_data_from_apidae.c.description_courte],
+                    row[tInfo_data_from_apidae.c.description_detaillee],
+                    row[tInfo_data_from_apidae.c.image],
+                    row[tInfo_data_from_apidae.c.publics],
+                    row[tInfo_data_from_apidae.c.tourisme_adapte],
+                    row[tInfo_data_from_apidae.c.payant],
+                    row[tInfo_data_from_apidae.c.animaux_acceptes],
+                    row[tInfo_data_from_apidae.c.environnement],
+                    row[tInfo_data_from_apidae.c.equipement],
+                    row[tInfo_data_from_apidae.c.services],
+                    row[tInfo_data_from_apidae.c.periode],
+                    row[tInfo_data_from_apidae.c.activites],
+                    row[tInfo_data_from_apidae.c.ouverture],
+                    row[tInfo_data_from_apidae.c.date_debut],
+                    row[tInfo_data_from_apidae.c.date_fin],
+                    row[tInfo_data_from_apidae.c.typologie],
+                    row[tInfo_data_from_apidae.c.bons_plans],
+                    row[tInfo_data_from_apidae.c.dispositions_speciales],
+                    row[tInfo_data_from_apidae.c.service_enfants],
+                    row[tInfo_data_from_apidae.c.service_cyclistes],
+                    row[tInfo_data_from_apidae.c.nouveaute_2020]
+                )
+                key = "{0}_#_{1}".format(
+                    adata_from_apidae.id_apidae, adata_from_apidae.id_selection)
 
-                    if not key in dico_data_from_apidae:
-                        dico_data_from_apidae[key] = adata_from_apidae
+                if not key in dico_data_from_apidae:
+                    dico_data_from_apidae[key] = adata_from_apidae
 
             return dico_data_from_apidae
 
@@ -503,93 +537,98 @@ class Data_from_apidae():
                 autoload_with=self.__connexion.engine()
             )
 
-            with self.__instance.connect():
-
-                query = tInfo_data_from_apidae.update(None).where(
-                    sqlalchemy.and_(
-                        tInfo_data_from_apidae.c.id_apidae == sqlalchemy.bindparam(
-                            'c_id_apidae'),
-                        tInfo_data_from_apidae.c.id_selection == int(
-                            self.__id_selection),
-                    )
-                ).values(
-                    type_apidae=sqlalchemy.bindparam('type_apidae'),
-                    titre=sqlalchemy.bindparam('titre'),
-                    profil_c2g=sqlalchemy.bindparam('profil_c2g'),
-                    sous_type=sqlalchemy.bindparam('sous_type'),
-                    adresse1=sqlalchemy.bindparam('adresse1'),
-                    adresse2=sqlalchemy.bindparam('adresse2'),
-                    code_postal=sqlalchemy.bindparam('code_postal'),
-                    ville=sqlalchemy.bindparam('ville'),
-                    altitude=sqlalchemy.bindparam('altitude'),
-                    latitude=sqlalchemy.bindparam('latitude'),
-                    longitude=sqlalchemy.bindparam('longitude'),
-                    telephone=sqlalchemy.bindparam('telephone'),
-                    email=sqlalchemy.bindparam('email'),
-                    site_web=sqlalchemy.bindparam('site_web'),
-                    description_courte=sqlalchemy.bindparam(
-                        'description_courte'),
-                    description_detaillee=sqlalchemy.bindparam(
-                        'description_detaillee'),
-                    image=sqlalchemy.bindparam('image'),
-                    publics=sqlalchemy.bindparam('publics'),
-                    tourisme_adapte=sqlalchemy.bindparam('tourisme_adapte'),
-                    payant=sqlalchemy.bindparam('payant'),
-                    animaux_acceptes=sqlalchemy.bindparam('animaux_acceptes'),
-                    environnement=sqlalchemy.bindparam('environnement'),
-                    equipement=sqlalchemy.bindparam('equipement'),
-                    services=sqlalchemy.bindparam('services'),
-                    activites=sqlalchemy.bindparam('activites'),
-                    ouverture=sqlalchemy.bindparam('ouverture'),
-                    typologie=sqlalchemy.bindparam('typologie'),
-                    bons_plans=sqlalchemy.bindparam('bons_plans'),
-                    dispositions_speciales=sqlalchemy.bindparam(
-                        'dispositions_speciales'),
-                    service_enfants=sqlalchemy.bindparam('service_enfants'),
-                    service_cyclistes=sqlalchemy.bindparam(
-                        'service_cyclistes'),
-                    nouveaute_2020=sqlalchemy.bindparam('nouveaute_2020'),
+            query = tInfo_data_from_apidae.update(None).where(
+                sqlalchemy.and_(
+                    tInfo_data_from_apidae.c.id_apidae == sqlalchemy.bindparam(
+                        'c_id_apidae'),
+                    tInfo_data_from_apidae.c.id_selection == int(
+                        self.__id_selection),
                 )
+            ).values(
+                type_apidae=sqlalchemy.bindparam('type_apidae'),
+                titre=sqlalchemy.bindparam('titre'),
+                profil_c2g=sqlalchemy.bindparam('profil_c2g'),
+                categorie_c2g=sqlalchemy.bindparam('categorie_c2g'),
+                adresse1=sqlalchemy.bindparam('adresse1'),
+                adresse2=sqlalchemy.bindparam('adresse2'),
+                code_postal=sqlalchemy.bindparam('code_postal'),
+                ville=sqlalchemy.bindparam('ville'),
+                altitude=sqlalchemy.bindparam('altitude'),
+                latitude=sqlalchemy.bindparam('latitude'),
+                longitude=sqlalchemy.bindparam('longitude'),
+                telephone=sqlalchemy.bindparam('telephone'),
+                email=sqlalchemy.bindparam('email'),
+                site_web=sqlalchemy.bindparam('site_web'),
+                description_courte=sqlalchemy.bindparam(
+                    'description_courte'),
+                description_detaillee=sqlalchemy.bindparam(
+                    'description_detaillee'),
+                image=sqlalchemy.bindparam('image'),
+                publics=sqlalchemy.bindparam('publics'),
+                tourisme_adapte=sqlalchemy.bindparam('tourisme_adapte'),
+                payant=sqlalchemy.bindparam('payant'),
+                animaux_acceptes=sqlalchemy.bindparam('animaux_acceptes'),
+                environnement=sqlalchemy.bindparam('environnement'),
+                equipement=sqlalchemy.bindparam('equipement'),
+                services=sqlalchemy.bindparam('services'),
+                activites=sqlalchemy.bindparam('activites'),
+                ouverture=sqlalchemy.bindparam('ouverture'),
+                date_debut=sqlalchemy.bindparam('date_debut'),
+                date_fin=sqlalchemy.bindparam('date_fin'),
+                typologie=sqlalchemy.bindparam('typologie'),
+                bons_plans=sqlalchemy.bindparam('bons_plans'),
+                dispositions_speciales=sqlalchemy.bindparam(
+                    'dispositions_speciales'),
+                service_enfants=sqlalchemy.bindparam('service_enfants'),
+                service_cyclistes=sqlalchemy.bindparam(
+                    'service_cyclistes'),
+                nouveaute_2020=sqlalchemy.bindparam('nouveaute_2020'),
+            )
 
-                lines = self.__instance.execute(query,
-                                                [
-                                                    {
-                                                        'c_id_apidae': str(adata_from_apidae.id_apidae),
-                                                        'type_apidae': adata_from_apidae.type_apidae,
-                                                        'titre': adata_from_apidae.titre,
-                                                        'profil_c2g': adata_from_apidae.profil_c2g,
-                                                        'sous_type': adata_from_apidae.sous_type,
-                                                        'adresse1': adata_from_apidae.adresse1,
-                                                        'adresse2': adata_from_apidae.adresse2,
-                                                        'code_postal': adata_from_apidae.code_postal,
-                                                        'ville': adata_from_apidae.ville,
-                                                        'altitude': adata_from_apidae.altitude,
-                                                        'latitude': adata_from_apidae.latitude,
-                                                        'longitude': adata_from_apidae.longitude,
-                                                        'telephone': adata_from_apidae.telephone,
-                                                        'email': adata_from_apidae.email,
-                                                        'site_web': adata_from_apidae.site_web,
-                                                        'description_courte': adata_from_apidae.description_courte,
-                                                        'description_detaillee': adata_from_apidae.description_detaillee,
-                                                        'image': adata_from_apidae.image,
-                                                        'publics': adata_from_apidae.publics,
-                                                        'tourisme_adapte': adata_from_apidae.tourisme_adapte,
-                                                        'payant': adata_from_apidae.payant,
-                                                        'animaux_acceptes': adata_from_apidae.animaux_acceptes,
-                                                        'environnement': adata_from_apidae.environnement,
-                                                        'equipement': adata_from_apidae.equipement,
-                                                        'services': adata_from_apidae.services,
-                                                        'activites': adata_from_apidae.activites,
-                                                        'ouverture': adata_from_apidae.ouverture,
-                                                        'typologie': adata_from_apidae.typologie,
-                                                        'bons_plans': adata_from_apidae.bons_plans,
-                                                        'dispositions_speciales': adata_from_apidae.dispositions_speciales,
-                                                        'service_enfants': adata_from_apidae.service_enfants,
-                                                        'service_cyclistes': adata_from_apidae.service_cyclistes,
-                                                        'nouveaute_2020': adata_from_apidae.nouveaute_2020,
-                                                    } for adata_from_apidae in data_from_apidae
-                                                ]
-                                                )
+            lines = self.__connexion.engine().connect().execute(query,
+                                                                [
+                                                                    {
+                                                                        'c_id_apidae': str(adata_from_apidae.id_apidae),
+                                                                        'type_apidae': adata_from_apidae.type_apidae,
+                                                                        'titre': adata_from_apidae.titre,
+                                                                        'profil_c2g': adata_from_apidae.profil_c2g,
+                                                                        'categorie_c2g': adata_from_apidae.categorie_c2g,
+                                                                        'adresse1': adata_from_apidae.adresse1,
+                                                                        'adresse2': adata_from_apidae.adresse2,
+                                                                        'code_postal': adata_from_apidae.code_postal,
+                                                                        'ville': adata_from_apidae.ville,
+                                                                        'altitude': adata_from_apidae.altitude,
+                                                                        'latitude': adata_from_apidae.latitude,
+                                                                        'longitude': adata_from_apidae.longitude,
+                                                                        'telephone': adata_from_apidae.telephone,
+                                                                        'email': adata_from_apidae.email,
+                                                                        'site_web': adata_from_apidae.site_web,
+                                                                        'description_courte': adata_from_apidae.description_courte,
+                                                                        'description_detaillee': adata_from_apidae.description_detaillee,
+                                                                        'image': adata_from_apidae.image,
+                                                                        'publics': adata_from_apidae.publics,
+                                                                        'tourisme_adapte': adata_from_apidae.tourisme_adapte,
+                                                                        'payant': adata_from_apidae.payant,
+                                                                        'animaux_acceptes': adata_from_apidae.animaux_acceptes,
+                                                                        'environnement': adata_from_apidae.environnement,
+                                                                        'equipement': adata_from_apidae.equipement,
+                                                                        'services': adata_from_apidae.services,
+                                                                        'activites': adata_from_apidae.activites,
+                                                                        'ouverture': adata_from_apidae.ouverture,
+                                                                        'date_debut': adata_from_apidae.date_debut,
+                                                                        'date_fin': adata_from_apidae.date_fin,
+                                                                        'typologie': adata_from_apidae.typologie,
+                                                                        'bons_plans': adata_from_apidae.bons_plans,
+                                                                        'dispositions_speciales': adata_from_apidae.dispositions_speciales,
+                                                                        'service_enfants': adata_from_apidae.service_enfants,
+                                                                        'service_cyclistes': adata_from_apidae.service_cyclistes,
+                                                                        'nouveaute_2020': adata_from_apidae.nouveaute_2020,
+                                                                    } for adata_from_apidae in data_from_apidae
+                                                                ]
+                                                                )
+            nb_connexion = self.__connexion.number_connections()
+            FileLogger.log(
+                logging.DEBUG, f"New instance created, number of connexion : {nb_connexion}")
             for adata_from_apidae in data_from_apidae:
                 id_data_from_apidae = self.__connexion.Query_SQL_fetchone(select_apidae_with_id_apidae_and_selection, [
                                                                           adata_from_apidae.id_apidae, adata_from_apidae.id_selection])[0]
@@ -597,10 +636,17 @@ class Data_from_apidae():
                     rel_prf_apidae.delete_relation_profil_apidae_with_id_data_from_apidae, [id_data_from_apidae])
                 self.__connexion.Delete_SQL(
                     rel_ctg_apidae.delete_relation_category_apidae_with_id_data_from_apidae, [id_data_from_apidae])
-                for profil in adata_from_apidae.profil_c2g:
-                    self.__connexion.Insert_SQL(
-                        rel_prf_apidae.insert_relation_profil_apidae, [profil, id_data_from_apidae])
-                for category in adata_from_apidae.sous_type:
+                if not adata_from_apidae.profil_c2g:
+                    list_profil = self.__connexion.Query_SQL_fetchall(
+                        prf.select_basic_user_profil)
+                    for profil in list_profil:
+                        self.__connexion.Insert_SQL(
+                            rel_prf_apidae.insert_relation_profil_apidae, [profil[0], id_data_from_apidae])
+                else:
+                    for profil in adata_from_apidae.profil_c2g:
+                        self.__connexion.Insert_SQL(
+                            rel_prf_apidae.insert_relation_profil_apidae, [profil, id_data_from_apidae])
+                for category in adata_from_apidae.categorie_c2g:
                     self.__connexion.Insert_SQL(
                         rel_ctg_apidae.insert_relation_category_apidae, [category, id_data_from_apidae])
             FileLogger.log(
@@ -622,18 +668,20 @@ class Data_from_apidae():
                 autoload_with=self.__connexion.engine()
             )
 
-            with self.__instance.connect():
-                lines = 0
-                for adata_from_apidae in data_from_apidae:
-                    id_apidae = re.split(r'_#_', adata_from_apidae)[0]
-                    query = tInfo_data_from_apidae.delete(None).where(
-                        sqlalchemy.and_(
-                            tInfo_data_from_apidae.c.id_apidae == id_apidae,
-                            tInfo_data_from_apidae.c.id_selection == self.__id_selection
-                        )
+            lines = 0
+            for adata_from_apidae in data_from_apidae:
+                id_apidae = re.split(r'_#_', adata_from_apidae)[0]
+                query = tInfo_data_from_apidae.delete(None).where(
+                    sqlalchemy.and_(
+                        tInfo_data_from_apidae.c.id_apidae == id_apidae,
+                        tInfo_data_from_apidae.c.id_selection == self.__id_selection
                     )
-                    line = self.__instance.execute(query)
-                    lines += int(line.rowcount)
+                )
+                line = self.__connexion.engine().connect().execute(query)
+                nb_connexion = self.__connexion.number_connections()
+                FileLogger.log(
+                    logging.DEBUG, f"New instance created, number of connexion : {nb_connexion}")
+                lines += int(line.rowcount)
             FileLogger.log(
                 logging.DEBUG, f"{lines} data_from_apidae(s) for selection: {self.__id_selection} of project_ID: {self.__project_ID} deleted!")
 
@@ -659,7 +707,7 @@ class Data_from_apidae():
                     row['type_apidae'],
                     row['titre'],
                     row['profil_c2g'],
-                    row['sous_type'],
+                    row['categorie_c2g'],
                     row['adresse1'],
                     row['adresse2'],
                     row['code_postal'],
@@ -683,6 +731,8 @@ class Data_from_apidae():
                     row['periode'],
                     row['activites'],
                     row['ouverture'],
+                    row['date_debut'],
+                    row['date_fin'],
                     row['typologie'],
                     row['bons_plans'],
                     row['dispositions_speciales'],
@@ -728,10 +778,6 @@ class Data_from_apidae():
         except Exception:
             FileLogger.log(logging.ERROR, traceback.print_exc())
 
-    def Close(self):
-        self.__connexion.close()
-        self.__instance.close()
-
 
 drop_apidae = """
                 DROP TABLE IF EXISTS data_from_apidae CASCADE;
@@ -745,7 +791,7 @@ apidae = """
             type_apidae VARCHAR(500),
             titre VARCHAR(600),
             profil_c2g VARCHAR(203),
-            sous_type VARCHAR(601),
+            categorie_c2g VARCHAR(601),
             adresse1 TEXT,
             adresse2 TEXT,
             code_postal VARCHAR(20),
@@ -769,6 +815,8 @@ apidae = """
             periode VARCHAR(1003),
             activites VARCHAR(1008),
             ouverture TEXT,
+            date_debut DATE,
+            date_fin DATE,
             typologie VARCHAR(1005),
             bons_plans TEXT,
             dispositions_speciales TEXT,
@@ -779,28 +827,225 @@ apidae = """
 
 insert_apidae = """
                 INSERT INTO data_from_apidae (
-                    id_apidae, id_selection, type_apidae, titre, profil_c2g, sous_type, adresse1,
+                    id_apidae, id_selection, type_apidae, titre, profil_c2g, categorie_c2g, adresse1,
                     adresse2, code_postal, ville, altitude, latitude, longitude, telephone, email,
                     site_web, description_courte, description_detaillee, image, publics, tourisme_adapte,
                     payant, animaux_acceptes, environnement, equipement, services, periode, activites,
-                    ouverture, typologie, bons_plans, dispositions_speciales, service_enfants,
-                    service_cyclistes, nouveaute_2020)
+                    ouverture, date_debut, date_fin, typologie, bons_plans, dispositions_speciales, 
+                    service_enfants, service_cyclistes, nouveaute_2020)
                 VALUES (
                     %(id_apidae)s,%(id_selection)s, %(type_apidae)s, %(titre)s, %(profil_c2g)s,
-                    %(sous_type)s,%(adresse1)s, %(adresse2)s, %(code_postal)s, %(ville)s, %(altitude)s,
+                    %(categorie_c2g)s,%(adresse1)s, %(adresse2)s, %(code_postal)s, %(ville)s, %(altitude)s,
                     %(latitude)s, %(longitude)s, %(telephone)s, %(email)s, %(site_web)s, %(description_courte)s,
-                    %(description_detaillee)s,%(image)s, %(Publics)s, %(tourisme_adapte)s,%(payant)s,
+                    %(description_detaillee)s,%(image)s, %(publics)s, %(tourisme_adapte)s,%(payant)s,
                     %(animaux_acceptes)s, %(environnement)s, %(equipement)s, %(services)s, %(periode)s,
-                    %(activites)s, %(ouverture)s, %(typologie)s, %(bons_plans)s, %(dispositions_speciales)s,
-                    %(service_enfants)s, %(service_cyclistes)s, %(nouveaute_2020)s)
+                    %(activites)s, %(ouverture)s, %(date_debut)s, %(date_fin)s, %(typologie)s, %(bons_plans)s, 
+                    %(dispositions_speciales)s, %(service_enfants)s, %(service_cyclistes)s, %(nouveaute_2020)s)
                 returning id_data_from_apidae;
                 """
 
 select_apidae_display = """
-                        SELECT *, '' as modifier
-                        FROM data_from_apidae
-                        ORDER BY id_data_from_apidae ASC;
-                        """
+                SELECT MIN(sad.id) AS id, sad.id_apidae, sad.type_apidae, sad.titre,
+                        array_to_string(array_agg(DISTINCT sad.id_selection), ', ') AS id_s,
+                        sad.profil_c2g, sad.categorie_c2g,
+                        sad.adresse1, sad.adresse2, sad.code_postal, sad.ville,sad.altitude, sad.longitude, 
+                        sad.latitude, sad.telephone, sad.email, sad.site_web, sad.description_courte,
+                        sad.description_detaillee, sad.image, sad.publics, sad.tourisme_adapte, sad.payant, 
+                        sad.animaux_acceptes, sad.environnement, sad.equipement, sad.services, sad.periode, 
+                        sad.activites, sad.ouverture, sad.date_debut, sad.date_fin, sad.typologie, 
+                        sad.bons_plans, sad.dispositions_speciales, sad.service_enfants, sad.service_cyclistes, 
+                        sad.nouveaute_2020, '' AS modifier
+                FROM (
+                    SELECT MIN(dfa.id_data_from_apidae) AS id, dfa.id_apidae AS id_apidae,
+                        array_to_string(array_agg(DISTINCT dfa.id_selection), ', ') AS id_selection, 
+                        dfa.type_apidae AS type_apidae, dfa.titre AS titre,
+                        CASE 
+                            WHEN pae.id_data_from_apidae IS NULL THEN array_to_string(array_agg(DISTINCT p.profil), ', ')
+                            ELSE array_to_string(array_agg(DISTINCT pe.profil), ', ',)
+                            END AS profil_c2g,
+                        CASE
+                            WHEN cae.id_data_from_apidae IS NULL THEN array_to_string(array_agg(DISTINCT c.category_name), ', ')
+                            ELSE array_to_string(array_agg(DISTINCT ce.category_name), ', ')
+                            END AS categorie_c2g,
+                        dfa.adresse1 AS adresse1, dfa.adresse2 AS adresse2, dfa.code_postal AS code_postal, 
+                        dfa.ville AS ville, dfa.altitude AS altitude, dfa.longitude AS longitude,
+                        dfa.latitude AS latitude, dfa.telephone AS telephone, dfa.email AS email, 
+                        dfa.site_web AS site_web, dfa.description_courte AS description_courte, 
+                        dfa.description_detaillee AS description_detaillee,
+                        dfa.image AS image, dfa.publics AS publics, dfa.tourisme_adapte AS tourisme_adapte, 
+                        dfa.payant AS payant, dfa.animaux_acceptes AS animaux_acceptes, dfa.environnement AS environnement, 
+                        dfa.equipement AS equipement, dfa.services AS services, dfa.periode AS periode, 
+                        dfa.activites AS activites, dfa.ouverture AS ouverture, dfa.date_debut AS date_debut, 
+                        dfa.date_fin AS date_fin, dfa.typologie AS typologie, dfa.bons_plans AS bons_plans, 
+                        dfa.dispositions_speciales AS dispositions_speciales, dfa.service_enfants AS service_enfants, 
+                        dfa.service_cyclistes AS service_cyclistes, dfa.nouveaute_2020 AS nouveaute_2020
+                    FROM data_from_apidae AS dfa
+                    LEFT JOIN category_apidae AS ca ON dfa.id_data_from_apidae = ca.id_data_from_apidae
+                    LEFT JOIN category AS c ON ca.id_category = c.id_category
+                    LEFT JOIN category_apidae_edited AS cae ON dfa.id_data_from_apidae = cae.id_data_from_apidae
+                    LEFT JOIN category AS ce ON cae.id_category = ce.id_category
+                    LEFT JOIN profil_apidae AS pa ON dfa.id_data_from_apidae = pa.id_data_from_apidae
+                    LEFT JOIN profil AS p ON pa.id_profil = p.id_profil
+                    LEFT JOIN profil_apidae_edited AS pae ON dfa.id_data_from_apidae = pae.id_data_from_apidae
+                    LEFT JOIN profil AS pe ON pae.id_profil = pe.id_profil
+                    GROUP BY dfa.id_apidae, dfa.type_apidae, dfa.titre,pae.id_data_from_apidae, cae.id_data_from_apidae,
+                        dfa.adresse1, dfa.adresse2, dfa.code_postal, dfa.ville,dfa.altitude, dfa.longitude, 
+                        dfa.latitude, dfa.telephone, dfa.email, dfa.site_web, dfa.description_courte,
+                        dfa.description_detaillee, dfa.image, dfa.publics, dfa.tourisme_adapte, dfa.payant, 
+                        dfa.animaux_acceptes, dfa.environnement, dfa.equipement, dfa.services, dfa.periode, 
+                        dfa.activites, dfa.ouverture, dfa.date_debut, dfa.date_fin, dfa.typologie, 
+                        dfa.bons_plans, dfa.dispositions_speciales, dfa.service_enfants, dfa.service_cyclistes, 
+                        dfa.nouveaute_2020) AS sad
+                GROUP BY sad.id_apidae, sad.type_apidae, sad.titre,sad.profil_c2g, sad.categorie_c2g,
+                    sad.adresse1, sad.adresse2, sad.code_postal, sad.ville,sad.altitude, sad.longitude, 
+                    sad.latitude, sad.telephone, sad.email, sad.site_web, sad.description_courte,
+                    sad.description_detaillee, sad.image, sad.publics, sad.tourisme_adapte, sad.payant, 
+                    sad.animaux_acceptes, sad.environnement, sad.equipement, sad.services, sad.periode, 
+                    sad.activites, sad.ouverture, sad.date_debut, sad.date_fin, sad.typologie, 
+                    sad.bons_plans, sad.dispositions_speciales, sad.service_enfants, sad.service_cyclistes, 
+                    sad.nouveaute_2020;
+                """
+
+select_apidae_display_apidae_extract = """
+                    SELECT MIN(sad.id) AS id, sad.id_apidae, sad.type_apidae, sad.titre,
+                        array_to_string(array_agg(DISTINCT sad.id_selection), ', ') AS id_s,
+                        sad.profil_c2g, sad.categorie_c2g, sad.adresse1, sad.adresse2, sad.code_postal, 
+                        sad.ville,sad.altitude, sad.longitude, sad.latitude, sad.telephone, sad.email, 
+                        sad.site_web, sad.description_courte, sad.description_detaillee, sad.image, 
+                        sad.publics, sad.tourisme_adapte, sad.payant, sad.animaux_acceptes, 
+                        sad.environnement, sad.equipement, sad.services, sad.periode, sad.activites, 
+                        sad.ouverture, sad.date_debut, sad.date_fin, sad.typologie, sad.bons_plans, 
+                        sad.dispositions_speciales, sad.service_enfants, sad.service_cyclistes, 
+                        sad.nouveaute_2020, '' AS modifier
+                    FROM (
+                        SELECT MIN(dfa.id_data_from_apidae) AS id, dfa.id_apidae AS id_apidae,
+                            array_to_string(array_agg(DISTINCT dfa.id_selection), ', ') AS id_selection, 
+                            dfa.type_apidae AS type_apidae, dfa.titre AS titre,
+                            CASE 
+                                WHEN pae.id_data_from_apidae IS NULL THEN array_to_string(array_agg(DISTINCT p.profil), ', ')
+                                ELSE array_to_string(array_agg(DISTINCT pe.profil), ', ')
+                                END AS profil_c2g,
+                            CASE
+                                WHEN cae.id_data_from_apidae IS NULL THEN array_to_string(array_agg(DISTINCT c.category_name), ', ')
+                                ELSE array_to_string(array_agg(DISTINCT ce.category_name), ', ')
+                                END AS categorie_c2g,
+                            dfa.adresse1 AS adresse1, dfa.adresse2 AS adresse2, dfa.code_postal AS code_postal, 
+                            dfa.ville AS ville, dfa.altitude AS altitude, dfa.longitude AS longitude,
+                            dfa.latitude AS latitude, dfa.telephone AS telephone, dfa.email AS email, 
+                            dfa.site_web AS site_web, dfa.description_courte AS description_courte, 
+                            dfa.description_detaillee AS description_detaillee, dfa.image AS image, 
+                            dfa.publics AS publics, dfa.tourisme_adapte AS tourisme_adapte, 
+                            dfa.payant AS payant, dfa.animaux_acceptes AS animaux_acceptes, 
+                            dfa.environnement AS environnement, dfa.equipement AS equipement, 
+                            dfa.services AS services, dfa.periode AS periode, dfa.activites AS activites, 
+                            dfa.ouverture AS ouverture, dfa.date_debut AS date_debut, dfa.date_fin AS date_fin, 
+                            dfa.typologie AS typologie, dfa.bons_plans AS bons_plans, 
+                            dfa.dispositions_speciales AS dispositions_speciales, dfa.service_enfants AS service_enfants, 
+                            dfa.service_cyclistes AS service_cyclistes, dfa.nouveaute_2020 AS nouveaute_2020
+                        FROM data_from_apidae AS dfa
+                        LEFT JOIN category_apidae AS ca ON dfa.id_data_from_apidae = ca.id_data_from_apidae
+                        LEFT JOIN category AS c ON ca.id_category = c.id_category
+                        LEFT JOIN category_apidae_edited AS cae ON dfa.id_data_from_apidae = cae.id_data_from_apidae
+                        LEFT JOIN category AS ce ON cae.id_category = ce.id_category
+                        LEFT JOIN profil_apidae AS pa ON dfa.id_data_from_apidae = pa.id_data_from_apidae
+                        LEFT JOIN profil AS p ON pa.id_profil = p.id_profil
+                        LEFT JOIN profil_apidae_edited AS pae ON dfa.id_data_from_apidae = pae.id_data_from_apidae
+                        LEFT JOIN profil AS pe ON pae.id_profil = pe.id_profil
+                        WHERE dfa.id_selection<>0
+                        GROUP BY dfa.id_apidae, dfa.type_apidae, dfa.titre,pae.id_data_from_apidae, 
+                            cae.id_data_from_apidae, dfa.adresse1, dfa.adresse2, dfa.code_postal, 
+                            dfa.ville,dfa.altitude, dfa.longitude, dfa.latitude, dfa.telephone, 
+                            dfa.email, dfa.site_web, dfa.description_courte, dfa.description_detaillee, 
+                            dfa.image, dfa.publics, dfa.tourisme_adapte, dfa.payant, dfa.animaux_acceptes, 
+                            dfa.environnement, dfa.equipement, dfa.services, dfa.periode, dfa.activites, 
+                            dfa.ouverture, dfa.date_debut, dfa.date_fin, dfa.typologie, dfa.bons_plans, 
+                            dfa.dispositions_speciales, dfa.service_enfants, dfa.service_cyclistes, 
+                            dfa.nouveaute_2020) AS sad
+                    GROUP BY sad.id_apidae, sad.type_apidae, sad.titre,sad.profil_c2g, sad.categorie_c2g,
+                        sad.adresse1, sad.adresse2, sad.code_postal, sad.ville,sad.altitude, sad.longitude, 
+                        sad.latitude, sad.telephone, sad.email, sad.site_web, sad.description_courte,
+                        sad.description_detaillee, sad.image, sad.publics, sad.tourisme_adapte, sad.payant, 
+                        sad.animaux_acceptes, sad.environnement, sad.equipement, sad.services, sad.periode, 
+                        sad.activites, sad.ouverture, sad.date_debut, sad.date_fin, sad.typologie, 
+                        sad.bons_plans, sad.dispositions_speciales, sad.service_enfants, sad.service_cyclistes, 
+                        sad.nouveaute_2020;
+                    """
+
+select_apidae_display_manual_entry = """
+                SELECT MIN(sad.id) AS id, sad.id_apidae, sad.type_apidae, sad.titre,
+                    array_to_string(array_agg(DISTINCT sad.id_selection), ', ') AS id_s,
+                    sad.profil_c2g, sad.categorie_c2g,
+                    sad.adresse1, sad.adresse2, sad.code_postal, sad.ville,sad.altitude, sad.longitude, 
+                    sad.latitude, sad.telephone, sad.email, sad.site_web, sad.description_courte,
+                    sad.description_detaillee, sad.image, sad.publics, sad.tourisme_adapte, sad.payant, 
+                    sad.animaux_acceptes, sad.environnement, sad.equipement, sad.services, sad.periode, 
+                    sad.activites, sad.ouverture, sad.date_debut, sad.date_fin, sad.typologie, 
+                    sad.bons_plans, sad.dispositions_speciales, sad.service_enfants, sad.service_cyclistes, 
+                    sad.nouveaute_2020, '' AS modifier, '' AS supprimer
+                FROM (
+                    SELECT MIN(dfa.id_data_from_apidae) AS id, dfa.id_apidae AS id_apidae,
+                        array_to_string(array_agg(DISTINCT dfa.id_selection), ', ') AS id_selection, 
+                        dfa.type_apidae AS type_apidae, dfa.titre AS titre,
+                        CASE 
+                            WHEN pae.id_data_from_apidae IS NULL THEN array_to_string(array_agg(DISTINCT p.profil), ', ')
+                            ELSE array_to_string(array_agg(DISTINCT pe.profil), ', ')
+                            END AS profil_c2g,
+                        CASE
+                            WHEN cae.id_data_from_apidae IS NULL THEN array_to_string(array_agg(DISTINCT c.category_name), ', ')
+                            ELSE array_to_string(array_agg(DISTINCT ce.category_name), ', ')
+                            END AS categorie_c2g,
+                        dfa.adresse1 AS adresse1, dfa.adresse2 AS adresse2, dfa.code_postal AS code_postal, 
+                        dfa.ville AS ville, dfa.altitude AS altitude, dfa.longitude AS longitude,
+                        dfa.latitude AS latitude, dfa.telephone AS telephone, dfa.email AS email, 
+                        dfa.site_web AS site_web, dfa.description_courte AS description_courte, 
+                        dfa.description_detaillee AS description_detaillee,
+                        dfa.image AS image, dfa.publics AS publics, dfa.tourisme_adapte AS tourisme_adapte, 
+                        dfa.payant AS payant, dfa.animaux_acceptes AS animaux_acceptes, dfa.environnement AS environnement, 
+                        dfa.equipement AS equipement, dfa.services AS services, dfa.periode AS periode, 
+                        dfa.activites AS activites, dfa.ouverture AS ouverture, dfa.date_debut AS date_debut, 
+                        dfa.date_fin AS date_fin, dfa.typologie AS typologie, dfa.bons_plans AS bons_plans, 
+                        dfa.dispositions_speciales AS dispositions_speciales, dfa.service_enfants AS service_enfants, 
+                        dfa.service_cyclistes AS service_cyclistes, dfa.nouveaute_2020 AS nouveaute_2020
+                        FROM data_from_apidae AS dfa
+                        LEFT JOIN category_apidae AS ca ON dfa.id_data_from_apidae = ca.id_data_from_apidae
+                        LEFT JOIN category AS c ON ca.id_category = c.id_category
+                        LEFT JOIN category_apidae_edited AS cae ON dfa.id_data_from_apidae = cae.id_data_from_apidae
+                        LEFT JOIN category AS ce ON cae.id_category = ce.id_category
+                        LEFT JOIN profil_apidae AS pa ON dfa.id_data_from_apidae = pa.id_data_from_apidae
+                        LEFT JOIN profil AS p ON pa.id_profil = p.id_profil
+                        LEFT JOIN profil_apidae_edited AS pae ON dfa.id_data_from_apidae = pae.id_data_from_apidae
+                        LEFT JOIN profil AS pe ON pae.id_profil = pe.id_profil
+                        WHERE dfa.id_selection=0
+                        GROUP BY dfa.id_apidae, dfa.type_apidae, dfa.titre,pae.id_data_from_apidae, cae.id_data_from_apidae,
+                            dfa.adresse1, dfa.adresse2, dfa.code_postal, dfa.ville,dfa.altitude, dfa.longitude, 
+                            dfa.latitude, dfa.telephone, dfa.email, dfa.site_web, dfa.description_courte,
+                            dfa.description_detaillee, dfa.image, dfa.publics, dfa.tourisme_adapte, dfa.payant, 
+                            dfa.animaux_acceptes, dfa.environnement, dfa.equipement, dfa.services, dfa.periode, 
+                            dfa.activites, dfa.ouverture, dfa.date_debut, dfa.date_fin, dfa.typologie, 
+                            dfa.bons_plans, dfa.dispositions_speciales, dfa.service_enfants, dfa.service_cyclistes, 
+                            dfa.nouveaute_2020) AS sad
+                GROUP BY sad.id_apidae, sad.type_apidae, sad.titre,sad.profil_c2g, sad.categorie_c2g,
+                    sad.adresse1, sad.adresse2, sad.code_postal, sad.ville,sad.altitude, sad.longitude, 
+                    sad.latitude, sad.telephone, sad.email, sad.site_web, sad.description_courte,
+                    sad.description_detaillee, sad.image, sad.publics, sad.tourisme_adapte, sad.payant, 
+                    sad.animaux_acceptes, sad.environnement, sad.equipement, sad.services, sad.periode, 
+                    sad.activites, sad.ouverture, sad.date_debut, sad.date_fin, sad.typologie, 
+                    sad.bons_plans, sad.dispositions_speciales, sad.service_enfants, sad.service_cyclistes, 
+                    sad.nouveaute_2020;
+                """
+
+select_apidae_category_display = """
+                                SELECT a.*, sc.id_category AS id_catégorie, 
+                                    array_to_string(array_agg(c.category_name), ', ') AS catégorie_ctg, 
+                                    '' AS modifir
+                                FROM data_from_apidae AS a
+                                LEFT JOIN selection_category AS sc
+                                ON a.id_selection = sc.id_selection
+                                LEFT JOIN category AS c
+                                ON sc.id_category=c.id_category
+                                GROUP BY a.id_data_from_apidae, a.*, sc.id_category
+                                ORDER BY id_data_from_apidae ASC;
+                                """
 
 select_apidae = """
                 SELECT *
@@ -809,7 +1054,8 @@ select_apidae = """
                 """
 
 select_apidae_selection_display = """
-                                    SELECT selection.description AS selection, data_from_apidae.*, '' as Modifier
+                                    SELECT selection.description AS selection, 
+                                        data_from_apidae.*, '' as Modifier
                                     FROM selection
                                     RIGHT JOIN data_from_apidae
                                     ON selection.id_selection = data_from_apidae.id_selection
@@ -817,23 +1063,29 @@ select_apidae_selection_display = """
                                 """
 
 select_apidae_1_id = """
-                    SELECT dfa.id_apidae AS id_apidae, dfa.type_apidae AS type_apidae, dfa.titre AS titre,
-                        array_agg(DISTINCT pa.id_profil) AS profil_c2g, array_agg(DISTINCT ca.id_category) AS sous_type,
-                        dfa.adresse1 AS adresse1, dfa.code_postal AS code_postal, dfa.ville AS ville, 
-                        dfa.longitude AS longitude, dfa.latitude AS latitude, dfa.telephone AS telephone, 
-                        dfa.email AS email, dfa.site_web AS site_web, dfa.description_detaillee AS description_detaillee,
-                        dfa.image AS image, dfa.publics AS publics, dfa.tourisme_adapte AS tourisme_adapte, 
-                        dfa.payant AS payant, dfa.environnement AS environnement, dfa.ouverture AS ouverture
-                    FROM data_from_apidae AS dfa
-                    LEFT JOIN category_apidae AS ca 
-                    ON dfa.id_data_from_apidae = ca.id_data_from_apidae
-                    LEFT JOIN profil_apidae AS pa
-                    ON dfa.id_data_from_apidae = pa.id_data_from_apidae
-                    WHERE dfa.id_data_from_apidae = %s
-                    GROUP BY dfa.id_apidae, dfa.type_apidae, dfa.titre, dfa.adresse1, dfa.code_postal, dfa.ville, 
-                        dfa.longitude, dfa.latitude, dfa.telephone, dfa.email, dfa.site_web, dfa.description_detaillee, 
-                        dfa.image, dfa.publics, dfa.tourisme_adapte, dfa.payant, dfa.environnement, dfa.ouverture
-                    LIMIT 1;
+                        SELECT dfa.id_apidae AS id_apidae, dfa.type_apidae AS type_apidae, dfa.titre AS titre,
+                            array_to_json(array_agg(DISTINCT pa.id_profil)) AS profil_c2g, 
+                            array_to_json(array_agg(DISTINCT ca.id_category)) AS categorie_c2g, 
+                            dfa.adresse1 AS adresse1, dfa.adresse2 AS adresse2, dfa.code_postal AS code_postal, 
+                            dfa.ville AS ville, dfa.altitude AS altitude, dfa.longitude AS longitude, 
+                            dfa.latitude AS latitude, dfa.telephone AS telephone, dfa.email AS email, 
+                            dfa.site_web AS site_web, dfa.description_courte AS description_courte,
+                            dfa.description_detaillee AS description_detaillee, dfa.image AS image, 
+                            dfa.publics AS publics, dfa.tourisme_adapte AS tourisme_adapte, 
+                            dfa.payant AS payant, dfa.environnement AS environnement, dfa.ouverture AS ouverture,
+                            dfa.date_debut AS date_debut, dfa.date_fin AS date_fin
+                        FROM data_from_apidae AS dfa
+                        LEFT JOIN category_apidae AS ca 
+                        ON dfa.id_data_from_apidae = ca.id_data_from_apidae
+                        LEFT JOIN profil_apidae AS pa
+                        ON dfa.id_data_from_apidae = pa.id_data_from_apidae
+                        WHERE dfa.id_data_from_apidae = %s
+                        GROUP BY dfa.id_apidae, dfa.type_apidae, dfa.titre, dfa.adresse1, dfa.adresse2, 
+                            dfa.code_postal, dfa.ville,dfa.altitude, dfa.longitude, dfa.latitude, 
+                            dfa.telephone, dfa.email, dfa.site_web, dfa.description_courte, 
+                            dfa.description_detaillee, dfa.image, dfa.publics, dfa.tourisme_adapte, 
+                            dfa.payant, dfa.environnement, dfa.ouverture, dfa.date_debut, dfa.date_fin
+                        LIMIT 1;
                     """
 
 select_apidae_with_id_apidae_and_selection = """
@@ -850,30 +1102,261 @@ select_apidae_with_categorie_list_and_profil_list = """
                                                     ON dfa.id_data_from_apidae = ca.id_data_from_apidae
                                                     LEFT JOIN profil_apidae AS pa
                                                     ON dfa.id_data_from_apidae = pa.id_data_from_apidae
+                                                    LEFT JOIN category_apidae_edited AS cae 
+                                                    ON dfa.id_data_from_apidae = cae.id_data_from_apidae
+                                                    LEFT JOIN profil_apidae_edited AS pae
+                                                    ON dfa.id_data_from_apidae = pae.id_data_from_apidae
                                                     WHERE pa.id_profil IN %s AND ca.id_category IN %s AND (
-                                                        dfa.longitude<>'NaN' AND dfa.latitude<>'NaN')
+                                                        dfa.longitude<>'NaN' AND dfa.latitude<>'NaN') AND 
+                                                    cae.id IS NULL AND pae.id IS NULL
                                                     GROUP BY dfa.id_apidae;
                                                     """
 
+select_apidae_with_categorie_list_edited_and_profil_list_edited = """
+                                                                    SELECT DISTINCT(dfa.id_apidae) AS id_apidae, 
+                                                                        MIN(dfa.id_data_from_apidae) AS id_data_from_apidae
+                                                                    FROM data_from_apidae as dfa
+                                                                    LEFT JOIN category_apidae_edited AS cae 
+                                                                    ON dfa.id_data_from_apidae = cae.id_data_from_apidae
+                                                                    LEFT JOIN profil_apidae_edited AS pae
+                                                                    ON dfa.id_data_from_apidae = pae.id_data_from_apidae
+                                                                    WHERE pae.id_profil IN %s AND cae.id_category IN %s AND (
+                                                                        dfa.longitude<>'NaN' AND dfa.latitude<>'NaN')
+                                                                    GROUP BY dfa.id_apidae;
+                                                                    """
+
+select_apidae_with_categorie_list_edited_and_profil_list = """
+                                                            SELECT DISTINCT(dfa.id_apidae) AS id_apidae, 
+                                                                MIN(dfa.id_data_from_apidae) AS id_data_from_apidae
+                                                            FROM data_from_apidae as dfa
+                                                            LEFT JOIN profil_apidae AS pa
+                                                            ON dfa.id_data_from_apidae = pa.id_data_from_apidae
+                                                            LEFT JOIN category_apidae_edited AS cae 
+                                                            ON dfa.id_data_from_apidae = cae.id_data_from_apidae
+                                                            LEFT JOIN profil_apidae_edited AS pae
+                                                            ON dfa.id_data_from_apidae = pae.id_data_from_apidae
+                                                            WHERE pa.id_profil IN %s AND cae.id_category IN %s AND (
+                                                                dfa.longitude<>'NaN' AND dfa.latitude<>'NaN') AND 
+                                                                pae.id IS NULL 
+                                                            GROUP BY dfa.id_apidae;
+                                                            """
+
+select_apidae_with_categorie_list_and_profil_list_edited = """
+                                                            SELECT DISTINCT(dfa.id_apidae) AS id_apidae, 
+                                                                MIN(dfa.id_data_from_apidae) AS id_data_from_apidae
+                                                            FROM data_from_apidae as dfa
+                                                            LEFT JOIN category_apidae AS ca 
+                                                            ON dfa.id_data_from_apidae = ca.id_data_from_apidae
+                                                            LEFT JOIN category_apidae_edited AS cae 
+                                                            ON dfa.id_data_from_apidae = cae.id_data_from_apidae
+                                                            LEFT JOIN profil_apidae_edited AS pae
+                                                            ON dfa.id_data_from_apidae = pae.id_data_from_apidae
+                                                            WHERE pae.id_profil IN %s AND ca.id_category IN %s AND (
+                                                                dfa.longitude<>'NaN' AND dfa.latitude<>'NaN') AND 
+                                                                cae.id IS NULL 
+                                                            GROUP BY dfa.id_apidae;
+                                                            """
+
 select_apidae_1_id_apidae = """
                             SELECT dfa.id_apidae AS id_apidae, dfa.type_apidae AS type_apidae, dfa.titre AS titre,
-                                array_agg(DISTINCT pa.id_profil) AS profil_c2g, array_agg(DISTINCT ca.id_category) AS sous_type, 
-                                dfa.adresse1 AS adresse1, dfa.code_postal AS code_postal, dfa.ville AS ville, 
+                                array_to_json(array_agg(DISTINCT pa.id_profil)) AS profil_c2g, 
+                                array_to_json(array_agg(DISTINCT ca.id_category)) AS categorie_c2g, 
+                                dfa.adresse1 AS adresse1, dfa.adresse2 AS adresse2, dfa.code_postal AS code_postal, 
+                                dfa.ville AS ville, dfa.altitude AS altitude,
                                 dfa.longitude AS longitude, dfa.latitude AS latitude, dfa.telephone AS telephone, 
-                                dfa.email AS email, dfa.site_web AS site_web, dfa.description_detaillee AS description_detaillee,
-                                dfa.image AS image, dfa.publics AS publics, dfa.tourisme_adapte AS tourisme_adapte, 
-                                dfa.payant AS payant, dfa.environnement AS environnement, dfa.ouverture AS ouverture
+                                dfa.email AS email, dfa.site_web AS site_web, dfa.description_courte AS description_courte, 
+                                dfa.description_detaillee AS description_detaillee, dfa.image AS image, 
+                                dfa.publics AS publics, dfa.tourisme_adapte AS tourisme_adapte, dfa.payant AS payant, 
+                                dfa.environnement AS environnement, dfa.ouverture AS ouverture,
+                                dfa.date_debut AS date_debut, dfa.date_fin AS date_fin
                             FROM data_from_apidae AS dfa
                             LEFT JOIN category_apidae AS ca 
                             ON dfa.id_data_from_apidae = ca.id_data_from_apidae
                             LEFT JOIN profil_apidae AS pa
                             ON dfa.id_data_from_apidae = pa.id_data_from_apidae
                             WHERE dfa.id_apidae = %s
-                            GROUP BY dfa.id_apidae, dfa.type_apidae, dfa.titre, dfa.adresse1, dfa.code_postal, 
-                                dfa.ville, dfa.longitude, dfa.latitude, dfa.telephone, dfa.email, dfa.site_web, 
-                                dfa.description_detaillee, dfa.image, dfa.publics, dfa.tourisme_adapte, dfa.payant, 
-                                dfa.environnement, dfa.ouverture
+                            GROUP BY dfa.id_apidae, dfa.type_apidae, dfa.titre, dfa.adresse1, dfa.adresse2, 
+                                dfa.code_postal, dfa.ville,dfa.altitude, dfa.longitude, dfa.latitude, 
+                                dfa.telephone, dfa.email, dfa.site_web, dfa.description_courte, 
+                                dfa.description_detaillee, dfa.image, dfa.publics, dfa.tourisme_adapte,
+                                dfa.payant, dfa.environnement, dfa.ouverture, dfa.date_debut, dfa.date_fin
                             LIMIT 1;
+                            """
+
+select_apidae_all_data = """
+                            SELECT MIN(dfa.id_data_from_apidae) AS id, dfa.id_apidae AS id_apidae,
+                                dfa.type_apidae AS type_apidae, dfa.titre AS titre,
+                                array_to_string(array_agg(DISTINCT p.profil), ', ', '*') AS profil_c2g, 
+                                array_to_string(array_agg(DISTINCT c.category_name), ', ', '*') AS categorie_c2g, 
+                                dfa.adresse1 AS adresse1, dfa.adresse2 AS adresse2, dfa.code_postal AS code_postal, 
+                                dfa.ville AS ville, dfa.altitude AS altitude, dfa.longitude AS longitude,
+                                dfa.latitude AS latitude, dfa.telephone AS telephone, dfa.email AS email, 
+                                dfa.site_web AS site_web, dfa.description_courte AS description_courte, 
+                                dfa.description_detaillee AS description_detaillee, dfa.image AS image, 
+                                dfa.publics AS publics, dfa.tourisme_adapte AS tourisme_adapte, 
+                                dfa.payant AS payant, dfa.environnement AS environnement, dfa.ouverture AS ouverture,
+                                dfa.date_debut AS date_debut, dfa.date_fin AS date_fin, '' AS modifier
+                            FROM data_from_apidae AS dfa
+                            LEFT JOIN category_apidae AS ca ON dfa.id_data_from_apidae = ca.id_data_from_apidae
+                            LEFT JOIN category AS c ON ca.id_category = c.id_category
+                            LEFT JOIN profil_apidae AS pa ON dfa.id_data_from_apidae = pa.id_data_from_apidae
+                            LEFT JOIN profil AS p ON pa.id_profil = p.id_profil
+                            GROUP BY dfa.id_apidae, dfa.type_apidae, dfa.titre, dfa.adresse1, 
+                                dfa.adresse2, dfa.code_postal, dfa.ville,dfa.altitude, dfa.longitude, 
+                                dfa.latitude, dfa.telephone, dfa.email, dfa.site_web, dfa.description_courte,
+                                dfa.description_detaillee, dfa.image, dfa.publics, dfa.tourisme_adapte,
+                                dfa.payant, dfa.environnement, dfa.ouverture, dfa.date_debut, dfa.date_fin;
+                            """
+
+select_apidae_all_data_with_data_edited = """
+                    SELECT MIN(dfa.id_data_from_apidae) AS id, dfa.id_apidae AS id_apidae, 
+                        dfa.type_apidae AS type_apidae, dfa.titre AS titre,
+                    CASE 
+                        WHEN pae.id_data_from_apidae IS NULL THEN array_to_string(array_agg(DISTINCT p.profil), ', ', '*')
+                        ELSE array_to_string(array_agg(DISTINCT pe.profil), ', ', '*')
+                        END AS profil_c2g,
+                    CASE
+                        WHEN cae.id_data_from_apidae IS NULL THEN array_to_string(array_agg(DISTINCT c.category_name), ', ', '*')
+                        ELSE array_to_string(array_agg(DISTINCT ce.category_name), ', ', '*')
+                        END AS categorie_c2g, 
+                        dfa.adresse1 AS adresse1, dfa.adresse2 AS adresse2, dfa.code_postal AS code_postal,
+                        dfa.ville AS ville, dfa.altitude AS altitude, dfa.longitude AS longitude,
+                        dfa.latitude AS latitude, dfa.telephone AS telephone, dfa.email AS email, 
+                        dfa.site_web AS site_web, dfa.description_courte AS description_courte, 
+                        dfa.description_detaillee AS description_detaillee,
+                        dfa.image AS image, dfa.publics AS publics, dfa.tourisme_adapte AS tourisme_adapte, 
+                        dfa.payant AS payant, dfa.environnement AS environnement, dfa.ouverture AS ouverture,
+                        dfa.date_debut AS date_debut, dfa.date_fin AS date_fin, '' AS modifier
+                    FROM data_from_apidae AS dfa
+                    LEFT JOIN category_apidae AS ca ON dfa.id_data_from_apidae = ca.id_data_from_apidae
+                    LEFT JOIN category AS c ON ca.id_category = c.id_category
+                    LEFT JOIN category_apidae_edited AS cae ON dfa.id_data_from_apidae = cae.id_data_from_apidae
+                    LEFT JOIN category AS ce ON cae.id_category = ce.id_category
+                    LEFT JOIN profil_apidae AS pa ON dfa.id_data_from_apidae = pa.id_data_from_apidae
+                    LEFT JOIN profil AS p ON pa.id_profil = p.id_profil
+                    LEFT JOIN profil_apidae_edited AS pae ON dfa.id_data_from_apidae = pae.id_data_from_apidae
+                    LEFT JOIN profil AS pe ON pae.id_profil = pe.id_profil
+                    GROUP BY dfa.id_apidae, dfa.type_apidae, dfa.titre,
+                        pae.id_data_from_apidae, cae.id_data_from_apidae,
+                        dfa.adresse1, dfa.adresse2, dfa.code_postal, dfa.ville,dfa.altitude, dfa.longitude,
+                        dfa.latitude, dfa.telephone, dfa.email, dfa.site_web, dfa.description_courte,
+                        dfa.description_detaillee, dfa.image, dfa.publics, dfa.tourisme_adapte, dfa.payant, 
+                        dfa.environnement, dfa.ouverture, dfa.date_debut, dfa.date_fin;
+                    """
+
+select_apidae_1_id_with_data_edited = """
+                                        SELECT MIN(dfa.id_data_from_apidae) AS id, dfa.id_apidae AS id_apidae, 
+                                            dfa.type_apidae AS type_apidae, dfa.titre AS titre,
+                                        CASE 
+                                            WHEN pae.id_data_from_apidae IS NULL THEN array_agg(DISTINCT p.id_profil)
+                                            ELSE array_agg(DISTINCT pe.id_profil)
+                                            END AS profil_c2g,
+                                        CASE
+                                            WHEN cae.id_data_from_apidae IS NULL THEN array_agg(DISTINCT c.id_category)
+                                            ELSE array_agg(DISTINCT ce.id_category)
+                                            END AS categorie_c2g, 
+                                            dfa.adresse1 AS adresse1, dfa.adresse2 AS adresse2, dfa.code_postal AS code_postal, 
+                                            dfa.ville AS ville, dfa.altitude AS altitude, dfa.longitude AS longitude,
+                                            dfa.latitude AS latitude, dfa.telephone AS telephone, dfa.email AS email, 
+                                            dfa.site_web AS site_web, dfa.description_courte AS description_courte, 
+                                            dfa.description_detaillee AS description_detaillee,
+                                            dfa.image AS image, dfa.publics AS publics, dfa.tourisme_adapte AS tourisme_adapte, 
+                                            dfa.payant AS payant, dfa.environnement AS environnement, dfa.ouverture AS ouverture,
+                                            dfa.date_debut AS date_debut, dfa.date_fin AS date_fin, '' AS modifier
+                                        FROM data_from_apidae AS dfa
+                                        LEFT JOIN category_apidae AS ca ON dfa.id_data_from_apidae = ca.id_data_from_apidae
+                                        LEFT JOIN category AS c ON ca.id_category = c.id_category
+                                        LEFT JOIN category_apidae_edited AS cae ON dfa.id_data_from_apidae = cae.id_data_from_apidae
+                                        LEFT JOIN category AS ce ON cae.id_category = ce.id_category
+                                        LEFT JOIN profil_apidae AS pa ON dfa.id_data_from_apidae = pa.id_data_from_apidae
+                                        LEFT JOIN profil AS p ON pa.id_profil = p.id_profil
+                                        LEFT JOIN profil_apidae_edited AS pae ON dfa.id_data_from_apidae = pae.id_data_from_apidae
+                                        LEFT JOIN profil AS pe ON pae.id_profil = pe.id_profil
+                                        WHERE dfa.id_data_from_apidae = %s
+                                        GROUP BY dfa.id_apidae, dfa.type_apidae, dfa.titre,
+                                            pae.id_data_from_apidae, cae.id_data_from_apidae,
+                                            dfa.adresse1, dfa.adresse2, dfa.code_postal, dfa.ville,dfa.altitude, dfa.longitude,
+                                            dfa.latitude, dfa.telephone, dfa.email, dfa.site_web, dfa.description_courte,
+                                            dfa.description_detaillee, dfa.image, dfa.publics, dfa.tourisme_adapte, dfa.payant, 
+                                            dfa.environnement, dfa.ouverture, dfa.date_debut, dfa.date_fin;
+                                        """
+
+select_apidae_1_id_apidae_with_data_edited = """
+                                    SELECT MIN(sad.id) AS id, sad.id_apidae, sad.type_apidae, sad.titre,
+                                        sad.profil_c2g, sad.categorie_c2g, sad.adresse1, sad.adresse2, sad.code_postal, 
+                                        sad.ville,sad.altitude, sad.longitude, sad.latitude, sad.telephone, sad.email, 
+                                        sad.site_web, sad.description_courte, sad.description_detaillee, sad.image, 
+                                        sad.publics, sad.tourisme_adapte, sad.payant, 
+                                        sad.environnement, sad.ouverture, sad.date_debut, sad.date_fin
+                                        FROM (SELECT MIN(dfa.id_data_from_apidae) AS id, dfa.id_apidae AS id_apidae, 
+                                            dfa.type_apidae AS type_apidae, dfa.titre AS titre,
+                                        CASE 
+                                            WHEN pae.id_data_from_apidae IS NULL THEN array_agg(DISTINCT p.id_profil)
+                                            ELSE array_agg(DISTINCT pe.id_profil)
+                                            END AS profil_c2g,
+                                        CASE
+                                            WHEN cae.id_data_from_apidae IS NULL THEN array_agg(DISTINCT c.id_category)
+                                            ELSE array_agg(DISTINCT ce.id_category)
+                                            END AS categorie_c2g, 
+                                            dfa.adresse1 AS adresse1, dfa.adresse2 AS adresse2, dfa.code_postal AS code_postal, 
+                                            dfa.ville AS ville, dfa.altitude AS altitude, dfa.longitude AS longitude,
+                                            dfa.latitude AS latitude, dfa.telephone AS telephone, dfa.email AS email, 
+                                            dfa.site_web AS site_web, dfa.description_courte AS description_courte, 
+                                            dfa.description_detaillee AS description_detaillee,
+                                            dfa.image AS image, dfa.publics AS publics, dfa.tourisme_adapte AS tourisme_adapte, 
+                                            dfa.payant AS payant, dfa.environnement AS environnement, dfa.ouverture AS ouverture,
+                                            dfa.date_debut AS date_debut, dfa.date_fin AS date_fin
+                                        FROM data_from_apidae AS dfa
+                                        LEFT JOIN category_apidae AS ca ON dfa.id_data_from_apidae = ca.id_data_from_apidae
+                                        LEFT JOIN category AS c ON ca.id_category = c.id_category
+                                        LEFT JOIN category_apidae_edited AS cae ON dfa.id_data_from_apidae = cae.id_data_from_apidae
+                                        LEFT JOIN category AS ce ON cae.id_category = ce.id_category
+                                        LEFT JOIN profil_apidae AS pa ON dfa.id_data_from_apidae = pa.id_data_from_apidae
+                                        LEFT JOIN profil AS p ON pa.id_profil = p.id_profil
+                                        LEFT JOIN profil_apidae_edited AS pae ON dfa.id_data_from_apidae = pae.id_data_from_apidae
+                                        LEFT JOIN profil AS pe ON pae.id_profil = pe.id_profil
+                                        WHERE dfa.id_apidae = %s
+                                        GROUP BY dfa.id_apidae, dfa.type_apidae, dfa.titre,
+                                            pae.id_data_from_apidae, cae.id_data_from_apidae,
+                                            dfa.adresse1, dfa.adresse2, dfa.code_postal, dfa.ville,dfa.altitude, dfa.longitude,
+                                            dfa.latitude, dfa.telephone, dfa.email, dfa.site_web, dfa.description_courte,
+                                            dfa.description_detaillee, dfa.image, dfa.publics, dfa.tourisme_adapte, dfa.payant, 
+                                            dfa.environnement, dfa.ouverture, dfa.date_debut, dfa.date_fin) AS sad
+                                    GROUP BY sad.id_apidae, sad.type_apidae, sad.titre,sad.profil_c2g, sad.categorie_c2g,
+                                        sad.adresse1, sad.adresse2, sad.code_postal, sad.ville,sad.altitude, sad.longitude, 
+                                        sad.latitude, sad.telephone, sad.email, sad.site_web, sad.description_courte,
+                                        sad.description_detaillee, sad.image, sad.publics, sad.tourisme_adapte, sad.payant, 
+                                        sad.environnement, sad.ouverture, sad.date_debut, sad.date_fin;
+                                        """
+
+select_apidae_edit = """
+                    SELECT MIN(apidae.id_data_from_apidae) AS id, apidae.id_apidae AS id_apidae, apidae.titre AS titre,
+                        array_to_string(array_agg(DISTINCT p.profil), ', ') AS profil_c2g,
+                        array_to_string(array_agg(DISTINCT c.category_name), ', ') AS categorie_c2g
+                    FROM data_from_apidae AS apidae
+                    LEFT JOIN category_apidae AS ca ON apidae.id_data_from_apidae = ca.id_data_from_apidae
+                    LEFT JOIN category AS c ON ca.id_category = c.id_category
+                    LEFT JOIN profil_apidae AS pa ON apidae.id_data_from_apidae = pa.id_data_from_apidae
+                    LEFT JOIN profil AS p ON pa.id_profil = p.id_profil
+                    WHERE apidae.id_apidae=(SELECT id_apidae FROM data_from_apidae WHERE id_data_from_apidae=%s)
+                    GROUP BY apidae.id_apidae, apidae.titre;
+                    """
+
+select_apidae_all_id_for_same_id_apidae = """
+                                            SELECT id_data_from_apidae
+                                            FROM data_from_apidae
+                                            WHERE id_apidae IN (
+                                                SELECT id_apidae 
+                                                FROM data_from_apidae 
+                                                WHERE id_data_from_apidae=%s
+                                                )
+                                            ORDER BY id_data_from_apidae ASC;
+                                            """
+
+select_count_manual_entry = """
+                            SELECT count(id_data_from_apidae) AS nb_manual_entry
+                            FROM data_from_apidae
+                            WHERE id_selection=0;
                             """
 
 delete_apidae_project_id = """
@@ -882,5 +1365,12 @@ delete_apidae_project_id = """
                             WHERE id_selection IN (
                                 SELECT id_data_from_apidae
                                 FROM selection
-                                WHERE id_project=%s);
+                                WHERE id_project=%s
+                                );
                             """
+
+delete_manual_entry = """
+                        DELETE 
+                        FROM data_from_apidae 
+                        WHERE id_data_from_apidae=%s; 
+                        """

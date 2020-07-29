@@ -1,6 +1,6 @@
 """ ----------------------------
 Creation date : 2020-04-02
-Last update   : 2020-07-06
+Last update   : 2020-07-24
 ----------------------------"""
 # _______________________________________________________________________
 
@@ -27,6 +27,10 @@ from threading import Thread
 import time
 import queue
 
+# For log management
+import logging
+from LoggerModule.FileLogger import FileLogger as FileLogger
+
 # My functions
 import Table_selection as slc
 from transformation import transformation
@@ -35,13 +39,13 @@ from transformation import transformation
 
 
 def retrieve_data_by_id(project_ID, api_KEY, select_id, selectionId, id_selection, categories_list, element_reference_by_profil_dict, element_reference_by_category_dict):
-    result_df = pd.DataFrame(columns=['id_apidae', 'id_selection', 'type_apidae', 'titre', 'profil_c2g', 'sous_type',
-                                      'adresse1', 'adresse2', 'code_postal', 'ville', 'altitude', 'latitude',
-                                      'longitude', 'telephone', 'email', 'site_web', 'description_courte',
-                                      'description_detaillee', 'image', 'publics', 'tourisme_adapte', 'payant',
-                                      'animaux_acceptes', 'environnement', 'equipement', 'services', 'periode',
-                                      'activites', 'ouverture', 'typologie', 'bons_plans', 'dispositions_speciales',
-                                      'service_enfants', 'service_cyclistes', 'nouveaute_2020'])
+    result_df = pd.DataFrame(columns=['id_apidae', 'id_selection', 'type_apidae', 'titre', 'profil_c2g', 'categorie_c2g',
+                                      'adresse1', 'adresse2', 'code_postal', 'ville', 'altitude', 'latitude', 'longitude',
+                                      'telephone', 'email', 'site_web', 'description_courte', 'description_detaillee',
+                                      'image', 'publics', 'tourisme_adapte', 'payant', 'animaux_acceptes', 'environnement',
+                                      'equipement', 'services', 'periode', 'activites', 'ouverture', 'date_debut',
+                                      'date_fin', 'typologie', 'bons_plans', 'dispositions_speciales', 'service_enfants',
+                                      'service_cyclistes', 'nouveaute_2020'])
 
     url = 'http://api.apidae-tourisme.com/api/v002/objet-touristique/get-by-id/' + select_id + '?'
     url += "responseFields=id,nom,informations,presentation.descriptifCourt,@all"
@@ -51,14 +55,10 @@ def retrieve_data_by_id(project_ID, api_KEY, select_id, selectionId, id_selectio
     req = re.json()
 
     transfo = transformation(
-        req, [5154, 6143], categories_list=categories_list, element_reference_by_profil_dict=element_reference_by_profil_dict, element_reference_by_category_dict=element_reference_by_category_dict)
+        req, categories_list=categories_list, element_reference_by_profil_dict=element_reference_by_profil_dict, element_reference_by_category_dict=element_reference_by_category_dict)
     transfo.Execute()
     dict_for_id = transfo.dict_id()
-    # if 596 in transfo.list_elements_de_references():
-    #     print(dict_for_id['id_apidae'], transfo.list_elements_de_references(
-    #     ), "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-    # # print(transfo.special_elements_descriptions())
-    # print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+    del transfo
 
     dict_for_id['id_selection'] = id_selection
     result_df = result_df.append(dict_for_id, ignore_index=True)
@@ -66,43 +66,19 @@ def retrieve_data_by_id(project_ID, api_KEY, select_id, selectionId, id_selectio
 # _______________________________________________________________________
 
 
-# def retrieve_data_by_id_light(project_ID, api_KEY, select_id):
-
-#     result_df = pd.DataFrame(
-#         columns=['id_apidae', 'Type_Apidae', 'Titre'])
-
-#     url = 'http://api.apidae-tourisme.com/api/v002/objet-touristique/get-by-id/' + select_id + '?'
-#     url += "responseFields=id,nom,informations,presentation.descriptifCourt,@all"
-#     url += '&apiKey='+api_KEY
-#     url += '&projetId='+project_ID
-
-#     re = requests.get(url)
-#     req = re.json()
-
-#     dict_for_id = {}
-#     dict_for_id['id_apidae'] = req['gestion']['membreProprietaire']['type']['id']
-#     dict_for_id['Titre'] = req['gestion']['membreProprietaire']['nom']
-#     dict_for_id['types'] = req['type']
-
-#     result_df = result_df.append(dict_for_id, ignore_index=True)
-#     return result_df
-
-
-# _______________________________________________________________________
-
 count_ = "100"              # "count":20
 first = "0"                 # start from 0
 
 
 def retrive_data_by_selectionId(project_ID, api_KEY, selectionId, id_selection, categories_list, element_reference_by_profil_dict, element_reference_by_category_dict):
     import pandas as pd
-    result_df = pd.DataFrame(columns=['id_apidae', 'id_selection', 'type_apidae', 'titre', 'profil_c2g', 'sous_type',
-                                      'adresse1', 'adresse2', 'code_postal', 'ville', 'altitude', 'latitude',
-                                      'longitude', 'telephone', 'email', 'site_web', 'description_courte',
-                                      'description_detaillee', 'image', 'publics', 'tourisme_adapte', 'payant',
-                                      'animaux_acceptes', 'environnement', 'equipement', 'services', 'periode',
-                                      'activites', 'ouverture', 'typologie', 'bons_plans', 'dispositions_speciales',
-                                      'service_enfants', 'service_cyclistes', 'nouveaute_2020'])
+    result_df = pd.DataFrame(columns=['id_apidae', 'id_selection', 'type_apidae', 'titre', 'profil_c2g', 'categorie_c2g',
+                                      'adresse1', 'adresse2', 'code_postal', 'ville', 'altitude', 'latitude', 'longitude',
+                                      'telephone', 'email', 'site_web', 'description_courte', 'description_detaillee',
+                                      'image', 'publics', 'tourisme_adapte', 'payant', 'animaux_acceptes', 'environnement',
+                                      'equipement', 'services', 'periode', 'activites', 'ouverture', 'date_debut',
+                                      'date_fin', 'typologie', 'bons_plans', 'dispositions_speciales', 'service_enfants',
+                                      'service_cyclistes', 'nouveaute_2020'])
 
     url = 'http://api.apidae-tourisme.com/api/v002/recherche/list-objets-touristiques?query={'
     url += '"projetId":"'+project_ID+'",'
@@ -120,6 +96,13 @@ def retrive_data_by_selectionId(project_ID, api_KEY, selectionId, id_selection, 
             result_df = result_df.append(retrive_data_by_selectionId_by_cent(
                 project_ID, api_KEY, selectionId, id_selection, categories_list, element_reference_by_profil_dict, element_reference_by_category_dict, count*i, count))
             i += 1
+        nb_data_retrieved = len(result_df.index)
+        if nb_object == nb_data_retrieved:
+            FileLogger.log(
+                logging.DEBUG, f"{nb_object} data expected and {nb_data_retrieved} obtained for url {url} !!!")
+        else:
+            FileLogger.log(
+                logging.ERROR, f"{nb_object} data expected and {nb_data_retrieved} obtained for url {url} !!!")
     except ValueError:
         print("problème d'extraction")
     return result_df
@@ -128,13 +111,13 @@ def retrive_data_by_selectionId(project_ID, api_KEY, selectionId, id_selection, 
 
 def retrive_data_by_selectionId_by_cent(project_ID, api_KEY, selectionId, id_selection, categories_list, element_reference_by_profil_dict, element_reference_by_category_dict, first, count):
     import pandas as pd
-    result_df = pd.DataFrame(columns=['id_apidae', 'id_selection', 'type_apidae', 'titre', 'profil_c2g', 'sous_type',
-                                      'adresse1', 'adresse2', 'code_postal', 'ville', 'altitude', 'latitude',
-                                      'longitude', 'telephone', 'email', 'site_web', 'description_courte',
-                                      'description_detaillee', 'image', 'publics', 'tourisme_adapte', 'payant',
-                                      'animaux_acceptes', 'environnement', 'equipement', 'services', 'periode',
-                                      'activites', 'ouverture', 'typologie', 'bons_plans', 'dispositions_speciales',
-                                      'service_enfants', 'service_cyclistes', 'nouveaute_2020'])
+    result_df = pd.DataFrame(columns=['id_apidae', 'id_selection', 'type_apidae', 'titre', 'profil_c2g', 'categorie_c2g',
+                                      'adresse1', 'adresse2', 'code_postal', 'ville', 'altitude', 'latitude', 'longitude',
+                                      'telephone', 'email', 'site_web', 'description_courte', 'description_detaillee',
+                                      'image', 'publics', 'tourisme_adapte', 'payant', 'animaux_acceptes', 'environnement',
+                                      'equipement', 'services', 'periode', 'activites', 'ouverture', 'date_debut',
+                                      'date_fin', 'typologie', 'bons_plans', 'dispositions_speciales', 'service_enfants',
+                                      'service_cyclistes', 'nouveaute_2020'])
 
     url = 'http://api.apidae-tourisme.com/api/v002/recherche/list-objets-touristiques?query={'
     url += '"projetId":"'+project_ID+'",'
@@ -159,21 +142,22 @@ def retrive_data_by_selectionId_by_cent(project_ID, api_KEY, selectionId, id_sel
         while not que.empty():
             df = que.get()
             result_df = result_df.append(df)
-    except:
+    except Exception as error:
         print("problème d'extraction by cent")
+        print("selectionId_by_cent: ", error)
     return result_df
 # _______________________________________________________________________
 
 
 def retrive_data_by_multiple_selectionId(project_ID, api_KEY, dict_selectionId):
     import pandas as pd
-    result_df = pd.DataFrame(columns=['id_apidae', 'id_selection', 'type_apidae', 'titre', 'profil_c2g', 'sous_type',
-                                      'adresse1', 'adresse2', 'code_postal', 'ville', 'altitude', 'latitude',
-                                      'longitude', 'telephone', 'email', 'site_web', 'description_courte',
-                                      'description_detaillee', 'image', 'publics', 'tourisme_adapte', 'payant',
-                                      'animaux_acceptes', 'environnement', 'equipement', 'services', 'periode',
-                                      'activites', 'ouverture', 'typologie', 'bons_plans', 'dispositions_speciales',
-                                      'service_enfants', 'service_cyclistes', 'nouveaute_2020'])
+    result_df = pd.DataFrame(columns=['id_apidae', 'id_selection', 'type_apidae', 'titre', 'profil_c2g', 'categorie_c2g',
+                                      'adresse1', 'adresse2', 'code_postal', 'ville', 'altitude', 'latitude', 'longitude',
+                                      'telephone', 'email', 'site_web', 'description_courte', 'description_detaillee',
+                                      'image', 'publics', 'tourisme_adapte', 'payant', 'animaux_acceptes', 'environnement',
+                                      'equipement', 'services', 'periode', 'activites', 'ouverture', 'date_debut',
+                                      'date_fin', 'typologie', 'bons_plans', 'dispositions_speciales', 'service_enfants',
+                                      'service_cyclistes', 'nouveaute_2020'])
     for key in dict_selectionId:
         result_df = result_df.append(
             retrive_data_by_selectionId(project_ID, api_KEY, dict_selectionId[key], key))

@@ -14,7 +14,6 @@ insert_relation_selection_profil = """
                                     VALUES (%s,%s);
                                     """
 
-
 delete_relation_selection_profil = """
                                     DELETE 
                                     FROM selection_profil

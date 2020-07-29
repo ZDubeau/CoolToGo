@@ -24,6 +24,8 @@ import Table_relation_eltref_prf
 import Table_relation_eltref_ctg
 import Table_relation_profil_data_from_apidae
 import Table_relation_category_data_from_apidae
+import Table_relation_category_apidae_edited
+import Table_relation_profil_apidae_edited
 from DB_Connexion import DB_connexion
 # _______________________________________________________________________
 
@@ -49,7 +51,9 @@ full_actions_list = (
     Table_message.message,
     Table_elementReference.elementRef,
     Table_project.project,
+    Table_project.default_project_for_manual_entry,
     Table_selection.selection,
+    Table_selection.default_selection_for_manual_entry,
     Table_extraction.selection_extraction,
     Table_Apidae.apidae,
     Table_category.category,
@@ -65,8 +69,9 @@ full_actions_list = (
     Table_freshness.freshness_level
 )
 
+
 if __name__ == "__main__":
     connexion = DB_connexion()
     for value in full_actions_list:
         connexion.Insert_SQL(value)
-    connexion.close()
+    del connexion

@@ -1694,7 +1694,7 @@ pre code {
   width: auto;
   vertical-align: top;
   border-top: 1px solid #dee2e6;
-  text-align: center;
+  text-align: left;
 }
 .table thead th {
   vertical-align: bottom;
@@ -1723,6 +1723,7 @@ pre code {
 .table-bordered thead th,
 .table-bordered thead td {
   border-bottom-width: 2px;
+  background-color: #96b7bd52;     /* header CoolToGo */
 }
 
 .table-borderless th,
@@ -1999,6 +2000,7 @@ pre code {
 }
 .table-responsive > .table-bordered {
   border: 0;
+  
 }
 
 .form-control {
@@ -2057,7 +2059,7 @@ pre code {
   opacity: 1;
 }
 .form-control:disabled, .form-control[readonly] {
-  background-color: #e9ecef;
+  background-color: #edf0f3;    /*Manual change for project Cool To Go */
   opacity: 1;
 }
 
@@ -9918,6 +9920,7 @@ blockquote {
 
   thead {
     display: table-header-group;
+    background-color: burlywood;
   }
 
   tr,
@@ -9963,7 +9966,7 @@ h3 {
   .table td,
 .table th {
     background-color: #fff !important;
-    
+    /* text-align: center; */
   }
 
   .table-bordered th,

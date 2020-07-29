@@ -1,7 +1,9 @@
+<!-- LAST UPDATE: 27 JULY 2020 -->
+
 {% extends "layout.html" %}
 {% block bootstrap_2 %}
 <div class="card-header"
-    style="background-color: #01289fe3; color: #d0eeed; border-radius: 4px 4px 0px 0px; font-size: large; font-weight: bold;">
+    style="background-color: #01289fe3; color: #d0eeed; border-radius: 4px 4px 0px 0px; font-size: medium; font-weight: bold;">
     Element Reference
 </div>
 <div class="card-body" style="border-radius: 0px 0px 4px 4px;background-color: #1778b825;">
@@ -22,8 +24,9 @@
     <div class="form-row" style="transform: translate(5px, 0px);">
         <div class="custom-file" style="width: 30%;">
             <input type="file" name="file" class="custom-file-input" id="validatedCustomFile" required>
-            <label class="custom-file-label" for="validatedCustomFile">Choississez votre
-                fichier</label>
+            <label class="custom-file-label" for="validatedCustomFile">
+                Choississez votre fichier
+            </label>
         </div>
         <div class="field is-grouped is-grouped-left">
             <div class="control">
@@ -32,20 +35,10 @@
                     style="background-color: #01289f; border-radius: 5px;border-width: 0;border-color: #01289f;padding: 0 20px;margin-left: 15px;font-size: 15px;color: #d0eeed;">Upload</button>
             </div>
         </div>
-    </div>
-</form>
-<div class="column" style="margin-left: 0 !important;transform: translate(-15px, 0px)">
-    <div class="form-row" style="display: inherit;">
-        <!-- <div class="container-fluid" style="transform: translate(-20px, 8px);"> -->
-        <div class="row justify-content-md-center">
-            <div class="col-md-auto" style="transform: translate(-165px, 20px);">
-                <div class="-md-auto control">
-                    <a href='/delete_elt_ref_not_used' class="btn btn-outline-light"
-                        style="color: #01289f;border-color: #01289f;">Supprimer les elements de réferences non
-                        liés</a>
-                </div>
-            </div>
+        <div class="-md-auto control" style="transform: translate(15px, 0px);">
+            <a href='/delete_elt_ref_not_used' class="btn btn-outline-light"
+                style="color: #01289f;border-color: #01289f;">Supprimer les elements de réferences non liés</a>
         </div>
     </div>
-</div>
+</form>
 {% endblock bootstrap_2 %}

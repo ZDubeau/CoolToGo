@@ -1,3 +1,5 @@
+<!-- LAST UPDATE: 27 JULY 2020 -->
+
 {% extends "layout.html" %}
 {% block bootstrap_2 %}
 <section id="app" class="hero is-fullheight">
@@ -12,8 +14,7 @@
                     <form action="/edit_selection_post" method="post">
                         <div class="form-row">
                             <div class="col-md-2">
-                                <label class="label" style="font-size: 17px;color: #01289f;">ID
-                                    selection</label>
+                                <label class="label" style="font-size: 17px;color: #01289f;">ID selection</label>
                                 <input type="text" name="selection" class="form-control" value="{{selection}}" readonly>
                             </div>
                             <div class="col-md-3">
@@ -31,8 +32,6 @@
                                             <div class="card-header"
                                                 style="font-size: 17px;font-weight: 600;color: #d0eeed;background-color: #01289fe3;">
                                                 Catégorie(s)</div>
-                                            <!-- <label class="label"
-                                            style="padding-top: 15px;font-size: 17px;color: #01289f;">Catégorie(s)</label> -->
                                             {% for line in categories  %}
                                             {% if line[2] == None %}
                                             <label class="customcheck"

@@ -81,11 +81,17 @@ class Selection():
             return
         self.__id_project = id_project
         self.__connexion = DB_connexion()
-        self.__instance = self.__connexion.instance()
         data = self.__connexion.Query_SQL_fetchone(
             prj.select_project_with_id, [self.__id_project])
         self.__project_ID = data[0]
         self.__api_KEY = data[1]
+
+    def __del__(self):
+        del self.__connexion
+
+        FileLogger.log(
+            logging.DEBUG, "Destruction of Selection class instance")
+        pass
 
     def __Create(self, selection=[]):
         """Insertion des sélections dans la table des selections 
@@ -101,18 +107,20 @@ class Selection():
                 autoload=True,
                 autoload_with=self.__connexion.engine()
             )
-            with self.__instance.connect():
-                lines = self.__instance.execute(
-                    tInfo_selection.insert(None),
-                    [
-                        {
-                            'id_project': self.__id_project,
-                            'selection': aselection.selection,
-                            'description': aselection.description,
-                        } for aselection in selection
-                    ]
-                )
 
+            lines = self.__connexion.engine().connect().execute(
+                tInfo_selection.insert(None),
+                [
+                    {
+                        'id_project': self.__id_project,
+                        'selection': aselection.selection,
+                        'description': aselection.description,
+                    } for aselection in selection
+                ]
+            )
+            nb_connexion = self.__connexion.number_connections()
+            FileLogger.log(
+                logging.DEBUG, f"New instance created, number of connexion : {nb_connexion}")
             FileLogger.log(
                 logging.DEBUG, f"{lines.rowcount} selection(s) for project_ID: {self.__id_project} inserted!")
         except Exception:
@@ -132,27 +140,28 @@ class Selection():
             )
 
             dico_selection = {}
-            with self.__instance.connect():
 
-                query = sqlalchemy.select([tInfo_selection]).where(sqlalchemy.and_(
-                    tInfo_selection.c.id_project == self.__id_project,)
-                ).distinct()
+            query = sqlalchemy.select([tInfo_selection]).where(sqlalchemy.and_(
+                tInfo_selection.c.id_project == self.__id_project,)
+            ).distinct()
 
-                result = self.__instance.execute(query)
+            result = self.__connexion.engine().connect().execute(query)
+            nb_connexion = self.__connexion.number_connections()
+            FileLogger.log(
+                logging.DEBUG, f"New instance created, number of connexion : {nb_connexion}")
+            if result.rowcount == 0:
+                return dico_selection
+            for row in result:
+                aselection = selectionModel(
+                    row[tInfo_selection.c.id_project],
+                    row[tInfo_selection.c.selection],
+                    row[tInfo_selection.c.description]
+                )
+                key = "{0}_#_{1}".format(
+                    aselection.id_project, aselection.selection)
 
-                if result.rowcount == 0:
-                    return dico_selection
-                for row in result:
-                    aselection = selectionModel(
-                        row[tInfo_selection.c.id_project],
-                        row[tInfo_selection.c.selection],
-                        row[tInfo_selection.c.description]
-                    )
-                    key = "{0}_#_{1}".format(
-                        aselection.id_project, aselection.selection)
-
-                    if not key in dico_selection:
-                        dico_selection[key] = aselection
+                if not key in dico_selection:
+                    dico_selection[key] = aselection
 
             return dico_selection
 
@@ -175,26 +184,27 @@ class Selection():
                 autoload_with=self.__connexion.engine()
             )
 
-            with self.__instance.connect():
-
-                query = tInfo_selection.update(None).where(
-                    sqlalchemy.and_(
-                        tInfo_selection.c.id_project == int(self.__id_project),
-                        tInfo_selection.c.selection == sqlalchemy.bindparam(
-                            'c_selection'),
-                    )
-                ).values(
-                    description=sqlalchemy.bindparam('description'),
+            query = tInfo_selection.update(None).where(
+                sqlalchemy.and_(
+                    tInfo_selection.c.id_project == int(self.__id_project),
+                    tInfo_selection.c.selection == sqlalchemy.bindparam(
+                        'c_selection'),
                 )
+            ).values(
+                description=sqlalchemy.bindparam('description'),
+            )
 
-                lines = self.__instance.execute(query,
-                                                [
-                                                    {
-                                                        'c_selection': str(aselection.selection),
-                                                        'description': aselection.description,
-                                                    } for aselection in selection
-                                                ]
-                                                )
+            lines = self.__connexion.engine().connect().execute(query,
+                                                                [
+                                                                    {
+                                                                        'c_selection': str(aselection.selection),
+                                                                        'description': aselection.description,
+                                                                    } for aselection in selection
+                                                                ]
+                                                                )
+            nb_connexion = self.__connexion.number_connections()
+            FileLogger.log(
+                logging.DEBUG, f"New instance created, number of connexion : {nb_connexion}")
             FileLogger.log(
                 logging.DEBUG, f"{lines.rowcount} selection(s) for project_ID: {self.__id_project} updated!")
 
@@ -214,18 +224,20 @@ class Selection():
                 autoload_with=self.__connexion.engine()
             )
 
-            with self.__instance.connect():
-                lines = 0
-                for aselection in selection:
-                    selection = re.split(r'_#_', aselection)[1]
-                    query = tInfo_selection.delete(None).where(
-                        sqlalchemy.and_(
-                            tInfo_selection.c.id_project == self.__id_project,
-                            tInfo_selection.c.selection == selection
-                        )
+            lines = 0
+            for aselection in selection:
+                selection = re.split(r'_#_', aselection)[1]
+                query = tInfo_selection.delete(None).where(
+                    sqlalchemy.and_(
+                        tInfo_selection.c.id_project == self.__id_project,
+                        tInfo_selection.c.selection == selection
                     )
-                    line = self.__instance.execute(query)
-                    lines += int(line.rowcount)
+                )
+                line = self.__connexion.engine().connect().execute(query)
+                nb_connexion = self.__connexion.number_connections()
+                FileLogger.log(
+                    logging.DEBUG, f"New instance created, number of connexion : {nb_connexion}")
+                lines += int(line.rowcount)
             FileLogger.log(
                 logging.DEBUG, f"{lines} selection(s) for project_ID: {self.__id_project} deleted!")
 
@@ -284,10 +296,6 @@ class Selection():
         except Exception:
             FileLogger.log(logging.ERROR, traceback.print_exc())
 
-    def Close(self):
-        self.__connexion.close()
-        self.__instance.close()
-
 
 drop_selection = """
                     DROP TABLE IF EXISTS selection CASCADE;
@@ -300,6 +308,8 @@ selection = """
                 selection TEXT NOT NULL,
                 description TEXT NOT NULL
             )"""
+
+default_selection_for_manual_entry = """insert into selection (id_selection, id_project, selection, description) values (0,0,0,'Manual Entry');"""
 
 insert_selection = """
                     INSERT INTO selection (
@@ -332,7 +342,7 @@ select_selection_information = """
                                     s.selection AS ID_s, s.description AS selection, 
                                     to_char(se.selection_extraction_date,'DD/MM/YY HH24:MI:SS') AS dernier_extract, 
                                     se.selection_extraction_nb_records AS Nb, 
-                                    array_to_string(array_agg(c.category_name), ', ', '*') AS Catégorie,
+                                    array_to_string(array_agg(c.category_name), ', ', '*') AS catégorie,
                                     '' AS lancer, '' AS modifier
                                 FROM selection AS s 
                                 LEFT JOIN project AS p 
@@ -347,6 +357,7 @@ select_selection_information = """
                                     SELECT MAX(selection_extraction_date) 
                                     FROM selection_extraction 
                                     WHERE id_selection=se.id_selection)
+                                WHERE s.id_selection<>0
                                 GROUP BY s.id_selection, p.project_ID, s.selection, s.description, 
                                     se.selection_extraction_date, se.selection_extraction_nb_records;
                                 """

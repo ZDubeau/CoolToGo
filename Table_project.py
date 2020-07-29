@@ -9,6 +9,11 @@ project = """
                 api_key TEXT NOT NULL
             )"""
 
+default_project_for_manual_entry = """
+                                    INSERT INTO project (id_project, project_id, api_key) 
+                                    VALUES (0,0,0);
+                                    """
+
 insert_project = """
                 INSERT INTO project (project_ID, api_key)
                 VALUES (%(project_ID)s, %(api_key)s) 
@@ -29,7 +34,8 @@ select_project_with_project_ID = """
 
 select_project_information = """
                             SELECT id_project, project_ID as id_project, api_key,'' as lancement, '' as supprimer
-                            FROM project; 
+                            FROM project
+                            WHERE id_project<>0; 
                             """
 
 select_selection_project = """

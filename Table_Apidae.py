@@ -1338,7 +1338,7 @@ select_apidae_edit = """
                     LEFT JOIN category AS c ON ca.id_category = c.id_category
                     LEFT JOIN profil_apidae AS pa ON apidae.id_data_from_apidae = pa.id_data_from_apidae
                     LEFT JOIN profil AS p ON pa.id_profil = p.id_profil
-                    WHERE apidae.id_data_from_apidae=%s
+                    WHERE apidae.id_apidae=(SELECT id_apidae FROM data_from_apidae WHERE id_data_from_apidae=%s)
                     GROUP BY apidae.id_apidae, apidae.titre;
                     """
 

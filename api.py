@@ -44,7 +44,7 @@ def query_database_for_list_of_filtered_locations(categories, profiles):
     list_of_location = connexion.Query_SQL_fetchall(
         apidae.select_apidae_with_categorie_list_edited_and_profil_list_edited, [profiles, categories])
     for location in list_of_location:
-        set_of_location_id.add(location[1])
+        set_of_location_id.add(location[0])
         try:
             set_of_all_location.remove(location[0])
         except:
@@ -57,7 +57,7 @@ def query_database_for_list_of_filtered_locations(categories, profiles):
     list_of_location = connexion.Query_SQL_fetchall(
         apidae.select_apidae_with_categorie_list_edited_and_profil_list, [profiles, categories])
     for location in list_of_location:
-        set_of_location_id.add(location[1])
+        set_of_location_id.add(location[0])
         try:
             set_of_all_location.remove(location[0])
         except:
@@ -70,7 +70,7 @@ def query_database_for_list_of_filtered_locations(categories, profiles):
     list_of_location = connexion.Query_SQL_fetchall(
         apidae.select_apidae_with_categorie_list_and_profil_list_edited, [profiles, categories])
     for location in list_of_location:
-        set_of_location_id.add(location[1])
+        set_of_location_id.add(location[0])
         try:
             set_of_all_location.remove(location[0])
         except:
@@ -83,7 +83,7 @@ def query_database_for_list_of_filtered_locations(categories, profiles):
     list_of_location = connexion.Query_SQL_fetchall(
         apidae.select_apidae_with_categorie_list_and_profil_list, [profiles, categories])
     for location in list_of_location:
-        set_of_location_id.add(location[1])
+        set_of_location_id.add(location[0])
         try:
             set_of_all_location.remove(location[0])
         except:
@@ -97,7 +97,7 @@ def query_database_for_list_of_filtered_locations(categories, profiles):
     nb_location = 0
     for id_location in set_of_location_id:
         data = connexion.Query_SQL_fetchone(
-            apidae.select_apidae_1_id_with_data_edited, [id_location])
+            apidae.select_apidae_1_id_apidae_with_data_edited, [id_location])
         dict_for_apidae, dict_for_geometry = functions.create_dict_for_lieu_validated(
             data)
         # liste properties, geometry

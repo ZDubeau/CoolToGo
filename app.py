@@ -1,6 +1,6 @@
 """----------------------------
 Creation date : 2020-06-11
-Last update : 2020-07-27
+Last update : 2020-07-28
 ----------------------------"""
 
 from wtforms.validators import InputRequired, Email, Length, Regexp, AnyOf

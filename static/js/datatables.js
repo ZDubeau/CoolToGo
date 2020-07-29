@@ -1,3 +1,5 @@
+// Last update 28 July 2020
+
 var validate = '<img src="/static/image/validate.png" style="height:18px;"/>';
 var cancel = '<img src="/static/image/delete.png" style="height:18px;"/>';
 var edit = '<img src="/static/image/edit-svgrepo-com.svg" style="height:18px;"/>';
@@ -132,7 +134,6 @@ $(document).ready(function () {
       });
     }
   });
-
   //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::Table Admin
   $('#dataTableAdmin').DataTable({
     "columnDefs": [

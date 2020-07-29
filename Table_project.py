@@ -9,7 +9,10 @@ project = """
                 api_key TEXT NOT NULL
             )"""
 
-default_project_for_manual_entry = """insert into project (id_project, project_id, api_key) values (0,0,0);"""
+default_project_for_manual_entry = """
+                                    INSERT INTO project (id_project, project_id, api_key) 
+                                    VALUES (0,0,0);
+                                    """
 
 insert_project = """
                 INSERT INTO project (project_ID, api_key)

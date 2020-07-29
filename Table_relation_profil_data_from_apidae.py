@@ -20,7 +20,6 @@ insert_relation_profil_apidae = """
                                 returning id_profil_apidae;
                                 """
 
-
 delete_relation_profil_apidae = """
                                 DELETE FROM profil_apidae 
                                 WHERE id_profil_apidae=%s; 

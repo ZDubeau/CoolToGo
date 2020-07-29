@@ -1335,7 +1335,6 @@ def locations():
         profiles: ['profile1', 'profile2', ...]
     }
     """
-    # try:
     req_data = request.get_json()
     nb = 0
     l = dict()
@@ -1367,20 +1366,11 @@ def locations():
     dict_for_extract_2.update({"categories": categories})
     dict_for_extract_2.update({"profiles": profiles})
     dict_for_extract.update({"query": dict_for_extract_2})
-    # dict_for_extract.update({"categories": categories, "profiles": profiles})
     dict_for_extract_1 = dict()
     dict_for_extract_1.update({"type": "FeatureCollection"})
     dict_for_extract_1.update({"name": "cool2go"})
     dict_for_extract_1.update({"features": l})
     dict_for_extract.update({"data": dict_for_extract_1})
-    # except:
-    #     dict_for_extract = dict()
-    #     dict_for_extract.update({"status": 503})
-    #     dict_for_extract_1 = dict()
-    #     dict_for_extract_1.update({"type": "FeatureCollection"})
-    #     dict_for_extract_1.update({"name": "cool2go"})
-    #     dict_for_extract_1.update({"error": "error error"})
-    #     dict_for_extract.update({"data": dict_for_extract_1})
 
     response = app.response_class(
         response=json.dumps(dict_for_extract, indent=3, sort_keys=False),
@@ -1389,9 +1379,10 @@ def locations():
     )
     return response
 
-
 #---------------------------------------------------#
 #                      The End                      #
 #---------------------------------------------------#
+
+
 if __name__ == '__main__':
     app.run(debug=True)

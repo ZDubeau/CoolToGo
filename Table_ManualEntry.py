@@ -3,7 +3,9 @@ Creation date : 2020-07-08
 Last update   : 2020-07-22
 ----------------------------"""
 
-drop_manualEntry = """DROP TABLE IF EXISTS manual_entry;"""
+drop_manualEntry = """
+                    DROP TABLE IF EXISTS manual_entry;
+                    """
 
 manualEntry = """
                 CREATE TABLE IF NOT EXISTS manual_entry (

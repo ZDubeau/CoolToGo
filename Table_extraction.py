@@ -1,10 +1,7 @@
-""" 
-Project CoolToGo
-----------------------------
+"""----------------------------
 Creation date : 2020-06-30
-Last update : 2020-07-01
-----------------------------
-"""
+Last update : 2020-07-29
+----------------------------"""
 
 drop_selection_extraction = """
                             DROP TABLE IF EXISTS selection_extraction CASCADE;

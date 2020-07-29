@@ -21,7 +21,6 @@ insert_relation_profil_apidae_edited = """
                                         returning id;
                                         """
 
-
 delete_relation_profil_apidae_edited = """
                                         DELETE FROM profil_apidae_edited 
                                         WHERE id_profil=%s AND  id_data_from_apidae=%s; 

@@ -1,10 +1,7 @@
-""" 
-Projet CoolToGo
-----------------------------
+"""----------------------------
 Creation date : 2020-06-11
-Last update : 2020-06-20
-----------------------------
-"""
+Last update : 2020-07-29
+----------------------------"""
 
 drop_category = """
                 DROP TABLE IF EXISTS category CASCADE;

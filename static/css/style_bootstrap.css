@@ -1703,7 +1703,7 @@ pre code {
 .table tbody + tbody {
   border-top: 2px solid #dee2e6;
   border-bottom: 1px solid #dee2e6;
-  table-layout: fixed; 
+  table-layout: fixed;
   width: 100%;
 }
 
@@ -2000,7 +2000,7 @@ pre code {
 }
 .table-responsive > .table-bordered {
   border: 0;
-  
+
 }
 
 .form-control {

@@ -99,15 +99,6 @@ $(document).ready(function () {
   $('#dataTableManualEntry').DataTable({
     "sScrollX": "100%",
     "bScrollCollapse": true,
-    "fixedHeader": {
-      "header": false,
-      "footer": false
-    },
-    dom: 'Bfrtip',
-    buttons: [{
-      extend: 'colvis',
-      collectionLayout: 'fixed four-column'
-    }],
     "columnDefs": [
       { "targets": 0, "visible": false },      //id primary key
       { "targets": 1, "width": "1px" },        //id_Apidae
@@ -335,4 +326,5 @@ $(document).ready(function () {
       });
     }
   });
+  $('#myModal').modal(options)
 });

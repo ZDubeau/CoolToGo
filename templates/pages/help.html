@@ -1,0 +1,230 @@
+{% extends "layout.html" %}
+{% block bootstrap_2 %}
+<!-- INFO DE PROJET -->
+<div class="card text-manual bg-manual mb-3" style="max-width: 68rem;">
+    <div class="card-body" style="background-color: #17a3b81c;padding: 0.5rem;">
+        <h2 class="card-header"
+            style="color: #000000; background-color: #17a3b8ca; font-weight: bold; font-size: medium;">
+            Info de projet
+        </h2>
+        <ul class="list-group">
+            <li class="list-group-item" style="background-color: #d0eeed;border-color: #d0eeed;line-height: 2.0;">
+                Cette page permet d’ajouter une projet qui vient de la vase de donnée Apidae. Avec
+                <strong>l'identité</strong> et la <strong>clé API</strong> de projet, on peut lancer
+                d'extraction depuis Apidae et dans la table dessus, on va voir des informations.
+                Assui il y a la possibilité de relancement et la suppression d'un projet.
+                (Cette partie est automatique qui rafraîchit des données tous les jours à 3h du matin.)
+                <!-- <ul class="list-group" style="padding-top: 20px;">
+                    <li class="list-group-item"
+                        style="background-color: #d0eeed;border-color: #d0eeed;padding: 0rem 1rem !important;">-
+                        nombres
+                        de
+                        projets</li>
+                    <li class="list-group-item"
+                        style="background-color: #d0eeed;border-color: #d0eeed;padding: 0rem 1rem !important;">-
+                        nombres
+                        de
+                        fichiers moyens par
+                        projets</li>
+                    <li class="list-group-item"
+                        style="background-color: #d0eeed;border-color: #d0eeed;padding: 0rem 1rem !important;">-
+                        temps
+                        moyens
+                        d’analyse pour 10000
+                        lignes</li>
+                    <li class="list-group-item"
+                        style="background-color: #d0eeed;border-color: #d0eeed;padding: 0rem 1rem !important;">- un
+                        graphe
+                        avec le temps d’analyse
+                        par modèle de fichier (9 templates à
+                        ce jour)</li>
+                </ul> -->
+            </li>
+        </ul>
+    </div>
+</div>
+<!-- GESTION SELECTION APDAE -->
+<div class="card text-manual bg-manual mb-3" style="max-width: 68rem;transform: translate(0px, -17px);">
+    <div class="card-body" style="background-color: #17a3b81c;padding: 0.5rem;">
+        <h2 class="card-header"
+            style="color: #000000; background-color: #17a3b8ca; font-weight: bold; font-size: medium;">
+            Gestion Selection Apidae
+        </h2>
+        <ul class="list-group">
+            <li class="list-group-item" style="background-color: #d0eeed;border-color: #d0eeed;line-height: 2.0;">
+                Toutes les sélections qui sont choisi dans Apidae se montrent dans cette partie.
+                Il y a des informations de projet et des sélections, aussi la dernière date/heure
+                d'extraction, En cas d'erreur de lancement par projet, on peut relancer chaque
+                sélection séparément. Egalement pour chaque sélection, on peut ajouter une ou des
+                catégorie(s).
+            </li>
+            <!-- <li class="list-group-item" style="background-color: #d0eeed;border-color: #d0eeed;line-height: 2.0;">
+                Pour
+                un projet donné on
+                va trouver la liste
+                des fichiers avec leur
+                caractéristiques
+                (statut, temps
+                d’analyse, nombres de lignes, modèle) et la possibilité de télécharger le résultat d’un fichier,
+                supprimer
+                le fichier du projet et d’ajouter un nouveau fichier au projet à l’aide d’un formulaire.
+            </li> -->
+        </ul>
+    </div>
+</div>
+
+<!-- DONNÉES DE LIEUX -->
+<div class="card text-manual bg-manual mb-3" style="max-width: 68rem;transform: translate(0px, -34px);">
+    <div class="card-body" style="background-color: #17a3b81c;padding: 0.5rem;">
+        <h2 class="card-header"
+            style="color: #000000; background-color: #17a3b8ca; font-weight: bold; font-size: medium;">
+            Données de lieux
+        </h2>
+        <ul class="list-group">
+            <li class="list-group-item" style="background-color: #d0eeed;border-color: #d0eeed;line-height: 2.0;">
+                Cette page permet d'avoir toutes les données dont on a besoin de nous servir pour le site CoolToGo.
+                On trouve trois partie ici :
+                <ul class="list-group" style="padding-top: 20px;">
+                    <li class="list-group-item"
+                        style="background-color: #d0eeed;border-color: #d0eeed;padding: 0rem 1rem !important;">-
+                        Apidae Extraction
+                    </li>
+                    <li class="list-group-item"
+                        style="background-color: #d0eeed;border-color: #d0eeed;padding: 0rem 1rem !important;">-
+                        Entrées Manuelles
+                    </li>
+                    <li class="list-group-item"
+                        style="background-color: #d0eeed;border-color: #d0eeed;padding: 0rem 1rem !important;">-
+                        Toutes les données</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
+<!-- SAISIE MANUELLE -->
+<div class="card text-manual bg-manual mb-3" style="max-width: 68rem;transform: translate(0px, -51px);">
+    <div class="card-body" style="background-color: #17a3b81c;padding: 0.5rem;">
+        <h2 class="card-header"
+            style="color: #000000; background-color: #17a3b8ca; font-weight: bold; font-size: medium;">
+            Saisie Manuelle
+        </h2>
+        <ul class="list-group">
+            <li class="list-group-item" style="background-color: #d0eeed;border-color: #d0eeed;line-height: 2.0;">
+                Saisie manuelle nous permet d'ajouter les données hors Apidae. Dans cette page nous pouvons
+                ajouter les informations nécessaires pour le site CoolToGo.
+            </li>
+        </ul>
+    </div>
+</div>
+<!-- TABLES -->
+<div class="card text-manual bg-manual mb-3" style="max-width: 68rem;transform: translate(0px, -68px);">
+    <div class="card-body" style="background-color: #17a3b81c;padding: 0.5rem;">
+        <h2 class="card-header"
+            style="color: #000000; background-color: #17a3b8ca; font-weight: bold; font-size: medium;">
+            Tables
+        </h2>
+        <ul class="list-group">
+            <li class="list-group-item" style="background-color: #d0eeed;border-color: #d0eeed;line-height: 2.0;">
+                Cette page nous montre ces trois éléments ci-dessous qui contiennent les
+                catégories et les profils usager, aussi toujours la gestion de fraîcheur.
+                Nous pouvons également ajouter des éléments référence à chaque d'eux en appuyant
+                <strong>modifier</strong>.
+                <ul class="list-group" style="padding-top: 20px;">
+                    <li class="list-group-item"
+                        style="background-color: #d0eeed;border-color: #d0eeed;padding: 0rem 1rem !important;">-
+                        Catégories
+                    </li>
+                    <li class="list-group-item"
+                        style="background-color: #d0eeed;border-color: #d0eeed;padding: 0rem 1rem !important;">-
+                        Gestion de fraîcheur
+                    </li>
+                    <li class="list-group-item"
+                        style="background-color: #d0eeed;border-color: #d0eeed;padding: 0rem 1rem !important;">-
+                        Profils usager
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
+<!-- API -->
+<div class="card text-manual bg-manual mb-3" style="max-width: 68rem;transform: translate(0px, -85px);">
+    <div class="card-body" style="background-color: #17a3b81c;padding: 0.5rem;">
+        <h2 class="card-header"
+            style="color: #000000; background-color: #17a3b8ca; font-weight: bold; font-size: medium;">
+            API
+        </h2>
+        <ul class="list-group">
+            <li class="list-group-item" style="background-color: #d0eeed;border-color: #d0eeed;line-height: 2.0;">
+                L'une des pages les plus importantes(même avec audace, l'objectif uitimr du projet)
+                où il y a tous ce qui est utile et envisager pour le site CoolToGo.<br>
+                Cette page comprend les liens de profils, catégories et les deux (locations).
+            </li>
+        </ul>
+    </div>
+</div>
+<!-- ElEMENT REFERENCE -->
+<div class="card text-manual bg-manual mb-3" style="max-width: 68rem;transform: translate(0px, -102px);">
+    <div class="card-body" style="background-color: #17a3b81c;padding: 0.5rem;">
+        <h2 class="card-header"
+            style="color: #000000; background-color: #17a3b8ca; font-weight: bold; font-size: medium;">
+            Element Reference
+        </h2>
+        <ul class="list-group">
+            <li class="list-group-item" style="background-color: #d0eeed;border-color: #d0eeed;line-height: 2.0;">
+                La page élément référence contient le <strong>fichier ElementReference d'Apidae</strong>.
+                (On peut trouver ce fichier sur le site base.apidae).<br> Pour avoir ce fichier, on upload
+                depuis de notre PC. Cette page nous permet de définir les profils usager (en plus les
+                catégories qui sont en commentaire).<br>
+                Enfin, on peut supprimer des données inutiles de ce tableau.
+            </li>
+        </ul>
+    </div>
+</div>
+<!-- MESSAGE -->
+<div class="card text-manual bg-manual mb-3" style="max-width: 68rem;transform: translate(0px, -119px);">
+    <div class="card-body" style="background-color: #17a3b81c;padding: 0.5rem;">
+        <h2 class="card-header"
+            style="color: #000000; background-color: #17a3b8ca; font-weight: bold; font-size: medium;">
+            Message
+        </h2>
+        <ul class="list-group">
+            <li class="list-group-item" style="background-color: #d0eeed;border-color: #d0eeed;line-height: 2.0;">
+                Liste
+                permettant <strong>de visualiser tous les fichiers</strong> soumis à analyse dans un projet. Il est
+                possible de télécharger le résultat intermédiaire après normalisation (voir documentation) et après
+                standardisation (voir documentation).
+            </li>
+            <li class="list-group-item" style="background-color: #d0eeed;border-color: #d0eeed;line-height: 2.0;">
+                Cette
+                liste permet également de voir si la standardisation est bien fidèle aux données soumise. Un écart
+                de
+                mois de 1000 PPB (voir documentation) est négligable.
+            </li>
+        </ul>
+    </div>
+</div>
+<!-- NOUVEL ADMINISTRATEUR -->
+<div class="card text-manual bg-manual mb-3" style="max-width: 68rem;transform: translate(0px, -136px);">
+    <div class="card-body" style="background-color: #17a3b81c;padding: 0.5rem;">
+        <h2 class="card-header"
+            style="color: #000000; background-color: #17a3b8ca; font-weight: bold; font-size: medium;">
+            Nouvel Administrateur
+        </h2>
+        <ul class="list-group">
+            <li class="list-group-item" style="background-color: #d0eeed;border-color: #d0eeed;line-height: 2.0;">
+                Liste
+                permettant <strong>de visualiser tous les fichiers</strong> soumis à analyse dans un projet. Il est
+                possible de télécharger le résultat intermédiaire après normalisation (voir documentation) et après
+                standardisation (voir documentation).
+            </li>
+            <li class="list-group-item" style="background-color: #d0eeed;border-color: #d0eeed;line-height: 2.0;">
+                Cette
+                liste permet également de voir si la standardisation est bien fidèle aux données soumise. Un écart
+                de
+                mois de 1000 PPB (voir documentation) est négligable.
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock bootstrap_2 %}

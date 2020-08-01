@@ -1,4 +1,6 @@
-// Last update 28 July 2020
+// Creation date : 2020-06-11
+// Last update : 2020-08-01
+
 
 var validate = '<img src="/static/image/validate.png" style="height:18px;"/>';
 var cancel = '<img src="/static/image/delete.png" style="height:18px;"/>';
@@ -227,6 +229,16 @@ $(document).ready(function () {
         window.location.href = '/delete_message/' + id;
       });
     }
+  });
+  //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::Table Message Edit page
+  $('#dataTableMessageEdit').DataTable({
+    "columnDefs": [
+      { "width": "10px", "targets": 0 },
+      { "width": "130px", "targets": 1 },
+      { "width": "50px", "targets": 2 },
+      { "width": "50px", "targets": 3 }
+    ],
+    "order": [[0, "asc"]]
   });
   //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::Table Coolness Values
   $('#dataTableCoolnessValues').DataTable({

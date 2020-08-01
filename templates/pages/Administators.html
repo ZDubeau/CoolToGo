@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block bootstrap_2 %}
 <div class="card-header"
-    style="background-color: #1778b8b6; color: black; border-radius: 4px 4px 0px 0px; font-size: large; font-weight: bold;">
+    style="background-color: #01289fe3; color: #d0eeed; border-radius: 4px 4px 0px 0px; font-size: medium; font-weight: bold;">
     Administrateurs
 </div>
 <div class="card-body" style="border-radius: 0px 0px 4px 4px;background-color: #1778b825;">
@@ -13,50 +13,53 @@
 </div>
 </br>
 <center>
-    <h2 style="color: red; text-align: center;">{{ErrorMessage}}</h2>
+    <h2 style="color: khaki; text-align: center;">{{ErrorMessage}}</h2>
 </center>
-<section id="app" class="hero is-fullheight">
-    <div class="hero-body" style="padding: 2rem 0.5rem;flex-grow: 0;">
-        <div class="container">
-            <div class="columns" style="padding: 0 !important;">
-                <div class="column is-half is-offset-one-quarter"
-                    style="width: 80%;margin-left: 0 !important;transform: translate(-27px, 0px)">
-                    <span class="title" style="font-size: 1.25rem;">
-                        Ajouter un(e) Administateur
-                    </span>
-                    <!-- ---------------------- FORM ---------------------------- -->
-                    <form action="/new_admin" method="post">
-                        <!-- -------------------------------------------------------- -->
-                        <div class="field" style="padding-top: 50px;">
-                            <label class="label" style="font-size: 14px;">Nom d'utilisateur</label>
-                            <input name="adm_uname" class="input" type="text" maxlength="50"
-                                placeholder="Entrez nom d'utilisateur" style="color: #bebcbc60; width: 60%;" required>
-                        </div>
-                        <div class="field">
-                            <label class="label" style="font-size: 14px;">Adresse mail</label>
-                            <input name="adm_email" class="input" type="text" maxlength="50"
-                                placeholder="Entrez adresse mail" style="color: #9696967e; width: 60%;" required>
-                        </div>
-                        <div class="field">
-                            <label class="label" style="font-size: 14px;">Mot de passe</label>
-                            <input name="adm_psw" class="input" type="password" maxlength="50"
-                                placeholder="Entrez mot de passe" style="color: #9696967e; width: 60%;" required>
-                        </div>
-                        <div class="field">
-                            <label class="label" style="font-size: 14px;">Confirmer mot de passe</label>
-                            <input name="adm_psw-repeat" class="input" type="password" maxlength="50"
-                                placeholder="Confirmez mot de passe" style="color: #9696967e; width: 60%;" required>
-                        </div>
-                        <div class="field is-grouped is-grouped-left">
-                            <div class="control">
-                                <button class="button is-link"
-                                    style="background-color: #17a2b8; border-radius: 4px; border-color: #17a2b8; margin: 28px 0; padding: 5px 25px;">Confirm</button>
-                            </div>
-                        </div>
-                    </form>
+<div class="column" style="margin-left: 0 !important;transform: translate(0px, -10px);">
+    <p class="title" style="font-size: 1.25rem;color: #01289f;transform: translate(-8px, 0px);">
+        Ajouter un(e) Administateur
+    </p>
+    <!-- FORM -->
+    <form action="/new_admin" method="post">
+        <div class="form-row">
+            <div class="col-md-2 mb-3" style="transform: translate(-10px, 0px);">
+                <label class="label" style="font-size: 13px;display: inherit !important;">
+                    Nom d'utilisateur
+                </label>
+                <input name="adm_uname" class="input" type="text" maxlength="50" required>
+            </div>
+            <div class="col-md-5" style="transform: translate(-10px, 2px);">
+                <label class="label" style="font-size: 13px;">
+                    Adresse mail
+                </label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">@</div>
+                    </div>
+                    <input name="adm_email" type="text" class="form-control" placeholder="exemple@exemple.com">
+                </div>
+            </div>
+            <div class="col-md-2 mb-3" style="transform: translate(-10px, 0px);">
+                <label class="label" style="font-size: 13px;display: inherit !important;">
+                    Mot de passe
+                </label>
+                <input name="adm_psw" class="input" type="password" maxlength="50" required>
+            </div>
+            <div class="col-md-2 mb-3" style="transform: translate(-10px, 0px);">
+                <label class="label" style="font-size: 13px;display: inherit !important;">
+                    Confirmer mot de passe
+                </label>
+                <input name="adm_psw-repeat" class="input" type="password" maxlength="50" required>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="field is-grouped is-grouped-left" style="transform: translate(-5px, -24px);">
+                <div class="control">
+                    <button class="button is-link" type="submit"
+                        style="background-color: #01289f; border-radius: 4px; border-width: 0;color: #d0eeed; padding: 5px 20px;font-size: 15px;transform: translate(0px, 21px);">Valider</button>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </form>
+</div>
 {% endblock bootstrap_2 %}

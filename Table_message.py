@@ -1,3 +1,8 @@
+"""----------------------------
+Creation date : 2020-06-11
+Last update : 2020-08-01
+----------------------------"""
+
 drop_message = """
                 DROP TABLE IF EXISTS message;
                 """
@@ -24,6 +29,11 @@ select_message = """
 
 select_message_list = """ 
                         SELECT id,message, start_date, end_date, '' as Modifier, '' as Publier, '' as Supprimer 
+                        FROM message; 
+                    """
+
+select_message_edit_page = """ 
+                        SELECT id,message, start_date, end_date
                         FROM message; 
                         """
 

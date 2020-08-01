@@ -862,13 +862,13 @@ def get_edit_message(id):
     else:
         username = session["username"]
         connexion = DB_connexion()
-        data = connexion.Query_SQL_fetchone(
-            DB_Table_Definitions.select_message, [id])
-        del connexion
+        data = connexion.Query_SQL_fetchone(msg.select_message, [id])
         message = data[1]
         start_date = data[2]
         end_date = data[3]
-        return render_template('pages/message_edit.html', id=id, message=message, start_date=start_date, end_date=end_date, username=username)
+        df = pd.read_sql(msg.select_message_edit_page, connexion.connexion())
+        del connexion
+    return render_template('pages/message_edit.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableMessageEdit', index=False)], id=id, message=message, start_date=start_date, end_date=end_date, username=username)
 
 
 @app.route("/edit-message_save", methods=["POST"])
@@ -1143,6 +1143,7 @@ def get_documentation():
     return render_template('pages/documentation.html')
 
 #__________________________________________________________________#
+#                                                                  #
 #                        *api for front-end*                       #
 #__________________________________________________________________#
 
@@ -1241,9 +1242,7 @@ def locations():
     )
     return response
 
-#------------------------------------------------------------#
-#                            The End                         #
-#------------------------------------------------------------#
+# The End
 
 
 if __name__ == '__main__':

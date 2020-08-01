@@ -862,7 +862,7 @@ select_apidae_display = """
                         dfa.type_apidae AS type_apidae, dfa.titre AS titre,
                         CASE 
                             WHEN pae.id_data_from_apidae IS NULL THEN array_to_string(array_agg(DISTINCT p.profil), ', ')
-                            ELSE array_to_string(array_agg(DISTINCT pe.profil), ', ',)
+                            ELSE array_to_string(array_agg(DISTINCT pe.profil), ', ')
                             END AS profil_c2g,
                         CASE
                             WHEN cae.id_data_from_apidae IS NULL THEN array_to_string(array_agg(DISTINCT c.category_name), ', ')

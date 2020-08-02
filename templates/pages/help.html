@@ -9,12 +9,12 @@
         </h2>
         <ul class="list-group">
             <li class="list-group-item" style="background-color: #d0eeed;border-color: #d0eeed;line-height: 2.0;">
-                Cette page permet de gérer les informations de connections à la base de donnée apidae.
+                Cette page permet de gérer les informations de connections à la base de donnée Apidae.
                 Il est possible de créer un projet et d'y associer les informations fournis sur le site Apidae:
                 <strong>l'ID du projet</strong> et la <strong>clé API</strong>.Ces donées sont fournis par le site
                 Apidae.<br>
                 La fonctionnalité <strong>lancement</strong> permet de récupérer les séletions qui ont été définies pour
-                ce projet sur le site apidae et ensuite de lancer l'extraction de tous les lieux associés à chaque
+                ce projet sur le site Apidae et ensuite de lancer l'extraction de tous les lieux associés à chaque
                 sélection.<br>
                 La fonctionnalité <strong>supprimer</strong> permet de supprimer un projet, les sélections pour ce
                 projet et les lieux associés.
@@ -32,7 +32,7 @@
         <ul class="list-group">
             <li class="list-group-item" style="background-color: #d0eeed;border-color: #d0eeed;line-height: 2.0;">
                 Cette page permet d'afficher les sélections associées aux projets ajoutés sur le site.
-                Pour chaque sélection les informations du projet associé, du nom de la sélection sur le site
+                Pour chaque sélection, les informations du projet associé, du nom de la sélection sur le site
                 Apidae, la date de la dernière extraction, le nombre de lieux extraits, le nom des catégories associées
                 à la sélection sont affichées.<br>
                 La fonctionalité <strong>lancer</strong> permet de lancer la récupération des lieux associés à une
@@ -64,7 +64,7 @@
                         Apidae Extraction : permet d'afficher l'ensemble des lieux qui associés à des sélections qui
                         ont été extrait depuis le site Apidae.<br>
                         Il est possible de modifier un lieu en choississant manuellement les catégories et les
-                        profils qui dovent lui être affecté.
+                        profils qui doivent lui être affecté.
                     </li>
                     <li class="list-group-item"
                         style="background-color: #d0eeed;border-color: #d0eeed;padding: 0rem 1rem !important;">-
@@ -77,8 +77,7 @@
                     <li class="list-group-item"
                         style="background-color: #d0eeed;border-color: #d0eeed;padding: 0rem 1rem !important;">-
                         Toutes les données : permet d'afficher toutes les données de lieux quelles viennent du site
-                        Apidae
-                        ou qu'elles aient été créés manuellement.
+                        Apidae ou qu'elles aient été créés manuellement.
                     </li>
                 </ul>
             </li>
@@ -119,7 +118,7 @@
                             Apidae</strong>
                         et dont les éléments vont être utilisés dans chaque lieux de la base de donnée Apidae pour
                         le caractériser.<br>
-                        Par exemple, si un lieu est destiné à aux enfants, aux seniors, s'il est à proximité d'un cours
+                        Par exemple, si un lieu est destiné aux enfants, aux seniors, s'il est à proximité d'un cours
                         d'eau, il y a plus de 5000 entrées permettant de caractériser un lieu.<br>
                         Cette fonctionnalité permet de charger le fichier Excel extrait du site Apidae
                         ensuite il est possible d'associer ces éléments de référence à une catégorie, un profil ou un
@@ -131,36 +130,33 @@
                     <li class="list-group-item"
                         style="background-color: #d0eeed;border-color: #d0eeed;padding: 0rem 1rem !important;">-
                         <strong>Catégories</strong> : il s'agit des catégories qui seront utilisés sur le
-                        <strong>Front-End
-                            CoolToGo</strong><br>
+                        <strong>Front-End CoolToGo</strong>.<br>
                         Il est possible d'ajouter une ou plusieur catégorie à une sélection.<br>
                         Il est possible de choisir de nouvelles catégories pour un lieu extrait de la base de donnée
                         Apidae ou entré manuellement.<br>
                         Il est possible d'associer des éléments de références à une catégorie afin de déterminer la ou
-                        les catégories d'un lieu lors de la phase de transformation. Pour l'instant cette fonctionnalité
-                        n'est pas activé dans la transformation.
+                        les catégories d'un lieu lors de la phase de transformation. Pour l'instant, cette
+                        fonctionnalité n'est pas activé dans la transformation.
                     </li>
                     <li class="list-group-item"
                         style="background-color: #d0eeed;border-color: #d0eeed;padding: 0rem 1rem !important;">-
                         <strong>Profils usager</strong> : il s'agit des profils usagers qui seront utilisés sur le
-                        <strong>Front-End
-                            CoolToGo</strong><br>
+                        <strong>Front-End CoolToGo</strong>.<br>
                         Il est possible de choisir de nouveaux profils usagers pour un lieu extrait de la base de donnée
                         Apidae ou entré manuellement.<br>
                         Il est possible d'associer des éléments de références à un profil usager afin de déterminer le
-                        ou
-                        les profil usager d'un lieu lors de la phase de transformation.
+                        ou les profil usager d'un lieu lors de la phase de transformation.
                     </li>
                     <li class="list-group-item"
                         style="background-color: #d0eeed;border-color: #d0eeed;padding: 0rem 1rem !important;">-
                         <strong>Gestion de fraîcheur</strong> : il s'agit d'un moyen de caractériser le niveau de
-                        fraicheur d'un
-                        lieu.<br>
+                        fraicheur d'un lieu.<br>
                         L'idée est d'associer des points en fonction des équipements présent dans les éléments de
                         références d'un lieu et ainsi de pouvoir donner une "note de fraicheur".<br>
                         Lors de l'étape de transformation des données extraites d'Apidae, un score serait calculé à
                         partir des points associées à chaque élément dans ce module.<br>
-                        <strong>Pour l'instant cette fonctionnalité n'est pas disponible.</strong><br>
+                        <strong style="color: sandybrown;">Pour l'instant cette fonctionnalité n'est pas
+                            disponible.</strong><br>
                     </li>
                 </ul>
             </li>
@@ -200,7 +196,7 @@
                 La page <strong>messages</strong> permet de définir un ou des messages a afficher sur le
                 <strong>Front-End de CoolToGo</strong> avec une date de début et une date de fin.<br>
                 La fonctionnalité <strong>modifier</strong> permet d'éditer le message.<br>
-                La fonctionnalité <strong>publier</strong> permet d'obtenir un json avec les informations du
+                La fonctionnalité <strong>publier</strong> permet d'obtenir un JSON avec les informations du
                 message.<br>
                 la fonctionnalité <strong>supprimer</strong> permet de supprimer le message.
             </li>

@@ -1,29 +1,42 @@
 """----------------------------
 Creation date : 2020-06-11
-Last update : 2020-07-28
+Last update : 2020-07-30
 ----------------------------"""
-
+# A validator simply takes an input, verifies it fulfills some criterion
 from wtforms.validators import InputRequired, Email, Length, Regexp, AnyOf
 from wtforms import Form, StringField, PasswordField, validators
 from flask_wtf import FlaskForm
 from flask import Flask, render_template, request, redirect, url_for, make_response, jsonify, json, g, abort, session, send_from_directory
 from flask_restful import Api
+# Celery is a simple, flexible, and reliable distributed system to process vast amounts of messages.
 from celery import Celery
+# Redis Enterprise enables running Redis Python datasets & Python Redis client in a highly available
+# and auto-scalable manner, with predictable top performance.
 import redis
 import requests
+# Low-level networking interface
 import socket
 import os
+# Public API for display tools in IPython
 from IPython.display import HTML
+# pandas is a fast, powerful, flexible and easy to use open source data analysis and manipulation tool, ...
 import pandas as pd
 from pandas import DataFrame
+# geopy is a Python client for several popular geocoding web services.
 from geopy.geocoders import BANFrance
 from geopy.exc import GeocoderTimedOut, GeocoderUnavailable, GeocoderQuotaExceeded
 from geopy.extra.rate_limiter import RateLimiter
+
 from pathlib import Path
+import urllib.parse
+# The most popular PostgreSQL database adapter for the Python
 import psycopg2
 import psycopg2.extras
+# This module defines functions and classes which implement a flexible event logging system for applications and libraries.
 import logging
 from LoggerModule.FileLogger import FileLogger as FileLogger
+
+# user-defined function object :
 import DB_Functions as functions   # insert database related code here
 import Table_admin as admin
 import Table_Apidae as apidae
@@ -44,22 +57,25 @@ import Table_relation_category_data_from_apidae as ctg_apidae
 import Table_relation_profil_data_from_apidae as prf_apidae
 # import Table_relation_selection_profil as slc_prf
 from DB_Connexion import DB_connexion
-import urllib.parse
 import api as ctg_api
 
 
 if os.getenv("FLASK_ENV") == "development":
+    ''' 
+    Specify the environment for flask App
+    '''
+
     FileLogger.InitLoggerByFile(
         os.getenv("FileLogger_path"), os.getenv("FileLogger_name"))
 
-
+# Uplaod file as ElementReference into admin page (Element Reference)
 UPLOAD_FOLDER = 'tmp'
 RESULT_FOLDER = 'tmp/result'
 DOWNLOAD_FOLDER = 'tmp/download'
 ALLOWED_EXTENSIONS = {'xls'}
 
 app = Flask(__name__)
-
+# Store configuration information
 app.secret_key = os.getenv("SECRET_KEY")
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['RESULT_FOLDER'] = RESULT_FOLDER
@@ -71,10 +87,11 @@ POOL = redis.ConnectionPool(host=os.getenv(
     "REDIS_HOST"), port=os.getenv("REDIS_PORT"), db=0)
 r = redis.StrictRedis(connection_pool=POOL)
 
-#*********************** Register - new version **************************#
+#___________________ Register - new version _____________________#
 
 
 class RegistrationForm(Form):
+
     username = StringField(
         '', validators=[validators.input_required(), validators.Length(min=4, max=25)])
     email = StringField(
@@ -83,7 +100,7 @@ class RegistrationForm(Form):
         '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{6,})', message='Le mot de passe doit être composé de 6 caractères dont 1 lettre minuscule, 1 letter majuscule, 1 chiffre et un caractère spécial')])
     confirm = PasswordField('', validators=[validators.input_required()])
 
-#*********************** Login - new version **************************#
+#_____________________ Login - new version ______________________#
 
 
 class LoginForm(Form):
@@ -119,9 +136,7 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-#-------------------------------------------------------------------#
-#                            Celery Tasks                           #
-#-------------------------------------------------------------------#
+#________________________ Celery Tasks _________________________#
 
 
 @celery.task
@@ -153,7 +168,7 @@ def file_elementReference_treatment(dfjson):
     elt_Ref.Execute()
     del elt_Ref
 
-#____________________________________ Homepage ____________________________________#
+#__________________________ Homepage ___________________________#
 
 
 @app.route('/', methods=['GET'])
@@ -170,7 +185,7 @@ def get_homepage():
         inscription = True
     return render_template('homepage.html', inscription=inscription, form=form, modal_inscription=modal_inscription, modal_login=modal_login)
 
-#__________________________________ registration __________________________________#
+#_______________________ registration __________________________#
 
 
 @app.route('/inscription', methods=['GET', 'POST'])
@@ -199,7 +214,7 @@ def register():
         modal_inscription = True
     return render_template('homepage.html', inscription=inscription, form=form, modal_inscription=modal_inscription)
 
-# ???????????????????????????????????????????????????????????????????????????????????????????????????????
+# ?????????????????????????????????????????????????
 @app.route('/login_1', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -209,7 +224,7 @@ def login():
         return 'Formulaire soumis avec succès !'
     return render_template('get_homepage', form=form)
 
-#____________________________________ Login page __________________________________#
+#_________________________ Login page ___________________________#
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -229,7 +244,7 @@ def post_login():
 
     return redirect(url_for("get_homepage", ErrorMessage=ErrorMessage))
 
-#_____________________________________ Admin page ___________________________________#
+#_________________________________________________________________#
 
 
 @app.route('/home', methods=['GET'])
@@ -240,7 +255,7 @@ def get_home():
         username = session["username"]
         return render_template('pages/home.html', username=username)
 
-# ________________________________Element Reference _________________________________#
+# _____________________Element Reference _________________________#
 
 
 @app.route('/element_reference', methods=['GET'])
@@ -290,7 +305,7 @@ def get_delete_elt_ref_not_used():
         errorMessage = "Ménage effectué!"
         return redirect(url_for("get_elementReference", errorMessage=errorMessage))
 
-#______________________________ Apidae tables interface _____________________________#
+#___________________ Apidae tables interface ______________________#
 
 
 @app.route('/tableApidae', methods=['GET', 'POST'])
@@ -373,7 +388,7 @@ def get_edit_category_profil_manual(id):
         data_prf = connexion.Query_SQL_fetchall(
             prf.select_profil_for_apidae_id, [id])
         del connexion
-    return redirect(url_for('get_tableManualEntry', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableManualEntry', index=False)], id_data_from_apidae=id, id_apidae=data[1], titre=data[2], profil_c2g=data[3], category_c2g=data[4], categories=data_ctg, profiles=data_prf, username=username))
+    return render_template('pages/apidae_edit.html', id_data_from_apidae=id, id_apidae=data[1], titre=data[2], profil_c2g=data[3], category_c2g=data[4], categories=data_ctg, profiles=data_prf, username=username)
 
 
 @app.route('/remove_manual_entry/<id>', methods=['GET'])
@@ -424,26 +439,7 @@ def post_edit_category_profil():
     del connexion
     return redirect(url_for("get_tableApidae"))
 
-#_____________________________ Valid tables interface _______________________________#
-
-
-# @app.route('/tableValide', methods=['GET', 'POST'])
-# def get_tableValide():
-#     if "username" not in session:
-#         return redirect(url_for("get_homepage"))
-#     else:
-#         username = session["username"]
-#         if 'ErrorMessage' in request.args:
-#             ErrorMessage = request.args.get('ErrorMessage')
-#         else:
-#             ErrorMessage = ""
-#         connexion = DB_connexion()
-#         df = pd.read_sql(
-#             DB_Table_Definitions.select_cooltogo_validated_for_display, connexion.connexion())
-#         del connexion
-#         return render_template('pages/tableValide.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableValid', index=False)], username=username, ErrorMessage=ErrorMessage)
-
-#________________________________ Manual Entry ____________________________________#
+#________________________ Manual Entry ____________________________#
 
 
 @app.route('/ManualEntry', methods=['GET'])
@@ -508,9 +504,11 @@ def post_manualEntry():
         except (GeocoderTimedOut, GeocoderUnavailable, GeocoderQuotaExceeded) as e:
             FileLogger.log(logging.ERROR, "Error: geocode failed on input %s with message %s" %
                            (address, str(e)))
-        id_apidae = 1000000000 + \
-            connexion.Query_SQL_fetchone(
-                apidae.select_count_manual_entry)[0] + 1
+        if connexion.Query_SQL_fetchone(apidae.select_count_manual_entry)[0] == 0:
+            id_apidae = 1000000001
+        else:
+            id_apidae = connexion.Query_SQL_fetchone(
+                apidae.select_max_manual_entry)[0] + 1
         id_data_from_apidae = connexion.Insert_SQL_fetchone(apidae.insert_apidae, {
             'id_apidae': id_apidae,  # mandatory
             'id_selection': 0,  # mandatory
@@ -570,7 +568,7 @@ def post_manualEntry():
         del connexion
         return redirect(url_for("get_manualEntry", ErrorMessage="Nouvelle entrée a été ajouté dans la table manualEntry !"))
 
-#________________________Add new administator interface_______________________#
+#_________________Add new administator interface___________________#
 
 
 @app.route('/add_admin', methods=['GET'])
@@ -618,19 +616,7 @@ def get_delete_admin(id):
     del connexion
     ErrorMessage = "Admin deleted successfully !"
     return redirect(url_for("get_add_admin", ErrorMessage=ErrorMessage))
-# ________________________________________________________________________
-# @app.route('/remove_lieu/<id>')
-# def get_remove_lieu(id):
-#     connexion = DB_connexion()
-#     DB_Protocole.cur.execute(
-#         DB_Table_Definitions.delete_from_cooltogo_validated_with_id, [id])
-#     DB_Protocole.cur.execute(
-#         DB_Table_Definitions.delete_lien_niveau_de_fraicheur_cooltogo_validated, [id])
-#     DB_Protocole.conn.commit()
-#     del connexion
-#     return redirect(url_for("get_tableValide"))
-
-#----------------- Project Informations --------------------#
+# _____________________ Project Informations ________________________#
 
 
 @app.route('/projectInformation', methods=['GET', 'POST'])
@@ -649,7 +635,7 @@ def get_projectInformation():
         del connexion
         return render_template('pages/projectInformation.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableProjet', index=False)], username=username, ErrorMessage=ErrorMessage)
 
-#------------------- New Project --------------------#
+#___________________________New Project______________________________#
 
 
 @app.route('/new_project_info', methods=['GET', 'POST'])
@@ -668,7 +654,7 @@ def get_new_project_info():
         errormessage = ''
     return redirect(url_for("get_projectInformation", ErrorMessage=errormessage))
 
-#--------------- Lancement(launch) d'extraction des selection --------------#
+#__________Lancement(launch) d'extraction des selection _____________#
 
 
 @app.route('/launch_selection_extract/<id>')
@@ -677,7 +663,7 @@ def get_launch_selection_extract(id):
         args=[id], countdown=2)
     return redirect(url_for("get_apidaeSelection"))
 
-#---------------- Remove project id -----------------#
+#_________________________ Remove project id ________________________#
 
 
 @app.route('/delete_projet/<id>')
@@ -689,7 +675,7 @@ def get_delete_projet(id):
     del connexion
     return redirect(url_for("get_projectInformation"))
 
-#----------------- Apidae Selection --------------------#
+#_________________________ Apidae Selection _________________________#
 
 
 @app.route('/apidaeSelection', methods=['GET', 'POST'])
@@ -704,7 +690,7 @@ def get_apidaeSelection():
         del connexion
         return render_template('pages/apidaeSelection.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableSelection', index=False)], username=username)
 
-#------------------- Edit Selection --------------------#
+#__________________________ Edit Selection __________________________#
 
 
 @app.route('/edit_selection/<id>', methods=['GET', 'POST'])
@@ -722,7 +708,7 @@ def get_edit_selection(id):
         del connexion
         return render_template('pages/editSelection.html', id_selection=id, selection=data[0], description=data[1], categories=data_ctg, username=username)
 
-#------------------- New category _ Selection --------------------#
+#_____________________ New category _ Selection _____________________#
 
 
 @app.route('/edit_selection_post', methods=['POST'])
@@ -756,7 +742,7 @@ def get_edit_selection_post():
     del connexion
     return redirect(url_for("get_apidaeSelection"))
 
-#--------------- Lancement(launch) d'extraction --------------#
+#____________________ Lancement(launch) d'extraction ________________#
 
 
 @app.route('/launch_extract/<id>')
@@ -764,144 +750,8 @@ def get_launch_extract(id):
     asynchronous_extract_for_selection.apply_async(args=[id], countdown=2)
     return redirect(url_for("get_apidaeSelection"))
 
-#---------------- Remove Selection id -----------------#
-
-
-# @app.route('/delete_selection/<id>')
-# def get_delete_selection(id):
-#     connexion = DB_connexion()
-
-#     DB_Protocole.cur.execute(slc.delete_selection, [id])
-#     DB_Protocole.conn.commit()
-#     del connexion
-#     return redirect(url_for("get_apidaeSelection"))
-
-
-#------------------ Edit lieu valid --------------------#
-
-
-# @app.route('/edit_lieu_valide/<id>')
-# def get_edit_data(id):
-#     if "username" not in session:
-#         return redirect(url_for("get_homepage"))
-#     else:
-#         username = session["username"]
-#         connexion = DB_connexion()
-#         DB_Protocole.cur.execute(
-#             DB_Table_Definitions.select_cooltogo_validate_with_id, [id])
-#         data = DB_Protocole.cur.fetchall()
-#         DB_Protocole.cur.execute(
-#             DB_Table_Definitions.select_lien_niveau_de_fraicheur_cooltogo_validated, [id])
-#         data_niveau_fraicheur = DB_Protocole.cur.fetchone()
-#         DB_Protocole.cur.execute(
-#             DB_Table_Definitions.select_niveau_de_fraicheur_tous)
-#         data_liste_fraicheur = DB_Protocole.cur.fetchall()
-#         if data[0][16] == None:
-#             publics = None
-#         else:
-#             publics = data[0][16].split(",")
-#         del connexion redis.exceptions.ConnectionError: max number of clients reached
-#     lieu_event = request.form["lieu_event"]
-#     latitude = request.form["latitude"]
-#     longitude = request.form["longitude"]
-#     name = request.form["name"]
-#     niveau_fraicheur = request.form["niveau_fraicheur"]
-#     type_ = request.form["type"]
-#     adresse1 = request.form["adresse1"]
-#     adresse2 = request.form["adresse2"]
-#     codePostal = request.form["code_postal"]
-#     City = request.form["city"]
-#     telephone = request.form["telephone"]
-#     email = request.form["email"]
-#     site_web = request.form["site_web"]
-#     Description_Teaser = request.form["description_teaser"]
-#     Description = request.form["description"]
-#     Images = request.form["images"]
-#     Categories = request.form["categories"]
-#     Accessibilite = request.form["accessibilite"]
-#     Payant = request.form["payant"]
-#     public = ""
-#     first = True
-#     if "senior" in request.form:
-#         public += "senior"
-#         first = False
-#     if "enfant" in request.form:
-#         if first:
-#             public += "enfant"
-#             first = False
-#         else:
-#             public += ",enfant"
-#     if "jeune" in request.form:
-#         if first:
-#             public += "jeune"
-#             first = False
-#         else:
-#             public += ",jeune"
-#     if "adulte" in request.form:
-#         if first:
-#             public += "adulte"
-#             first = False
-#         else:
-#             public += ",adulte"
-#     if "solidaire" in request.form:
-#         if first:
-#             public += "solidaire"
-#             first = False
-#         else:
-#             public += ",solidaire"
-#     plus_d_infos = request.form["plus_d_infos"]
-#     Date_debut = request.form["date_debut"]
-#     Date_fin = request.form["date_fin"]
-#     geolocator = Nominatim(user_agent="cooltogo_api_backend")
-#     location = geolocator.geocode(
-#         adresse1+" "+adresse2+" "+codePostal+" "+City)
-#     if location == None:
-#         x_site = request.form["latitude"]
-#         if x_site == "None":
-#             x_lat = None
-#         else:
-#             x_lat = x_site
-#         y_site = request.form["longitude"]
-#         if y_site == "None":
-#             y_lon = None
-#         else:
-#             y_lon = y_site
-#     else:
-#         x_lat = location.latitude
-#         y_lon = location.longitude
-#     connexion = DB_connexion()
-#     ErrorMessage = functions.update_cooltogo_validated(
-#         id_apidae,
-#         lieu_event,
-#         x_lat,
-#         y_lon,
-#         name,
-#         niveau_fraicheur,
-#         adresse1,
-#         adresse2,
-#         codePostal,
-#         City,
-#         telephone,
-#         email,
-#         site_web,
-#         Description_Teaser,
-#         Description,
-#         Images,
-#         public,
-#         styleUrl,
-#         styleHash,
-#         type_,
-#         Categories,
-#         Accessibilite,
-#         Payant,
-#         plus_d_infos,
-#         Date_debut,
-#         Date_fin)
-
-#     del connexion
-#     return redirect(url_for("get_tableValide", ErrorMessage=ErrorMessage))
-
 #_________________________extract locations__________________________#
+
 
 @app.route('/extract_locations')
 def get_extract_locations():
@@ -968,7 +818,7 @@ def post_change_coolness_status(id):
     del connexion
     return redirect(url_for("get_coolness_values"))
 
-#_______________________Message button_________________________#
+#__________________________Message button___________________________#
 
 
 @app.route('/message', methods=['GET'])
@@ -1012,13 +862,13 @@ def get_edit_message(id):
     else:
         username = session["username"]
         connexion = DB_connexion()
-        data = connexion.Query_SQL_fetchone(
-            DB_Table_Definitions.select_message, [id])
-        del connexion
+        data = connexion.Query_SQL_fetchone(msg.select_message, [id])
         message = data[1]
         start_date = data[2]
         end_date = data[3]
-        return render_template('pages/message_edit.html', id=id, message=message, start_date=start_date, end_date=end_date, username=username)
+        df = pd.read_sql(msg.select_message_edit_page, connexion.connexion())
+        del connexion
+    return render_template('pages/message_edit.html', tables=[df.to_html(classes='table table-bordered table-hover', table_id='dataTableMessageEdit', index=False)], id=id, message=message, start_date=start_date, end_date=end_date, username=username)
 
 
 @app.route("/edit-message_save", methods=["POST"])
@@ -1051,10 +901,10 @@ def get_publish_message(id):
     list_feature = []
 
     dict_for_extract = dict()
-    dict_for_extract.update({"type": "message"})
+    dict_for_extract.update({"id": id})
     dict_for_extract.update({"message": message})
-    dict_for_extract.update({"Date de début": start_date})
-    dict_for_extract.update({"Date de fin": end_date})
+    dict_for_extract.update({"Start Date": start_date})
+    dict_for_extract.update({"End Date": end_date})
 
     response = app.response_class(
         response=json.dumps(dict_for_extract, indent=3, sort_keys=False),
@@ -1073,7 +923,7 @@ def get_delete_message(id):
 
     return redirect(url_for("get_message", ErrorMessage=ErrorMessage))
 
-#__________________________Category___________________________#
+#____________________________Category____________________________#
 
 
 @app.route('/category', methods=['GET'])
@@ -1175,7 +1025,7 @@ def get_delete_category(id):
         ErrorMessage = e
     return redirect(url_for("get_category", ErrorMessage=ErrorMessage))
 
-#________________________User Profil_________________________#
+#__________________________User Profil__________________________#
 
 
 @app.route('/profil', methods=['GET'])
@@ -1280,9 +1130,22 @@ def get_delete_profil(id):
         ErrorMessage = e
     return redirect(url_for("get_profil", ErrorMessage=ErrorMessage))
 
-#----------------------------------------------------------#
-#                      api for front-end                   #
-#----------------------------------------------------------#
+#_____________________ Documentation / help _______________________#
+
+
+@app.route('/help', methods=['GET'])
+def get_help():
+    return render_template('pages/help.html')
+
+
+@app.route('/documentation', methods=['GET'])
+def get_documentation():
+    return render_template('pages/documentation.html')
+
+#__________________________________________________________________#
+#                                                                  #
+#                        *api for front-end*                       #
+#__________________________________________________________________#
 
 
 @app.route('/api', methods=['GET', 'POST'])
@@ -1317,6 +1180,17 @@ def profiles():
     p = ctg_api.query_database_for_list_of_profiles()
     response = app.response_class(
         response=json.dumps(p, indent=3, sort_keys=False),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
+
+
+@app.route('/api/messages', methods=['GET'])
+def messages():
+    m = ctg_api.query_database_for_list_of_messages()
+    response = app.response_class(
+        response=json.dumps(m, indent=3, sort_keys=False),
         status=200,
         mimetype='application/json'
     )
@@ -1379,9 +1253,7 @@ def locations():
     )
     return response
 
-#---------------------------------------------------#
-#                      The End                      #
-#---------------------------------------------------#
+# The End
 
 
 if __name__ == '__main__':

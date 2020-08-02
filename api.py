@@ -5,6 +5,7 @@ from DB_Connexion import DB_connexion
 import DB_Functions as functions
 import Table_category as ctg
 import Table_profil as pfl
+import Table_message as msg
 import Table_Apidae as apidae
 
 
@@ -26,6 +27,17 @@ def query_database_for_list_of_profiles():
     for line in data:
         pfl_list.append({'label': line[1], 'value': line[0]})
     return pfl_list
+
+
+def query_database_for_list_of_messages():
+    connexion = DB_connexion()
+    data = connexion.Query_SQL_fetchall(msg.select_message_for_api)
+    del connexion
+    msg_list = []
+    for line in data:
+        msg_list.append(
+            {'id': line[0], 'message': line[1], 'Start Date': line[2], 'End Date': line[3]})
+    return msg_list
 
 
 def query_database_for_list_of_filtered_locations(categories, profiles):

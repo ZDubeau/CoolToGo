@@ -1,23 +1,28 @@
-<!-- LAST UPDATE: 27 JULY 2020 -->
+<!-- LAST UPDATE: 30 JULY 2020 -->
 
 {% extends "layout.html" %}
 {% block bootstrap_2 %}
 <div class="card-header"
     style="background-color: #01289fe3; color: #d0eeed; border-radius: 4px 4px 0px 0px; font-size: medium; font-weight: bold;">
-    Information de projet
+    Table data Apidae
 </div>
+<!-- TABLE APIDAE -->
 <div class="card-body" style="border-radius: 0px 0px 4px 4px;background-color: #1778b825;">
     <div class="table-responsive">
-        {% for table in tables %}
-        {{ table|safe }}
-        {% endfor %}
+        <table id="table" data-toggle="table" data-height="460" data-show-columns="true" data-show-fullscreen="true"
+            data-icons-prefix="icon" data-icons="icons" data-url="json/data1.json">
+            <thead>
+                {% for table in tables %}
+                {{ table|safe }}
+                {% endfor %}
+            </thead>
         </table>
     </div>
 </div>
 <center>
     <h2 style="color: khaki; text-align: center;">{{errorMessage}}</h2>
 </center>
-<!-- Edit Modal HTML -->
+<!-- Edit CATEGORY/PROFIL -->
 <div id="editEmployeeModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -53,7 +58,9 @@
         </div>
     </div>
 </div>
-<div class="container-fluid" style="transform: translate(-20px, 8px);">
+<!-- TH BUTTONS FOR GET LOCATIONS & DOWNLOAD AS LINK/FILE-->
+<!-- --------------------------------------------------- -->
+<!-- <div class="container-fluid" style="transform: translate(-20px, 8px);">
     <div class="row justify-content-md-left">
         <div class="col-md-auto">
             <div class="-md-auto control">
@@ -64,5 +71,5 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->
 {% endblock bootstrap_2 %}

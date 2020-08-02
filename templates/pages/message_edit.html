@@ -1,57 +1,59 @@
-<!-- LAST UPDATE: 27 JULY 2020 -->
+<!-- LAST UPDATE: 31 JULY 2020 -->
 
 {% extends "layout.html" %}
 {% block bootstrap_2 %}
 <div class="card-header"
-    style="background-color: #1778b8b6; color: black; border-radius: 4px 4px 0px 0px; font-size: large; font-weight: bold;">
+    style="background-color: #01289fe3; color: #d0eeed; border-radius: 4px 4px 0px 0px; font-size: medium; font-weight: bold;">
     Messages
 </div>
-<div class="card-body" style="border-radius: 0px 0px 4px 4px;background-color: #1778b825;">
+<div class="card-body" style="border-radius: 0px 0px 4px 4px;background-color: #17a3b825;">
     <div class="table-responsive">
         {% for table in tables %}
         {{ table|safe }}
         {% endfor %}
     </div>
 </div>
-<section id="app" class="hero is-fullheight">
-    <div class="hero-body" style="padding: 2rem 0.5rem;flex-grow: 0;">
-        <div class="container">
-            <div class="columns" style="padding: 0 !important;">
-                <div class="column is-half is-offset-one-quarter"
-                    style="width: 80%;margin-left: 0 !important;transform: translate(-27px, 0px)">
-                    <p class="title">Edit the message</p>
-                    <div>
-                        <form action="/edit-message_save" method="post">
-                            <div class="field">
-                                <label class="label" style="font-size: 14px;">Message</label>
-                                <textarea name="message" class="textarea" maxlength="1500" style="color: #363434;"
-                                    required>{{message}}</textarea>
-                            </div>
-                            <!-- ------- -->
-                            <div class="field">
-                                <label class="label" style="font-size: 14px;">Date de début</label>
-                                <input name="start_date" value="{{start_date}}" class="input" type="date"
-                                    style="color: #3f3d3d;">
-                            </div>
-                            <!-- ------- -->
-                            <div class="field">
-                                <label class="label" style="font-size: 14px;">Date de fin</label>
-                                <input name="end_date" value="{{end_date}}" class="input" type="date"
-                                    style="color: #3f3d3d;">
-                            </div>
-                            <!-- ------- -->
-                            <div class="field is-grouped is-grouped-left">
-                                <div class="control">
-                                    <input name="id" value="{{id}}" hidden>
-                                    <button class="button is-link" style="padding: 5px 25px;">Send</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+<center>
+    <h3 style="color: khaki; text-align: center;">{{errorMessage}}</h3>
+</center>
+<div class="column" style="margin-left: 0 !important;transform: translate(0px, 10px);">
+    <p class="title" style="font-size: 1.25rem;color: #01289f;transform: translate(-8px, 0px);">
+        Editer le message
+    </p>
+    <!-- FORM -->
+    <form action="/edit-message_save" method="post">
+        <div class="form-row">
+            <div class="col-md-5 mb-4" style="transform: translate(-10px, 0px);">
+                <label class="label" style="font-size: 13px;display: inherit !important;">Message</label>
+                <textarea name="message" class="textarea" value="{{message}}" maxlength="1500"
+                    required>{{message}}</textarea>
+            </div>
+            <!-- START DATE & END DATE -->
+            <div class="col-md-3 mb-3">
+                <label class="label" style="font-size: 13px;display: inherit !important;">
+                    Date de début
+                </label>
+                <input name="start_date" class="input" value="{{start_date}}" type="date">
+                <!---------------->
+                <label class="label"
+                    style="font-size: 13px;display: inherit !important;transform: translate(0px, 22px);">
+                    Date de fin
+                </label>
+                <input name="end_date" class="input" value="{{end_date}}" type="date"
+                    style="transform: translate(0px, 22px);">
+            </div>
+        </div>
+        <!-- BUTTON VALIDATE -->
+        <div class="form-row">
+            <div class="field is-grouped is-grouped-left" style="transform: translate(-5px, -14px);" <div
+                class="control">
+                <div class="control">
+                    <input name="id" value="{{id}}" hidden>
+                    <button class="button is-link" type="submit"
+                        style="background-color: #01289f; border-radius: 4px; border-width: 0;color: #d0eeed; padding: 5px 20px;font-size: 15px;transform: translate(0px, 21px);">Valider</button>
                 </div>
             </div>
         </div>
-    </div>
-</section>
-<h3>{{errorMessage}}</h3>
+    </form>
+</div>
 {% endblock bootstrap_2 %}

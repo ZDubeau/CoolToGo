@@ -1,6 +1,6 @@
 """----------------------------
 Creation date : 2020-06-11
-Last update : 2020-07-29
+Last update : 2020-07-30
 ----------------------------"""
 
 import re
@@ -779,6 +779,7 @@ class Data_from_apidae():
             FileLogger.log(logging.ERROR, traceback.print_exc())
 
 
+# Table Apidae requests (Creation, insert, ...)
 drop_apidae = """
                 DROP TABLE IF EXISTS data_from_apidae CASCADE;
                 """
@@ -861,7 +862,7 @@ select_apidae_display = """
                         dfa.type_apidae AS type_apidae, dfa.titre AS titre,
                         CASE 
                             WHEN pae.id_data_from_apidae IS NULL THEN array_to_string(array_agg(DISTINCT p.profil), ', ')
-                            ELSE array_to_string(array_agg(DISTINCT pe.profil), ', ',)
+                            ELSE array_to_string(array_agg(DISTINCT pe.profil), ', ')
                             END AS profil_c2g,
                         CASE
                             WHEN cae.id_data_from_apidae IS NULL THEN array_to_string(array_agg(DISTINCT c.category_name), ', ')
@@ -1355,6 +1356,12 @@ select_apidae_all_id_for_same_id_apidae = """
 
 select_count_manual_entry = """
                             SELECT count(id_data_from_apidae) AS nb_manual_entry
+                            FROM data_from_apidae
+                            WHERE id_selection=0;
+                            """
+
+select_max_manual_entry = """
+                            SELECT max(id_apidae) AS max_manual_entry
                             FROM data_from_apidae
                             WHERE id_selection=0;
                             """

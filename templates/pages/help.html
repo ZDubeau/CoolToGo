@@ -9,36 +9,15 @@
         </h2>
         <ul class="list-group">
             <li class="list-group-item" style="background-color: #d0eeed;border-color: #d0eeed;line-height: 2.0;">
-                Cette page permet d’ajouter une projet qui vient de la vase de donnée Apidae. Avec
-                <strong>l'identité</strong> et la <strong>clé API</strong> de projet, on peut lancer
-                d'extraction depuis Apidae et dans la table dessus, on va voir des informations.
-                Assui il y a la possibilité de relancement et la suppression d'un projet.
-                (Cette partie est automatique qui rafraîchit des données tous les jours à 3h du matin.)
-                <!-- <ul class="list-group" style="padding-top: 20px;">
-                    <li class="list-group-item"
-                        style="background-color: #d0eeed;border-color: #d0eeed;padding: 0rem 1rem !important;">-
-                        nombres
-                        de
-                        projets</li>
-                    <li class="list-group-item"
-                        style="background-color: #d0eeed;border-color: #d0eeed;padding: 0rem 1rem !important;">-
-                        nombres
-                        de
-                        fichiers moyens par
-                        projets</li>
-                    <li class="list-group-item"
-                        style="background-color: #d0eeed;border-color: #d0eeed;padding: 0rem 1rem !important;">-
-                        temps
-                        moyens
-                        d’analyse pour 10000
-                        lignes</li>
-                    <li class="list-group-item"
-                        style="background-color: #d0eeed;border-color: #d0eeed;padding: 0rem 1rem !important;">- un
-                        graphe
-                        avec le temps d’analyse
-                        par modèle de fichier (9 templates à
-                        ce jour)</li>
-                </ul> -->
+                Cette page permet de gérer les informations de connections à la base de donnée apidae.
+                Il est possible de créer un projet et d'y associer les informations fournis sur le site Apidae:
+                <strong>l'ID du projet</strong> et la <strong>clé API</strong>.Ces donées sont fournis par le site
+                Apidae.<br>
+                La fonctionnalité <strong>lancement</strong> permet de récupérer les séletions qui ont été définies pour
+                ce projet sur le site apidae et ensuite de lancer l'extraction de tous les lieux associés à chaque
+                sélection.<br>
+                La fonctionnalité <strong>supprimer</strong> permet de supprimer un projet, les sélections pour ce
+                projet et les lieux associés.
             </li>
         </ul>
     </div>
@@ -52,23 +31,18 @@
         </h2>
         <ul class="list-group">
             <li class="list-group-item" style="background-color: #d0eeed;border-color: #d0eeed;line-height: 2.0;">
-                Toutes les sélections qui sont choisi dans Apidae se montrent dans cette partie.
-                Il y a des informations de projet et des sélections, aussi la dernière date/heure
-                d'extraction, En cas d'erreur de lancement par projet, on peut relancer chaque
-                sélection séparément. Egalement pour chaque sélection, on peut ajouter une ou des
-                catégorie(s).
+                Cette page permet d'afficher les sélections associées aux projets ajoutés sur le site.
+                Pour chaque sélection les informations du projet associé, du nom de la sélection sur le site
+                Apidae, la date de la dernière extraction, le nombre de lieux extraits, le nom des catégories associées
+                à la sélection sont affichées.<br>
+                La fonctionalité <strong>lancer</strong> permet de lancer la récupération des lieux associés à une
+                sélection et les insérer dans la base de donnée du site.<br>
+                La fonctionnalité <strong>modifier</strong> permet de changer les catégories associées à une sélection.
+                <strong>Attention</strong> les catégories ne seront mise à jour pour les lieux associés à cette
+                sélection qu'au prochain lancement de l'extraction.<br>
+                Une <strong>tâche planifié</strong> qui se déclenche automatiquement à 3h toutes les nuits permet
+                l'extraction des données pour toutes les sélections présentes dans la base de donnée.
             </li>
-            <!-- <li class="list-group-item" style="background-color: #d0eeed;border-color: #d0eeed;line-height: 2.0;">
-                Pour
-                un projet donné on
-                va trouver la liste
-                des fichiers avec leur
-                caractéristiques
-                (statut, temps
-                d’analyse, nombres de lignes, modèle) et la possibilité de télécharger le résultat d’un fichier,
-                supprimer
-                le fichier du projet et d’ajouter un nouveau fichier au projet à l’aide d’un formulaire.
-            </li> -->
         </ul>
     </div>
 </div>
@@ -81,20 +55,31 @@
         </h2>
         <ul class="list-group">
             <li class="list-group-item" style="background-color: #d0eeed;border-color: #d0eeed;line-height: 2.0;">
-                Cette page permet d'avoir toutes les données dont on a besoin de nous servir pour le site CoolToGo.
-                On trouve trois partie ici :
+                Cette page regroupe toutes les données de lieux dont le <Strong>Front-End CoolToGo</Strong> a
+                besoin.<br>
+                Ces données sont regroupés commme suit :
                 <ul class="list-group" style="padding-top: 20px;">
                     <li class="list-group-item"
                         style="background-color: #d0eeed;border-color: #d0eeed;padding: 0rem 1rem !important;">-
-                        Apidae Extraction
+                        Apidae Extraction : permet d'afficher l'ensemble des lieux qui associés à des sélections qui
+                        ont été extrait depuis le site Apidae.<br>
+                        Il est possible de modifier un lieu en choississant manuellement les catégories et les
+                        profils qui dovent lui être affecté.
                     </li>
                     <li class="list-group-item"
                         style="background-color: #d0eeed;border-color: #d0eeed;padding: 0rem 1rem !important;">-
-                        Entrées Manuelles
+                        Entrées Manuelles : permet d'afficher l'ensemble des lieux qui ont créés manuellement sur ce
+                        site
+                        (le <Strong>Back-End CoolToGo</Strong>).<br>
+                        Il est possible de choisir des catégories et profils différentes de celle initialement affectés
+                        et aussi de supprimer un lieu insérer manuellement.
                     </li>
                     <li class="list-group-item"
                         style="background-color: #d0eeed;border-color: #d0eeed;padding: 0rem 1rem !important;">-
-                        Toutes les données</li>
+                        Toutes les données : permet d'afficher toutes les données de lieux quelles viennent du site
+                        Apidae
+                        ou qu'elles aient été créés manuellement.
+                    </li>
                 </ul>
             </li>
         </ul>
@@ -109,37 +94,73 @@
         </h2>
         <ul class="list-group">
             <li class="list-group-item" style="background-color: #d0eeed;border-color: #d0eeed;line-height: 2.0;">
-                Saisie manuelle nous permet d'ajouter les données hors Apidae. Dans cette page nous pouvons
-                ajouter les informations nécessaires pour le site CoolToGo.
+                Saisie manuelle permet d'ajouter un nouveau lieu sans qu'il ne viennent du site Apidae. Dans cette page
+                il faut saisir l'ensemble des informations nécessaires pour le <strong>Front-End CoolToGo</strong>.
             </li>
         </ul>
     </div>
 </div>
-<!-- TABLES -->
+<!-- OUTILS D'ASSOCIATIONS -->
 <div class="card text-manual bg-manual mb-3" style="max-width: 68rem;transform: translate(0px, -68px);">
     <div class="card-body" style="background-color: #17a3b81c;padding: 0.5rem;">
         <h2 class="card-header"
             style="color: #000000; background-color: #17a3b8ca; font-weight: bold; font-size: medium;">
-            Tables
+            Outils d'associations
         </h2>
         <ul class="list-group">
             <li class="list-group-item" style="background-color: #d0eeed;border-color: #d0eeed;line-height: 2.0;">
-                Cette page nous montre ces trois éléments ci-dessous qui contiennent les
-                catégories et les profils usager, aussi toujours la gestion de fraîcheur.
-                Nous pouvons également ajouter des éléments référence à chaque d'eux en appuyant
-                <strong>modifier</strong>.
+                Cette section regroupe l'administration de plusieurs tables qui vont permettre d'automatiser la
+                transformation des données extraites du site Apidae. C'est la pierre angulaire du traitement des données
+                afin de limiter les retraitements manuels.
                 <ul class="list-group" style="padding-top: 20px;">
                     <li class="list-group-item"
                         style="background-color: #d0eeed;border-color: #d0eeed;padding: 0rem 1rem !important;">-
-                        Catégories
+                        <strong>Eléments de références</strong> : il s'agit d'une <strong>liste disponible sur le site
+                            Apidae</strong>
+                        et dont les éléments vont être utilisés dans chaque lieux de la base de donnée Apidae pour
+                        le caractériser.<br>
+                        Par exemple, si un lieu est destiné à aux enfants, aux seniors, s'il est à proximité d'un cours
+                        d'eau, il y a plus de 5000 entrées permettant de caractériser un lieu.<br>
+                        Cette fonctionnalité permet de charger le fichier Excel extrait du site Apidae
+                        ensuite il est possible d'associer ces éléments de référence à une catégorie, un profil ou un
+                        niveau de fraicheur.<br>
+                        Il est possible de <strong>supprimer</strong> les éléments de réference non liés à une catégorie
+                        ou un profil ou un niveau de fraicheur et ceci pour éviter de saturer la base de donnée quand on
+                        utilise <strong>heroku en mode gratuit</strong>.<br>
                     </li>
                     <li class="list-group-item"
                         style="background-color: #d0eeed;border-color: #d0eeed;padding: 0rem 1rem !important;">-
-                        Gestion de fraîcheur
+                        <strong>Catégories</strong> : il s'agit des catégories qui seront utilisés sur le
+                        <strong>Front-End
+                            CoolToGo</strong><br>
+                        Il est possible d'ajouter une ou plusieur catégorie à une sélection.<br>
+                        Il est possible de choisir de nouvelles catégories pour un lieu extrait de la base de donnée
+                        Apidae ou entré manuellement.<br>
+                        Il est possible d'associer des éléments de références à une catégorie afin de déterminer la ou
+                        les catégories d'un lieu lors de la phase de transformation. Pour l'instant cette fonctionnalité
+                        n'est pas activé dans la transformation.
                     </li>
                     <li class="list-group-item"
                         style="background-color: #d0eeed;border-color: #d0eeed;padding: 0rem 1rem !important;">-
-                        Profils usager
+                        <strong>Profils usager</strong> : il s'agit des profils usagers qui seront utilisés sur le
+                        <strong>Front-End
+                            CoolToGo</strong><br>
+                        Il est possible de choisir de nouveaux profils usagers pour un lieu extrait de la base de donnée
+                        Apidae ou entré manuellement.<br>
+                        Il est possible d'associer des éléments de références à un profil usager afin de déterminer le
+                        ou
+                        les profil usager d'un lieu lors de la phase de transformation.
+                    </li>
+                    <li class="list-group-item"
+                        style="background-color: #d0eeed;border-color: #d0eeed;padding: 0rem 1rem !important;">-
+                        <strong>Gestion de fraîcheur</strong> : il s'agit d'un moyen de caractériser le niveau de
+                        fraicheur d'un
+                        lieu.<br>
+                        L'idée est d'associer des points en fonction des équipements présent dans les éléments de
+                        références d'un lieu et ainsi de pouvoir donner une "note de fraicheur".<br>
+                        Lors de l'étape de transformation des données extraites d'Apidae, un score serait calculé à
+                        partir des points associées à chaque élément dans ce module.<br>
+                        <strong>Pour l'instant cette fonctionnalité n'est pas disponible.</strong><br>
                     </li>
                 </ul>
             </li>
@@ -155,27 +176,14 @@
         </h2>
         <ul class="list-group">
             <li class="list-group-item" style="background-color: #d0eeed;border-color: #d0eeed;line-height: 2.0;">
-                L'une des pages les plus importantes(même avec audace, l'objectif uitimr du projet)
-                où il y a tous ce qui est utile et envisager pour le site CoolToGo.<br>
-                Cette page comprend les liens de profils, catégories et les deux (locations).
-            </li>
-        </ul>
-    </div>
-</div>
-<!-- ElEMENT REFERENCE -->
-<div class="card text-manual bg-manual mb-3" style="max-width: 68rem;transform: translate(0px, -102px);">
-    <div class="card-body" style="background-color: #17a3b81c;padding: 0.5rem;">
-        <h2 class="card-header"
-            style="color: #000000; background-color: #17a3b8ca; font-weight: bold; font-size: medium;">
-            Element Reference
-        </h2>
-        <ul class="list-group">
-            <li class="list-group-item" style="background-color: #d0eeed;border-color: #d0eeed;line-height: 2.0;">
-                La page élément référence contient le <strong>fichier ElementReference d'Apidae</strong>.
-                (On peut trouver ce fichier sur le site base.apidae).<br> Pour avoir ce fichier, on upload
-                depuis de notre PC. Cette page nous permet de définir les profils usager (en plus les
-                catégories qui sont en commentaire).<br>
-                Enfin, on peut supprimer des données inutiles de ce tableau.
+                Cette page permet de tester l'une des fonctionnalités les plus importantes du projet voire même le but
+                ultime : connecter le <strong>Front-End CoolToGo</strong> au <strong>Back-End CoolToGo</strong>.<br>
+                Les différents liens vont appeler l'API permettant au <strong>Front-End CoolToGo</strong> de récupérer
+                les informations de catégories, de profils usages et de messages qui sont définies dans <strong>Back-End
+                    CoolToGo</strong>.<br>
+                Pour l"instant la fonctionnalité permettant de tester l'API pour les lieux (locations) n'est pas
+                fonctionnelle par manque de temps pour intégrer du code AJAX dans cette page. C'est pourquoi il est
+                conseillé d'utiliser Postman pour tester celle-ci.
             </li>
         </ul>
     </div>
@@ -189,9 +197,12 @@
         </h2>
         <ul class="list-group">
             <li class="list-group-item" style="background-color: #d0eeed;border-color: #d0eeed;line-height: 2.0;">
-                La page <strong>messages</strong> ne pas changer depuis la première création et contient toujours
-                les mêmes champs qu'avant. On a la possibilité d'avoir les messages avec la champs
-                <strong>publier</strong> où il nous donne un lien dans une nouvelle fenêtre.
+                La page <strong>messages</strong> permet de définir un ou des messages a afficher sur le
+                <strong>Front-End de CoolToGo</strong> avec une date de début et une date de fin.<br>
+                La fonctionnalité <strong>modifier</strong> permet d'éditer le message.<br>
+                La fonctionnalité <strong>publier</strong> permet d'obtenir un json avec les informations du
+                message.<br>
+                la fonctionnalité <strong>supprimer</strong> permet de supprimer le message.
             </li>
         </ul>
     </div>
@@ -205,9 +216,9 @@
         </h2>
         <ul class="list-group">
             <li class="list-group-item" style="background-color: #d0eeed;border-color: #d0eeed;line-height: 2.0;">
-                Cette page est pour pouvoir ajouter ou supprimer un Administrateur et S'il n'y a
-                aucun adminstrateur, on se trouve sur la page d'inscription sinon en se
-                déconnectant, on peut se connecter à tout moment.
+                Cette page permet d'ajouter ou supprimer un Administrateur.<br>
+                Si aucun administrateur n'est présent dans la base de donnée, la page d'accueil permet de créer un
+                nouvel administrateur.
             </li>
         </ul>
     </div>

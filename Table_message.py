@@ -32,6 +32,13 @@ select_message_list = """
                         FROM message; 
                     """
 
+select_message_for_api = """ 
+                        SELECT *
+                        FROM message
+                        WHERE end_date > NOW() 
+                        ORDER BY id ASC; 
+                    """
+
 select_message_edit_page = """ 
                         SELECT id,message, start_date, end_date
                         FROM message; 

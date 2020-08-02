@@ -92,7 +92,7 @@
                         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayouts"
                             aria-expanded="false" aria-controls="collapseLayouts">
                             <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
-                            Tables
+                            Outils d'association
                             <div class="sb-sidenav-collapse-arrow">
                                 <i class="fas fa-angle-down"></i>
                             </div>
@@ -100,25 +100,12 @@
                         <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne"
                             data-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link" href="{{ url_for('get_elementReference')}}"> Element Reference</a>
                                 <a class="nav-link" href="{{ url_for('get_category')}}">Catégories</a>
-                                <a class="nav-link" href="{{ url_for('get_coolness_values')}}">Gestion Fraîcheur</a>
                                 <a class="nav-link" href="{{ url_for('get_profil')}}">Profils usager</a>
+                                <a class="nav-link" href="{{ url_for('get_coolness_values')}}">Gestion Fraîcheur</a>
                             </nav>
                         </div>
-                        <!-- ----------------------------------------------------------------- -->
-                        <a class="nav-link" href="{{ url_for('get_api')}}">
-                            <div class="sb-nav-link-icon">
-                                <i class="fas fa-paper-plane"></i>
-                            </div>
-                            API
-                        </a>
-                        <!-- ----------------------------------------------------------------- -->
-                        <a class="nav-link" href="{{ url_for('get_elementReference')}}">
-                            <div class="sb-nav-link-icon">
-                                <i class="fas fa-upload"></i>
-                            </div>
-                            Element Reference
-                        </a>
                         <!-- ----------------------------------------------------------------- -->
 
                         <a class="nav-link" href="{{ url_for('get_message')}}">
@@ -133,6 +120,13 @@
                                 <i class="fas fa-user-plus"></i>
                             </div>
                             Nouvel Administrateur
+                        </a>
+                        <!-- ----------------------------------------------------------------- -->
+                        <a class="nav-link" href="{{ url_for('get_api')}}">
+                            <div class="sb-nav-link-icon">
+                                <i class="fas fa-paper-plane"></i>
+                            </div>
+                            API
                         </a>
                         <!-- ----------------------------------------------------------------- -->
                         <a class="nav-link" href="{{ url_for('get_help')}}">

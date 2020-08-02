@@ -901,10 +901,10 @@ def get_publish_message(id):
     list_feature = []
 
     dict_for_extract = dict()
-    dict_for_extract.update({"type": "message"})
+    dict_for_extract.update({"id": id})
     dict_for_extract.update({"message": message})
-    dict_for_extract.update({"Date de début": start_date})
-    dict_for_extract.update({"Date de fin": end_date})
+    dict_for_extract.update({"Start Date": start_date})
+    dict_for_extract.update({"End Date": end_date})
 
     response = app.response_class(
         response=json.dumps(dict_for_extract, indent=3, sort_keys=False),
@@ -1180,6 +1180,17 @@ def profiles():
     p = ctg_api.query_database_for_list_of_profiles()
     response = app.response_class(
         response=json.dumps(p, indent=3, sort_keys=False),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
+
+
+@app.route('/api/messages', methods=['GET'])
+def messages():
+    m = ctg_api.query_database_for_list_of_messages()
+    response = app.response_class(
+        response=json.dumps(m, indent=3, sort_keys=False),
         status=200,
         mimetype='application/json'
     )

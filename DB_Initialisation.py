@@ -15,7 +15,6 @@ import Table_category
 import Table_freshness
 import Table_selection
 import Table_extraction
-import Table_ManualEntry
 import Table_elementReference
 import Table_relation_selection_profil
 import Table_relation_selection_category
@@ -45,7 +44,6 @@ full_actions_list = (
     Table_relation_category_data_from_apidae.drop_relation_category_apidae,
     Table_relation_profil_data_from_apidae.drop_relation_profil_apidae,
     Table_admin.drop_admin,
-    Table_ManualEntry.drop_manualEntry,
     Table_freshness.drop_freshness_level,
     Table_message.message,
     Table_elementReference.elementRef,
@@ -64,7 +62,6 @@ full_actions_list = (
     Table_relation_category_data_from_apidae.relation_category_apidae,
     Table_relation_profil_data_from_apidae.relation_profil_apidae,
     Table_admin.admin,
-    Table_ManualEntry.manualEntry,
     Table_freshness.freshness_level
 )
 

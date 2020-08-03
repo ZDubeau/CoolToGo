@@ -46,7 +46,6 @@ import Table_selection as slc
 import Table_message as msg
 import Table_freshness as fresh
 import Table_profil as prf
-import Table_ManualEntry as me
 import Table_relation_selection_category as slc_ctg
 import Table_relation_eltref_prf as elt_prf
 import Table_relation_eltref_ctg as elt_ctg

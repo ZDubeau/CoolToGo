@@ -1,12 +1,11 @@
-""" 
-Projet CoolToGo
-----------------------------
+"""-------------------------
 Creation date  : 2020-03-06
-Last update    : 2020-07-12
+Last update    : 2020-08-03
 ----------------------------
-"""
-# _______________________________________________________________________
 
+Be careful, if you run this file you will drop all tables & re-create tables (remove all data) """
+
+# import all tables + file connection that execute tables
 import Table_admin
 import Table_profil
 import Table_Apidae
@@ -27,9 +26,9 @@ import Table_relation_category_data_from_apidae
 import Table_relation_category_apidae_edited
 import Table_relation_profil_apidae_edited
 from DB_Connexion import DB_connexion
-# _______________________________________________________________________
 
 
+# list (set) of all tables + drop
 full_actions_list = (
     Table_message.drop_message,
     Table_elementReference.drop_elementRef,
@@ -68,7 +67,6 @@ full_actions_list = (
     Table_ManualEntry.manualEntry,
     Table_freshness.freshness_level
 )
-
 
 if __name__ == "__main__":
     connexion = DB_connexion()

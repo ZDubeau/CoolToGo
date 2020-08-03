@@ -23,8 +23,22 @@ h2 {
     font-size: 17px;
     margin-bottom: 30px;
 }
-/* ----------les boutons de l'utilisateur et son mot de pass---------- */
+/* --------------------------------------------------------------------- */
+/* input register */
 input[type=text], input[type=password], input[type=psw-repeat] {
+    width: 114%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    background-color: lightgray;
+    border-radius: 4px;
+    margin-inline-start: -40px;
+}
+/* --------------------------------------------------------------------- */
+/* input login */
+#logins {
     width: 100%;
     padding: 12px 20px;
     margin: 8px 0;

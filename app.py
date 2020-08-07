@@ -74,6 +74,7 @@ DOWNLOAD_FOLDER = 'tmp/download'
 ALLOWED_EXTENSIONS = {'xls'}
 
 app = Flask(__name__)
+
 # Store configuration information
 app.secret_key = os.getenv("SECRET_KEY")
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -85,7 +86,6 @@ app.config['CELERY_RESULT_BACKEND'] = os.getenv("CELERY_RESULT_BACKEND")
 POOL = redis.ConnectionPool(host=os.getenv(
     "REDIS_HOST"), port=os.getenv("REDIS_PORT"), db=0)
 r = redis.StrictRedis(connection_pool=POOL)
-
 #___________________ Register - new version _____________________#
 
 

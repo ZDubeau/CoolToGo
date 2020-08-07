@@ -12,14 +12,14 @@
     <div class="content">
         <center>
             <h1>Cool To Go!</h1>
-            <h3>Administration page</h2>
-                <h3>{{errorMessage}}</h3>
-                <button onclick="document.getElementById('id_1').style.display='block'" style="width:auto;"
-                    id="LogIn">Login</button>
-                {% if inscription %}
-                <button onclick="document.getElementById('id_2').style.display='block'" style="width:auto;"
-                    id="SignUp">SignUp</button>
-                {% endif %}
+            <h2>Administration page</h2>
+            <h3>{{errorMessage}}</h3>
+            <button onclick="document.getElementById('id_1').style.display='block'" style="width:auto;"
+                id="LogIn">Login</button>
+            {% if inscription %}
+            <button onclick="document.getElementById('id_2').style.display='block'" style="width:auto;"
+                id="SignUp">SignUp</button>
+            {% endif %}
         </center>
     </div>
     <!-- La fenêtre de la connection d'utilisateur -->
@@ -31,10 +31,10 @@
             </div>
             <div class="container">
                 <label id="forme" for="uname"><b>Username</b></label>
-                <input type="text" placeholder="Enter Username" name="uname" required>
+                <input id="logins" type="text" placeholder="Enter Username" name="uname" required>
 
                 <label id="forme" for="psw"><b>Password</b></label>
-                <input type="password" placeholder="Enter Password" name="psw" required>
+                <input id="logins" type="password" placeholder="Enter Password" name="psw" required>
 
                 <button type="submit">Login</button>
             </div>
@@ -55,16 +55,16 @@
                 <img alt="" class="insc">
             </div>
             <div class="container">
-                <label id="username_label" for="username"><b>Username</b></label>
+                <label id="forme" for="username"><b>Username</b></label>
                 {{ render_field(form.username) }}
 
-                <label id="email_label" for="email"><b>Address Email</b></label>
+                <label id="forme" for="email"><b>Address Email</b></label>
                 {{ render_field(form.email) }}
 
-                <label id="password_label" for="password"><b>Password</b></label>
+                <label id="forme" for="password"><b>Password</b></label>
                 {{ render_field(form.password) }}
 
-                <label id="confirm_label" for="confirm"><b>Confirm Password</b></label>
+                <label id="forme" for="confirm"><b>Confirm Password</b></label>
                 {{ render_field(form.confirm) }}
 
                 <button type=submit value=Register>Confirm</button>

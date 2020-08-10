@@ -1129,17 +1129,12 @@ def get_delete_profil(id):
         ErrorMessage = e
     return redirect(url_for("get_profil", ErrorMessage=ErrorMessage))
 
-#_____________________ Documentation / help _______________________#
+#_____________________help _______________________#
 
 
 @app.route('/help', methods=['GET'])
 def get_help():
     return render_template('pages/help.html')
-
-
-@app.route('/documentation', methods=['GET'])
-def get_documentation():
-    return render_template('pages/documentation.html')
 
 #__________________________________________________________________#
 #                                                                  #
